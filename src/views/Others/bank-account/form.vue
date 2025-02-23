@@ -5,11 +5,11 @@
       <div
         v-if="notification.show"
         :class="[
-          'mb-4 p-4 rounded-lg shadow-sm',
           notification.type === 'success'
             ? 'bg-green-100 text-green-700'
             : 'bg-red-100 text-red-700',
         ]"
+        class="mb-4 p-4 rounded-lg shadow-sm"
       >
         {{ notification.message }}
       </div>
@@ -18,12 +18,12 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Asset</h1>
-            <p class="text-gray-500 text-sm mt-1">Master Data / Asset / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800">Create New Bank Account</h1>
+            <p class="text-gray-500 text-sm mt-1">Master Data / Bank Account / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink
-              to="/asset"
+              to="/bank-account"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
             >
               Cancel
@@ -42,101 +42,96 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Asset Name -->
+          <!-- Bank Name -->
           <div class="form-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Asset Name
+              Bank Name
               <span class="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="name_asset"
-              name="name_asset"
-              v-model="name"
+              id="bank_name"
+              name="bank_name"
+              v-model="bankName"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.name
+                rules.bankName
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter asset name"
+              placeholder="Enter bank name"
             />
-            <p v-if="rules.name" class="mt-2 text-sm text-red-600">Asset name is required</p>
+            <p v-if="rules.bankName" class="mt-2 text-sm text-red-600">Bank name is required</p>
           </div>
 
-          <!-- Asset Type -->
+          <!-- Account Number -->
           <div class="form-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Asset Type
-              <span class="text-red-500">*</span>
-            </label>
-            <select
-              id="asset_type"
-              name="asset_type"
-              v-model="id_asset_type"
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.asset_type
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-            >
-              <option value="">Select asset type</option>
-              <option value="hardware">Hardware</option>
-              <option value="software">Software</option>
-              <option value="furniture">Furniture</option>
-              <option value="vehicle">Vehicle</option>
-            </select>
-            <p v-if="rules.asset_type" class="mt-2 text-sm text-red-600">Asset type is required</p>
-          </div>
-
-          <!-- Quantity -->
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Quantity
+              Account Number
               <span class="text-red-500">*</span>
             </label>
             <input
-              type="number"
-              id="quantity_asset"
-              name="quantity_asset"
-              v-model="qty"
-              min="1"
+              type="text"
+              id="account_number"
+              name="account_number"
+              v-model="accountNumber"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.qty
+                rules.accountNumber
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter quantity"
+              placeholder="Enter account number"
             />
-            <p v-if="rules.qty" class="mt-2 text-sm text-red-600">Quantity is required</p>
+            <p v-if="rules.accountNumber" class="mt-2 text-sm text-red-600">
+              Account number is required
+            </p>
           </div>
 
-          <!-- Status -->
+          <!-- Account Holder -->
           <div class="form-group">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Status
+              Account Holder
               <span class="text-red-500">*</span>
             </label>
-            <select
-              id="status_asset"
-              name="status_asset"
-              v-model="status"
+            <input
+              type="text"
+              id="account_holder"
+              name="account_holder"
+              v-model="accountHolder"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.status
+                rules.accountHolder
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-            >
-              <option value="">Select status</option>
-              <option value="available">Available</option>
-              <option value="in_use">In Use</option>
-              <option value="maintenance">Maintenance</option>
-              <option value="retired">Retired</option>
-            </select>
-            <p v-if="rules.status" class="mt-2 text-sm text-red-600">Status is required</p>
+              placeholder="Enter account holder name"
+            />
+            <p v-if="rules.accountHolder" class="mt-2 text-sm text-red-600">
+              Account holder name is required
+            </p>
+          </div>
+
+          <!-- Branch -->
+          <div class="form-group">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Branch
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="branch"
+              name="branch"
+              v-model="branch"
+              :class="[
+                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+                rules.branch
+                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                  : 'border-gray-300 focus:ring-blue-500',
+              ]"
+              placeholder="Enter branch"
+            />
+            <p v-if="rules.branch" class="mt-2 text-sm text-red-600">Branch is required</p>
           </div>
         </div>
       </div>
@@ -151,18 +146,19 @@ import { Form } from 'vee-validate'
 import { RouterLink } from 'vue-router'
 
 export default defineComponent({
-  name: 'AssetForm',
+  name: 'BankAccountForm',
   components: {
     AdminLayout,
     Form,
+    RouterLink,
   },
 
   data() {
     return {
-      id_asset_type: '',
-      name: '',
-      qty: null,
-      status: '',
+      bankName: '',
+      accountNumber: '',
+      accountHolder: '',
+      branch: '',
       isSubmitting: false,
       notification: {
         show: false,
@@ -170,10 +166,10 @@ export default defineComponent({
         message: '',
       },
       rules: {
-        asset_type: false,
-        name: false,
-        qty: false,
-        status: false,
+        bankName: false,
+        accountNumber: false,
+        accountHolder: false,
+        branch: false,
       },
     }
   },
@@ -200,27 +196,27 @@ export default defineComponent({
         this.rules[key] = false
       })
 
-      // Validate name
-      if (!this.name?.trim()) {
-        this.rules.name = true
+      // Validate bank name
+      if (!this.bankName?.trim()) {
+        this.rules.bankName = true
         isValid = false
       }
 
-      // Validate asset type
-      if (!this.id_asset_type?.trim()) {
-        this.rules.asset_type = true
+      // Validate account number
+      if (!this.accountNumber?.trim()) {
+        this.rules.accountNumber = true
         isValid = false
       }
 
-      // Validate quantity
-      if (!this.qty || this.qty < 1) {
-        this.rules.qty = true
+      // Validate account holder
+      if (!this.accountHolder?.trim()) {
+        this.rules.accountHolder = true
         isValid = false
       }
 
-      // Validate status
-      if (!this.status?.trim()) {
-        this.rules.status = true
+      // Validate branch
+      if (!this.branch?.trim()) {
+        this.rules.branch = true
         isValid = false
       }
 
@@ -240,23 +236,23 @@ export default defineComponent({
       this.isSubmitting = true
 
       try {
-        const assetData = {
-          id_asset_type: this.id_asset_type,
-          name: this.name,
-          qty: this.qty,
-          status: this.status,
+        const bankAccountData = {
+          bankName: this.bankName,
+          accountNumber: this.accountNumber,
+          accountHolder: this.accountHolder,
+          branch: this.branch,
         }
 
-        console.log('Submitting asset data:', assetData)
+        console.log('Submitting bank account data:', bankAccountData)
         // Add your API call here
 
-        this.showNotification('success', 'Asset created successfully')
+        this.showNotification('success', 'Bank account created successfully')
         setTimeout(() => {
-          this.$router.push('/asset')
+          this.$router.push('/bank-account')
         }, 1500)
       } catch (error) {
-        console.error('Error creating asset:', error)
-        this.showNotification('error', 'Failed to create asset. Please try again.')
+        console.error('Error creating bank account:', error)
+        this.showNotification('error', 'Failed to create bank account. Please try again.')
       } finally {
         this.isSubmitting = false
       }

@@ -4,14 +4,14 @@
       <!-- Header Section -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Product Management</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / Product</p>
+          <h1 class="text-2xl font-bold text-gray-800">Bank Account Management</h1>
+          <p class="text-gray-500 text-sm mt-1">Master Data / Bank Account</p>
         </div>
         <RouterLink
-          to="/product/form"
+          to="/bank-account/form"
           class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
         >
-          Add New Product
+          Add New Bank Account
         </RouterLink>
       </div>
 
@@ -23,7 +23,7 @@
             <input
               type="text"
               v-model="searchQuery"
-              placeholder="Search products..."
+              placeholder="Search bank accounts..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -34,7 +34,7 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="name">Name</option>
-              <option value="price">Price</option>
+              <option value="balance">Balance</option>
               <option value="id">ID</option>
             </select>
           </div>
@@ -71,12 +71,12 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Price
+                Balance
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Category
+                Account Number
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -87,28 +87,28 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              v-for="(product, index) in paginatedData"
-              :key="product.id"
+              v-for="(account, index) in paginatedData"
+              :key="account.id"
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ (currentPage - 1) * itemsPerPage + index + 1 }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ account.name }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.price }}
+                {{ account.balance }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.category }}
+                {{ account.accountNumber }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editProduct(product)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editAccount(account)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
-                  <button @click="deleteProduct(product)" class="text-red-600 hover:text-red-900">
+                  <button @click="deleteAccount(account)" class="text-red-600 hover:text-red-900">
                     Delete
                   </button>
                 </div>
@@ -193,25 +193,25 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 
 export default defineComponent({
-  name: 'ProductPage',
+  name: 'BankAccountPage',
   components: {
     AdminLayout,
   },
 
   setup() {
     // Data
-    const products = ref([
+    const accounts = ref([
       {
         id: 1,
-        name: 'Product A',
-        price: '$10',
-        category: 'Category 1',
+        name: 'Account A',
+        balance: '$1000',
+        accountNumber: '1234567890',
       },
       {
         id: 2,
-        name: 'Product B',
-        price: '$20',
-        category: 'Category 2',
+        name: 'Account B',
+        balance: '$2000',
+        accountNumber: '0987654321',
       },
       // Add more sample data as needed
     ])
@@ -223,15 +223,15 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     const filteredData = computed(() => {
-      let result = [...products.value]
+      let result = [...accounts.value]
 
       // Search
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter(
-          (product) =>
-            product.name.toLowerCase().includes(query) ||
-            product.category.toLowerCase().includes(query),
+          (account) =>
+            account.name.toLowerCase().includes(query) ||
+            account.accountNumber.toLowerCase().includes(query),
         )
       }
 
@@ -258,14 +258,14 @@ export default defineComponent({
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
     // Utility functions
-    const editProduct = (product) => {
-      console.log('Edit product:', product)
+    const editAccount = (account) => {
+      console.log('Edit account:', account)
       // Implement edit logic
     }
 
-    const deleteProduct = (product) => {
-      if (confirm('Are you sure you want to delete this product?')) {
-        console.log('Delete product:', product)
+    const deleteAccount = (account) => {
+      if (confirm('Are you sure you want to delete this account?')) {
+        console.log('Delete account:', account)
         // Implement delete logic
       }
     }
@@ -280,8 +280,8 @@ export default defineComponent({
       totalPages,
       startIndex,
       endIndex,
-      editProduct,
-      deleteProduct,
+      editAccount,
+      deleteAccount,
     }
   },
 })
