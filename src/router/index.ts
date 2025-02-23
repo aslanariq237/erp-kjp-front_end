@@ -8,36 +8,33 @@ const router = createRouter({
   routes: [
     //a
     {
-      path: '/asset',
-      name: 'Asset',
-      component: () => import('../views/Others/asset/index.vue'),
-      meta: {
-        title: 'Asset',
-      },
-    },
-    {
-      path: '/asset/form',
-      name: 'Asset-Form',
-      component: () => import('../views/Others/asset/form.vue'),
-      meta: {
-        title: 'Asset-Form',
-      },
+      path: "/",
+      children: [
+        {
+          path: '/asset',
+          name: 'Asset',
+          component: () => import('../views/MasterData/asset/index.vue'),
+          meta: {
+            title: 'Asset',
+          },
+        },
+        {
+          path: '/asset/form',
+          name: 'Asset-Form',
+          component: () => import('../views/MasterData/asset/form.vue'),
+          meta: {
+            title: 'Asset-Form',
+          },
+        },
+      ]
     },
 
-    //b
-    {
-      path: '/basic-tables',
-      name: 'Basic Tables',
-      component: () => import('../views/Tables/BasicTables.vue'),
-      meta: {
-        title: 'Basic Tables',
-      },
-    },
+    //b    
     //c
     {
       path: '/customer',
       name: 'Customer',
-      component: () => import('../views/Others/customer/index.vue'),
+      component: () => import('../views/MasterData/customer/index.vue'),
       meta: {
         title: 'Customer',
       },
@@ -45,7 +42,7 @@ const router = createRouter({
     {
       path: '/customer/form',
       name: 'Customer-Form',
-      component: () => import('../views/Others/customer/form.vue'),
+      component: () => import('../views/MasterData/customer/form.vue'),
       meta: {
         title: 'Customer-Form',
       },
@@ -64,7 +61,7 @@ const router = createRouter({
     {
       path: '/employee',
       name: 'Employee',
-      component: () => import('../views/Others/employee/index.vue'),
+      component: () => import('../views/MasterData/employee/index.vue'),
       meta: {
         title: 'Employee',
       },
@@ -72,20 +69,12 @@ const router = createRouter({
     {
       path: '/employee/form',
       name: 'Employee-Form',
-      component: () => import('../views/Others/employee/form.vue'),
+      component: () => import('../views/MasterData/employee/form.vue'),
       meta: {
         title: 'Employee-Form',
       },
     },
     //f
-    {
-      path: '/form-elements',
-      name: 'Form Elements',
-      component: () => import('../views/Forms/FormElements.vue'),
-      meta: {
-        title: 'Form Elements',
-      },
-    },
     //g
     //h
     //i
@@ -100,7 +89,7 @@ const router = createRouter({
     {
       path: '/product',
       name: 'Product',
-      component: () => import('../views/Others/product/index.vue'),
+      component: () => import('../views/MasterData/product/index.vue'),
       meta: {
         title: 'Product',
       },
@@ -108,7 +97,7 @@ const router = createRouter({
     {
       path: '/product/form',
       name: 'Product-Form',
-      component: () => import('../views/Others/product/form.vue'),
+      component: () => import('../views/MasterData/product/form.vue'),
       meta: {
         title: 'Product-Form',
       },
@@ -315,7 +304,7 @@ const router = createRouter({
     // {
     //   path: '/profile',
     //   name: 'Profile',
-    //   component: () => import('../views/Others/UserProfile.vue'),
+    //   component: () => import('../views/MasterData/UserProfile.vue'),
     //   meta: {
     //     title: 'Profile',
     //   },
@@ -378,14 +367,6 @@ const router = createRouter({
       component: () => import('../views/UiElements/Videos.vue'),
       meta: {
         title: 'Videos',
-      },
-    },
-    {
-      path: '/blank',
-      name: 'Blank',
-      component: () => import('../views/Pages/BlankPage.vue'),
-      meta: {
-        title: 'Blank',
       },
     },
 
