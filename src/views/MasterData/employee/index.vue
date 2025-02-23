@@ -231,7 +231,22 @@ export default defineComponent({
         address: '456 Elm St',
       },
       // Add more sample data as needed
-    ])
+    ]);
+
+    return {
+      searchQuery,
+      sortBy,
+      currentPage,
+      itemsPerPage,
+      filteredData,
+      paginatedData,
+      totalPages,
+      startIndex,
+      endIndex,
+      getAvatarUrl,
+      editEmployee,
+      deleteEmployee,
+    }
 
     // Filtering and Sorting
     const searchQuery = ref('')
@@ -290,22 +305,7 @@ export default defineComponent({
         console.log('Delete employee:', employee)
         // Implement delete logic
       }
-    }
-
-    return {
-      searchQuery,
-      sortBy,
-      currentPage,
-      itemsPerPage,
-      filteredData,
-      paginatedData,
-      totalPages,
-      startIndex,
-      endIndex,
-      getAvatarUrl,
-      editEmployee,
-      deleteEmployee,
-    }
+    }    
   },
 })
 </script>

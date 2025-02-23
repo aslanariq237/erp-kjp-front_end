@@ -13,53 +13,42 @@
                 </div>
             </div>
             <div class="line border-b-2 py-4"></div>
-            <div class="contain p-2 mt-4">
-                <div class="filter">
-
-                </div>
-                <div class="">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">
-                                    Product name
-                                </th>
-                                <th scope="col" class="px-6 py-3">
-                                    Color
-                                </th>
-                                <th scope="col" class="px-6 py-3">
-                                    Category
-                                </th>
-                                <th scope="col" class="px-6 py-3">
-                                    Price
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                <th scope="row"
-                                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    Apple MacBook Pro 17"
-                                </th>
-                                <td class="px-6 py-4">
-                                    Silver
-                                </td>
-                                <td class="px-6 py-4">
-                                    Laptop
-                                </td>
-                                <td class="px-6 py-4">
-                                    $2999
-                                </td>
-                            </tr>
-                            <template v-for="customer in customers" :key="customers.id">
-                                <tr>
-                                    <td>{{ customer.customer_name }}</td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="form-group">
+            <label class="text-sm text-gray-600 mb-1 block">Search</label>
+            <input
+              type="text"
+              v-model="searchQuery"
+              placeholder="Search employees..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="form-group">
+            <label class="text-sm text-gray-600 mb-1 block">Sort By</label>
+            <select
+              v-model="sortBy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="id">ID</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-sm text-gray-600 mb-1 block">Items per page</label>
+            <select
+              v-model="itemsPerPage"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+      </div>
         </div>
     </AdminLayout>
 </template>
@@ -74,7 +63,6 @@ import ApiCustomer from "../../../core/controllers/master_data/customer.api.js"
 import axios from 'axios';
 import { RouterLink } from 'vue-router';
 import { Customer } from '@/core/utils/url_api';
-import ApiService from '@/core/services/ApiServices.js';
 DataTable.use(DataTablesCore)
 
 export default defineComponent({
@@ -83,7 +71,15 @@ export default defineComponent({
         DataTable,
     },
     data() {
-        const columns = []
+        const cust = ref([
+            {
+                id: 1,
+                name : 'udin',
+                phone : '+18821312',
+                email : 'udin@gmail.com',
+                address : '123 ast'
+            }
+        ])
         return {
             customers: null,
         }
