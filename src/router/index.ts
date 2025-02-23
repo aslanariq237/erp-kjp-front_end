@@ -26,10 +26,17 @@ const router = createRouter({
             title: 'Asset-Form',
           },
         },
+<<<<<<< HEAD
       ],
     },
 
     //b
+=======
+      ]
+    },
+
+    //b    
+>>>>>>> 226189582dfabce14d82875663c16c503a3a7253
     //c
     {
       path: '/customer',
