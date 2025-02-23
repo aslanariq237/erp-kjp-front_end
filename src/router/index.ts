@@ -8,7 +8,7 @@ const router = createRouter({
   routes: [
     //a
     {
-      path: "/",
+      path: '/',
       children: [
         {
           path: '/asset',
@@ -26,10 +26,10 @@ const router = createRouter({
             title: 'Asset-Form',
           },
         },
-      ]
+      ],
     },
 
-    //b    
+    //b
     //c
     {
       path: '/customer',

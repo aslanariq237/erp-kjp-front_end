@@ -1,32 +1,9 @@
-let baseUrl = "";
+let baseUrl = ''
 
-baseUrl = import.meta.env.VITE_APP_API_URL+"/api/";
+baseUrl = import.meta.env.VITE_APP_API_URL + '/api/'
+let laraUrl = 'http://127.0.0.1:8000/api/'
 
-//a
-//b
-//c
-export const Customer = baseUrl + "customers";
-export const CustomerCode = baseUrl + "customers_code";
-//d
-//e
-//f
-//g
-//h
-//i
-//j
-//k
-//l
-//m
-//n
-//o
-//p
-//q
-//r
-//s
-//t
-//u
-//v
-//w
-//x
-//y
-//z
+export const Customer = baseUrl + 'customers'
+export const GetCustomer = laraUrl + 'customers'
+export const AddCustomer = laraUrl + 'store-customers'
+export const CustomerCode = baseUrl + 'customers_code'
