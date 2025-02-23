@@ -258,6 +258,17 @@ const menuGroups = [
         ],
       },
       {
+        name: "Operation",
+        icon: BoxCubeIcon,
+        subItems: [                    
+          { name: "Purchase Order", path: "/form-elements", pro: false },
+          { name: "Delivery Order", path: "/form-elements", pro: false },
+          { name: "Quatation", path: "/form-elements", pro: false },
+          { name: "Invoice", path: "/form-elements", pro: false },          
+          { name: "Report", path: "/form-elements", pro: false },        
+        ],
+      }, 
+      {
         name: "Finance Tools",
         icon: ListIcon,
         subItems: [
@@ -268,18 +279,7 @@ const menuGroups = [
           { name: "Laporan Laba Rugi", path: "/form-elements", pro: false },
           { name: "OPEX", path: "/form-elements", pro: false },
         ],
-      },
-      {
-        name: "Operation",
-        icon: BoxCubeIcon,
-        subItems: [
-          { name: "Quatation", path: "/form-elements", pro: false },
-          { name: "Invoice", path: "/form-elements", pro: false },
-          { name: "Purchase Order", path: "/form-elements", pro: false },
-          { name: "Delivery Order", path: "/form-elements", pro: false },
-          { name: "Report", path: "/form-elements", pro: false },
-        ],
-      },      
+      },           
       {
         icon: UserCircleIcon,
         name: "System Config",
