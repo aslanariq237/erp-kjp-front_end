@@ -12,5 +12,10 @@ export const CustomerCode = baseUrl + 'customers_code';
 //E
 export const Employee = baseUrl + 'employees';
 
+//I
+export const Invoice = baseUrl + 'invoices';
+
 //P
 export const Product = baseUrl + 'products';
+
+export const PurchaseOrder = baseUrl + 'purchase_orders';

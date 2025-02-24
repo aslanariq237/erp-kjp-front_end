@@ -198,8 +198,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import axios from 'axios';
+import { PurchaseOrder } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -235,42 +237,19 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const entries = ref([
-      {
-        id_po: 1,
-        id_customer: 1,
-        id_payment_type: 1,
-        id_bank_account: 1,
-        code_po: 'PO001',
-        po_type: 'Type A',
-        status_payment: 'Paid',
-        sub_total: 1000,
-        total_tax: 100,
-        total_service: 50,
-        deposit: 200,
-        ppn: 10,
-        grand_total: 1160,
-        issue_at: '2024-02-20',
-        due_at: '2024-03-20',
-      },
-      {
-        id_po: 2,
-        id_customer: 2,
-        id_payment_type: 2,
-        id_bank_account: 2,
-        code_po: 'PO002',
-        po_type: 'Type B',
-        status_payment: 'Unpaid',
-        sub_total: 2000,
-        total_tax: 200,
-        total_service: 100,
-        deposit: 400,
-        ppn: 20,
-        grand_total: 2320,
-        issue_at: '2024-02-21',
-        due_at: '2024-03-21',
-      },
-    ])
+    const entries = ref([])
+
+    const getPurchaseOrder = async() => {
+      try {
+        const res = await axios.get(PurchaseOrder)
+        entries.value = res.data;
+      } catch (error) {
+        console.error('Error Fetching : ', error)
+      }
+    }
+    onMounted(() => {
+      getPurchaseOrder();
+    })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
