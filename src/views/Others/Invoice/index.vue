@@ -88,7 +88,7 @@
                   {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_invoice }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.no_invoice }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.invoice_type }}
@@ -190,8 +190,10 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import axios from 'axios';
+import { Invoice, PurchaseOrder } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -225,42 +227,30 @@ export default defineComponent({
     const endDate = ref('')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
+    const invoice = ref([]);  
+    const purchaseorders = ref([]) 
+    
+    const getInvoices = async() => {
+      const response = await axios.get(Invoice)
+      invoice.value = response.data
 
-    // Sample data - replace with API call
-    const entries = ref([
-      {
-        id_invoice: 1,
-        code_invoice: 'INV001',
-        invoice_type: 'Type A',
-        status_payment: 'Paid',
-        sub_total: 1000,
-        total_tax: 100,
-        total_service: 50,
-        deposit: 200,
-        ppn: 10,
-        grand_total: 1160,
-        issue_at: '2024-02-20',
-        due_at: '2024-03-20',
-      },
-      {
-        id_invoice: 2,
-        code_invoice: 'INV002',
-        invoice_type: 'Type B',
-        status_payment: 'Unpaid',
-        sub_total: 2000,
-        total_tax: 200,
-        total_service: 100,
-        deposit: 400,
-        ppn: 20,
-        grand_total: 2320,
-        issue_at: '2024-02-21',
-        due_at: '2024-03-21',
-      },
-    ])
+      if (invoice.value.length > 0) {
+        const invoiceId = invoice.value[0].id_transaksi; // Assuming 'id_transaksi' is the ID to use
+        getById(invoiceId);
+      }
+    }
 
+    const getById = async() => {
+      const res = await axios.get(PurchaseOrder)
+      purchaseorders.value = res.data
+    }
+
+    onMounted(() => {      
+      getInvoices();
+    })
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
-      let result = [...entries.value]
+      let result = [...invoice.value]
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
@@ -369,6 +359,9 @@ export default defineComponent({
       itemsPerPage,
       tableHeaders,
 
+      //data
+      purchase_order_id : null,
+
       // Computed
       filteredData,
       paginatedData,
@@ -376,6 +369,7 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      invoice : [],
 
       // Methods
       exportData,

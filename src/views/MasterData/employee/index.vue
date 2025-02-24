@@ -66,6 +66,11 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Avatar
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Name
               </th>
               <th
@@ -81,7 +86,7 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Address
+                Position
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -102,21 +107,23 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="h-10 w-10 flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" :src="getAvatarUrl(employee.name)" alt="" />
+                    <img class="h-10 w-10 rounded-full" :src="getAvatarUrl(employee.employee_name)" alt="" />
+                  </div>                  
+                </div>              
+              </td>
+              <td>
+                <div class="ml-4">
+                    <div class="text-sm font-medium text-gray-900">{{ employee.employee_name }}</div>
                   </div>
-                  <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ employee.name }}</div>
-                  </div>
-                </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ employee.phone }}
+                {{ employee.employee_phone }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ employee.email }}
+                {{ employee.employee_email }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ employee.address }}
+                {{ employee.position }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
@@ -203,9 +210,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
+import axios from 'axios';
+import { Employee } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'EmployeePage',
@@ -215,32 +224,29 @@ export default defineComponent({
 
   setup() {
     // Data
-    const employees = ref([
-      {
-        id: 1,
-        name: 'John Doe',
-        phone: '+1234567890',
-        email: 'john@example.com',
-        address: '123 Main St',
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        phone: '+0987654321',
-        email: 'jane@example.com',
-        address: '456 Elm St',
-      },
-      // Add more sample data as needed
-    ])
-
     // Filtering and Sorting
-    const searchQuery = ref('')
-    const sortBy = ref('name')
-    const currentPage = ref(1)
-    const itemsPerPage = ref(10)
+    const searchQuery = ref('');
+    const sortBy = ref('name');
+    const currentPage = ref(1);
+    const itemsPerPage = ref(10);   
+    const employee = ref([]); 
+
+    const fetchEmployees = async () => {
+      try{
+        const response = await axios.get(Employee)
+        employee.value = await response.data
+      }catch (error){
+        console.error('Error fetching customers:', error)     
+      }
+
+    }
+
+    onMounted(() => {
+      fetchEmployees();
+    })
 
     const filteredData = computed(() => {
-      let result = [...employees.value]
+      let result = [...employee.value]
 
       // Search
       if (searchQuery.value) {
@@ -290,9 +296,8 @@ export default defineComponent({
         console.log('Delete employee:', employee)
         // Implement delete logic
       }
-    }
-
-    return {
+    }  
+     return {
       searchQuery,
       sortBy,
       currentPage,
@@ -305,7 +310,8 @@ export default defineComponent({
       getAvatarUrl,
       editEmployee,
       deleteEmployee,
-    }
+      employee,
+    }  
   },
 })
 </script>

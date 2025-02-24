@@ -95,13 +95,16 @@
                 {{ (currentPage - 1) * itemsPerPage + index + 1 }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ product.product_name }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.price }}
+                {{ product.product_price }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.category }}
+                {{ product.stock }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ product.status != 1 ? "Not Ready":"Ready" }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
@@ -188,39 +191,40 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
+import { Product } from '@/core/utils/url_api';
+import axios from 'axios';
 
 export default defineComponent({
   name: 'ProductPage',
   components: {
     AdminLayout,
-  },
+  },  
 
   setup() {
-    // Data
-    const products = ref([
-      {
-        id: 1,
-        name: 'Product A',
-        price: '$10',
-        category: 'Category 1',
-      },
-      {
-        id: 2,
-        name: 'Product B',
-        price: '$20',
-        category: 'Category 2',
-      },
-      // Add more sample data as needed
-    ])
+    const products = ref([]);
+    // Data   
+
+    const getProduct = async () => {
+      try{
+        const res = await axios.get(Product)
+        products.value = res.data        
+      }catch(error){
+        console.error('Error Fetching : ', error)
+      }
+    }
+
+    onMounted(() => {
+      getProduct();
+    })
 
     // Filtering and Sorting
     const searchQuery = ref('')
     const sortBy = ref('name')
     const currentPage = ref(1)
-    const itemsPerPage = ref(10)
+    const itemsPerPage = ref(10)    
 
     const filteredData = computed(() => {
       let result = [...products.value]
@@ -236,12 +240,12 @@ export default defineComponent({
       }
 
       // Sort
-      result.sort((a, b) => {
-        if (sortBy.value === 'id') {
-          return a.id - b.id
-        }
-        return a[sortBy.value].localeCompare(b[sortBy.value])
-      })
+      // result.sort((a, b) => {
+      //   if (sortBy.value === 'id') {
+      //     return a.id - b.id
+      //   }
+      //   return a[sortBy.value].localeCompare(b[sortBy.value])
+      // })
 
       return result
     })
@@ -282,6 +286,7 @@ export default defineComponent({
       endIndex,
       editProduct,
       deleteProduct,
+      products,
     }
   },
 })

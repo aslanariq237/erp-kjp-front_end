@@ -55,7 +55,7 @@
 
       <!-- Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-gray-200 table-fixed">
           <thead class="bg-gray-50">
             <tr>
               <th
@@ -245,12 +245,7 @@ export default defineComponent({
     const fetchCustomers = async () => {
       try {
         const response = await axios.get(Customer)
-        customers.value = response.data
-
-        // Logging setelah data di-assign
-        console.log('Fetched data:', response.data)
-        console.log('Customers:', customers.value)
-        console.log('Paginated Data:', paginatedData.value)
+        customers.value = response.data                
       } catch (error) {
         console.error('Error fetching customers:', error)
       }
