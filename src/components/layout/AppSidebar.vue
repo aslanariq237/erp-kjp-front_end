@@ -214,7 +214,7 @@ const menuGroups = [
         subItems: [
           { name: 'Assets', path: '/asset', pro: false },
           { name: 'Customer', path: '/customer', pro: false },
-          { name: 'Employee', path: '/employee', pro: false },
+          { name: 'Employee', path: '/  ', pro: false },
           { name: 'Product', path: '/product', pro: false },
         ],
       },
