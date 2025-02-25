@@ -47,7 +47,7 @@
                   name="customer_phone"
                   class="w-full rounded-md px-3 py-3 my-2"
                   placeholder="Insert Customer Phone"
-                  v-model="customer.customer_phone"
+                  v-model="customer_phone"
                 />
                 <div class="fv-plugins-message-container">
                   <div class="fv-help-block">
@@ -67,7 +67,7 @@
                   name="customer_email"
                   class="w-full rounded-md px-3 py-3 my-2"
                   placeholder="Masukkan Customer Email"
-                  v-model="customer.customer_email"
+                  v-model="customer_email"
                 />
                 <div class="fv-plugins-message-container">
                   <div class="fv-help-block">
@@ -85,7 +85,7 @@
                   name="customer_address"
                   class="w-full rounded-md px-3 my-2"
                   placeholder="Masukkan Customer Address"
-                  v-model="customer.customer_address"
+                  v-model="customer_address"
                 />
                 <div class="fv-plugins-message-container">
                   <div class="fv-help-block">
@@ -141,26 +141,28 @@
 
 <script>
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { Form } from 'vee-validate'
+import { Form, Field, ErrorMessage } from 'vee-validate'
 import axios from 'axios'
 import { AddCustomer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'assets-forms',
   components: {
     AdminLayout,
     Form,
+    Field,
+    ErrorMessage
   },
   data() {
     return {
-      customer: {
-        customer_name: '',
-        customer_phone: '',
-        customer_email: '',
-        customer_address: '',
-        npwp: '',
-        contact_person: '',
-      },
+      customer_name: '',
+      customer_phone: 0,
+      customer_email: '',
+      customer_address: '',
+      npwp: '',
+      contact_person: '',  
+
       rules: {
         customer_name: false,
         customer_phone: false,
@@ -181,7 +183,7 @@ export default {
       this.rules.contact_person = !this.customer.contact_person
 
       return Object.values(this.rules).every((val) => !val)
-    },
+    },    
     async onSubmit() {
       if (!this.validation()) {
         return
@@ -211,5 +213,5 @@ export default {
       }
     },
   },
-}
+})
 </script>
