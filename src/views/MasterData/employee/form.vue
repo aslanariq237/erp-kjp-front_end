@@ -69,14 +69,14 @@
                                 </div>
                             </div>
                             <div class="flex justify-between gap-5 align-top mt-3">
-                                <div class="NIK w-full">
-                                    <label>NIK<label class="text-red-500">*</label></label>
+                                <div class="nik w-full">
+                                    <label>nik<label class="text-red-500">*</label></label>
                                     <input type="text" id="nik" name="nik" class="w-full rounded-md px-3 py-3 my-2"
-                                        placeholder="Masukkan NIK" v-model="NIK">
+                                        placeholder="Masukkan nik" v-model="nik">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.NIK == true">
-                                                NIK is required
+                                            <p class="text-red-400 text-md italic" v-if="rules.nik == true">
+                                                nik is required
                                             </p>
                                         </div>
                                     </div>
@@ -115,6 +115,10 @@
 </template>
 <script>
 import AdminLayout from '@/components/layout/AdminLayout.vue';
+import { EmployeeCode } from '@/core/utils/url_api';
+import router from '@/router';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { RouterLink } from 'vue-router';
 
@@ -129,23 +133,23 @@ export default {
         return {
             id_employee: "",
             employee_name: "",
-            employee_phone: null,
+            employee_phone: 0,
             employee_email: "",
             employee_address: "",
-            NIK: "",
+            nik: 0,
             position: "",
             rules: {
                 employee_name: false,
                 employee_phone: false,
                 employee_email: false,
                 employee_address: false,
-                NIK: false,
+                nik: false,
                 position: false
             }
         }
     },
     methods: {
-        validation() {
+        async validation() {
             var count = 0;
             if (this.employee_name == "" || this.employee_name == null) {
                 this.rules.employee_name = true;
@@ -174,11 +178,11 @@ export default {
                 this.rules.employee_address = false;
             }
 
-            if (this.NIK == "" || this.NIK == null) {
-                this.rules.NIK = true;
+            if (this.nik == null) {
+                this.rules.nik = true;
                 count++;
             } else {
-                this.rules.NIK = false;
+                this.rules.nik = false;
             }
 
             if (this.position == "" || this.position == null) {
@@ -187,20 +191,52 @@ export default {
             } else {
                 this.rules.position = false;
             }
+
+            return count
         },
         async onSubmit() {
-            const data = [
-                this.id_employee,
-                this.employee_name,
-                this.employee_phone,
-                this.employee_email,
-                this.employee_address,
-                this.NIK,
-                this.position
-            ]
-
             const result = await this.validation();
-            console.log(data);
+
+            if (result == 0) {
+                await axios.post(EmployeeCode, {
+                    employee_name: this.employee_name,
+                    employee_phone: this.employee_phone,
+                    employee_email: this.employee_email,
+                    employee_address: this.employee_address,
+                    nik: parseInt(this.nik) || 0,
+                    position: this.position
+                }).then((response) => {
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Success',
+                        text: "Data has been Saved"
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            var mssg = "";
+                            if (this.id != null) {
+                                mssg = "Success Update Employee";
+                            } else {
+                                mssg = "Success Create Employee";
+                            }
+                            await router.push("/employee");
+                            this.alertStore.success(mssg);
+                        }
+                    })
+                },
+                    (error) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text:
+                                (error.response &&
+                                    error.response &&
+                                    error.response.message) ||
+                                error.message ||
+                                error.toString(),
+                        });
+                    },
+                )
+            }            
         }
     }
 }

@@ -40,14 +40,14 @@
                             </div>
                             <div class="flex justify-between gap-5 align-top mt-3">
                                 <div class="product Weight w-full">
-                                    <label>product Weight</label>
+                                    <label>product Price</label>
                                     <input type="text" id="product-weight" name="product-weight"
                                         class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
-                                        v-model="product_weight">
+                                        v-model="product_price">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_weight == true">
-                                                Product Weight is required
+                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
+                                                Product Price is required
                                             </p>
                                         </div>
                                     </div>
@@ -64,21 +64,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="flex justify-between gap-5 align-top mt-3">
-                                <div class="status w-full">
-                                    <label>status</label>
-                                    <input type="text" id="status" name="status"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Masukkan status"
-                                        v-model="status">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.status == true">
-                                                Status is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>                            
+                            <div class="flex justify-between gap-5 align-top mt-3">                                
                                 <div class="contact-person w-full">
                                 </div>
                             </div>
@@ -102,6 +89,9 @@
 </template>
 <script>
 import AdminLayout from '@/components/layout/AdminLayout.vue';
+import { ProductCode } from '@/core/utils/url_api';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { RouterLink } from 'vue-router';
 
@@ -113,17 +103,16 @@ export default {
         Form,
     },
     data() {
-        return {
-            id_product: "",
+        return {            
             product_image: "",
             product_name: "",
-            product_weight: null,
+            product_price: 0,
             stock: null,
-            status: "",
+            status: 1,
             rules: {
                 product_image: false,
                 product_name: false,
-                product_weight: false,
+                product_price: false,
                 stock: false,
                 status: false
             }
@@ -131,7 +120,7 @@ export default {
     },
     mounted() { },
     methods: {
-        validation() {
+        async validation() {
             var count = 0;
 
             if (this.product_image == "" || this.product_image == null) {
@@ -148,13 +137,6 @@ export default {
                 this.rules.product_name = false;
             }
 
-            if (this.product_weight == "" || this.product_weight == null) {
-                this.rules.product_weight = true;
-                count++;
-            } else {
-                this.rules.product_weight = false;
-            }
-
             if (this.stock == "" || this.stock == null) {
                 this.rules.stock = true;
                 count++;
@@ -162,13 +144,10 @@ export default {
                 this.rules.stock = false;
             }
 
-            if (this.status == "" || this.status == null) {
-                this.rules.status = true;
-                count++;
-            } else {
-                this.rules.status = false;
-            }
+
+            return count;
         },
+
         handleFileUpload(event) {
             const input = event.target;
             if (!input.files || input.files.target === 0) {
@@ -186,15 +165,48 @@ export default {
         },
 
         async onSubmit() {
-            const data = [
-                this.product_image,
-                this.product_name,
-                this.product_weight,
-                this.stock,
-                this.status
-            ]
             const result = await this.validation();
-            console.log(data);
+
+            if (result == 0) {
+
+                await axios.post(ProductCode, {
+                    product_image : this.product_image,
+                    product_name : this.product_name,
+                    product_price : parseInt(this.product_price) || 0,
+                    stock : parseInt(this.stock) || 0,
+                    status : this.status
+                }).then((response) => {
+                    Swal.fire({
+                        icon: "success",
+                        title: 'Success',
+                        text: "Data has been Saved"
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            var mssg = "";
+                            if (this.id != null) {
+                                mssg = "Success Update Employee";
+                            } else {
+                                mssg = "Success Create Employee";
+                            }
+                            await router.push("/employee");
+                            this.alertStore.success(mssg);
+                        }
+                    })
+                },
+                    (error) => {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text:
+                                (error.response &&
+                                    error.response &&
+                                    error.response.message) ||
+                                error.message ||
+                                error.toString(),
+                        });
+                    },
+                )
+            }
         }
     }
 }

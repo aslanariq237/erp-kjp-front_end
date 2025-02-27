@@ -6,12 +6,29 @@ const router = createRouter({
     return savedPosition || { left: 0, top: 0 }
   },
   routes: [
-    //a
     {
       path: '/',
+      name: 'User Dashbiard',
+      component: () => import('../views/Ecommerce.vue'),
+      meta: {
+        title: 'eCommerce Dashboard',
+      },
+    },
+    //a
+    {
+      path: '/admin-dashboard',
+      name: 'Admin Dashboard',
+      component: () => import('../views/Others/adminDashboard/index.vue'),
+      meta: {
+        title: 'Admin Dashboard',
+      },
+    },
+
+    {
+      path: '/asset',
       children: [
         {
-          path: '/asset',
+          path: '',
           name: 'Asset',
           component: () => import('../views/MasterData/asset/index.vue'),
           meta: {
@@ -19,7 +36,7 @@ const router = createRouter({
           },
         },
         {
-          path: '/asset/form',
+          path: 'form',
           name: 'Asset-Form',
           component: () => import('../views/MasterData/asset/form.vue'),
           meta: {
@@ -28,164 +45,320 @@ const router = createRouter({
         },
       ]
     },
+    {
+      path: '/account-receivable',
+      children: [
+        {
+          path: '',
+          name: 'Account Receivable',
+          component: () => import('../views/Others/account-receivable/index.vue'),
+          meta: {
+            title: 'Account Recieveable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Account Receivable-Form',
+          component: () => import('../views/Others/account-receivable/form.vue'),
+          meta: {
+            title: 'Account Recieveable-Form',
+          },
+        },
+      ],
+    },    
+    {
+      path: '/account-payable',
+      children: [
+        {
+          path: '',
+          name: 'Account Payable',
+          component: () => import('../views/Others/AccountPayable/index.vue'),
+          meta: {
+            title: 'Account Payable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Account Payable-Form',
+          component: () => import('../views/Others/AccountPayable/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+      ],
+    },
 
-    //b    
+    //b
+    {
+      path: '/bank-account',
+      children: [
+        {
+          path: '',
+          name: 'Bank Account',
+          component: () => import('../views/Others/bank-account/index.vue'),
+          meta: {
+            title: 'Bank Account',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Bank Account-Form',
+          component: () => import('../views/Others/bank-account/form.vue'),
+          meta: {
+            title: 'Bank Account-Form',
+          },
+        },
+      ],
+    },    
     //c
     {
       path: '/customer',
-      name: 'Customer',
-      component: () => import('../views/MasterData/customer/index.vue'),
-      meta: {
-        title: 'Customer',
-      },
-    },
-    {
-      path: '/customer/form',
-      name: 'Customer-Form',
-      component: () => import('../views/MasterData/customer/form.vue'),
-      meta: {
-        title: 'Customer-Form',
-      },
-    },
+      children: [
+        {
+          path: '',
+          name: 'Customer',
+          component: () => import('../views/MasterData/customer/index.vue'),
+          meta: {
+            title: 'Customer',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Customer-Form',
+          component: () => import('../views/MasterData/customer/form.vue'),
+          meta: {
+            title: 'Customer-Form',
+          },
+        },
+      ],
+    },        
     //d
-    //e
     {
-      path: '/',
-      name: 'Ecommerce',
-      component: () => import('../views/Ecommerce.vue'),
-      meta: {
-        title: 'eCommerce Dashboard',
-      },
+      path: '/delivery-order',
+      children: [
+        {
+          path: '',
+          name: 'Delivery Order',
+          component: () => import('../views/Others/DeliveryOrder/index.vue'),
+          meta: {
+            title: 'Delivery Order',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Delivery Order-Form',
+          component: () => import('../views/Others/DeliveryOrder/form.vue'),
+          meta: {
+            title: 'Delivery Order-Form',
+          },
+        },
+      ]
     },
-
+    //e 
     {
       path: '/employee',
-      name: 'Employee',
-      component: () => import('../views/MasterData/employee/index.vue'),
-      meta: {
-        title: 'Employee',
-      },
-    },
-    {
-      path: '/employee/form',
-      name: 'Employee-Form',
-      component: () => import('../views/MasterData/employee/form.vue'),
-      meta: {
-        title: 'Employee-Form',
-      },
-    },
+      children: [
+        {
+          path: '',
+          name: 'Employee',
+          component: () => import('../views/MasterData/employee/index.vue'),
+          meta: {
+            title: 'Employee',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Employee-Form',
+          component: () => import('../views/MasterData/employee/form.vue'),
+          meta: {
+            title: 'Employee-Form',
+          },
+        },
+      ],
+    } ,      
     //f
     //g
     //h
     //i
     //i
+    {
+      path: '/invoice',
+      children: [
+        {
+          path: '',
+          name: 'Invoice',
+          component: () => import('../views/Others/Invoice/index.vue'),
+          meta: {
+            title: 'Invoice',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Invoice-Form',
+          component: () => import('../views/Others/Invoice/form.vue'),
+          meta: {
+            title: 'Invoice-Form',
+          },
+        },
+      ]      
+    },
+    {
+      path: '/inquiry',
+      children: [
+        {
+          path: '',
+          name: 'Inquiry',
+          component: () => import('../views/Operation/Inquiry/index.vue'),
+          meta: {
+            title: 'Inquiry',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Inquiry-Form',
+          component: () => import('../views/Operation/Inquiry/form.vue'),
+          meta: {
+            title: 'Inquiry-Form',
+          },
+        },
+      ]      
+    },
     //j
     //k
     //l
+    {
+      path: '/laporan-keuangan',
+      children: [
+        {
+          path: '',
+          name: 'Laporan Keuangan', // Financial Report
+          component: () => import('../views/Others/LaporanKeuangan/index.vue'),
+          meta: {
+            title: 'Laporan Keuangan',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Laporan Keuangan-Form',
+          component: () => import('../views/Others/LaporanKeuangan/form.vue'),
+          meta: {
+            title: 'Laporan Keuangan-Form',
+          },
+        },
+      ]
+    } ,         
+    {
+      path: '/laporan-laba-rugi',
+      children: [
+        {
+          path: '',
+          name: 'Laporan Laba Rugi', // Profit and Loss Report
+          component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
+          meta: {
+            title: 'Laporan Laba Rugi',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Laporan Laba Rugi-Form',
+          component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
+          meta: {
+            title: 'Laporan Laba Rugi-Form',
+          },
+        },
+      ],
+    },
     //m
     //n
     //o
     //p
     {
       path: '/product',
-      name: 'Product',
-      component: () => import('../views/MasterData/product/index.vue'),
-      meta: {
-        title: 'Product',
-      },
-    },
+      children: [
+        {
+          path: '',
+          name: 'Product',
+          component: () => import('../views/MasterData/product/index.vue'),
+          meta: {
+            title: 'Product',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Product-Form',
+          component: () => import('../views/MasterData/product/form.vue'),
+          meta: {
+            title: 'Product-Form',
+          },
+        },
+      ]
+    },  
     {
-      path: '/product/form',
-      name: 'Product-Form',
-      component: () => import('../views/MasterData/product/form.vue'),
-      meta: {
-        title: 'Product-Form',
-      },
-    },
+      path: '/purchase-order',
+      children: [
+        {
+          path: '',
+          name: 'Purchase Order',
+          component: () => import('../views/Others/PurchaseOrder/index.vue'),
+          meta: {
+            title: 'Purchase Order',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Purchase Order-Form',
+          component: () => import('../views/Others/PurchaseOrder/form.vue'),
+          meta: {
+            title: 'Purchase Order-Form',
+          },
+        },
+      ]
+    },  
     //q
-    //r
     {
-      path: '/bank-account',
-      name: 'Bank Account',
-      component: () => import('../views/Others/bank-account/index.vue'),
-      meta: {
-        title: 'Bank Account',
-      },
+      path: '/quotation',
+      children: [
+        {
+          path: '',
+          name: 'Quotation',
+          component: () => import('../views/Others/Quotation/index.vue'),
+          meta: {
+            title: 'Quotation',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Quotation-Form',
+          component: () => import('../views/Others/Quotation/form.vue'),
+          meta: {
+            title: 'Quotation-Form',
+          },
+        },
+      ],
     },
+    //r     
     {
-      path: '/bank-account/form',
-      name: 'Bank Account-Form',
-      component: () => import('../views/Others/bank-account/form.vue'),
-      meta: {
-        title: 'Bank Account-Form',
-      },
+      path: '/report',
+      children: [
+        {
+          path: '',
+          name: 'Report',
+          component: () => import('../views/Others/Report/index.vue'),
+          meta: {
+            title: 'Report',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Report-Form',
+          component: () => import('../views/Others/Report/form.vue'),
+          meta: {
+            title: 'Report-Form',
+          },
+        },
+      ]
     },
-    {
-      path: '/account-receivable',
-      name: 'Account Receivable',
-      component: () => import('../views/Others/account-receivable/index.vue'),
-      meta: {
-        title: 'Account Recieveable',
-      },
-    },
-    {
-      path: '/account-receivable/form',
-      name: 'Account Receivable-Form',
-      component: () => import('../views/Others/account-receivable/form.vue'),
-      meta: {
-        title: 'Account Recieveable-Form',
-      },
-    },
-    {
-      path: '/account-payable',
-      name: 'Account Payable',
-      component: () => import('../views/Others/AccountPayable/index.vue'),
-      meta: {
-        title: 'Account Payable',
-      },
-    },
-    {
-      path: '/account-payable/form',
-      name: 'Account Payable-Form',
-      component: () => import('../views/Others/AccountPayable/form.vue'),
-      meta: {
-        title: 'Account Payable-Form',
-      },
-    },
-
-    {
-      path: '/laporan-keuangan',
-      name: 'Laporan Keuangan', // Financial Report
-      component: () => import('../views/Others/LaporanKeuangan/index.vue'),
-      meta: {
-        title: 'Laporan Keuangan',
-      },
-    },
-    {
-      path: '/laporan-keuangan/form',
-      name: 'Laporan Keuangan-Form',
-      component: () => import('../views/Others/LaporanKeuangan/form.vue'),
-      meta: {
-        title: 'Laporan Keuangan-Form',
-      },
-    },
-
-    {
-      path: '/laporan-laba-rugi',
-      name: 'Laporan Laba Rugi', // Profit and Loss Report
-      component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
-      meta: {
-        title: 'Laporan Laba Rugi',
-      },
-    },
-    {
-      path: '/laporan-laba-rugi/form',
-      name: 'Laporan Laba Rugi-Form',
-      component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
-      meta: {
-        title: 'Laporan Laba Rugi-Form',
-      },
-    },
+    
     {
       path: '/opex',
       name: 'Opex',
@@ -193,90 +366,30 @@ const router = createRouter({
       meta: {
         title: 'Opex',
       },
-    },
-    {
-      path: '/quotation',
-      name: 'Quotation',
-      component: () => import('../views/Others/Quotation/index.vue'),
-      meta: {
-        title: 'Quotation',
-      },
-    },
-    {
-      path: '/quotation/form',
-      name: 'Quotation-Form',
-      component: () => import('../views/Others/Quotation/form.vue'),
-      meta: {
-        title: 'Quotation-Form',
-      },
-    },
-
-    {
-      path: '/invoice',
-      name: 'Invoice',
-      component: () => import('../views/Others/Invoice/index.vue'),
-      meta: {
-        title: 'Invoice',
-      },
-    },
-    {
-      path: '/invoice/form',
-      name: 'Invoice-Form',
-      component: () => import('../views/Others/Invoice/form.vue'),
-      meta: {
-        title: 'Invoice-Form',
-      },
-    },
-    {
-      path: '/purchase-order',
-      name: 'Purchase Order',
-      component: () => import('../views/Others/PurchaseOrder/index.vue'),
-      meta: {
-        title: 'Purchase Order',
-      },
-    },
-    {
-      path: '/purchase-order/form',
-      name: 'Purchase Order-Form',
-      component: () => import('../views/Others/PurchaseOrder/form.vue'),
-      meta: {
-        title: 'Purchase Order-Form',
-      },
-    },
-    {
-      path: '/delivery-order',
-      name: 'Delivery Order',
-      component: () => import('../views/Others/DeliveryOrder/index.vue'),
-      meta: {
-        title: 'Delivery Order',
-      },
-    },
-    {
-      path: '/delivery-order/form',
-      name: 'Delivery Order-Form',
-      component: () => import('../views/Others/DeliveryOrder/form.vue'),
-      meta: {
-        title: 'Delivery Order-Form',
-      },
-    },
-    {
-      path: '/report',
-      name: 'Report',
-      component: () => import('../views/Others/Report/index.vue'),
-      meta: {
-        title: 'Report',
-      },
-    },
-    {
-      path: '/report/form',
-      name: 'Report-Form',
-      component: () => import('../views/Others/Report/form.vue'),
-      meta: {
-        title: 'Report-Form',
-      },
-    },
+    },    
 
     //s
+    {
+      path: '/sales-order',
+      children: [
+        {
+          path: '',
+          name: 'Sales Order',
+          component: () => import('../views/Operation/SalesOrder/index.vue'),
+          meta: {
+            title: 'Report',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Sales Order Form',
+          component: () => import('../views/Operation/SalesOrder/form.vue'),
+          meta: {
+            title: 'Report-Form',
+          },
+        },
+      ]
+    },
     {
       path: '/signin',
       name: 'Signin',

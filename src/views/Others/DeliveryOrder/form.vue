@@ -40,167 +40,6 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- No -->
-          <FormGroup label="No" :required="true" :error="rules.no" errorMessage="No is required">
-            <input
-              type="text"
-              id="no"
-              name="no"
-              v-model="form.no"
-              :class="inputClass(rules.no)"
-              placeholder="Enter No"
-              autofocus
-            />
-          </FormGroup>
-
-          <!-- Code DO -->
-          <FormGroup
-            label="Code DO"
-            :required="true"
-            :error="rules.code_do"
-            errorMessage="Code DO is required"
-          >
-            <input
-              type="text"
-              id="code_do"
-              name="code_do"
-              v-model="form.code_do"
-              :class="inputClass(rules.code_do)"
-              placeholder="Enter Code DO"
-            />
-          </FormGroup>
-
-          <!-- DO Type -->
-          <FormGroup
-            label="DO Type"
-            :required="true"
-            :error="rules.do_type"
-            errorMessage="DO Type is required"
-          >
-            <input
-              type="text"
-              id="do_type"
-              name="do_type"
-              v-model="form.do_type"
-              :class="inputClass(rules.do_type)"
-              placeholder="Enter DO Type"
-            />
-          </FormGroup>
-
-          <!-- Status Payment -->
-          <FormGroup
-            label="Status Payment"
-            :required="true"
-            :error="rules.status_payment"
-            errorMessage="Status Payment is required"
-          >
-            <input
-              type="text"
-              id="status_payment"
-              name="status_payment"
-              v-model="form.status_payment"
-              :class="inputClass(rules.status_payment)"
-              placeholder="Enter Status Payment"
-            />
-          </FormGroup>
-
-          <!-- Sub Total -->
-          <FormGroup
-            label="Sub Total"
-            :required="true"
-            :error="rules.sub_total"
-            errorMessage="Sub Total is required"
-          >
-            <input
-              type="number"
-              id="sub_total"
-              name="sub_total"
-              v-model="form.sub_total"
-              :class="inputClass(rules.sub_total)"
-              placeholder="Enter Sub Total"
-            />
-          </FormGroup>
-
-          <!-- Total Tax -->
-          <FormGroup
-            label="Total Tax"
-            :required="true"
-            :error="rules.total_tax"
-            errorMessage="Total Tax is required"
-          >
-            <input
-              type="number"
-              id="total_tax"
-              name="total_tax"
-              v-model="form.total_tax"
-              :class="inputClass(rules.total_tax)"
-              placeholder="Enter Total Tax"
-            />
-          </FormGroup>
-
-          <!-- Total Service -->
-          <FormGroup
-            label="Total Service"
-            :required="true"
-            :error="rules.total_service"
-            errorMessage="Total Service is required"
-          >
-            <input
-              type="number"
-              id="total_service"
-              name="total_service"
-              v-model="form.total_service"
-              :class="inputClass(rules.total_service)"
-              placeholder="Enter Total Service"
-            />
-          </FormGroup>
-
-          <!-- Deposit -->
-          <FormGroup
-            label="Deposit"
-            :required="true"
-            :error="rules.deposit"
-            errorMessage="Deposit is required"
-          >
-            <input
-              type="number"
-              id="deposit"
-              name="deposit"
-              v-model="form.deposit"
-              :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit"
-            />
-          </FormGroup>
-
-          <!-- PPN -->
-          <FormGroup label="PPN" :required="true" :error="rules.ppn" errorMessage="PPN is required">
-            <input
-              type="number"
-              id="ppn"
-              name="ppn"
-              v-model="form.ppn"
-              :class="inputClass(rules.ppn)"
-              placeholder="Enter PPN"
-            />
-          </FormGroup>
-
-          <!-- Grand Total -->
-          <FormGroup
-            label="Grand Total"
-            :required="true"
-            :error="rules.grand_total"
-            errorMessage="Grand Total is required"
-          >
-            <input
-              type="number"
-              id="grand_total"
-              name="grand_total"
-              v-model="form.grand_total"
-              :class="inputClass(rules.grand_total)"
-              placeholder="Enter Grand Total"
-            />
-          </FormGroup>
-
           <!-- Issue Date -->
           <FormGroup
             label="Issue Date"
@@ -212,7 +51,7 @@
               type="date"
               id="issue_at"
               name="issue_at"
-              v-model="form.issue_at"
+              v-model="issue_at"
               :class="inputClass(rules.issue_at)"
             />
           </FormGroup>
@@ -228,10 +67,206 @@
               type="date"
               id="due_at"
               name="due_at"
-              v-model="form.due_at"
+              v-model="due_at"
               :class="inputClass(rules.due_at)"
             />
           </FormGroup>
+          <!-- Id_Purchase order -->
+          <FormGroup label="Purchase Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
+            <select name="id_po" id="id_po" v-model="id_po" class="rounded w-full" @change="selectedPurchaseOrder">              
+              <option v-for="po in purchaseOrders" :key="po.id_po" :value="po.id_po">
+                {{ po.code_po }}
+              </option>                
+            </select>
+          </FormGroup>
+          <FormGroup label="" :required="false">
+            
+          </FormGroup>
+
+          <!-- Code DO -->
+          <FormGroup
+            label="Code Po"
+            :required="true"
+            :error="rules.code_po"
+            errorMessage="Code DO is required"
+          >
+            <input
+              type="text"
+              id="code_do"
+              name="code_do"
+              v-model="code_po"
+              :class="inputClass(rules.code_do)"
+              placeholder="Enter Code DO"
+            />
+          </FormGroup>
+
+          <!-- DO Type -->
+          <FormGroup
+            label="Customer"
+            :required="true"
+            :error="rules.customer"
+            errorMessage="DO Type is required"
+          >
+            <input
+              type="text"
+              id="do_type"
+              name="do_type"
+              v-model="customers.customer_name"              
+              :class="inputClass(rules.do_type)"
+              placeholder="Enter DO Type"
+            />
+          </FormGroup>
+
+          <!-- Status Payment -->
+          <FormGroup
+            label="NPWP"
+            :required="false"            
+            errorMessage="Status Payment is required"
+          >
+            <input
+              type="text"
+              id="status_payment"
+              name="status_payment" 
+              v-model="customers.npwp"              
+              :class="inputClass(rules.status_payment)"
+              placeholder="Enter Status Payment"
+            />
+          </FormGroup>
+
+          <!-- Alamat -->
+          <FormGroup
+            label="Alamat"
+            :required="false"            
+            errorMessage="Sub Total is required"
+          >
+            <input
+              type="text"
+              id="alamat"
+              name="alamat" 
+              v-model="customers.customer_address"             
+              :class="inputClass(rules.alamat)"
+              placeholder="Enter Sub Total"
+            />
+          </FormGroup>
+
+          <!-- Total Tax -->
+          <FormGroup
+            label="Bank Account"
+            :required="true"
+            :error="rules.total_tax"
+            errorMessage="Total Tax is required"
+          >
+            <input
+              type="text"
+              id="bank_account"
+              name="bank_account"
+              v-model="bankaccounts.account_name"              
+              :class="inputClass(rules.bank_account)"
+              placeholder="Enter Total Tax"
+            />
+          </FormGroup>
+
+          <!--  -->
+          <FormGroup
+            label="Bank Name"
+            :required="true"
+            :error="rules.total_tax"
+            errorMessage="Total Tax is required"
+          >
+            <input
+              type="text"
+              id="bank_account"
+              name="bank_account" 
+              v-model="bankaccounts.bank_name"             
+              :class="inputClass(rules.bank_account)"
+              placeholder="Enter Total Tax"
+            />
+          </FormGroup>
+
+          <!-- Total Service -->
+          <!-- <FormGroup
+            label="Total Service"
+            :required="true"
+            :error="rules.total_service"
+            errorMessage="Total Service is required"
+          >
+            <input
+              type="number"
+              id="total_service"
+              name="total_service"
+              v-model="form.total_service"
+              :class="inputClass(rules.total_service)"
+              placeholder="Enter Total Service"
+            />
+          </FormGroup> -->
+
+          <!-- Deposit -->
+          <!-- <FormGroup
+            label="Deposit"
+            :required="true"
+            :error="rules.deposit"
+            errorMessage="Deposit is required"
+          >
+            <input
+              type="number"
+              id="deposit"
+              name="deposit"
+              v-model="form.deposit"
+              :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit"
+            />
+          </FormGroup> -->
+
+          <!-- PPN -->
+          <!-- <FormGroup label="PPN" :required="true" :error="rules.ppn" errorMessage="PPN is required">
+            <input
+              type="number"
+              id="ppn"
+              name="ppn"
+              v-model="form.ppn"
+              :class="inputClass(rules.ppn)"
+              placeholder="Enter PPN"
+            />
+          </FormGroup> -->
+
+          <!-- Grand Total -->
+          <!-- <FormGroup
+            label="Grand Total"
+            :required="true"
+            :error="rules.grand_total"
+            errorMessage="Grand Total is required"
+          >
+            <input
+              type="number"
+              id="grand_total"
+              name="grand_total"
+              v-model="form.grand_total"
+              :class="inputClass(rules.grand_total)"
+              placeholder="Enter Grand Total"
+            />
+          </FormGroup>           -->
+        </div>
+        <div class=" mt-8">
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+          <thead>
+            <tr class="text-left">
+              <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
+              <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>              
+              <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
+              <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-100">
+            <tr v-for="poDetail in purchase_order_details" :key="poDetail.id_product">
+              <td class="px-3 py-2 whitespace-no-wrap">
+                <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
+              </td>
+              <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.name }}</td>              
+              <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>              
+              <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.price }}</td>
+            </tr>
+          </tbody>
+        </table>
         </div>
       </div>
     </Form>
@@ -245,6 +280,8 @@ import { Form } from 'vee-validate'
 import { RouterLink } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
+import axios from 'axios'
+import { BankAccount, Customer, GetCustomer, PurchaseOrder } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -257,20 +294,14 @@ export default defineComponent({
 
   data() {
     return {
-      form: {
-        no: '',
-        code_do: '',
-        do_type: '',
-        status_payment: '',
-        sub_total: '',
-        total_tax: '',
-        total_service: '',
-        deposit: '',
-        ppn: '',
-        grand_total: '',
-        issue_at: '',
-        due_at: '',
-      },
+      purchaseOrders: [],
+      bankaccounts: [],
+      customers : [],
+      detailpo : [],
+      id_po: null,
+      code_po: '',
+      issue_at: '',
+      due_at : '',
       isSubmitting: false,
       notification: {
         show: false,
@@ -278,23 +309,55 @@ export default defineComponent({
         message: '',
       },
       rules: {
-        no: false,
-        code_do: false,
-        do_type: false,
-        status_payment: false,
-        sub_total: false,
-        total_tax: false,
-        total_service: false,
-        deposit: false,
-        ppn: false,
-        grand_total: false,
-        issue_at: false,
-        due_at: false,
+        
       },
     }
   },
-
+  async mounted(){
+    this.getPurchaseOrder();
+  },
   methods: {
+    getPurchaseOrder(){
+      axios.get(PurchaseOrder).then((res) => {
+        var data = res.data;
+        this.purchaseOrders = data;           
+      })
+    },
+    selectedPurchaseOrder(){
+      axios.get(PurchaseOrder + '/' + this.id_po).then((res) => {
+        var data = res.data;
+        this.code_po = data.code_po;
+        var id_customer = data.id_customer;
+        var id_bank_account = data.id_bank_account        
+
+        if(id_customer){
+          this.getCustomer(id_customer)
+        }
+
+        if (id_bank_account) {
+          this.getBankAccount(id_bank_account)
+        }
+
+        if(data){
+          this.getDetailPo(data.id_po)
+        }
+      })
+    },
+    getCustomer(id){
+      axios.get(Customer + '/' + id).then((res) => {
+        var data = res.data;        
+        this.customers = data;
+      })
+    },
+    getBankAccount(id){
+      axios.get(BankAccount + '/' + id).then((res) => {
+        var data = res.data
+        this.bankaccounts = data;
+      })
+    },
+    getDetailPo(){
+      axios.get()
+    },
     showNotification(type, message) {
       this.notification = {
         show: true,

@@ -206,7 +206,23 @@ const menuGroups = [
       {
         icon: GridIcon,
         name: 'Dashboard',
-        subItems: [{ name: 'Ecommerce', path: '/', pro: false }],
+        subItems: [
+          { name: 'User Dashboard', path: '/', pro: false },
+          { name: 'Admin Dashboard', path: '/admin-dashboard', pro: false }
+        ],
+      },
+      {
+        name: 'Operation',
+        icon: BoxCubeIcon,
+        subItems: [
+          { name: 'Inquiry', path: '/inquiry', pro: false },
+          { name: 'Purchase Order', path: '/purchase-order', pro: false },
+          { name: 'Sales Order', path: '/sales-order', pro: false },
+          { name: 'Delivery Order', path: '/delivery-order', pro: false },
+          { name: 'Quatation', path: '/quotation', pro: false },          
+          { name: 'Invoice', path: '/invoice', pro: false },                    
+          { name: 'Report', path: '/report', pro: false },
+        ],
       },
       {
         name: 'Master Data',
@@ -222,25 +238,15 @@ const menuGroups = [
         name: 'Finance Tools',
         icon: ListIcon,
         subItems: [
-          { name: 'Bank Account', path: '/bank-account', pro: false },
+          { name: 'Bank Account', path: '/bank-account', pro: false },          
+          { name: 'Faktur Pajak', path: '/bank-account', pro: false },          
           { name: 'Account Receivable', path: '/account-receivable', pro: false },
           { name: 'Account Payable', path: '/account-payable', pro: false },
           { name: 'Laporan Keuangan', path: '/laporan-keuangan', pro: false },
           { name: 'Laporan Laba Rugi', path: '/laporan-laba-rugi', pro: false },
           { name: 'OPEX', path: '/opex', pro: false },
         ],
-      },
-      {
-        name: 'Operation',
-        icon: BoxCubeIcon,
-        subItems: [
-          { name: 'Quatation', path: '/quotation', pro: false },
-          { name: 'Invoice', path: '/invoice', pro: false },
-          { name: 'Purchase Order', path: '/purchase-order', pro: false },
-          { name: 'Delivery Order', path: '/delivery-order', pro: false },
-          { name: 'Report', path: '/report', pro: false },
-        ],
-      },
+      },      
       {
         icon: UserCircleIcon,
         name: 'System Config',
