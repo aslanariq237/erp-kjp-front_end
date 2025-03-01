@@ -200,8 +200,8 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios';
-import { PurchaseOrder } from '@/core/utils/url_api';
+import axios from 'axios'
+import { PurchaseOrder } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -239,16 +239,16 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const getPurchaseOrder = async() => {
+    const getPurchaseOrder = async () => {
       try {
         const res = await axios.get(PurchaseOrder)
-        entries.value = res.data;
+        entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
     onMounted(() => {
-      getPurchaseOrder();
+      getPurchaseOrder()
     })
 
     // Computed properties for filtering and pagination

@@ -26,10 +26,10 @@ const router = createRouter({
             title: 'Asset-Form',
           },
         },
-      ]
+      ],
     },
 
-    //b    
+    //b
     //c
     {
       path: '/customer',
@@ -103,6 +103,14 @@ const router = createRouter({
       },
     },
     //q
+    {
+      path: '/vendor',
+      name: 'Vendor',
+      component: () => import('../views/MasterData/vendor/index.vue'),
+      meta: {
+        title: 'Vendor',
+      },
+    },
     //r
     {
       path: '/bank-account',
@@ -257,6 +265,14 @@ const router = createRouter({
       component: () => import('../views/Others/DeliveryOrder/form.vue'),
       meta: {
         title: 'Delivery Order-Form',
+      },
+    },
+    {
+      path: '/sales-order',
+      name: 'Sales Order',
+      component: () => import('../views/Others/SalesOrder/index.vue'),
+      meta: {
+        title: 'Sales Order',
       },
     },
     {

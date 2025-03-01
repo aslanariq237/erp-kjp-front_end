@@ -4,14 +4,14 @@
       <!-- Header Section -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Customer Management</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / Customer</p>
+          <h1 class="text-2xl font-bold text-gray-800">Vendor Management</h1>
+          <p class="text-gray-500 text-sm mt-1">Master Data / Vendor</p>
         </div>
         <RouterLink
-          to="/customer/form"
+          to="/vendor/form"
           class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
         >
-          Add New Customer
+          Add New Vendor
         </RouterLink>
       </div>
 
@@ -23,7 +23,7 @@
             <input
               type="text"
               v-model="searchQuery"
-              placeholder="Search customers..."
+              placeholder="Search vendors..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -33,9 +33,9 @@
               v-model="sortBy"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="name">Name</option>
-              <option value="email">Email</option>
-              <option value="id">ID</option>
+              <option value="vendor_name">Name</option>
+              <option value="vendor_email">Email</option>
+              <option value="vendor_phone">Phone</option>
             </select>
           </div>
           <div class="form-group">
@@ -55,7 +55,7 @@
 
       <!-- Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="min-w-full divide-y divide-gray-200 table-fixed">
           <thead class="bg-gray-50">
             <tr>
               <th
@@ -66,7 +66,17 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Account Name
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Name
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Type
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -86,44 +96,64 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Tax Number
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Actions
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              v-for="(customer, index) in paginatedData"
-              :key="customer.id"
+              v-for="(vendor, index) in paginatedData"
+              :key="vendor.id_vendor"
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ (currentPage - 1) * itemsPerPage + index + 1 }}
               </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ vendor.account_name }}
+              </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="h-10 w-10 flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" :src="getAvatarUrl(customer.name)" alt="" />
+                    <img
+                      class="h-10 w-10 rounded-full"
+                      :src="getAvatarUrl(vendor.vendor_name)"
+                      alt=""
+                    />
                   </div>
                   <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ customer.name }}</div>
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ vendor.vendor_name }}
+                    </div>
                   </div>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.phone }}
+                {{ vendor.vendor_type }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.email }}
+                {{ vendor.vendor_phone }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.address }}
+                {{ vendor.vendor_email }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ vendor.vendor_address }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ vendor.tax_number }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editCustomer(customer)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editVendor(vendor)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
-                  <button @click="deleteCustomer(customer)" class="text-red-600 hover:text-red-900">
+                  <button @click="deleteVendor(vendor)" class="text-red-600 hover:text-red-900">
                     Delete
                   </button>
                 </div>
@@ -203,62 +233,61 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
+import { GetVendor } from '@/core/utils/url_api'
 
 export default defineComponent({
-  name: 'CustomerPage',
+  name: 'VendorPage',
   components: {
     AdminLayout,
   },
 
   setup() {
     // Data
-    const customers = ref([
-      {
-        id: 1,
-        name: 'John Doe',
-        phone: '+1234567890',
-        email: 'john@example.com',
-        address: '123 Main St',
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        phone: '+0987654321',
-        email: 'jane@example.com',
-        address: '456 Elm St',
-      },
-      // Add more sample data as needed
-    ])
+    const vendors = ref([])
+
+    // Fetch vendors from API
+    const fetchVendors = async () => {
+      try {
+        const response = await axios.get(GetVendor)
+        vendors.value = response.data
+      } catch (error) {
+        console.error('Error fetching vendors:', error)
+      }
+    }
+
+    onMounted(() => {
+      fetchVendors()
+    })
 
     // Filtering and Sorting
     const searchQuery = ref('')
-    const sortBy = ref('name')
+    const sortBy = ref('vendor_name')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
 
     const filteredData = computed(() => {
-      let result = [...customers.value]
+      let result = [...vendors.value]
 
       // Search
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter(
-          (customer) =>
-            customer.name.toLowerCase().includes(query) ||
-            customer.email.toLowerCase().includes(query) ||
-            customer.phone.includes(query),
+          (vendor) =>
+            vendor.vendor_name.toLowerCase().includes(query) ||
+            vendor.vendor_email.toLowerCase().includes(query) ||
+            vendor.vendor_phone.includes(query),
         )
       }
 
       // Sort
       result.sort((a, b) => {
-        if (sortBy.value === 'id') {
-          return a.id - b.id
-        }
-        return a[sortBy.value].localeCompare(b[sortBy.value])
+        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
+        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
+        return fieldA.localeCompare(fieldB)
       })
 
       return result
@@ -280,14 +309,14 @@ export default defineComponent({
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
     }
 
-    const editCustomer = (customer) => {
-      console.log('Edit customer:', customer)
+    const editVendor = (vendor) => {
+      console.log('Edit vendor:', vendor)
       // Implement edit logic
     }
 
-    const deleteCustomer = (customer) => {
-      if (confirm('Are you sure you want to delete this customer?')) {
-        console.log('Delete customer:', customer)
+    const deleteVendor = (vendor) => {
+      if (confirm('Are you sure you want to delete this vendor?')) {
+        console.log('Delete vendor:', vendor)
         // Implement delete logic
       }
     }
@@ -303,8 +332,9 @@ export default defineComponent({
       startIndex,
       endIndex,
       getAvatarUrl,
-      editCustomer,
-      deleteCustomer,
+      editVendor,
+      deleteVendor,
+      vendors,
     }
   },
 })
