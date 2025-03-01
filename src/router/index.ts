@@ -112,27 +112,7 @@ const router = createRouter({
       ],
     },
     //d
-    {
-      path: '/delivery-order',
-      children: [
-        {
-          path: '',
-          name: 'Delivery Order',
-          component: () => import('../views/Others/DeliveryOrder/index.vue'),
-          meta: {
-            title: 'Delivery Order',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Delivery Order-Form',
-          component: () => import('../views/Others/DeliveryOrder/form.vue'),
-          meta: {
-            title: 'Delivery Order-Form',
-          },
-        },
-      ],
-    },
+
     //e
     {
       path: '/employee',
@@ -180,6 +160,27 @@ const router = createRouter({
     //g
     //h
     //i
+    {
+      path: '/invoice',
+      children: [
+        {
+          path: '/invoice',
+          name: 'Invoice',
+          component: () => import('../views/Others/Invoice/index.vue'),
+          meta: {
+            title: 'Invoice',
+          },
+        },
+        {
+          path: '/invoice/form',
+          name: 'Invoice-Form',
+          component: () => import('../views/Others/Invoice/form.vue'),
+          meta: {
+            title: 'Invoice-Form',
+          },
+        },
+      ],
+    },
     //i
     {
       path: '/invoice',
@@ -271,6 +272,14 @@ const router = createRouter({
     //m
     //n
     //o
+    {
+      path: '/opex',
+      name: 'Opex',
+      component: () => import('../views/Others/OPEX/index.vue'),
+      meta: {
+        title: 'Opex',
+      },
+    },
     //p
     {
       path: '/product',
@@ -299,6 +308,27 @@ const router = createRouter({
         {
           path: '',
           name: 'Purchase Order',
+          component: () => import('../views/Operation/PurchaseOrder/index.vue'),
+          meta: {
+            title: 'Purchase Order',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Purchase Order-Form',
+          component: () => import('../views/Operation/PurchaseOrder/form.vue'),
+          meta: {
+            title: 'Purchase Order-Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/purchase-order',
+      children: [
+        {
+          path: '',
+          name: 'Purchase Order',
           component: () => import('../views/Others/PurchaseOrder/index.vue'),
           meta: {
             title: 'Purchase Order',
@@ -316,12 +346,25 @@ const router = createRouter({
     },
     //q
     {
-      path: '/vendor',
-      name: 'Vendor',
-      component: () => import('../views/MasterData/vendor/index.vue'),
-      meta: {
-        title: 'Vendor',
-      },
+      path: '/quatation',
+      children: [
+        {
+          path: '/quotation',
+          name: 'Quotation',
+          component: () => import('../views/Others/Quotation/index.vue'),
+          meta: {
+            title: 'Quotation',
+          },
+        },
+        {
+          path: '/quotation/form',
+          name: 'Quotation-Form',
+          component: () => import('../views/Others/Quotation/form.vue'),
+          meta: {
+            title: 'Quotation-Form',
+          },
+        },
+      ],
     },
     //r
     {
@@ -442,14 +485,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/sales-order',
-      name: 'Sales Order',
-      component: () => import('../views/Others/SalesOrder/index.vue'),
-      meta: {
-        title: 'Sales Order',
-      },
-    },
-    {
       path: '/report',
       name: 'Report',
       component: () => import('../views/Others/Report/index.vue'),
@@ -475,7 +510,7 @@ const router = createRouter({
           name: 'Sales Order',
           component: () => import('../views/Operation/SalesOrder/index.vue'),
           meta: {
-            title: 'Report',
+            title: 'Sales Order',
           },
         },
         {
@@ -483,7 +518,7 @@ const router = createRouter({
           name: 'Sales Order Form',
           component: () => import('../views/Operation/SalesOrder/form.vue'),
           meta: {
-            title: 'Report-Form',
+            title: 'Sales Order-Form',
           },
         },
       ],
@@ -507,6 +542,14 @@ const router = createRouter({
     //t
     //u
     //v
+    {
+      path: '/vendor',
+      name: 'Vendor',
+      component: () => import('../views/MasterData/vendor/index.vue'),
+      meta: {
+        title: 'Vendor',
+      },
+    },
     //w
     //x
     //y
@@ -520,66 +563,66 @@ const router = createRouter({
     //     title: 'Profile',
     //   },
     // },
-    {
-      path: '/line-chart',
-      name: 'Line Chart',
-      component: () => import('../views/Chart/LineChart/LineChart.vue'),
-    },
-    {
-      path: '/bar-chart',
-      name: 'Bar Chart',
-      component: () => import('../views/Chart/BarChart/BarChart.vue'),
-    },
-    {
-      path: '/alerts',
-      name: 'Alerts',
-      component: () => import('../views/UiElements/Alerts.vue'),
-      meta: {
-        title: 'Alerts',
-      },
-    },
-    {
-      path: '/avatars',
-      name: 'Avatars',
-      component: () => import('../views/UiElements/Avatars.vue'),
-      meta: {
-        title: 'Avatars',
-      },
-    },
-    {
-      path: '/badge',
-      name: 'Badge',
-      component: () => import('../views/UiElements/Badges.vue'),
-      meta: {
-        title: 'Badge',
-      },
-    },
+    // {
+    //   path: '/line-chart',
+    //   name: 'Line Chart',
+    //   component: () => import('../views/Chart/LineChart/LineChart.vue'),
+    // },
+    // {
+    //   path: '/bar-chart',
+    //   name: 'Bar Chart',
+    //   component: () => import('../views/Chart/BarChart/BarChart.vue'),
+    // },
+    // {
+    //   path: '/alerts',
+    //   name: 'Alerts',
+    //   component: () => import('../views/UiElements/Alerts.vue'),
+    //   meta: {
+    //     title: 'Alerts',
+    //   },
+    // },
+    // {
+    //   path: '/avatars',
+    //   name: 'Avatars',
+    //   component: () => import('../views/UiElements/Avatars.vue'),
+    //   meta: {
+    //     title: 'Avatars',
+    //   },
+    // },
+    // {
+    //   path: '/badge',
+    //   name: 'Badge',
+    //   component: () => import('../views/UiElements/Badges.vue'),
+    //   meta: {
+    //     title: 'Badge',
+    //   },
+    // },
 
-    {
-      path: '/buttons',
-      name: 'Buttons',
-      component: () => import('../views/UiElements/Buttons.vue'),
-      meta: {
-        title: 'Buttons',
-      },
-    },
+    // {
+    //   path: '/buttons',
+    //   name: 'Buttons',
+    //   component: () => import('../views/UiElements/Buttons.vue'),
+    //   meta: {
+    //     title: 'Buttons',
+    //   },
+    // },
 
-    {
-      path: '/images',
-      name: 'Images',
-      component: () => import('../views/UiElements/Images.vue'),
-      meta: {
-        title: 'Images',
-      },
-    },
-    {
-      path: '/videos',
-      name: 'Videos',
-      component: () => import('../views/UiElements/Videos.vue'),
-      meta: {
-        title: 'Videos',
-      },
-    },
+    // {
+    //   path: '/images',
+    //   name: 'Images',
+    //   component: () => import('../views/UiElements/Images.vue'),
+    //   meta: {
+    //     title: 'Images',
+    //   },
+    // },
+    // {
+    //   path: '/videos',
+    //   name: 'Videos',
+    //   component: () => import('../views/UiElements/Videos.vue'),
+    //   meta: {
+    //     title: 'Videos',
+    //   },
+    // },
 
     {
       path: '/error-404',

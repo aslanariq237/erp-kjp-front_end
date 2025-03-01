@@ -66,17 +66,27 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Name
+                PN
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Price
+                Desc
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Category
+                Brand
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                UoM
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Stock
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -92,19 +102,22 @@
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+                {{ product.product_code }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ product.product_name }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ product.product_sn }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ product.product_desc }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.product_price }}
+                <div class="text-sm font-medium text-gray-900">{{ product.product_brand }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.stock }}
+                <div class="text-sm font-medium text-gray-900">{{ product.product_uom }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.status != 1 ? "Not Ready":"Ready" }}
+                {{ product.product_stock }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">

@@ -91,10 +91,7 @@
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
+              >                
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
@@ -213,8 +210,7 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
+    const tableHeaders = [      
       { key: 'code_po', label: 'Code PO' },
       { key: 'po_type', label: 'PO Type' },
       { key: 'status_payment', label: 'Status Payment' },
