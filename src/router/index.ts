@@ -112,27 +112,7 @@ const router = createRouter({
       ],
     },
     //d
-    {
-      path: '/delivery-order',
-      children: [
-        {
-          path: '',
-          name: 'Delivery Order',
-          component: () => import('../views/Others/DeliveryOrder/index.vue'),
-          meta: {
-            title: 'Delivery Order',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Delivery Order-Form',
-          component: () => import('../views/Others/DeliveryOrder/form.vue'),
-          meta: {
-            title: 'Delivery Order-Form',
-          },
-        },
-      ],
-    },
+
     //e
     {
       path: '/employee',
@@ -421,14 +401,6 @@ const router = createRouter({
       },
     },
     {
-      path: '/sales-order',
-      name: 'Sales Order',
-      component: () => import('../views/Others/SalesOrder/index.vue'),
-      meta: {
-        title: 'Sales Order',
-      },
-    },
-    {
       path: '/report',
       name: 'Report',
       component: () => import('../views/Others/Report/index.vue'),
@@ -454,7 +426,7 @@ const router = createRouter({
           name: 'Sales Order',
           component: () => import('../views/Operation/SalesOrder/index.vue'),
           meta: {
-            title: 'Report',
+            title: 'Sales Order',
           },
         },
         {
@@ -462,7 +434,7 @@ const router = createRouter({
           name: 'Sales Order Form',
           component: () => import('../views/Operation/SalesOrder/form.vue'),
           meta: {
-            title: 'Report-Form',
+            title: 'Sales Order-Form',
           },
         },
       ],
