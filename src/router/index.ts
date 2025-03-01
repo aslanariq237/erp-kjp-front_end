@@ -112,27 +112,7 @@ const router = createRouter({
       ],
     },
     //d
-    {
-      path: '/delivery-order',
-      children: [
-        {
-          path: '',
-          name: 'Delivery Order',
-          component: () => import('../views/Others/DeliveryOrder/index.vue'),
-          meta: {
-            title: 'Delivery Order',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Delivery Order-Form',
-          component: () => import('../views/Others/DeliveryOrder/form.vue'),
-          meta: {
-            title: 'Delivery Order-Form',
-          },
-        },
-      ],
-    },
+
     //e
     {
       path: '/employee',
@@ -178,7 +158,7 @@ const router = createRouter({
             title: 'Invoice-Form',
           },
         },
-      ]
+      ],
     },
     //i
     {
@@ -278,7 +258,7 @@ const router = createRouter({
       meta: {
         title: 'Opex',
       },
-    }, 
+    },
     //p
     {
       path: '/product',
@@ -341,7 +321,7 @@ const router = createRouter({
             title: 'Purchase Order-Form',
           },
         },
-      ]
+      ],
     },
     //q
     {
@@ -363,7 +343,7 @@ const router = createRouter({
             title: 'Quotation-Form',
           },
         },
-      ]
+      ],
     },
     //r
     {
@@ -408,7 +388,98 @@ const router = createRouter({
           },
         },
       ],
-    },                   
+    },
+
+    {
+      path: '/opex',
+      name: 'Opex',
+      component: () => import('../views/Others/OPEX/index.vue'),
+      meta: {
+        title: 'Opex',
+      },
+    },
+    {
+      path: '/quotation',
+      name: 'Quotation',
+      component: () => import('../views/Others/Quotation/index.vue'),
+      meta: {
+        title: 'Quotation',
+      },
+    },
+    {
+      path: '/quotation/form',
+      name: 'Quotation-Form',
+      component: () => import('../views/Others/Quotation/form.vue'),
+      meta: {
+        title: 'Quotation-Form',
+      },
+    },
+
+    {
+      path: '/invoice',
+      name: 'Invoice',
+      component: () => import('../views/Others/Invoice/index.vue'),
+      meta: {
+        title: 'Invoice',
+      },
+    },
+    {
+      path: '/invoice/form',
+      name: 'Invoice-Form',
+      component: () => import('../views/Others/Invoice/form.vue'),
+      meta: {
+        title: 'Invoice-Form',
+      },
+    },
+    {
+      path: '/purchase-order',
+      name: 'Purchase Order',
+      component: () => import('../views/Others/PurchaseOrder/index.vue'),
+      meta: {
+        title: 'Purchase Order',
+      },
+    },
+    {
+      path: '/purchase-order/form',
+      name: 'Purchase Order-Form',
+      component: () => import('../views/Others/PurchaseOrder/form.vue'),
+      meta: {
+        title: 'Purchase Order-Form',
+      },
+    },
+    {
+      path: '/delivery-order',
+      name: 'Delivery Order',
+      component: () => import('../views/Others/DeliveryOrder/index.vue'),
+      meta: {
+        title: 'Delivery Order',
+      },
+    },
+    {
+      path: '/delivery-order/form',
+      name: 'Delivery Order-Form',
+      component: () => import('../views/Others/DeliveryOrder/form.vue'),
+      meta: {
+        title: 'Delivery Order-Form',
+      },
+    },
+    {
+      path: '/report',
+      name: 'Report',
+      component: () => import('../views/Others/Report/index.vue'),
+      meta: {
+        title: 'Report',
+      },
+    },
+    {
+      path: '/report/form',
+      name: 'Report-Form',
+      component: () => import('../views/Others/Report/form.vue'),
+      meta: {
+        title: 'Report-Form',
+      },
+    },
+
     //s
     {
       path: '/sales-order',
@@ -418,19 +489,19 @@ const router = createRouter({
           name: 'Sales Order',
           component: () => import('../views/Operation/SalesOrder/index.vue'),
           meta: {
-            title: 'Sales Order'
-          }
+            title: 'Sales Order',
+          },
         },
         {
           path: 'form',
           name: 'Sales Order Form',
           component: () => import('../views/Operation/SalesOrder/form.vue'),
           meta: {
-            title: 'Sales Order Form'
-          }
-        }
-      ]
-    },    
+            title: 'Sales Order-Form',
+          },
+        },
+      ],
+    },
     {
       path: '/signin',
       name: 'Signin',
