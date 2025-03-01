@@ -4,7 +4,7 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Purchase Order</h1>
+          <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
           <p class="text-gray-500 text-sm mt-1">Others / Purchase Order</p>
         </div>
         <div class="flex gap-3">
@@ -201,7 +201,7 @@ import axios from 'axios';
 import { SalesOrders } from '@/core/utils/url_api';
 
 export default defineComponent({
-  name: 'PurchaseOrderPage',
+  name: 'Sales Order',
   components: {
     AdminLayout,
   },

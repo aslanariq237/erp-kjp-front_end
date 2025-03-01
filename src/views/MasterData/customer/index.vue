@@ -107,7 +107,7 @@
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+                {{ customer.customer_code }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
