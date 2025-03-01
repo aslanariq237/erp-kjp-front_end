@@ -188,6 +188,7 @@
 <script>
 import { defineComponent, ref, computed } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import { DeliveryOrder } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -219,28 +220,14 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const entries = ref([
-      {
-        id_do: 1,
-        id_customer: 1,
-        id_employee: 1,
-        id_bank_account: 1,
-        id_po: 1,
-        code_do: 'DO001',
-        issue_at: '2024-02-20',
-        due_at: '2024-03-20',
-      },
-      {
-        id_do: 2,
-        id_customer: 2,
-        id_employee: 2,
-        id_bank_account: 2,
-        id_po: 2,
-        code_do: 'DO002',
-        issue_at: '2024-02-21',
-        due_at: '2024-03-21',
-      },
-    ])
+    const entries = ref([])
+
+    const getDO = async() => {
+      await axios.get(DeliveryOrder).then((res) => {
+        var data = res.data
+        entries.value = data;
+      })
+    }
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {

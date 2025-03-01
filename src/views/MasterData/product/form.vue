@@ -25,7 +25,7 @@
                                     </div>
                                 </div>
                                 <div class="product-name w-full">
-                                    <label>Product Name</label>
+                                    <label>Product Desc</label>
                                     <input type="text" id="product_image" name="product_image"
                                         class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Name"
                                         v-model="product_name">
@@ -40,10 +40,37 @@
                             </div>
                             <div class="flex justify-between gap-5 align-top mt-3">
                                 <div class="product Weight w-full">
-                                    <label>product Price</label>
+                                    <label>Part Number</label>
                                     <input type="text" id="product-weight" name="product-weight"
                                         class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
-                                        v-model="product_price">
+                                        v-model="product_sn">
+                                    <div class="fv-plugins-message-container">
+                                        <div class="fv-help-block">
+                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
+                                                Product Price is required
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="stock w-full">
+                                    <label>Brand</label>
+                                    <input type="text" id="stock" name="stock" class="w-full rounded-md px-3 py-3 my-2"
+                                        placeholder="Insert Stock" v-model="product_brand">
+                                    <div class="fv-plugins-message-container">
+                                        <div class="fv-help-block">
+                                            <p class="text-red-400 text-md italic" v-if="rules.stock == true">
+                                                Stock is required
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="flex justify-between gap-5 align-top mt-3">
+                                <div class="product Weight w-full">
+                                    <label>product UoM</label>
+                                    <input type="text" id="product-weight" name="product-weight"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
+                                        v-model="product_uom">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
                                             <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
@@ -91,6 +118,7 @@
 import AdminLayout from '@/components/layout/AdminLayout.vue';
 import { ProductCode } from '@/core/utils/url_api';
 import axios from 'axios';
+import router from '@/router';
 import Swal from 'sweetalert2';
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { RouterLink } from 'vue-router';
@@ -106,9 +134,10 @@ export default {
         return {            
             product_image: "",
             product_name: "",
-            product_price: 0,
-            stock: null,
-            status: 1,
+            product_sn : "",
+            product_brand : "",
+            product_uom : "",            
+            stock: null,            
             rules: {
                 product_image: false,
                 product_name: false,
@@ -123,26 +152,13 @@ export default {
         async validation() {
             var count = 0;
 
-            if (this.product_image == "" || this.product_image == null) {
-                this.rules.product_image = true;
-                count++;
-            } else {
-                this.rules.product_image = false;
-            }
-
             if (this.product_name == "" || this.product_name == null) {
                 this.rules.product_name = true;
                 count++;
             } else {
                 this.rules.product_name = false;
             }
-
-            if (this.stock == "" || this.stock == null) {
-                this.rules.stock = true;
-                count++;
-            } else {
-                this.rules.stock = false;
-            }
+            
 
 
             return count;
@@ -170,11 +186,12 @@ export default {
             if (result == 0) {
 
                 await axios.post(ProductCode, {
-                    product_image : this.product_image,
-                    product_name : this.product_name,
-                    product_price : parseInt(this.product_price) || 0,
-                    stock : parseInt(this.stock) || 0,
-                    status : this.status
+                    product_image : "rajut.jpg",
+                    product_desc : this.product_name,
+                    product_sn : this.product_sn,
+                    product_uom : this.product_uom,
+                    product_brand : this.product_brand,                    
+                    product_stock : parseInt(this.stock) || 0,                    
                 }).then((response) => {
                     Swal.fire({
                         icon: "success",
@@ -188,7 +205,7 @@ export default {
                             } else {
                                 mssg = "Success Create Employee";
                             }
-                            await router.push("/employee");
+                            await router.push("/products");
                             this.alertStore.success(mssg);
                         }
                     })

@@ -299,7 +299,7 @@ const router = createRouter({
         {
           path: '',
           name: 'Purchase Order',
-          component: () => import('../views/Others/PurchaseOrder/index.vue'),
+          component: () => import('../views/Operation/PurchaseOrder/index.vue'),
           meta: {
             title: 'Purchase Order',
           },
@@ -307,7 +307,7 @@ const router = createRouter({
         {
           path: 'form',
           name: 'Purchase Order-Form',
-          component: () => import('../views/Others/PurchaseOrder/form.vue'),
+          component: () => import('../views/Operation/PurchaseOrder/form.vue'),
           meta: {
             title: 'Purchase Order-Form',
           },

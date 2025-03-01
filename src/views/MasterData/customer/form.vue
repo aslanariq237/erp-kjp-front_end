@@ -74,7 +74,7 @@
               <div class="NPWP w-full">
                 <label>NPWP</label>
                 <input type="text" id="npwp" name="npwp" class="w-full rounded-md px-3 my-2" placeholder="Masukkan NPWP"
-                  v-model="npwp" />
+                  v-model="customer_npwp" />
                 <div class="fv-plugins-message-container">
                   <div class="fv-help-block">
                     <p class="text-red-400 text-md italic" v-if="rules.npwp">NPWP is required</p>
@@ -84,7 +84,7 @@
               <div class="contact-person w-full">
                 <label>Contact Person</label>
                 <input type="text" id="contact_person" name="contact_person" class="w-full rounded-md px-3 my-2"
-                  placeholder="Masukkan contact-person" v-model="contact_person" />
+                  placeholder="Masukkan contact-person" v-model="customer_contact" />
                 <div class="fv-plugins-message-container">
                   <div class="fv-help-block">
                     <p class="text-red-400 text-md italic" v-if="rules.contact_person">
@@ -120,13 +120,13 @@ export default defineComponent({
     ErrorMessage
   },
   data() {
-    return {
+    return {        
       customer_name: '',
       customer_phone: 0,
       customer_email: '',
       customer_address: '',
-      npwp: '',
-      contact_person: '',
+      customer_npwp: '',
+      customer_contact: '',
       rules: {
         customer_name: false,
         customer_phone: false,
@@ -158,7 +158,7 @@ export default defineComponent({
         this.rules.customer_name = false;
       }
 
-      if (this.customer_phone == "" || this.customer_phone == null) {
+      if (this.customer_phone == null && this.customer_phone <= 16) {
         this.rules.customer_phone = true;
         count++;
       } else {
@@ -172,14 +172,14 @@ export default defineComponent({
         this.rules.customer_email = false;
       }
 
-      if (this.npwp == "" || this.npwp == null) {
+      if (this.customer_npwp == null && this.customer_npwp <= 16) {
         this.rules.npwp = true;
         count++;
       } else {
         this.rules.npwp = false;
       }
 
-      if (this.contact_person == "" || this.contact_person == null) {
+      if (this.customer_contact == "" || this.customer_contact == null) {
         this.rules.contact_person = true;
         count++;
       } else {
@@ -196,11 +196,11 @@ export default defineComponent({
         await axios.post(
           AddCustomer, {
           customer_name: this.customer_name,
-          customer_phone: this.customer_phone,
+          customer_phone: parseInt(this.customer_phone) || 0,
           customer_email: this.customer_email,
           customer_address: this.customer_address,
-          npwp: this.npwp,
-          contact_person: this.contact_person
+          customer_npwp: this.customer_npwp,
+          customer_contact: this.customer_contact
         }
         ).then((response) => {
           Swal.fire({

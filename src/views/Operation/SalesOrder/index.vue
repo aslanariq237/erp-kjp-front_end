@@ -16,7 +16,7 @@
           </button>
           <button>
             <RouterLink
-              to="/purchase-order/form"
+              to="/sales-order/form"
               class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
             >
               Add New Purchase Order
@@ -92,11 +92,8 @@
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.po_type }}
@@ -201,7 +198,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
-import { PurchaseOrder } from '@/core/utils/url_api';
+import { SalesOrders } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -213,9 +210,8 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'code_po', label: 'Code PO' },
+    const tableHeaders = [      
+      { key: 'code_so', label: 'Code SO' },
       { key: 'po_type', label: 'PO Type' },
       { key: 'status_payment', label: 'Status Payment' },
       { key: 'sub_total', label: 'Sub Total' },
@@ -241,7 +237,7 @@ export default defineComponent({
 
     const getPurchaseOrder = async() => {
       try {
-        const res = await axios.get(PurchaseOrder)
+        const res = await axios.get(SalesOrders)
         entries.value = res.data;
       } catch (error) {
         console.error('Error Fetching : ', error)

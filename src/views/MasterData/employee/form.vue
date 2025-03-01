@@ -72,7 +72,7 @@
                                 <div class="nik w-full">
                                     <label>nik<label class="text-red-500">*</label></label>
                                     <input type="text" id="nik" name="nik" class="w-full rounded-md px-3 py-3 my-2"
-                                        placeholder="Masukkan nik" v-model="nik">
+                                        placeholder="Masukkan nik" v-model="employee_nik">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
                                             <p class="text-red-400 text-md italic" v-if="rules.nik == true">
@@ -85,7 +85,7 @@
                                     <label>Position<label class="text-red-500">*</label></label>
                                     <input type="text" id="position" name="position"
                                         class="w-full rounded-md px-3 py-3 my-2" placeholder="Masukkan position"
-                                        v-model="position">
+                                        v-model="employee_position">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
                                             <p class="text-red-400 text-md italic" v-if="rules.position == true">
@@ -130,14 +130,14 @@ export default {
         Form,
     },
     data() {
-        return {
-            id_employee: "",
+        return {                           
             employee_name: "",
             employee_phone: 0,
             employee_email: "",
             employee_address: "",
-            nik: 0,
-            position: "",
+            employee_salary : 0,            
+            employee_nik: 0,
+            employee_position: "",
             rules: {
                 employee_name: false,
                 employee_phone: false,
@@ -178,14 +178,14 @@ export default {
                 this.rules.employee_address = false;
             }
 
-            if (this.nik == null) {
+            if (this.employee_nik == null) {
                 this.rules.nik = true;
                 count++;
             } else {
                 this.rules.nik = false;
             }
 
-            if (this.position == "" || this.position == null) {
+            if (this.employee_position == "" || this.employee_position == null) {
                 this.rules.position = true;
                 count++
             } else {
@@ -203,8 +203,9 @@ export default {
                     employee_phone: this.employee_phone,
                     employee_email: this.employee_email,
                     employee_address: this.employee_address,
-                    nik: parseInt(this.nik) || 0,
-                    position: this.position
+                    employee_salary : this.employee_salary,                    
+                    employee_nik: parseInt(this.employee_nik) || 0,
+                    employee_position: this.employee_position
                 }).then((response) => {
                     Swal.fire({
                         icon: "success",

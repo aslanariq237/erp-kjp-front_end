@@ -135,10 +135,10 @@
                 {{ customer.customer_address }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.npwp }}
+                {{ customer.customer_npwp }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.contact_person }}
+                {{ customer.customer_contact }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">

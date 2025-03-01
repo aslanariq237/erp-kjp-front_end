@@ -7,13 +7,19 @@
           <h1 class="text-2xl font-bold text-gray-800">Invoice</h1>
           <p class="text-gray-500 text-sm mt-1">Others / Invoice</p>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 items-center">
           <button
             @click="exportData"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
           </button>
+          <RouterLink
+            to="/invoice/form"
+            class="bg-blue-500 px-6 py-2 rounded-lg"
+          >
+          Add New Data
+          </RouterLink>
         </div>
       </div>
 
