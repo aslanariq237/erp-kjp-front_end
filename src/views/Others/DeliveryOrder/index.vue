@@ -186,32 +186,43 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { DeliveryOrder } from '@/core/utils/url_api';
+import { RouterLink } from 'vue-router'
+import { GetDeliveryOrder } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
   components: {
     AdminLayout,
+    RouterLink,
   },
 
   setup() {
+    // Data
+    const entries = ref([])
     const loading = ref(false)
 
-    // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'code_do', label: 'Code DO' },
-      { key: 'id_customer', label: 'Customer ID' },
-      { key: 'id_employee', label: 'Employee ID' },
-      { key: 'id_bank_account', label: 'Bank Account ID' },
-      { key: 'id_po', label: 'PO ID' },
-      { key: 'issue_at', label: 'Issue Date' },
-      { key: 'due_at', label: 'Due Date' },
-    ]
+    // Fetch delivery orders from API
+    const fetchDeliveryOrders = async () => {
+      loading.value = true
+      try {
+        const response = await axios.get(GetDeliveryOrder)
+        console.log('API Response:', response.data) // 👈 Tambahkan ini
+        entries.value = response.data
+      } catch (error) {
+        console.error('Error fetching delivery orders:', error)
+      } finally {
+        loading.value = false
+      }
+    }
 
-    // Filter and sort state
+    onMounted(() => {
+      fetchDeliveryOrders()
+    })
+
+    // Filtering and Sorting
     const searchQuery = ref('')
     const sortBy = ref('code_do')
     const startDate = ref('')
@@ -219,25 +230,16 @@ export default defineComponent({
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
 
-    // Sample data - replace with API call
-    const entries = ref([])
-
-    const getDO = async() => {
-      await axios.get(DeliveryOrder).then((res) => {
-        var data = res.data
-        entries.value = data;
-      })
-    }
-
-    // Computed properties for filtering and pagination
     const filteredData = computed(() => {
       let result = [...entries.value]
 
+      // Search
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => entry.code_do.toLowerCase().includes(query))
       }
 
+      // Date Range Filter
       if (startDate.value) {
         result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
       }
@@ -246,13 +248,17 @@ export default defineComponent({
         result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
       }
 
+      // Sort
       result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
+        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
+        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
+        return fieldA.localeCompare(fieldB)
       })
 
       return result
     })
 
+    // Pagination
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
     const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value)
@@ -334,7 +340,16 @@ export default defineComponent({
       endDate,
       currentPage,
       itemsPerPage,
-      tableHeaders,
+      tableHeaders: [
+        { key: 'no', label: 'No' },
+        { key: 'code_do', label: 'Code DO' },
+        { key: 'id_customer', label: 'Customer ID' },
+        { key: 'id_employee', label: 'Employee ID' },
+        { key: 'id_bank_account', label: 'Bank Account ID' },
+        { key: 'id_po', label: 'PO ID' },
+        { key: 'issue_at', label: 'Issue Date' },
+        { key: 'due_at', label: 'Due Date' },
+      ],
 
       // Computed
       filteredData,
@@ -343,6 +358,7 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      entries,
 
       // Methods
       exportData,

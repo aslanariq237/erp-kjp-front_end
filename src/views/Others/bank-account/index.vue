@@ -33,9 +33,13 @@
               v-model="sortBy"
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="name">Name</option>
-              <option value="balance">Balance</option>
-              <option value="id">ID</option>
+              <option value="account_name">Account Name</option>
+              <option value="bank_name">Bank Name</option>
+              <option value="location">Location</option>
+              <option value="nama_usaha">Nama Usaha</option>
+              <option value="kode_cabang">Kode Cabang</option>
+              <option value="swift_code">SWIFT Code</option>
+              <option value="currency_code">Currency Code</option>
             </select>
           </div>
           <div class="form-group">
@@ -66,17 +70,37 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Name
+                Account Name
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Balance
+                Bank Name
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Account Number
+                Location
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Nama Usaha
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Kode Cabang
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                SWIFT Code
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Currency Code
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -88,20 +112,32 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
               v-for="(account, index) in paginatedData"
-              :key="account.id"
+              :key="account.id_bank_account"
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ (currentPage - 1) * itemsPerPage + index + 1 }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ account.name }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ account.account_name }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ account.balance }}
+                {{ account.bank_name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ account.accountNumber }}
+                {{ account.location }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ account.nama_usaha }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ account.kode_cabang }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ account.swift_code }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ account.currency_code }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
@@ -188,9 +224,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
+import { GetBankAccount } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'BankAccountPage',
@@ -200,25 +238,25 @@ export default defineComponent({
 
   setup() {
     // Data
-    const accounts = ref([
-      {
-        id: 1,
-        name: 'Account A',
-        balance: '$1000',
-        accountNumber: '1234567890',
-      },
-      {
-        id: 2,
-        name: 'Account B',
-        balance: '$2000',
-        accountNumber: '0987654321',
-      },
-      // Add more sample data as needed
-    ])
+    const accounts = ref([])
+
+    // Fetch accounts from API
+    const fetchAccounts = async () => {
+      try {
+        const response = await axios.get(GetBankAccount)
+        accounts.value = response.data
+      } catch (error) {
+        console.error('Error fetching accounts:', error)
+      }
+    }
+
+    onMounted(() => {
+      fetchAccounts()
+    })
 
     // Filtering and Sorting
     const searchQuery = ref('')
-    const sortBy = ref('name')
+    const sortBy = ref('account_name')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
 
@@ -230,17 +268,16 @@ export default defineComponent({
         const query = searchQuery.value.toLowerCase()
         result = result.filter(
           (account) =>
-            account.name.toLowerCase().includes(query) ||
-            account.accountNumber.toLowerCase().includes(query),
+            account.account_name.toLowerCase().includes(query) ||
+            account.bank_name.toLowerCase().includes(query),
         )
       }
 
       // Sort
       result.sort((a, b) => {
-        if (sortBy.value === 'id') {
-          return a.id - b.id
-        }
-        return a[sortBy.value].localeCompare(b[sortBy.value])
+        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
+        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
+        return fieldA.localeCompare(fieldB)
       })
 
       return result
@@ -282,6 +319,7 @@ export default defineComponent({
       endIndex,
       editAccount,
       deleteAccount,
+      accounts,
     }
   },
 })

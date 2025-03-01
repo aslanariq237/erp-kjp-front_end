@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">OPEX Management</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / OPEX</p>
+          <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
+          <p class="text-gray-500 text-sm mt-1">Others / Sales Order</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -14,12 +14,14 @@
           >
             <span>Export</span>
           </button>
-          <RouterLink
-            to="/opex/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Add New OPEX
-          </RouterLink>
+          <button>
+            <RouterLink
+              to="/sales-order/form"
+              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            >
+              Add New Sales Order
+            </RouterLink>
+          </button>
         </div>
       </div>
 
@@ -32,7 +34,7 @@
               <input
                 type="text"
                 v-model="searchQuery"
-                placeholder="Search by name or code..."
+                placeholder="Search by code..."
                 class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <span class="absolute left-3 top-2.5 text-gray-400">
@@ -42,45 +44,19 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Price Range</label>
+            <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
               <input
-                type="number"
-                v-model="minPrice"
-                placeholder="Min"
+                type="date"
+                v-model="startDate"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
-                type="number"
-                v-model="maxPrice"
-                placeholder="Max"
+                type="date"
+                v-model="endDate"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="opex_name">Name</option>
-              <option value="opex_price">Price</option>
-              <option value="opex_code">Code</option>
-              <option value="opex_type">Type</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-              <option :value="50">50</option>
-            </select>
           </div>
         </div>
       </div>
@@ -106,43 +82,51 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-if="loading" class="text-center">
-                <td colspan="5" class="px-6 py-4">Loading...</td>
+                <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
               <tr v-else-if="paginatedData.length === 0" class="text-center">
-                <td colspan="5" class="px-6 py-4">No data found</td>
+                <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr
-                v-for="(opex, index) in paginatedData"
-                :key="opex.opex_id"
+                v-for="(entry, index) in paginatedData"
+                :key="entry.id_so"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ (currentPage - 1) * itemsPerPage + index + 1 }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ opex.opex_name }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(opex.opex_price) }}
+                  {{ entry.so_type }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ opex.opex_code }}
+                  {{ entry.status_payment }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ opex.opex_type }}
+                  {{ entry.sub_total }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(opex)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
-                    <button @click="editOpex(opex)" class="text-green-600 hover:text-green-900">
-                      Edit
-                    </button>
-                    <button @click="confirmDelete(opex)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
-                  </div>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.total_tax }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.total_service }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.deposit }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.ppn }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.grand_total }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.issue_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.due_at }}
                 </td>
               </tr>
             </tbody>
@@ -209,118 +193,82 @@
           </div>
         </div>
       </div>
-
-      <!-- Delete Confirmation Modal -->
-      <div
-        v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
-        <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-          <h3 class="text-lg font-bold mb-4">Confirm Delete</h3>
-          <p class="mb-6">
-            Are you sure you want to delete this OPEX? This action cannot be undone.
-          </p>
-          <div class="flex justify-end gap-3">
-            <button
-              @click="showDeleteModal = false"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              @click="deleteOpex"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   </AdminLayout>
 </template>
 
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
-import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { RouterLink, useRouter } from 'vue-router'
-import { GetOpex } from '@/core/utils/url_api'
+import axios from 'axios'
+import { SalesOrder } from '@/core/utils/url_api'
 
 export default defineComponent({
-  name: 'OpexPage',
+  name: 'SalesOrderPage',
   components: {
     AdminLayout,
-    RouterLink,
   },
 
   setup() {
-    const router = useRouter()
     const loading = ref(false)
-    const showDeleteModal = ref(false)
-    const opexToDelete = ref(null)
 
     // Table headers configuration
     const tableHeaders = [
       { key: 'no', label: 'No' },
-      { key: 'opex_name', label: 'Name' },
-      { key: 'opex_price', label: 'Price' },
-      { key: 'opex_code', label: 'Code' },
-      { key: 'opex_type', label: 'Type' },
-      { key: 'actions', label: 'Actions' },
+      { key: 'code_so', label: 'Code SO' },
+      { key: 'so_type', label: 'SO Type' },
+      { key: 'status_payment', label: 'Status Payment' },
+      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'total_tax', label: 'Total Tax' },
+      { key: 'total_service', label: 'Total Service' },
+      { key: 'deposit', label: 'Deposit' },
+      { key: 'ppn', label: 'PPN' },
+      { key: 'grand_total', label: 'Grand Total' },
+      { key: 'issue_at', label: 'Issue Date' },
+      { key: 'due_at', label: 'Due Date' },
     ]
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('opex_name')
-    const minPrice = ref('')
-    const maxPrice = ref('')
+    const sortBy = ref('code_so')
+    const startDate = ref('')
+    const endDate = ref('')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
 
-    // Data state
-    const opexData = ref([])
+    // Sample data - replace with API call
+    const entries = ref([])
 
-    // Fetch OPEX data from API
-    const fetchOpexData = async () => {
-      loading.value = true
+    const getSalesOrder = async () => {
       try {
-        const response = await axios.get(GetOpex)
-        opexData.value = response.data
+        const res = await axios.get(SalesOrder)
+        entries.value = res.data
       } catch (error) {
-        console.error('Error fetching OPEX data:', error)
-      } finally {
-        loading.value = false
+        console.error('Error Fetching : ', error)
       }
     }
-
     onMounted(() => {
-      fetchOpexData()
+      getSalesOrder()
     })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
-      let result = [...opexData.value]
+      let result = [...entries.value]
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (opex) => opex.opex_name.toLowerCase().includes(query) || opex.opex_code.includes(query),
-        )
+        result = result.filter((entry) => entry.code_so.toLowerCase().includes(query))
       }
 
-      if (minPrice.value) {
-        result = result.filter((opex) => opex.opex_price >= minPrice.value)
+      if (startDate.value) {
+        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
       }
 
-      if (maxPrice.value) {
-        result = result.filter((opex) => opex.opex_price <= maxPrice.value)
+      if (endDate.value) {
+        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
       }
 
       result.sort((a, b) => {
-        if (sortBy.value === 'opex_price') {
-          return a.opex_price - b.opex_price
-        }
         return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
       })
 
@@ -369,56 +317,19 @@ export default defineComponent({
     })
 
     // Utility functions
-    const formatCurrency = (value) => {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(value)
-    }
-
-    const viewDetails = (opex) => {
-      router.push(`/opex/${opex.opex_id}`)
-    }
-
-    const editOpex = (opex) => {
-      router.push(`/opex/edit/${opex.opex_id}`)
-    }
-
-    const confirmDelete = (opex) => {
-      opexToDelete.value = opex
-      showDeleteModal.value = true
-    }
-
-    const deleteOpex = async () => {
-      try {
-        loading.value = true
-        // TODO: Implement API call
-        // await api.delete(`/opex/${opexToDelete.value.opex_id}`)
-
-        // Remove from local state
-        opexData.value = opexData.value.filter(
-          (opex) => opex.opex_id !== opexToDelete.value.opex_id,
-        )
-
-        showDeleteModal.value = false
-        opexToDelete.value = null
-
-        // Show success message
-        alert('OPEX deleted successfully')
-      } catch (error) {
-        console.error('Error deleting OPEX:', error)
-        alert('Failed to delete OPEX')
-      } finally {
-        loading.value = false
-      }
-    }
-
     const exportData = () => {
-      const data = filteredData.value.map((opex) => ({
-        Name: opex.opex_name,
-        Code: opex.opex_code,
-        Price: formatCurrency(opex.opex_price),
-        Type: opex.opex_type,
+      const data = filteredData.value.map((entry) => ({
+        'Code SO': entry.code_so,
+        'SO Type': entry.so_type,
+        'Status Payment': entry.status_payment,
+        'Sub Total': entry.sub_total,
+        'Total Tax': entry.total_tax,
+        'Total Service': entry.total_service,
+        Deposit: entry.deposit,
+        PPN: entry.ppn,
+        'Grand Total': entry.grand_total,
+        'Issue Date': entry.issue_at,
+        'Due Date': entry.due_at,
       }))
 
       // Create CSV content
@@ -433,7 +344,7 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `opex-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `sales-order-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -443,11 +354,10 @@ export default defineComponent({
     return {
       // State
       loading,
-      showDeleteModal,
       searchQuery,
       sortBy,
-      minPrice,
-      maxPrice,
+      startDate,
+      endDate,
       currentPage,
       itemsPerPage,
       tableHeaders,
@@ -459,14 +369,9 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
-      opexData,
+      entries,
 
       // Methods
-      formatCurrency,
-      viewDetails,
-      editOpex,
-      confirmDelete,
-      deleteOpex,
       exportData,
     }
   },
