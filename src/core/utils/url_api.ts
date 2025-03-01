@@ -30,3 +30,5 @@ export const Product = baseUrl + 'products'
 
 export const PurchaseOrder = baseUrl + 'purchase_orders'
 
+//S
+export const SalesOrder = baseUrl + 'sales_orders';
