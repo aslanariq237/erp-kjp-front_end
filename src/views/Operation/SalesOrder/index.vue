@@ -92,9 +92,6 @@
                 :key="entry.id_so"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
                 </td>

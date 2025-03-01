@@ -10,6 +10,14 @@ export const GetCustomer = laraUrl + 'customers'
 export const AddCustomer = laraUrl + 'store-customers'
 export const CustomerCode = baseUrl + 'customers_code'
 
+
+//D
+export const DeliveryOrder = baseUrl + 'delivery_orders';
+export const DeliverSales = baseUrl + 'delivery_sales';
+export const AddDeliveryOrder = baseUrl + 'store-do';
+export const DetailPo = baseUrl + 'detail_po';
+export const DetailSo = baseUrl + 'details_so';
+export const DetailDo = baseUrl + 'detail_do';
 //E
 export const Employee = baseUrl + 'employees'
 export const EmployeeCode = baseUrl + 'employees_code'
@@ -22,11 +30,3 @@ export const Product = baseUrl + 'products'
 
 export const PurchaseOrder = baseUrl + 'purchase_orders'
 
-export const GetBankAccount = baseUrl + 'bank_accounts'
-
-export const GetDeliveryOrder = baseUrl + 'delivery_orders'
-export const PostDeliveryOrder = baseUrl + 'delivery_orders_code'
-
-export const GetVendor = baseUrl + 'vendors'
-export const GetOpex = baseUrl + 'opex'
-export const GetSalesOrder = baseUrl + 'sales_orders'
