@@ -239,8 +239,13 @@ const menuGroups = [
         name: 'Finance Tools',
         icon: ListIcon,
         subItems: [
+<<<<<<< HEAD
+          { name: 'Bank Account', path: '/bank-account', pro: false },          
+          { name: 'Faktur Pajak', path: '/faktur-pajak', pro: false },          
+=======
           { name: 'Bank Account', path: '/bank-account', pro: false },
           { name: 'Faktur Pajak', path: '/bank-account', pro: false },
+>>>>>>> 9776ef29c7150caeef504ffc5cac06b3f41b5efa
           { name: 'Account Receivable', path: '/account-receivable', pro: false },
           { name: 'Account Payable', path: '/account-payable', pro: false },
           { name: 'Laporan Keuangan', path: '/laporan-keuangan', pro: false },

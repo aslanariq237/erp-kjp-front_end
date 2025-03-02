@@ -156,6 +156,27 @@ const router = createRouter({
       ],
     },
     //f
+    {
+      path: '/faktur-pajak',
+      children: [
+        {
+          path: '',
+          name: 'Faktur Pajak',
+          component: () => import('../views/Others/faktur-pajak/index.vue'),
+          meta: {
+            title: 'Faktur Pajak',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Faktur Pajak-form',
+          component: () => import('../views/Others/faktur-pajak/form.vue'),
+          meta: {
+            title: 'Faktur Pajak',
+          },
+        },
+      ],
+    },
     //g
     //h
     //i
