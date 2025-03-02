@@ -112,7 +112,27 @@ const router = createRouter({
       ],
     },
     //d
-
+    {
+      path: '/delivery-order',
+      children: [
+        {
+          path: '',
+          name: 'Delivery Order',
+          component: () => import('../views/Others/DeliveryOrder/index.vue'),
+          meta: {
+            title: 'Delivery Order',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Delivery Order-Form',
+          component: () => import('../views/Others/DeliveryOrder/form.vue'),
+          meta: {
+            title: 'Delivery Order-Form',
+          },
+        },
+      ]
+    },
     //e
     {
       path: '/employee',
@@ -291,7 +311,7 @@ const router = createRouter({
           meta: {
             title: 'Purchase Order',
           },
-        },
+        },  
         {
           path: 'form',
           name: 'Purchase Order-Form',
@@ -299,30 +319,9 @@ const router = createRouter({
           meta: {
             title: 'Purchase Order-Form',
           },
-        },
+        },      
       ],
-    },
-    {
-      path: '/purchase-order',
-      children: [
-        {
-          path: '',
-          name: 'Purchase Order',
-          component: () => import('../views/Others/PurchaseOrder/index.vue'),
-          meta: {
-            title: 'Purchase Order',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Purchase Order-Form',
-          component: () => import('../views/Others/PurchaseOrder/form.vue'),
-          meta: {
-            title: 'Purchase Order-Form',
-          },
-        },
-      ],
-    },
+    },    
     //q
     {
       path: '/quatation',
@@ -397,88 +396,7 @@ const router = createRouter({
       meta: {
         title: 'Opex',
       },
-    },
-    {
-      path: '/quotation',
-      name: 'Quotation',
-      component: () => import('../views/Others/Quotation/index.vue'),
-      meta: {
-        title: 'Quotation',
-      },
-    },
-    {
-      path: '/quotation/form',
-      name: 'Quotation-Form',
-      component: () => import('../views/Others/Quotation/form.vue'),
-      meta: {
-        title: 'Quotation-Form',
-      },
-    },
-
-    {
-      path: '/invoice',
-      name: 'Invoice',
-      component: () => import('../views/Others/Invoice/index.vue'),
-      meta: {
-        title: 'Invoice',
-      },
-    },
-    {
-      path: '/invoice/form',
-      name: 'Invoice-Form',
-      component: () => import('../views/Others/Invoice/form.vue'),
-      meta: {
-        title: 'Invoice-Form',
-      },
-    },
-    {
-      path: '/purchase-order',
-      name: 'Purchase Order',
-      component: () => import('../views/Others/PurchaseOrder/index.vue'),
-      meta: {
-        title: 'Purchase Order',
-      },
-    },
-    {
-      path: '/purchase-order/form',
-      name: 'Purchase Order-Form',
-      component: () => import('../views/Others/PurchaseOrder/form.vue'),
-      meta: {
-        title: 'Purchase Order-Form',
-      },
-    },
-    {
-      path: '/delivery-order',
-      name: 'Delivery Order',
-      component: () => import('../views/Others/DeliveryOrder/index.vue'),
-      meta: {
-        title: 'Delivery Order',
-      },
-    },
-    {
-      path: '/delivery-order/form',
-      name: 'Delivery Order-Form',
-      component: () => import('../views/Others/DeliveryOrder/form.vue'),
-      meta: {
-        title: 'Delivery Order-Form',
-      },
-    },
-    {
-      path: '/report',
-      name: 'Report',
-      component: () => import('../views/Others/Report/index.vue'),
-      meta: {
-        title: 'Report',
-      },
-    },
-    {
-      path: '/report/form',
-      name: 'Report-Form',
-      component: () => import('../views/Others/Report/form.vue'),
-      meta: {
-        title: 'Report-Form',
-      },
-    },
+    },   
 
     //s
     {

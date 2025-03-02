@@ -237,7 +237,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
-import { GetVendor } from '@/core/utils/url_api'
+import { Vendor } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'VendorPage',
@@ -252,7 +252,7 @@ export default defineComponent({
     // Fetch vendors from API
     const fetchVendors = async () => {
       try {
-        const response = await axios.get(GetVendor)
+        const response = await axios.get(Vendor)
         vendors.value = response.data
       } catch (error) {
         console.error('Error fetching vendors:', error)

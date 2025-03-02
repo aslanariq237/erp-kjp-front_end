@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
-          <p class="text-gray-500 text-sm mt-1">Others / Purchase Order</p>
+          <p class="text-gray-500 text-sm mt-1">Others / Sales Order</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -19,7 +19,7 @@
               to="/sales-order/form"
               class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
             >
-              Add New Purchase Order
+              Add New Sales Order
             </RouterLink>
           </button>
         </div>
@@ -32,7 +32,8 @@
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
               <input
-                type="text"                
+                type="text"
+                v-model="searchQuery"
                 placeholder="Search by code..."
                 class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -46,11 +47,13 @@
             <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
               <input
-                type="date"                
+                type="date"
+                v-model="startDate"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
-                type="date"                
+                type="date"
+                v-model="endDate"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -86,14 +89,14 @@
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
-                :key="entry.id_po"
+                :key="entry.id_so"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_type }}
+                  {{ entry.so_type }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_payment }}
@@ -103,15 +106,12 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.total_tax }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_service }}
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.deposit }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.ppn }}
+                  {{ numberWithCommas(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.grand_total }}
@@ -129,8 +129,17 @@
 
         <!-- Enhanced Pagination -->
         <div class="bg-white px-6 py-4 border-t border-gray-200">
-          <div class="flex items-center justify-between">            
-            <!-- <div class="flex items-center space-x-2">
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+              Showing
+              <span class="font-medium">{{ startIndex + 1 }}</span>
+              to
+              <span class="font-medium">{{ endIndex }}</span>
+              of
+              <span class="font-medium">{{ filteredData.length }}</span>
+              results
+            </div>
+            <div class="flex items-center space-x-2">
               <button
                 @click="currentPage = 1"
                 :disabled="currentPage === 1"
@@ -174,24 +183,23 @@
               >
                 Last
               </button>
-            </div> -->
+            </div>
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </AdminLayout>
 </template>
 
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios';
-import { SalesOrders } from '@/core/utils/url_api';
-
+import axios from 'axios'
+import { SalesOrders } from '@/core/utils/url_api'
 export default defineComponent({
-  name: 'Sales Order',
+  name: 'SalesOrderPage',
   components: {
-    AdminLayout
+    AdminLayout,
   },
 
   setup() {
@@ -200,11 +208,10 @@ export default defineComponent({
     // Table headers configuration
     const tableHeaders = [      
       { key: 'code_so', label: 'Code SO' },
-      { key: 'po_type', label: 'PO Type' },
+      { key: 'so_type', label: 'SO Type' },
       { key: 'status_payment', label: 'Status Payment' },
       { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },
-      { key: 'total_service', label: 'Total Service' },
+      { key: 'total_tax', label: 'Total Tax' },      
       { key: 'deposit', label: 'Deposit' },
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },
@@ -214,7 +221,7 @@ export default defineComponent({
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('code_po')
+    const sortBy = ref('code_so')
     const startDate = ref('')
     const endDate = ref('')
     const currentPage = ref(1)
@@ -223,16 +230,16 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const getPurchaseOrder = async() => {
+    const GetSalesOrder = async ()  => {
       try {
         const res = await axios.get(SalesOrders)
-        entries.value = res.data;
+        entries.value = res.data
       } catch (error) {
-        console.error(error);
+        console.error('Error Fetching : ', error)
       }
     }
     onMounted(() => {
-      getPurchaseOrder();
+      GetSalesOrder()
     })
 
     // Computed properties for filtering and pagination
@@ -241,7 +248,7 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_po.toLowerCase().includes(query))
+        result = result.filter((entry) => entry.code_so.toLowerCase().includes(query))
       }
 
       if (startDate.value) {
@@ -303,8 +310,8 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        'Code PO': entry.code_po,
-        'PO Type': entry.po_type,
+        'Code SO': entry.code_so,
+        'SO Type': entry.so_type,
         'Status Payment': entry.status_payment,
         'Sub Total': entry.sub_total,
         'Total Tax': entry.total_tax,
@@ -328,7 +335,7 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `purchase-order-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `sales-order-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -353,10 +360,26 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      entries,
 
       // Methods
       exportData,
     }
-  }
-});
+  },
+})
 </script>
+
+<style scoped>
+.pagination-button {
+  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-group input,
+.form-group select {
+  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+}
+</style>

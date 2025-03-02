@@ -115,18 +115,14 @@
 import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
-import { RouterLink } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import {
   AddDeliveryOrder,
-  Customer,
-  DetailPo,
   DetailSo,
-  Employee,
-  Product,
+  Employee,  
   SalesOrders
 } from '@/core/utils/url_api'
 

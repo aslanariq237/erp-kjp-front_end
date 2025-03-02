@@ -2,6 +2,10 @@ let baseUrl = ''
 
 baseUrl = import.meta.env.VITE_APP_API_URL + '/api/'
 let laraUrl = 'http://127.0.0.1:8000/api/'
+
+//A
+export const AccReceive = baseUrl + 'account_receivable';
+export const AccPayable = baseUrl + 'account_payable';
 //B
 export const BankAccount = baseUrl + 'bank_accounts'
 //C
@@ -24,11 +28,18 @@ export const EmployeeCode = baseUrl + 'employees_code'
 
 //I
 export const Invoice = baseUrl + 'invoices'
-
+export const InvoiceAdd = baseUrl + 'invoices_code'
+//O
+export const GetOpex = baseUrl + 'opex';
 //P
 export const Product = baseUrl + 'products'
 
 export const PurchaseOrder = baseUrl + 'purchase_orders'
+export const PurchaseOrderAdd = baseUrl + 'purchase_orders_code'
 
 //S
-export const SalesOrder = baseUrl + 'sales_orders';
+export const SalesOrders = baseUrl + 'sales_orders';
+export const SalesOrderAdd = baseUrl + 'sales_orders_code';
+
+//v
+export const Vendor = baseUrl + 'vendors';

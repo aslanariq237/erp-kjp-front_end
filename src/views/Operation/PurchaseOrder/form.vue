@@ -138,10 +138,9 @@ import AdminLayout from '@/components/layout/AdminLayout.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Swal from 'sweetalert2';
 import Notification from '@/components/Notification.vue';
-import purchase_order_api from '@/core/controllers/operation/purchase_orders.api'
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
-import { BankAccount, Customer, Employee, PaymentTypes, Product, PurchaseOrderAdd } from '@/core/utils/url_api';
+import { Customer, Employee, Product, PurchaseOrderAdd } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -246,14 +245,7 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 0;
-
-      if (this.customer_id == "" || this.customer_id == null) {
-        this.rules.customer_id = true;
-        count++
-      } else {
-        this.rules.customer_id = false;
-      }
+      var count = 2;     
 
       return count
     },

@@ -117,17 +117,20 @@
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
+                  {{ account.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.name }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.balance) }}
+                  {{ formatCurrency(account.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatAccountNumber(account.accountNumber) }}
+                  {{ formatCurrency(account.grand_total) }}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(account.grand_total - account.deposit) }}
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
                     <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
@@ -241,9 +244,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
+import axios from 'axios'
+import { AccReceive } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -260,10 +265,11 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'no', label: 'No' },
+      { key: 'no', label: 'Code So' },
       { key: 'name', label: 'Name' },
-      { key: 'balance', label: 'Balance' },
-      { key: 'accountNumber', label: 'Account Number' },
+      { key: 'Depoit', label: 'Depoit' },
+      { key: 'Amount', label: 'Amount' },
+      { key: 'Debt', label: 'Debt' },
       { key: 'actions', label: 'Actions' },
     ]
 
@@ -276,22 +282,20 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const accounts = ref([
-      {
-        id: 1,
-        name: 'Account A',
-        balance: 1000,
-        accountNumber: '1234567890',
-        dateCreated: '2024-02-20',
-      },
-      {
-        id: 2,
-        name: 'Account B',
-        balance: 2000,
-        accountNumber: '0987654321',
-        dateCreated: '2024-02-21',
-      },
-    ])
+    const accounts = ref([])
+
+    const getArcheive = async() => { 
+      await axios.get(AccReceive).then(
+        (res) => {
+          var data = res.data;
+          accounts.value = data;
+        }
+      )
+    }
+
+    onMounted(() => {
+      getArcheive();
+    })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -368,7 +372,7 @@ export default defineComponent({
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'IDR',
       }).format(value)
     }
 

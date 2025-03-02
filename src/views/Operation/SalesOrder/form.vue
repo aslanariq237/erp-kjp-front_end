@@ -86,7 +86,7 @@
             errorMessage="product_id is required">
             <select id="product_id" product name="product_id" v-model="product_id" class="rounded w-full">
               <option v-for="product in products" :key="product.product_id" :value="product.product_id">
-                {{ product.product_sn }} {{ product.product_desc }}
+                {{ product.product_sn }} - {{ product.product_desc }}
               </option>
             </select>
           </FormGroup>

@@ -16,9 +16,9 @@
           </button>
           <RouterLink
             to="/invoice/form"
-            class="bg-blue-500 px-6 py-2 rounded-lg"
+            class="bg-blue-500 px-6 py-2 rounded-lg text-white"
           >
-          Add New Data
+          Add New Invoice
           </RouterLink>
         </div>
       </div>
@@ -89,28 +89,13 @@
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_invoice"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              >                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.no_invoice }}</div>
+                  {{ entry.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.invoice_type }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sub_total }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_tax }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_service }}
-                </td>
+                  {{ entry.id_do }}
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.deposit }}
                 </td>
@@ -208,17 +193,14 @@ export default defineComponent({
   },
 
   setup() {
-    const loading = ref(false)
+    const loading = ref(false)    
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'code_invoice', label: 'Code Invoice' },
-      { key: 'invoice_type', label: 'Invoice Type' },
+    const tableHeaders = [      
+      { key: 'code_invoice', label: 'Code Invoice' },      
       { key: 'status_payment', label: 'Status Payment' },
       { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },
-      { key: 'total_service', label: 'Total Service' },
+      { key: 'total_tax', label: 'Total Tax' },      
       { key: 'deposit', label: 'Deposit' },
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },

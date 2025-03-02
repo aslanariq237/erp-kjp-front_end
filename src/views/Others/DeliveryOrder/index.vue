@@ -91,22 +91,19 @@
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_do"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_do }}</div>
-                </td>
+                  {{ entry.code_do}}
+                </td>                          
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_customer }}
+                  {{ entry.salesorder.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_employee }}
+                  {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_bank_account }}
-                </td>
+                  {{ entry.employee.employee_name }}
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.id_po }}
                 </td>
@@ -190,7 +187,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
-import { GetDeliveryOrder } from '@/core/utils/url_api'
+import { DeliveryOrder } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -208,8 +205,7 @@ export default defineComponent({
     const fetchDeliveryOrders = async () => {
       loading.value = true
       try {
-        const response = await axios.get(GetDeliveryOrder)
-        console.log('API Response:', response.data) // 👈 Tambahkan ini
+        const response = await axios.get(DeliveryOrder)        
         entries.value = response.data
       } catch (error) {
         console.error('Error fetching delivery orders:', error)
@@ -340,12 +336,11 @@ export default defineComponent({
       endDate,
       currentPage,
       itemsPerPage,
-      tableHeaders: [
-        { key: 'no', label: 'No' },
+      tableHeaders: [        
         { key: 'code_do', label: 'Code DO' },
-        { key: 'id_customer', label: 'Customer ID' },
-        { key: 'id_employee', label: 'Employee ID' },
-        { key: 'id_bank_account', label: 'Bank Account ID' },
+        { key: 'code_so', label: 'Code SO' },
+        { key: 'customer', label: 'Customer ID' },
+        { key: 'employee', label: 'Employee ID' },        
         { key: 'id_po', label: 'PO ID' },
         { key: 'issue_at', label: 'Issue Date' },
         { key: 'due_at', label: 'Due Date' },
