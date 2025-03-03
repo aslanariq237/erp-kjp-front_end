@@ -108,13 +108,10 @@
                   {{ entry.sub_total }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_tax }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.total_service }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.deposit }}
+                  {{ formatCurrency(entry.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.ppn }}
@@ -217,8 +214,7 @@ export default defineComponent({
       { key: 'no', label: 'No' },
       { key: 'code_po', label: 'Code PO' },
       { key: 'po_type', label: 'PO Type' },
-      { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'status_payment', label: 'Status Payment' },      
       { key: 'total_tax', label: 'Total Tax' },
       { key: 'total_service', label: 'Total Service' },
       { key: 'deposit', label: 'Deposit' },
@@ -274,6 +270,13 @@ export default defineComponent({
 
       return result
     })
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -372,6 +375,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      formatCurrency,
     }
   },
 })

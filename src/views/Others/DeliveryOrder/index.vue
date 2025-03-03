@@ -253,6 +253,12 @@ export default defineComponent({
 
       return result
     })
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
 
     // Pagination
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
@@ -357,6 +363,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      formatCurrency,
     }
   },
 })

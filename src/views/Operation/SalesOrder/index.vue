@@ -94,27 +94,27 @@
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so_type }}
+                  {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_payment }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sub_total }}
+                  {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_tax }}
+                  {{ formatCurrency(entry.total_tax) }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.deposit }}
+                  {{ formatCurrency(entry.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ numberWithCommas(entry.ppn) }}
+                  {{ formatCurrency(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.grand_total }}
+                  {{ formatCurrency(entry.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -207,11 +207,11 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [      
-      { key: 'code_so', label: 'Code SO' },
-      { key: 'so_type', label: 'SO Type' },
+      { key: 'code_so', label: 'Code SO' },      
+      { key: 'customer', label: 'Customer' },      
       { key: 'status_payment', label: 'Status Payment' },
       { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },      
+      { key: 'total_service', label: 'Total Service' },      
       { key: 'deposit', label: 'Deposit' },
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },
@@ -273,6 +273,13 @@ export default defineComponent({
     const endIndex = computed(() =>
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
+    
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
@@ -364,6 +371,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      formatCurrency,
     }
   },
 })

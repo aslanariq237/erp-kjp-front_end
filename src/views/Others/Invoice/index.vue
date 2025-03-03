@@ -94,16 +94,19 @@
                   {{ entry.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_do }}
+                  {{ entry.customer.customer_name }}
+                </td> 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.employee.employee_name }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.deposit }}
+                  {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.ppn }}
+                  {{ formatCurrency(entry.sub_total * 0.11) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.grand_total }}
+                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -184,7 +187,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
-import { Invoice, PurchaseOrder } from '@/core/utils/url_api';
+import { Invoice, SalesOrders } from '@/core/utils/url_api';
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -198,10 +201,9 @@ export default defineComponent({
     // Table headers configuration
     const tableHeaders = [      
       { key: 'code_invoice', label: 'Code Invoice' },      
-      { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },      
-      { key: 'deposit', label: 'Deposit' },
+      { key: 'Customer', label: 'Customer' },
+      { key: 'Employee', label: 'Employee' },
+      { key: 'sub_total', label: 'Sub Total' },                 
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },
       { key: 'issue_at', label: 'Issue Date' },
@@ -229,7 +231,7 @@ export default defineComponent({
     }
 
     const getById = async() => {
-      const res = await axios.get(PurchaseOrder)
+      const res = await axios.get(SalesOrders)
       purchaseorders.value = res.data
     }
 
@@ -259,6 +261,13 @@ export default defineComponent({
 
       return result
     })
+    
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -360,6 +369,7 @@ export default defineComponent({
       invoice : [],
 
       // Methods
+      formatCurrency,
       exportData,
     }
   },

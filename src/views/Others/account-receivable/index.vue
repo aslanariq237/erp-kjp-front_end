@@ -130,6 +130,9 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total - account.deposit) }}
+                </td> 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ account.has_invoice != 0 ? "Has Invoice" : "Hasn't Invoice" }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
@@ -270,6 +273,7 @@ export default defineComponent({
       { key: 'Depoit', label: 'Depoit' },
       { key: 'Amount', label: 'Amount' },
       { key: 'Debt', label: 'Debt' },
+      { key: 'Invoice', label: 'Invoice' },
       { key: 'actions', label: 'Actions' },
     ]
 

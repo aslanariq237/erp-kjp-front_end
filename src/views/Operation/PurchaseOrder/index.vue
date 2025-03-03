@@ -102,22 +102,19 @@
                   {{ entry.status_payment }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sub_total }}
+                  {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_tax }}
+                  {{ formatCurrency(0) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_service }}
+                  {{ formatCurrency(entry.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.deposit }}
+                  {{ formatCurrency(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.ppn }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.grand_total }}
+                  {{ formatCurrency(entry.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -214,8 +211,7 @@ export default defineComponent({
       { key: 'code_po', label: 'Code PO' },
       { key: 'po_type', label: 'PO Type' },
       { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },
+      { key: 'sub_total', label: 'Sub Total' },      
       { key: 'total_service', label: 'Total Service' },
       { key: 'deposit', label: 'Deposit' },
       { key: 'ppn', label: 'PPN' },
@@ -347,6 +343,13 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
 
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
+
     return {
       // State
       loading,
@@ -368,6 +371,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      formatCurrency,
     }
   },
 })
