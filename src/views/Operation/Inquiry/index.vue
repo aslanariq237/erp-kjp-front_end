@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Purchase Order</h1>
-          <p class="text-gray-500 text-sm mt-1">Others / Purchase Order</p>
+          <h1 class="text-2xl font-bold text-gray-800">Inquiry</h1>
+          <p class="text-gray-500 text-sm mt-1">Others / Inquiry</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -16,10 +16,10 @@
           </button>
           <button>
             <RouterLink
-              to="/purchase-order/form"
+              to="/inquiry/form"
               class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
             >
-              Add New Purchase Order
+              Add New Inquiry
             </RouterLink>
           </button>
         </div>
@@ -89,38 +89,23 @@
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
-                :key="entry.id_po"
+                :key="entry.id_so"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_inquiry }}</div>
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.customer.customer_name}}
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total) }}
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_type }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sub_total }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_tax }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.total_service }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.deposit }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.ppn }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.grand_total }}
+                  {{ formatCurrency(entry.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -200,11 +185,10 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios';
-import { PurchaseOrder } from '@/core/utils/url_api';
-
+import axios from 'axios'
+import { Inquiry } from '@/core/utils/url_api'
 export default defineComponent({
-  name: 'PurchaseOrderPage',
+  name: 'SalesOrderPage',
   components: {
     AdminLayout,
   },
@@ -213,15 +197,10 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'code_po', label: 'Code PO' },
-      { key: 'po_type', label: 'PO Type' },
-      { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_tax', label: 'Total Tax' },
-      { key: 'total_service', label: 'Total Service' },
-      { key: 'deposit', label: 'Deposit' },
+    const tableHeaders = [      
+      { key: 'code_inquiry', label: 'Code Inquiry' },      
+      { key: 'customer', label: 'Customer' },            
+      { key: 'sub_total', label: 'Sub Total' },               
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },
       { key: 'issue_at', label: 'Issue Date' },
@@ -230,7 +209,7 @@ export default defineComponent({
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('code_po')
+    const sortBy = ref('code_so')
     const startDate = ref('')
     const endDate = ref('')
     const currentPage = ref(1)
@@ -239,16 +218,16 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const getPurchaseOrder = async() => {
+    const GetSalesOrder = async ()  => {
       try {
-        const res = await axios.get(PurchaseOrder)
-        entries.value = res.data;
+        const res = await axios.get(Inquiry)
+        entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
     onMounted(() => {
-      getPurchaseOrder();
+      GetSalesOrder()
     })
 
     // Computed properties for filtering and pagination
@@ -257,7 +236,7 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_po.toLowerCase().includes(query))
+        result = result.filter((entry) => entry.code_so.toLowerCase().includes(query))
       }
 
       if (startDate.value) {
@@ -282,6 +261,13 @@ export default defineComponent({
     const endIndex = computed(() =>
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
+    
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
@@ -319,8 +305,8 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        'Code PO': entry.code_po,
-        'PO Type': entry.po_type,
+        'Code SO': entry.code_so,
+        'SO Type': entry.so_type,
         'Status Payment': entry.status_payment,
         'Sub Total': entry.sub_total,
         'Total Tax': entry.total_tax,
@@ -344,7 +330,7 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `purchase-order-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `sales-order-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
@@ -369,9 +355,11 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      entries,
 
       // Methods
       exportData,
+      formatCurrency,
     }
   },
 })

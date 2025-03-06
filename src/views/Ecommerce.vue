@@ -6,7 +6,7 @@
         <monthly-target />        
       </div>
       <div class="col-span-12 xl:col-span-5">
-        <monthly-sale />
+        <monthly-sale />        
       </div>
       <div class="col-span-12">
         <statistics-chart />
@@ -39,6 +39,6 @@ export default {
     StatisticsChart,
     RecentOrders,
   },
-  name: 'Ecommerce',
+  name: 'Ecommerce',  
 }
 </script>

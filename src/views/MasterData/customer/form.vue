@@ -16,84 +16,90 @@
             </div>
           </div>
         </div>
-        <div class="input rounded-lg shadow-lg p-4 mt-4">
-          <div class="field mt-3 text-lg font-semibold">
-            <div class="flex justify-between align-top gap-5 shadow-lg">
-              <div class="customer-name w-full">
-                <label>Name Customer</label>
-                <input type="text" id="customer_name" name="customer_name" class="w-full rounded-md px-3 py-3 my-2"
-                  placeholder="Insert Customer Name" v-model="customer_name" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.customer_name">
-                      Customer Name is required
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="customer-phone w-full">
-                <label>Customer Phone</label>
-                <input type="text" id="customer_phone" name="customer_phone" class="w-full rounded-md px-3 py-3 my-2"
-                  placeholder="Insert Customer Phone" v-model="customer_phone" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.customer_phone">
-                      Customer Phone is required
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="flex justify-between gap-5 align-top mt-3">
-              <div class="customer-email w-full">
-                <label>Email</label>
-                <input type="text" id="customer_email" name="customer_email" class="w-full rounded-md px-3 py-3 my-2"
-                  placeholder="Masukkan Customer Email" v-model="customer_email" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.customer_email">
-                      Customer Email is required
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="customer-address w-full">
-                <label>Customer Address</label>
-                <input type="text" id="customer_address" name="customer_address" class="w-full rounded-md px-3 my-2"
-                  placeholder="Masukkan Customer Address" v-model="customer_address" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.customer_address">
-                      Customer Address is required
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="flex justify-between gap-5 align-top mt-3">
-              <div class="NPWP w-full">
-                <label>NPWP</label>
-                <input type="text" id="npwp" name="npwp" class="w-full rounded-md px-3 my-2" placeholder="Masukkan NPWP"
-                  v-model="customer_npwp" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.npwp">NPWP is required</p>
-                  </div>
-                </div>
-              </div>
-              <div class="contact-person w-full">
-                <label>Contact Person</label>
-                <input type="text" id="contact_person" name="contact_person" class="w-full rounded-md px-3 my-2"
-                  placeholder="Masukkan contact-person" v-model="customer_contact" />
-                <div class="fv-plugins-message-container">
-                  <div class="fv-help-block">
-                    <p class="text-red-400 text-md italic" v-if="rules.contact_person">
-                      Contact Person is required
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+            <FormGroup label="Customer Name" :required="true" :error="rules.issue_at"
+              errorMessage="Issue Date is required">
+              <input type="text" id="customer_name" name="customer_name" v-model="customer_name"
+                :class="inputClass(rules.issue_at)" />
+            </FormGroup>
+
+            <!-- Due Date -->
+            <FormGroup label="Customer Phone" :required="true" :error="rules.due_at"
+              errorMessage="Due Date is required">
+              <input type="text" id="customer_phone" name="customer_phone" v-model="customer_phone"
+                :class="inputClass(rules.due_at)" />
+            </FormGroup>
+
+            <!-- customerToko -->
+            <FormGroup label="Customer Toko" :required="true" :error="rules.issue_at"
+              errorMessage="Issue Date is required">
+              <input type="text" id="customer_name" name="customer_name" v-model="customer_toko"
+                :class="inputClass(rules.issue_at)" @change="singkatan" />
+            </FormGroup>
+
+            <!-- No -->
+            <FormGroup label="Customer Email" :required="true" :error="rules.due_at"
+              errorMessage="Due Date is required">
+              <input type="text" id="customer_email" name="customer_email" v-model="customer_email"
+                :class="inputClass(rules.due_at)" />
+            </FormGroup>
+            <!-- Code PO -->
+
+            <!-- Total Service -->
+            <FormGroup label="Customer Address" :required="true" :error="rules.deposit"
+              errorMessage="Deposit is required">
+              <input type="text" id="customer_address" name="customer_address" v-model="customer_address"
+                :class="inputClass(rules.deposit)" placeholder="Insert Customer Address" />
+            </FormGroup>
+
+            <!-- Due Date -->
+            <FormGroup label="Customer NPWP" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+              <input type="number" id="customer_npwp" name="customer_npwp" v-model="customer_npwp"
+                :class="inputClass(rules.due_at)" />
+            </FormGroup>
+
+            <FormGroup label="Contact Person" :required="true" :error="rules.deposit"
+              errorMessage="Deposit is required">
+              <input type="text" id="contact_person" name="contact_person" v-model="customer_contact"
+                :class="inputClass(rules.deposit)" placeholder="Insert Contact Person" />
+            </FormGroup>
+            <FormGroup>              
+            </FormGroup>
+          </div>
+          <div class="flex justify-content-between gap-4 items-end mt-5">
+            <!-- Grand Total -->
+            <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
+              errorMessage="Quantity is required">
+              <input type="text" id="quantity" name="point" v-model="point" :class="inputClass(rules.quantity)"
+                placeholder="Enter Customer Point" />
+            </FormGroup>
+            <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
+              errorMessage="Price is required">
+              <input type="text" id="quantity" name="alamat" v-model="alamat" :class="inputClass(rules.quantity)"
+                placeholder="Enter Customer Address" />
+            </FormGroup>
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
+              @click="addPoDetails">tambah</button>
+          </div>
+          <div class=" mt-5">
+            <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+              <thead>
+                <tr class="text-left">
+                  <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
+                  <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Point</th>
+                  <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Alamat</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-100">
+                <tr v-for="poDetail in customer_details" :key="poDetail.product_id">
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.no }}</td>
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.point }}</td>
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.alamat }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -110,6 +116,7 @@ import Swal from "sweetalert2"
 import { AddCustomer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
+import FormGroup from '@/components/FormGroup.vue'
 
 export default defineComponent({
   name: 'assets-forms',
@@ -117,16 +124,24 @@ export default defineComponent({
     AdminLayout,
     Form,
     Field,
-    ErrorMessage
+    ErrorMessage,
+    FormGroup
   },
   data() {
-    return {        
+    return {
       customer_name: '',
       customer_phone: 0,
       customer_email: '',
+      customer_toko: '',
+      customer_singkatan: '',
       customer_address: '',
-      customer_npwp: '',
+      customer_npwp : 0,
       customer_contact: '',
+      point: '',
+      alamat: '',
+      code: 1000,
+      customer_details: [],
+
       rules: {
         customer_name: false,
         customer_phone: false,
@@ -188,19 +203,59 @@ export default defineComponent({
 
       return count;
     },
+    inputClass(error) {
+      return [
+        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+        error
+          ? 'border-red-300 focus:ring-red-500 bg-red-50'
+          : 'border-gray-300 focus:ring-blue-500',
+      ]
+    },
+
+    createSingkatan(input) {
+      const ignoreWords = [
+        'PT.', 'PT', 'pt', 'CV.', 'CV', 'UD. ', 'UD', 'TBK.', 'TBK',
+        'INC.', 'INC', 'inc', 'cv', 'ud', 'tbk'
+      ];
+
+      const words = input.split(' ');
+      const abbreviation = words
+        .filter(word => !ignoreWords.includes(word.toUpperCase()))
+        .map(word => word.charAt(0).toUpperCase())
+        .join('');
+      return abbreviation;
+    },
+
+    singkatan() {
+      this.customer_singkatan = this.createSingkatan(this.customer_toko);
+    },
+
+    addPoDetails() {
+      var object = {
+        no: this.code + 1,
+        point: this.point,
+        alamat: this.alamat
+      };
+      this.customer_details.push(object)
+      this.code++;
+    },
+
     getById() { },
     async onSubmit() {
-      const result = await this.validation();
+      const result = 2
 
-      if (result == 0) {
+      if (result != 0) {        
         await axios.post(
           AddCustomer, {
           customer_name: this.customer_name,
           customer_phone: parseInt(this.customer_phone) || 0,
+          customer_toko: this.customer_toko,
+          customer_singkatan: this.customer_singkatan,
           customer_email: this.customer_email,
           customer_address: this.customer_address,
           customer_npwp: this.customer_npwp,
-          customer_contact: this.customer_contact
+          customer_contact: this.customer_contact,
+          customer_details: this.customer_details,
         }
         ).then((response) => {
           Swal.fire({

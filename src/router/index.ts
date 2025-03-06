@@ -272,11 +272,24 @@ const router = createRouter({
     //o
     {
       path: '/opex',
-      name: 'Opex',
-      component: () => import('../views/Others/OPEX/index.vue'),
-      meta: {
-        title: 'Opex',
-      },
+      children: [
+        {
+          path: '',
+          name: 'Opex',
+          component: () => import('../views/Others/OPEX/index.vue'),
+          meta: {
+            title: 'Opex',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+      ]
     },
     //p
     {
@@ -323,20 +336,25 @@ const router = createRouter({
     },    
     //q
     {
-      path: '/quatation',
+      path: '/quotation',
       children: [
         {
-          path: '/quotation',
-          name: 'Quotation',
+          path: '',          
           component: () => import('../views/Others/Quotation/index.vue'),
           meta: {
             title: 'Quotation',
           },
         },
         {
-          path: '/quotation/form',
-          name: 'Quotation-Form',
+          path: 'form',          
           component: () => import('../views/Others/Quotation/form.vue'),
+          meta: {
+            title: 'Quotation-Form',
+          },
+        },
+        {
+          path: 'view/:id',          
+          component: () => import('../views/Others/Quotation/view.vue'),
           meta: {
             title: 'Quotation-Form',
           },
@@ -375,7 +393,7 @@ const router = createRouter({
       },
     },   
 
-    //s
+    //s    
     {
       path: '/sales-order',
       children: [
@@ -388,9 +406,15 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',
-          name: 'Sales Order Form',
+          path: 'form',          
           component: () => import('../views/Operation/SalesOrder/form.vue'),
+          meta: {
+            title: 'Sales Order-Form',
+          },
+        },        
+        {
+          path: 'view/:id',
+          component: () => import('../views/Operation/SalesOrder/view.vue'),
           meta: {
             title: 'Sales Order-Form',
           },
@@ -418,11 +442,22 @@ const router = createRouter({
     //v
     {
       path: '/vendor',
-      name: 'Vendor',
-      component: () => import('../views/MasterData/vendor/index.vue'),
-      meta: {
-        title: 'Vendor',
-      },
+      children: [
+        {
+          path: '',          
+          component: () => import('../views/MasterData/vendor/index.vue'),
+          meta: {
+            title: 'Vendor',
+          },
+        },
+        {
+          path: 'form',          
+          component: () => import('../views/MasterData/vendor/form.vue'),
+          meta: {
+            title: 'Vendor',
+          },
+        },
+      ]
     },
     //w
     //x

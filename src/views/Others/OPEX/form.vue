@@ -13,20 +13,19 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Account Receivable</h1>
-            <p class="text-gray-500 text-sm mt-1">Finance / Account Receivable / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800">Create New Opex</h1>
+            <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink
-              to="/account-receivable"
+              to="/opex"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
             >
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
             <button
-              type="submit"
-              :disabled="isSubmitting"
+              type="submit"              
               class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
@@ -42,52 +41,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Customer Name -->
           <FormGroup
-            label="Customer Name"
+            label="Opex"
             :required="true"
             :error="rules.customerName"
-            errorMessage="Customer name is required"
+            errorMessage="Opex is required"
           >
             <input
               type="text"
               id="customer_name"
               name="customer_name"
-              v-model="customerName"
+              v-model="opex_name"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
                 rules.customerName
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter customer name"
+              placeholder="Enter opex name"
               autofocus
             />
-          </FormGroup>
-
-          <!-- Invoice Number -->
-          <FormGroup
-            label="Invoice Number"
-            :required="true"
-            :error="rules.invoiceNumber"
-            errorMessage="Invoice number is required"
-          >
-            <input
-              type="text"
-              id="invoice_number"
-              name="invoice_number"
-              v-model="invoiceNumber"
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.invoiceNumber
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-              placeholder="Enter invoice number"
-            />
-          </FormGroup>
+          </FormGroup>          
 
           <!-- Amount -->
           <FormGroup
-            label="Amount"
+            label="Price"
             :required="true"
             :error="rules.amount"
             errorMessage="Amount is required and must be greater than 0"
@@ -96,7 +73,7 @@
               type="number"
               id="amount"
               name="amount"
-              v-model="amount"
+              v-model="opex_price"
               min="0"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
@@ -104,31 +81,32 @@
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter amount"
+              placeholder="Enter price"
             />
           </FormGroup>
 
-          <!-- Due Date -->
           <FormGroup
-            label="Due Date"
+            label="Price"
             :required="true"
-            :error="rules.dueDate"
-            errorMessage="Due date is required and must be in the future"
+            :error="rules.amount"
+            errorMessage="Amount is required and must be greater than 0"
           >
-            <input
-              type="date"
-              id="due_date"
-              name="due_date"
-              v-model="dueDate"
-              :class="[
+            <select name="opex_type" id="opex_type" v-model="opex_type"
+            :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.dueDate
+                rules.amount
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              :min="new Date().toISOString().split('T')[0]"
-            />
+            >
+              <option value="">-- select opex type --</option>
+              <option value="internal">Internal</option>
+              <option value="eksternal">Eksternal</option>
+              <option value="cogs">COGS</option>
+            </select>
           </FormGroup>
+
+          <!-- Due Date -->          
         </div>
       </div>
     </Form>
@@ -142,6 +120,10 @@ import { Form } from 'vee-validate'
 import { RouterLink } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
+import axios from 'axios'
+import { AddOpex } from '@/core/utils/url_api'
+import router from '@/router'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
   name: 'AccountReceivableForm',
@@ -153,11 +135,10 @@ export default defineComponent({
   },
 
   data() {
-    return {
-      customerName: '',
-      invoiceNumber: '',
-      amount: null,
-      dueDate: '',
+    return {                  
+      opex_name : '',
+      opex_price: 0,
+      opex_type: '',
       isSubmitting: false,
       notification: {
         show: false,
@@ -223,38 +204,41 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      if (this.isSubmitting) return
-
-      const isValid = this.validation()
-
-      if (!isValid) {
-        this.showNotification('error', 'Please fill in all required fields correctly')
-        return
-      }
-
-      this.isSubmitting = true
-
-      try {
-        const accountReceivableData = {
-          customerName: this.customerName,
-          invoiceNumber: this.invoiceNumber,
-          amount: this.amount,
-          dueDate: this.dueDate,
-        }
-
-        console.log('Submitting account receivable data:', accountReceivableData)
-        // Add your API call here
-
-        this.showNotification('success', 'Account receivable created successfully')
-        setTimeout(() => {
-          this.$router.push('/account-receivable')
-        }, 1500)
-      } catch (error) {
-        console.error('Error creating account receivable:', error)
-        this.showNotification('error', 'Failed to create account receivable. Please try again.')
-      } finally {
-        this.isSubmitting = false
-      }
+      await axios.post(AddOpex, {
+        opex_name : this.opex_name,
+        opex_price: this.opex_price,
+        opex_type : this.opex_type,
+      }).then((response) => {
+          console.log(response)
+          Swal.fire({
+            icon: "success",
+            title: 'Success',
+            text: "Data has been Saved"
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              var mssg = "";
+              if (this.id != null) {
+                mssg = "Success Update Opex";
+              } else {
+                mssg = "Success Create Opex";
+              }
+              await router.push("/opex");
+              this.alertStore.success(mssg);
+            }
+          })
+        }, (error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text:
+              (error.response &&
+                error.response &&
+                error.response.message) ||
+              error.message ||
+              error.toString(),
+          });
+        },
+        )
     },
   },
 })

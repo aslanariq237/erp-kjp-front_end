@@ -1,8 +1,6 @@
 <template>
   <AdminLayout>
-    <Form
-      @submit="onSubmit"
-      class="container mx-auto px-6 py-4">
+    <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
       <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
         @close="notification.show = false" />
@@ -126,6 +124,23 @@
               </tr>
             </tbody>
           </table>
+          <div class="flex justify-between mt-5">
+            <div class="w-full"></div>
+            <div class="w-full">
+              <tr class="flex justify-between">
+                <td>Sub Total</td>
+                <td>{{ formatCurrency(sub_total) }}</td>
+              </tr>
+              <tr class="flex justify-between">
+                <td>PPN</td>
+                <td>{{ formatCurrency(ppn) }}</td>
+              </tr>
+              <tr class="flex justify-between">
+                <td>Grand Total</td>
+                <td>{{ formatCurrency(grand_total) }}</td>
+              </tr>
+            </div>
+          </div>
         </div>
       </div>
     </Form>
@@ -140,6 +155,7 @@ import Swal from 'sweetalert2';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
+import { computed } from 'vue';
 import { Customer, Employee, Product, PurchaseOrderAdd } from '@/core/utils/url_api';
 
 export default defineComponent({
@@ -196,6 +212,24 @@ export default defineComponent({
     this.getProducts();
   },
 
+  computed: {
+      // Calculate subtotal based on all items in sales_order_details
+      sub_total() {
+        return this.purchase_order_details.reduce((total, item) => {
+          return total + item.quantity * item.price;
+        }, 0);
+      },
+
+      // Calculate PPN (11% of subtotal)
+      ppn() {
+        return this.sub_total * 0.11;
+      },
+
+      // Calculate grand total (subtotal + PPN)
+      grand_total() {
+        return this.sub_total + this.ppn;
+      },
+    },
   methods: {
     getCustomer() {
       axios.get(Customer).then((res) => {
@@ -214,7 +248,7 @@ export default defineComponent({
         var data = res.data;
         this.employees = data;
       })
-    },
+    },    
 
     addPoDetails() {
       axios
@@ -228,9 +262,21 @@ export default defineComponent({
             price: this.price,
           };
           this.purchase_order_details.push(object)
+
+          this.product_id = null,
+          this.quantity = 0,
+          this.price = 0
         })
 
     },
+
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    },
+
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -245,24 +291,24 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 2;     
+      var count = 2;
 
       return count
     },
 
-    async onSubmit() {      
-      const result = 2;     
+    async onSubmit() {
+      const result = 2;
       if (result != 0) {
-        await axios.post(PurchaseOrderAdd,{
-          customer_id : this.customer_id,
-          employee_id : this.employee_id,
-          termin : this.termin,
-          total_tax : this.total_tax,
-          status_payment : this.status_payment,
-          deposit : this.deposit,
-          issue_at : this.issue_at,
-          due_at : this.due_at,
-          purchase_order_details : this.purchase_order_details,
+        await axios.post(PurchaseOrderAdd, {
+          customer_id: this.customer_id,
+          employee_id: this.employee_id,
+          termin: this.termin,
+          total_tax: this.total_tax,
+          status_payment: this.status_payment,
+          deposit: this.deposit,
+          issue_at: this.issue_at,
+          due_at: this.due_at,
+          purchase_order_details: this.purchase_order_details,
         }).then((response) => {
           console.log(response)
           Swal.fire({

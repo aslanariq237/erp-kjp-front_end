@@ -70,7 +70,7 @@
                 <th
                   v-for="header in tableHeaders"
                   :key="header.key"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   @click="sortBy = header.key"
                 >
                   <div class="flex items-center gap-2">
@@ -93,16 +93,20 @@
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.description }}</div>
+                  {{ entry.code_quatation }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.amount) }}
+                  {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.date }}
+                  {{ entry.sub_total }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.created_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button @click="viewData(entry.id_quatation)" class="bg-blue-500 mx-4 px-3 py-2 rounded-lg text-white">View</button>
+                  <button @click="viewData" class="bg-success-500 px-3 py-2 rounded-lg text-white">Edit</button>
                 </td>
               </tr>
             </tbody>
@@ -174,8 +178,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
+import axios from 'axios'
+import { Quatations } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'QuotationPage',
@@ -188,10 +195,11 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'description', label: 'Description' },
+      { key: 'Code', label: 'Code' },
+      { key: 'Customer', label: 'Customer' },
       { key: 'amount', label: 'Amount' },
       { key: 'date', label: 'Date' },
+      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state
@@ -203,20 +211,18 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const entries = ref([
-      {
-        id: 1,
-        description: 'Product A',
-        amount: 5000,
-        date: '2024-02-20',
-      },
-      {
-        id: 2,
-        description: 'Product B',
-        amount: 2000,
-        date: '2024-02-21',
-      },
-    ])
+    const entries = ref([])
+
+    const Quatation = async() => {
+      await axios.get(Quatations).then((res) => {
+        var data = res.data;
+        entries.value = data;
+      })
+    }
+
+    onMounted(() => {
+      Quatation();
+    })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -249,6 +255,10 @@ export default defineComponent({
     const endIndex = computed(() =>
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
+
+    const viewData = (id) => {
+      router.push("/quotation/view/" + id);      
+    }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
@@ -318,6 +328,8 @@ export default defineComponent({
     }
 
     return {
+      viewData,
+
       // State
       loading,
       searchQuery,

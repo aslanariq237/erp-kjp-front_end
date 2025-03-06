@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
-          <p class="text-gray-500 text-sm mt-1">Others / Sales Order</p>
+          <p class="text-gray-500 text-sm mt-1">Sales / Sales Order</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -103,24 +103,21 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.total_tax) }}
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.deposit) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.ppn) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.grand_total) }}
-                </td>
+                </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
+                </td>
+                <td class="">
+                  <button 
+                    type="button" 
+                    class="bg-green-500 text-white rounded-lg px-3 py-2"
+                    @click="viewData(entry.id_so)"
+                  >
+                    View
+                  </button>                
                 </td>
               </tr>
             </tbody>
@@ -196,6 +193,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { SalesOrders } from '@/core/utils/url_api'
+import router from '@/router'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -210,13 +208,10 @@ export default defineComponent({
       { key: 'code_so', label: 'Code SO' },      
       { key: 'customer', label: 'Customer' },      
       { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
-      { key: 'total_service', label: 'Total Service' },      
-      { key: 'deposit', label: 'Deposit' },
-      { key: 'ppn', label: 'PPN' },
-      { key: 'grand_total', label: 'Grand Total' },
+      { key: 'sub_total', label: 'Sub Total' },    
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
+      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state
@@ -265,6 +260,10 @@ export default defineComponent({
 
       return result
     })
+
+    const viewData = (id) => {
+      router.push('/sales-order/view/' + id);
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -350,6 +349,8 @@ export default defineComponent({
     }
 
     return {
+      viewData,
+      
       // State
       loading,
       searchQuery,

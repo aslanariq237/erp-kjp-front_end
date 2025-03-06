@@ -1,8 +1,6 @@
 <template>
   <AdminLayout>
-    <Form
-      @submit="onSubmit"
-      class="container mx-auto px-6 py-4">
+    <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
       <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
         @close="notification.show = false" />
@@ -15,7 +13,7 @@
             <p class="text-gray-500 text-sm mt-1">Others / Sales Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/purchase-order"
+            <RouterLink to="/sales-order"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -32,19 +30,31 @@
 
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Issue Date -->
-          <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
-            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
-          </FormGroup>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <!-- Issue Date -->
+            <FormGroup label="Issue Date" :required="true" :error="rules.issue_at"
+              errorMessage="Issue Date is required">
+              <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
+            </FormGroup>
 
-          <!-- Due Date -->
-          <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
-            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
-          </FormGroup>
+            <!-- Termin -->
+            <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
+              <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
+                <option value="type1">DAP</option>
+                <option value="type2">DBP</option>
+                <option value="type3">N30</option>
+                <option value="type3">N60</option>
+              </select>
+            </FormGroup>
+
+            <!-- Due Date -->
+            <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+              <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
+            </FormGroup>
+          </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">          
           <!-- No -->
-          <FormGroup class="mt-5" label="Customer" :required="true" :error="rules.customer_id"
-            errorMessage="Customer is Required">
+          <FormGroup label="Customer" :required="true" :error="rules.customer_id" errorMessage="Customer is Required">
             <select name="customer_id" id="customer_id" v-model="customer_id" class="rounded w-full">
               <option v-for="customer in customers" :key="customers.customer_id" :value="customer.customer_id">
                 {{ customer.customer_name }}
@@ -52,24 +62,6 @@
             </select>
           </FormGroup>
           <!-- Code PO -->
-          <FormGroup class="mt-5" label="Employee" :required="true" :error="rules.id_payment_type"
-            errorMessage="Employee is Required">
-            <select name="id_payment_type" id="id_payment_type" v-model="employee_id" class="rounded w-full">
-              <option v-for="employee in employees" :key="employee.employee_id" :value="employee.employee_id">
-                {{ employee.employee_name }}
-              </option>
-            </select>
-          </FormGroup>
-
-          <!-- Status Payment -->
-          <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
-              <option value="type1">DP</option>
-              <option value="type2">Termin 50%</option>
-              <option value="type3">Termin 30%</option>
-              <option value="type3">Termin 20%</option>
-            </select>
-          </FormGroup>
 
           <!-- Total Service -->
           <FormGroup label="Deposit" :required="true" :error="rules.deposit" errorMessage="Deposit is required">
@@ -100,7 +92,7 @@
           <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
             errorMessage="Price is required">
             <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
+              placeholder="Enter Price" :valu="price" />
           </FormGroup>
           <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
             @click="addPoDetails">tambah</button>
@@ -109,23 +101,35 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Amount</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
               <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
-                </td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.price }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
               </tr>
             </tbody>
           </table>
+          <div class="flex justify-between mt-5">
+            <div class="w-full"></div>
+            <div class="w-full"></div>
+            <div class="w-full">
+              <div class="sub_total flex justify-between mt-3">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>              
+            </div>
+          </div>
         </div>
       </div>
     </Form>
@@ -140,6 +144,7 @@ import Swal from 'sweetalert2';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
+import { computed } from 'vue';
 import { Customer, Employee, Product, SalesOrderAdd } from '@/core/utils/url_api';
 
 export default defineComponent({
@@ -195,6 +200,33 @@ export default defineComponent({
     this.getEmployee();
     this.getProducts();
   },
+  watch: {
+    issue_at(newIssueDate) {
+      this.calculateDueDate(newIssueDate, this.termin);
+    },
+    termin(newTermin) {
+      this.calculateDueDate(this.issue_at, newTermin);
+    },
+  },
+
+  computed: {
+    // Calculate subtotal based on all items in sales_order_details
+    sub_total() {
+      return this.sales_order_details.reduce((total, item) => {
+        return total + item.quantity * item.price;
+      }, 0);
+    },
+
+    // Calculate PPN (11% of subtotal)
+    ppn() {
+      return this.sub_total * 0.11;
+    },
+
+    // Calculate grand total (subtotal + PPN)
+    grand_total() {
+      return this.sub_total + this.ppn;
+    },
+  },
 
   methods: {
     getCustomer() {
@@ -216,6 +248,13 @@ export default defineComponent({
       })
     },
 
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    },
+
     addPoDetails() {
       axios
         .get(Product + '/' + this.product_id)
@@ -223,14 +262,39 @@ export default defineComponent({
           var data = res.data;
           var object = {
             product_id: data.product_id,
+            product_code: data.product_code,
+            product_pn: data.product_sn,
             product_desc: data.product_desc,
             quantity: this.quantity,
             price: this.price,
+            amount: this.price * this.quantity,
           };
           this.sales_order_details.push(object)
-        })
 
+          this.product_id = null;
+          this.quantity = 0;
+          this.price = 0;
+        })
     },
+
+    calculateDueDate(issueDate, termin) {
+      if (issueDate && termin === 'type3') {
+        const date = new Date(issueDate); // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30); // Add 30 days
+        this.due_at = this.formatDate(date); // Set due_at to the new date
+      } else {
+        this.due_at = ''; // Reset due_at if termin is not type3
+      }
+    },
+
+    // Helper method to format date as YYYY-MM-DD
+    formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -257,19 +321,19 @@ export default defineComponent({
       return count
     },
 
-    async onSubmit() {      
-      const result = 2;     
+    async onSubmit() {
+      const result = 2;
       if (result != 0) {
-        await axios.post(SalesOrderAdd,{
-          customer_id : this.customer_id,
-          employee_id : this.employee_id,
-          termin : this.termin,
-          total_tax : this.total_tax,
-          status_payment : this.status_payment,
-          deposit : this.deposit,
-          issue_at : this.issue_at,
-          due_at : this.due_at,
-          sales_order_details : this.sales_order_details,
+        await axios.post(SalesOrderAdd, {
+          customer_id: this.customer_id,
+          employee_id: 1,
+          termin: this.termin,
+          total_tax: this.total_tax,
+          status_payment: this.status_payment,
+          deposit: this.deposit,
+          issue_at: this.issue_at,
+          due_at: this.due_at,
+          sales_order_details: this.sales_order_details,
         }).then((response) => {
           console.log(response)
           Swal.fire({
