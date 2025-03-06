@@ -48,13 +48,7 @@
               </option>
             </select>
           </FormGroup>
-          <FormGroup label="Employee" :required="false">
-            <select name="employee_id" id="employee_id" v-model="employee_id" class="rounded w-full" @change="selectedSalesOrder">
-              <option v-for="emp in employee" :key="emp.employee_id" :value="emp.employee_id">
-                {{ emp.employee_name }}
-              </option>
-            </select>
-          </FormGroup>          
+       
           <!-- DO Type -->
           <FormGroup label="Customer" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
@@ -77,8 +71,7 @@
         <div class=" mt-8">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
+              <tr class="text-left">                
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Desc</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">brand</th>
@@ -88,10 +81,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="products in sales_order_details" :key="products.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
-                </td>
+              <tr v-for="products in sales_order_details" :key="products.product_id">                
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_sn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
@@ -105,6 +95,16 @@
               </tr>
             </tbody>
           </table>
+          <div class="flex justify-between mt-5">
+            <div class="w-full"></div>
+            <div class="w-full"></div>
+            <div class="w-full">
+              <div class="sub_total flex justify-between mt-3">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Form>
@@ -117,6 +117,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
+import { computed } from 'vue'
 import Swal from 'sweetalert2'
 import axios from 'axios'
 import {
@@ -165,6 +166,16 @@ export default defineComponent({
     this.getSalesOrder();
     this.getEmployee();
   },
+
+  computed: {
+    // Calculate subtotal based on all items in sales_order_details
+    sub_total() {
+      return this.sales_order_details.reduce((total, item) => {
+        return total + item.quantity * item.price;
+      }, 0);
+    },    
+  },
+
   methods: {
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
@@ -184,11 +195,19 @@ export default defineComponent({
         this.customer_id = data.customer.customer_id;                
         this.customer_name = data.customer.customer_name;        
         this.customer_npwp = data.customer.customer_npwp;
-        this.customer_address = data.customer.customer_address;        
+        this.customer_address = data.customer.customer_address; 
+        this.due_at = data.due_at;       
         if (data.id_so) {
           this.SelectDataPo(data.id_so)
         }
       })
+    },
+
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',  
+      }).format(value)
     },
 
     SelectDataPo(id) {
@@ -251,7 +270,7 @@ export default defineComponent({
       if (result != 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id : this.customer_id,
-          employee_id : this.employee_id,
+          employee_id : 1,
           id_so       : this.id_so,
           issue_at    : this.issue_at,
           due_at      : this.due_at,

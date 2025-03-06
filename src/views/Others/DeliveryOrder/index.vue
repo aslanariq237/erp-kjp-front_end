@@ -105,9 +105,6 @@
                   {{ entry.employee.employee_name }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_po }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -308,8 +305,7 @@ export default defineComponent({
         'Code DO': entry.code_do,
         'Customer ID': entry.id_customer,
         'Employee ID': entry.id_employee,
-        'Bank Account ID': entry.id_bank_account,
-        'PO ID': entry.id_po,
+        'Bank Account ID': entry.id_bank_account,        
         'Issue Date': entry.issue_at,
         'Due Date': entry.due_at,
       }))
@@ -345,9 +341,8 @@ export default defineComponent({
       tableHeaders: [        
         { key: 'code_do', label: 'Code DO' },
         { key: 'code_so', label: 'Code SO' },
-        { key: 'customer', label: 'Customer ID' },
-        { key: 'employee', label: 'Employee ID' },        
-        { key: 'id_po', label: 'PO ID' },
+        { key: 'customer', label: 'Customer' },
+        { key: 'employee', label: 'Employee' },                
         { key: 'issue_at', label: 'Issue Date' },
         { key: 'due_at', label: 'Due Date' },
       ],

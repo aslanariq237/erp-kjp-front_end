@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Report Management</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / Report</p>
+          <h1 class="text-2xl font-bold text-gray-800">Report Sales Management</h1>
+          <p class="text-gray-500 text-sm mt-1">Sales / Report </p>
         </div>
         <div class="flex gap-3">
           <button
@@ -13,13 +13,7 @@
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
-          </button>
-          <RouterLink
-            to="/report/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Add New Report
-          </RouterLink>
+          </button>          
         </div>
       </div>
 
@@ -112,34 +106,36 @@
                 <td colspan="5" class="px-6 py-4">No data found</td>
               </tr>
               <tr
-                v-for="(report, index) in paginatedData"
-                :key="report.id"
+                v-for="(entry, index) in paginatedData"
+                :key="entry.id_invoice"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              >                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ report.name }}</div>
+                  {{ entry.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(report.amount) }}
+                  {{ entry.customer.customer_name }}
+                </td> 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.employee.employee_name }}
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatAccountNumber(report.accountNumber) }}
+                  {{ formatCurrency(entry.sub_total * 0.11) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(report)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
-                    <button @click="editReport(report)" class="text-green-600 hover:text-green-900">
-                      Edit
-                    </button>
-                    <button @click="confirmDelete(report)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
-                  </div>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.issue_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.due_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button class="bg-green-500 text-white px-3 py-2 rounded-lg">View</button>
                 </td>
               </tr>
             </tbody>
@@ -238,9 +234,12 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { Invoice } from '@/core/utils/url_api';
+
+import axios from 'axios'
 
 export default defineComponent({
   name: 'ReportPage',
@@ -257,63 +256,58 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'name', label: 'Name' },
-      { key: 'amount', label: 'Amount' },
-      { key: 'accountNumber', label: 'Account Number' },
-      { key: 'actions', label: 'Actions' },
+      { key: 'code_invoice', label: 'Code Invoice' },      
+      { key: 'Customer', label: 'Customer' },
+      { key: 'Employee', label: 'Employee' },
+      { key: 'sub_total', label: 'Sub Total' },                 
+      { key: 'ppn', label: 'PPN' },
+      { key: 'grand_total', label: 'Grand Total' },
+      { key: 'issue_at', label: 'Issue Date' },
+      { key: 'due_at', label: 'Due Date' },
+      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state
     const searchQuery = ref('')
     const sortBy = ref('name')
     const minAmount = ref('')
+    const startDate = ref('')
+    const endDate = ref('')
     const maxAmount = ref('')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
+    const invoice = ref([]); 
 
     // Sample data - replace with API call
-    const reportData = ref([
-      {
-        id: 1,
-        name: 'Report A',
-        amount: 1000,
-        accountNumber: '1234567890',
-        dateCreated: '2024-02-20',
-      },
-      {
-        id: 2,
-        name: 'Report B',
-        amount: 2000,
-        accountNumber: '0987654321',
-        dateCreated: '2024-02-21',
-      },
-    ])
+    const reportData = ref([])
+
+    const getInvoices = async() => {
+      const response = await axios.get(Invoice)
+      invoice.value = response.data;   
+    }
+
+    onMounted(() => {
+      getInvoices();
+    });
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
-      let result = [...reportData.value]
+      let result = [...invoice.value]
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (report) =>
-            report.name.toLowerCase().includes(query) || report.accountNumber.includes(query),
-        )
+        result = result.filter((entry) => entry.code_invoice.toLowerCase().includes(query))
       }
 
-      if (minAmount.value) {
-        result = result.filter((report) => report.amount >= minAmount.value)
+      if (startDate.value) {
+        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
       }
 
-      if (maxAmount.value) {
-        result = result.filter((report) => report.amount <= maxAmount.value)
+      if (endDate.value) {
+        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
       }
 
       result.sort((a, b) => {
-        if (sortBy.value === 'amount') {
-          return a.amount - b.amount
-        }
         return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
       })
 
@@ -365,7 +359,7 @@ export default defineComponent({
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'IDR',
       }).format(value)
     }
 

@@ -114,6 +114,9 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button class="bg-green-500 text-white px-3 py-2 rounded-lg">View</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -208,6 +211,7 @@ export default defineComponent({
       { key: 'grand_total', label: 'Grand Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
+      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state

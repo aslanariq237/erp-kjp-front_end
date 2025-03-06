@@ -220,7 +220,7 @@ const menuGroups = [
           { name: 'Delivery Order', path: '/delivery-order', pro: false },      
           { name: 'Invoice', path: '/invoice', pro: false },
           { name: 'Tanda Terima', path: '/tanda-terima', pro: false },
-          { name: 'Report', path: '/report', pro: false },
+          { name: 'Report', path: '/report/sales', pro: false },
         ],
       },
       {

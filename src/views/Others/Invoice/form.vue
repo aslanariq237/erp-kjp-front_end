@@ -13,7 +13,7 @@
             <p class="text-gray-500 text-sm mt-1">Others / Invoice / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/delivery-order"
+            <RouterLink to="/invoice"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -95,8 +95,7 @@
         <div class=" mt-8">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
+              <tr class="text-left">                
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code_DO</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Desc</th>
@@ -106,10 +105,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="products in delivery_order_details" :key="products.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
-                </td>                
+              <tr v-for="products in delivery_order_details" :key="products.product_id">                               
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.id_do }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_pn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
@@ -121,6 +117,24 @@
               </tr>
             </tbody>
           </table>
+          <div class="flex justify-between mt-5">
+            <div class="w-full"></div>
+            <div class="w-full"></div>
+            <div class="w-full">
+              <div class="sub_total flex justify-between mt-3">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3">
+                <p>PPN</p>
+                <p>{{ formatCurrency(ppn) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3">
+                <p>Grand Total</p>
+                <p>{{ formatCurrency(grand_total) }}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Form>
@@ -136,6 +150,7 @@ import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import Swal from 'sweetalert2'
 import axios from 'axios'
+import { computed } from 'vue'
 import {  
   DeliverSales,  
   DetailDo,  
@@ -184,6 +199,23 @@ export default defineComponent({
   async mounted() {
     this.getSalesOrder();
   },
+  computed: {
+    // Calculate subtotal based on all items in sales_order_details
+    sub_total() {
+      return this.delivery_order_details.reduce((total, item) => {
+        return total + item.quantity * item.price;
+      }, 0);
+    },
+    
+    ppn(){
+      return this.sub_total * 0.11;
+    },
+
+    grand_total(){
+      return this.ppn + this.sub_total;
+    }
+
+  },
   methods: {
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
@@ -199,7 +231,7 @@ export default defineComponent({
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
         this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;
+        this.employee_name = data.employee.employee_name;        
 
         if (data.id_so) {          
           this.getDeliveryOrder(data.id_so)
@@ -215,8 +247,14 @@ export default defineComponent({
       })
     },
 
-    addDoDetail(){
-      this.delivery_order_details.splice(0);      
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',  
+      }).format(value)
+    },
+
+    addDoDetail(){          
       axios.get(DetailDo + '/' + this.id_do).then(
         (res) => {
           var data = res.data;          
@@ -293,7 +331,7 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation()
+      const result = await this.validation()      
       if (result != 0) {
         await axios.post(InvoiceAdd, {          
           customer_id : this.customer_id,

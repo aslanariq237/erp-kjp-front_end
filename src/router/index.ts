@@ -366,15 +366,15 @@ const router = createRouter({
       path: '/report',
       children: [
         {
-          path: '',
+          path: 'sales',
           name: 'Report',
-          component: () => import('../views/Others/Report/index.vue'),
+          component: () => import('../views/Others/Report/indexsales.vue'),
           meta: {
             title: 'Report',
           },
         },
         {
-          path: 'form',
+          path: 'scm',
           name: 'Report-Form',
           component: () => import('../views/Others/Report/form.vue'),
           meta: {
