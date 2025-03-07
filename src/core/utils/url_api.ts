@@ -29,6 +29,7 @@ export const EmployeeCode = baseUrl + 'employees_code'
 
 //I
 export const Invoice = baseUrl + 'invoices'
+export const DetailInvoice = baseUrl + 'detail_invoices'
 export const InvoiceAdd = baseUrl + 'invoices_code'
 
 export const Inquiry = baseUrl + 'inquiry';

@@ -115,7 +115,10 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button class="bg-green-500 text-white px-3 py-2 rounded-lg">View</button>
+                  <button 
+                    class="bg-green-500 text-white px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >View</button>
                 </td>
               </tr>
             </tbody>
@@ -191,6 +194,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
 import { Invoice, SalesOrders } from '@/core/utils/url_api';
+import router from '@/router';
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -232,6 +236,10 @@ export default defineComponent({
         const invoiceId = invoice.value[0].id_transaksi; // Assuming 'id_transaksi' is the ID to use
         getById(invoiceId);
       }
+    }
+
+    const viewData = (id) => {
+      router.push('/invoice/view/' + id);
     }
 
     const getById = async() => {
@@ -350,6 +358,7 @@ export default defineComponent({
     }
 
     return {
+      viewData,
       // State
       loading,
       searchQuery,

@@ -110,6 +110,14 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button 
+                    class="bg-green-500 text-white px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_do)"
+                  >
+                  View
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -183,8 +191,9 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { DeliveryOrder } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -268,6 +277,10 @@ export default defineComponent({
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
+    const viewData = (id) => {
+      router.push('/delivery-order/view' + id);
+    }
+
     const displayedPages = computed(() => {
       const delta = 2
       const range = []
@@ -330,6 +343,7 @@ export default defineComponent({
     }
 
     return {
+      viewData,
       // State
       loading,
       searchQuery,
@@ -345,6 +359,7 @@ export default defineComponent({
         { key: 'employee', label: 'Employee' },                
         { key: 'issue_at', label: 'Issue Date' },
         { key: 'due_at', label: 'Due Date' },
+        { key: 'action', label: 'Action' },
       ],
 
       // Computed
