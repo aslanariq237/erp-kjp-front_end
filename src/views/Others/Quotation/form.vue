@@ -2,8 +2,12 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
-        @close="notification.show = false" />
+      <Notification
+        v-if="notification.show"
+        :type="notification.type"
+        :message="notification.message"
+        @close="notification.show = false"
+      />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6">
@@ -13,13 +17,17 @@
             <p class="text-gray-500 text-sm mt-1">Others / Quatation / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/quotation"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
+            <RouterLink
+              to="/quotation"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
+            >
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <button
+              type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -32,12 +40,28 @@
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
-          <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
-            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
+          <FormGroup
+            label="Issue Date"
+            :required="true"
+            :error="rules.issue_at"
+            errorMessage="Issue Date is required"
+          >
+            <input
+              type="date"
+              id="issue_at"
+              name="issue_at"
+              v-model="issue_at"
+              :class="inputClass(rules.issue_at)"
+            />
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
+          <FormGroup
+            label="Termin"
+            :required="true"
+            :error="rules.po_type"
+            errorMessage="PO Type is required"
+          >
             <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
               <option value="type1">DAP</option>
               <option value="type2">DBP</option>
@@ -47,55 +71,149 @@
           </FormGroup>
 
           <!-- Due Date -->
-          <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
-            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
+          <FormGroup
+            label="Due Date"
+            :required="true"
+            :error="rules.due_at"
+            errorMessage="Due Date is required"
+          >
+            <input
+              type="date"
+              id="due_at"
+              name="due_at"
+              v-model="due_at"
+              :class="inputClass(rules.due_at)"
+            />
           </FormGroup>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
-          <FormGroup class="mt-5" label="Customer" :required="true" :error="rules.customer_id"
-            errorMessage="Customer is Required">
-            <select name="customer_id" id="customer_id" v-model="customer_id" class="rounded w-full">
-              <option v-for="customer in customers" :key="customers.customer_id" :value="customer.customer_id">
+          <FormGroup
+            label="Customer"
+            :required="true"
+            :error="rules.customer_id"
+            errorMessage="Customer is Required"
+          >
+            <input
+              type="text"
+              name="customer_name"
+              id="customer_name"
+              v-model="customer_name"
+              @input="filterCustomers"
+              class="rounded w-full"
+              placeholder="Type customer name"
+            />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white">
+              <li
+                v-for="customer in filteredCustomers"
+                :key="customer.customer_id"
+                @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200"
+              >
                 {{ customer.customer_name }}
-              </option>
-            </select>
+              </li>
+            </ul>
           </FormGroup>
           <!-- Code PO -->
-          <FormGroup class="mt-5" label="Employee" :required="true" :error="rules.id_payment_type"
-            errorMessage="Employee is Required">
-            <select name="id_payment_type" id="id_payment_type" v-model="employee_id" class="rounded w-full">
-              <option v-for="employee in employees" :key="employee.employee_id" :value="employee.employee_id">
+          <FormGroup
+            class="mt-5"
+            label="Employee"
+            :required="true"
+            :error="rules.id_payment_type"
+            errorMessage="Employee is Required"
+          >
+            <input
+              type="text"
+              name="employee_name"
+              id="employee_name"
+              v-model="employee_name"
+              @input="filterEmployees"
+              class="rounded w-full"
+              placeholder="Type employee name"
+            />
+            <ul v-if="filteredEmployees.length" class="border rounded w-full mt-2 bg-white">
+              <li
+                v-for="employee in filteredEmployees"
+                :key="employee.employee_id"
+                @click="selectEmployee(employee)"
+                class="p-2 cursor-pointer hover:bg-gray-200"
+              >
                 {{ employee.employee_name }}
-              </option>
-            </select>
+              </li>
+            </ul>
           </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end mt-8">
-          <FormGroup class="w-full" label="product" :required="true" :error="rules.product_id"
-            errorMessage="product_id is required">
-            <select id="product_id" product name="product_id" v-model="product_id" class="rounded w-full">
-              <option v-for="product in products" :key="product.product_id" :value="product.product_id">
+          <FormGroup
+            class="w-full"
+            label="product"
+            :required="true"
+            :error="rules.product_id"
+            errorMessage="product_id is required"
+          >
+            <input
+              type="text"
+              name="product_name"
+              id="product_name"
+              v-model="product_name"
+              @input="filterProducts"
+              class="rounded w-full"
+              placeholder="Type product name"
+            />
+            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white">
+              <li
+                v-for="product in filteredProducts"
+                :key="product.product_id"
+                @click="selectProduct(product)"
+                class="p-2 cursor-pointer hover:bg-gray-200"
+              >
                 {{ product.product_sn }} - {{ product.product_desc }}
-              </option>
-            </select>
+              </li>
+            </ul>
           </FormGroup>
 
           <!-- Grand Total -->
-          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
-            errorMessage="Quantity is required">
-            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
+          <FormGroup
+            class="w-full"
+            label="Quantity"
+            :required="true"
+            :error="rules.quantity"
+            errorMessage="Quantity is required"
+          >
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              v-model="quantity"
+              :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity"
+            />
           </FormGroup>
-          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
-            errorMessage="Price is required">
-            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
+          <FormGroup
+            class="w-full"
+            label="Price"
+            :required="true"
+            :error="rules.quantity"
+            errorMessage="Price is required"
+          >
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              v-model="price"
+              :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity"
+            />
           </FormGroup>
-          <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-            @click="addPoDetails">tambah</button>
+          <button
+            type="button"
+            class="border-gray-300 border-2 px-3 h-12 rounded-lg"
+            @click="addPoDetails"
+          >
+            tambah
+          </button>
         </div>
-        <div class=" mt-5">
+        <div class="mt-5">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-left">
@@ -103,8 +221,12 @@
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Amount</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                  Product Price
+                </th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                  Product Amount
+                </th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
@@ -135,16 +257,23 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import AdminLayout from '@/components/layout/AdminLayout.vue';
-import { Form, Field, ErrorMessage } from 'vee-validate';
-import Swal from 'sweetalert2';
-import Notification from '@/components/Notification.vue';
-import FormGroup from '@/components/FormGroup.vue';
-import axios from 'axios';
-import { computed } from 'vue';
-import { Customer, Employee, InquiryAdd, Product, QuatationsAdd, SalesOrderAdd } from '@/core/utils/url_api';
-import router from '@/router';
+import { defineComponent } from 'vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import Swal from 'sweetalert2'
+import Notification from '@/components/Notification.vue'
+import FormGroup from '@/components/FormGroup.vue'
+import axios from 'axios'
+import { computed } from 'vue'
+import {
+  Customer,
+  Employee,
+  InquiryAdd,
+  Product,
+  QuatationsAdd,
+  SalesOrderAdd,
+} from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -160,6 +289,12 @@ export default defineComponent({
   data() {
     return {
       customers: [],
+      customer_name: '',
+      filteredCustomers: [],
+      employee_name: '',
+      filteredEmployees: [],
+      product_name: '',
+      filteredProducts: [],
       employees: [],
       products: [],
       product_id: [],
@@ -167,8 +302,8 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       price: 0,
-      termin: "",
-      po_type: "",
+      termin: '',
+      po_type: '',
       status_payment: "Hasn't Payed",
       total_tax: 0,
       total_service: 0,
@@ -195,17 +330,17 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.getCustomer();
-    this.getEmployee();
-    this.getProducts();
+    this.getCustomer()
+    this.getEmployee()
+    this.getProducts()
   },
 
   watch: {
     issue_at(newIssueDate) {
-      this.calculateDueDate(newIssueDate, this.termin);
+      this.calculateDueDate(newIssueDate, this.termin)
     },
     termin(newTermin) {
-      this.calculateDueDate(this.issue_at, newTermin);
+      this.calculateDueDate(this.issue_at, newTermin)
     },
   },
 
@@ -213,73 +348,107 @@ export default defineComponent({
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
       return this.inquiry_details.reduce((total, item) => {
-        return total + item.quantity * item.price;
-      }, 0);
+        return total + item.quantity * item.price
+      }, 0)
     },
   },
 
   methods: {
     getCustomer() {
       axios.get(Customer).then((res) => {
-        var data = res.data;
-        this.customers = data;
+        var data = res.data
+        this.customers = data
       })
     },
     getProducts() {
       axios.get(Product).then((res) => {
-        var data = res.data;
+        var data = res.data
         this.products = data
       })
     },
     getEmployee() {
       axios.get(Employee).then((res) => {
-        var data = res.data;
-        this.employees = data;
+        var data = res.data
+        this.employees = data
       })
+    },
+    filterProducts() {
+      const searchTerm = this.product_name.toLowerCase()
+      this.filteredProducts = this.products.filter((product) => {
+        const desc = product.product_desc.toLowerCase()
+        const sn = product.product_sn.toLowerCase()
+        return desc.includes(searchTerm) || sn.includes(searchTerm)
+      })
+    },
+    selectProduct(product) {
+      this.product_id = product.product_id
+      this.product_name = `${product.product_sn} - ${product.product_desc}`
+      this.filteredProducts = []
+    },
+    filterCustomers() {
+      const searchTerm = this.customer_name.toLowerCase()
+      this.filteredCustomers = this.customers.filter((customer) => {
+        const name = customer.customer_name.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    },
+    selectCustomer(customer) {
+      this.customer_id = customer.customer_id
+      this.customer_name = customer.customer_name
+      this.filteredCustomers = []
+    },
+    filterEmployees() {
+      const searchTerm = this.employee_name.toLowerCase()
+      this.filteredEmployees = this.employees.filter((employee) => {
+        const name = employee.employee_name.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    },
+    selectEmployee(employee) {
+      this.employee_id = employee.employee_id
+      this.employee_name = employee.employee_name
+      this.filteredEmployees = []
     },
 
     addPoDetails() {
-      axios
-        .get(Product + '/' + this.product_id)
-        .then((res) => {
-          var data = res.data;
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            quantity: this.quantity,
-            price: this.price,
-            amount: this.price * this.quantity,
-          };
-          this.inquiry_details.push(object)
-        })
-
+      axios.get(Product + '/' + this.product_id).then((res) => {
+        var data = res.data
+        var object = {
+          product_id: data.product_id,
+          product_code: data.product_code,
+          product_pn: data.product_sn,
+          product_desc: data.product_desc,
+          quantity: this.quantity,
+          price: this.price,
+          amount: this.price * this.quantity,
+        }
+        this.inquiry_details.push(object)
+      })
     },
 
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'IDR',  
+        currency: 'IDR',
       }).format(value)
     },
 
     calculateDueDate(issueDate, termin) {
       if (issueDate && termin === 'type3') {
-        const date = new Date(issueDate); // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 30); // Add 30 days
-        this.due_at = this.formatDate(date); // Set due_at to the new date
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date) // Set due_at to the new date
       } else {
-        this.due_at = ''; // Reset due_at if termin is not type3
+        this.due_at = '' // Reset due_at if termin is not type3
       }
     },
 
     // Helper method to format date as YYYY-MM-DD
     formatDate(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
     },
 
     showNotification(type, message) {
@@ -296,62 +465,63 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 0;
+      var count = 0
 
-      if (this.customer_id == "" || this.customer_id == null) {
-        this.rules.customer_id = true;
+      if (this.customer_id == '' || this.customer_id == null) {
+        this.rules.customer_id = true
         count++
       } else {
-        this.rules.customer_id = false;
+        this.rules.customer_id = false
       }
 
       return count
     },
 
     async onSubmit() {
-      const result = 2;
+      const result = 2
       if (result != 0) {
-        await axios.post(QuatationsAdd, {
-          customer_id: this.customer_id,
-          employee_id: this.employee_id,
-          termin : this.termin,
-          total_tax: this.total_tax,
-          issue_at: this.issue_at,
-          due_at: this.due_at,
-          sub_total : this.sub_total,
-          inquiry_details: this.inquiry_details,
-        }).then((response) => {
-          console.log(response)
-          Swal.fire({
-            icon: "success",
-            title: 'Success',
-            text: "Data has been Saved"
-          }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Employee";
-              } else {
-                mssg = "Success Create Employee";
-              }
-              await router.push("/employee");
-              this.alertStore.success(mssg);
-            }
+        await axios
+          .post(QuatationsAdd, {
+            customer_id: this.customer_id,
+            employee_id: this.employee_id,
+            termin: this.termin,
+            total_tax: this.total_tax,
+            issue_at: this.issue_at,
+            due_at: this.due_at,
+            sub_total: this.sub_total,
+            inquiry_details: this.inquiry_details,
           })
-        },
-          (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
-        )
+          .then(
+            (response) => {
+              console.log(response)
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Data has been Saved',
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  var mssg = ''
+                  if (this.id != null) {
+                    mssg = 'Success Update Employee'
+                  } else {
+                    mssg = 'Success Create Employee'
+                  }
+                  await router.push('/employee')
+                  this.alertStore.success(mssg)
+                }
+              })
+            },
+            (error) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text:
+                  (error.response && error.response && error.response.message) ||
+                  error.message ||
+                  error.toString(),
+              })
+            },
+          )
       }
     },
 

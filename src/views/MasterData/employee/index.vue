@@ -101,25 +101,25 @@
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="(employee, index) in paginatedData"
-              :key="employee.id"
-              class="hover:bg-gray-50"
-            >
+            <tr v-for="employee in paginatedData" :key="employee.id" class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ employee.employee_code }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="h-10 w-10 flex-shrink-0">
-                    <img class="h-10 w-10 rounded-full" :src="getAvatarUrl(employee.employee_name)" alt="" />
-                  </div>                  
-                </div>              
+                    <img
+                      class="h-10 w-10 rounded-full"
+                      :src="getAvatarUrl(employee.employee_name)"
+                      alt=""
+                    />
+                  </div>
+                </div>
               </td>
               <td>
                 <div class="ml-4">
-                    <div class="text-sm font-medium text-gray-900">{{ employee.employee_name }}</div>
-                  </div>
+                  <div class="text-sm font-medium text-gray-900">{{ employee.employee_name }}</div>
+                </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ employee.employee_phone }}
@@ -220,9 +220,8 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { RouterLink } from 'vue-router'
-import axios from 'axios';
-import { Employee } from '@/core/utils/url_api';
+import axios from 'axios'
+import { Employee } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'EmployeePage',
@@ -233,24 +232,23 @@ export default defineComponent({
   setup() {
     // Data
     // Filtering and Sorting
-    const searchQuery = ref('');
-    const sortBy = ref('name');
-    const currentPage = ref(1);
-    const itemsPerPage = ref(10);   
-    const employee = ref([]); 
+    const searchQuery = ref('')
+    const sortBy = ref('name')
+    const currentPage = ref(1)
+    const itemsPerPage = ref(10)
+    const employee = ref([])
 
     const fetchEmployees = async () => {
-      try{
+      try {
         const response = await axios.get(Employee)
         employee.value = await response.data
-      }catch (error){
-        console.error('Error fetching customers:', error)     
+      } catch (error) {
+        console.error('Error fetching customers:', error)
       }
-
     }
 
     onMounted(() => {
-      fetchEmployees();
+      fetchEmployees()
     })
 
     const filteredData = computed(() => {
@@ -269,10 +267,9 @@ export default defineComponent({
 
       // Sort
       result.sort((a, b) => {
-        if (sortBy.value === 'id') {
-          return a.id - b.id
-        }
-        return a[sortBy.value].localeCompare(b[sortBy.value])
+        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
+        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
+        return fieldA.localeCompare(fieldB)
       })
 
       return result
@@ -304,8 +301,8 @@ export default defineComponent({
         console.log('Delete employee:', employee)
         // Implement delete logic
       }
-    }  
-     return {
+    }
+    return {
       searchQuery,
       sortBy,
       currentPage,
@@ -319,7 +316,7 @@ export default defineComponent({
       editEmployee,
       deleteEmployee,
       employee,
-    }  
+    }
   },
 })
 </script>
