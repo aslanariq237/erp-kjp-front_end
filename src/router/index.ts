@@ -111,33 +111,33 @@ const router = createRouter({
         },
       ],
     },
-    //d    
+    //d
     {
       path: '/delivery-order',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/Others/DeliveryOrder/index.vue'),
           meta: {
             title: 'Delivery Order',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/Others/DeliveryOrder/form.vue'),
           meta: {
             title: 'Delivery Order-Form',
           },
-        },   
+        },
         {
-          path: 'view/:id',          
+          path: 'view/:id',
           component: () => import('../views/Others/DeliveryOrder/view.vue'),
           meta: {
             title: 'Delivery Order-View',
           },
-        },     
-      ]
-    },    
+        },
+      ],
+    },
     //e
     {
       path: '/employee',
@@ -173,7 +173,7 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',
+          path: '/faktur-pajak/form',
           name: 'Faktur Pajak-form',
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
@@ -183,7 +183,7 @@ const router = createRouter({
       ],
     },
     //g
-    //h    
+    //h
     //i
     {
       path: '/invoice',
@@ -302,7 +302,7 @@ const router = createRouter({
             title: 'Opex Form',
           },
         },
-      ]
+      ],
     },
     //p
     {
@@ -336,7 +336,7 @@ const router = createRouter({
           meta: {
             title: 'Purchase Order',
           },
-        },  
+        },
         {
           path: 'form',
           name: 'Purchase Order-Form',
@@ -346,41 +346,41 @@ const router = createRouter({
           },
         },
         {
-          path: 'view/:id',          
+          path: 'view/:id',
           component: () => import('../views/Operation/PurchaseOrder/view.vue'),
           meta: {
             title: 'Purchase Order-View',
           },
-        },      
+        },
       ],
-    },    
+    },
     //q
     {
       path: '/quotation',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/Others/Quotation/index.vue'),
           meta: {
             title: 'Quotation',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/Others/Quotation/form.vue'),
           meta: {
             title: 'Quotation-Form',
           },
         },
         {
-          path: 'view/:id',          
+          path: 'view/:id',
           component: () => import('../views/Others/Quotation/view.vue'),
           meta: {
             title: 'Quotation-Form',
           },
         },
       ],
-    },        
+    },
     //r
     {
       path: '/report',
@@ -411,9 +411,9 @@ const router = createRouter({
       meta: {
         title: 'Opex',
       },
-    },   
+    },
 
-    //s    
+    //s
     {
       path: '/sales-order',
       children: [
@@ -426,12 +426,12 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/Operation/SalesOrder/form.vue'),
           meta: {
             title: 'Sales Order-Form',
           },
-        },        
+        },
         {
           path: 'view/:id',
           component: () => import('../views/Operation/SalesOrder/view.vue'),
@@ -462,20 +462,20 @@ const router = createRouter({
       path: '/tanda-terima',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/Others/TandaTerima/index.vue'),
           meta: {
             title: 'Tanda Terima',
           },
         },
         {
-          path: 'form',          
+          path: '/tanda-terima/form',
           component: () => import('../views/Others/TandaTerima/form.vue'),
           meta: {
             title: 'Tanda Terima Form',
           },
-        }        
-      ]
+        },
+      ],
     },
     //u
     //v
@@ -483,20 +483,20 @@ const router = createRouter({
       path: '/vendor',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/MasterData/vendor/index.vue'),
           meta: {
             title: 'Vendor',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/MasterData/vendor/form.vue'),
           meta: {
             title: 'Vendor',
           },
         },
-      ]
+      ],
     },
     //w
     //x

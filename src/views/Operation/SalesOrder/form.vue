@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/block-lang -->
 <template>
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
@@ -56,9 +57,14 @@
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
+          <FormGroup
+            label="Termin"
+            :required="true"
+            :error="rules.po_type"
+            errorMessage="PO Type is required"
+          >
             <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
-              <option value="">-- termin -- </option>
+              <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
               <option value="N14">N14</option>
@@ -104,7 +110,10 @@
               class="rounded w-full"
               placeholder="Type customer name"
             />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white absolute">
+            <ul
+              v-if="filteredCustomers.length"
+              class="border rounded w-full mt-2 bg-white absolute"
+            >
               <li
                 v-for="customer in filteredCustomers"
                 :key="customer.customer_id"
@@ -219,9 +228,7 @@
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
                   Product Price
                 </th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Discount
-                </th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Discount</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
                   Product Amount
                 </th>
@@ -235,8 +242,12 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
-                    @change="updateAmount(poDetail)">
+                  <input
+                    type="text"
+                    v-model="poDetail.discount"
+                    class="w-20 rounded-lg"
+                    @change="updateAmount(poDetail)"
+                  />
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
               </tr>
@@ -299,7 +310,7 @@ export default defineComponent({
       status_payment: "Hasn't Payed",
       total_tax: 0,
       total_service: 0,
-      discount : 0,
+      discount: 0,
       deposit: 0,
       issue_at: '',
       due_at: '',
@@ -326,7 +337,7 @@ export default defineComponent({
     this.getCustomer()
     this.getEmployee()
     this.getProducts()
-    this.issue_at = new Date().toLocaleDateString('en-CA');
+    this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
     issue_at(newIssueDate) {
@@ -341,16 +352,16 @@ export default defineComponent({
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
       return this.sales_order_details.reduce((total, item) => {
-        return total + (item.amount) || 0
+        return total + item.amount || 0
       }, 0)
     },
   },
 
   methods: {
     updateAmount(poDetail) {
-      const discountPercentage = parseFloat(poDetail.discount) || 0;
-      const discountedPrice = poDetail.price * (1 - discountPercentage / 100);
-      poDetail.amount = discountedPrice * poDetail.quantity;
+      const discountPercentage = parseFloat(poDetail.discount) || 0
+      const discountedPrice = poDetail.price * (1 - discountPercentage / 100)
+      poDetail.amount = discountedPrice * poDetail.quantity
     },
 
     getCustomer() {
@@ -389,7 +400,7 @@ export default defineComponent({
           product_desc: data.product_desc,
           quantity: this.quantity,
           price: this.price,
-          discount : this.discount,
+          discount: this.discount,
           amount: this.price * this.quantity,
         }
         this.sales_order_details.push(object)
@@ -409,28 +420,23 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 90) // Add 30 days
         this.due_at = this.formatDate(date)
-      }
-      else if (issueDate && termin === 'N75') {
+      } else if (issueDate && termin === 'N75') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 75) // Add 30 days
         this.due_at = this.formatDate(date)
-      }
-      else if (issueDate && termin === 'N35') {
+      } else if (issueDate && termin === 'N35') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 35) // Add 30 days
         this.due_at = this.formatDate(date)
-      }
-      else if (issueDate && termin === 'N14') {
+      } else if (issueDate && termin === 'N14') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 14) // Add 30 days
         this.due_at = this.formatDate(date)
-      }
-      else if (issueDate && termin === 'N60') {
+      } else if (issueDate && termin === 'N60') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      }
-      else {
+      } else {
         this.due_at = '' // Reset due_at if termin is not type3
       }
     },

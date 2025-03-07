@@ -105,8 +105,15 @@
                   {{ entry.created_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button @click="viewData(entry.id_quatation)" class="bg-blue-500 mx-4 px-3 py-2 rounded-lg text-white">View</button>
-                  <button @click="viewData" class="bg-success-500 px-3 py-2 rounded-lg text-white">Edit</button>
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="bg-blue-500 mx-4 px-3 py-2 rounded-lg text-white"
+                  >
+                    View
+                  </button>
+                  <button @click="viewData" class="bg-success-500 px-3 py-2 rounded-lg text-white">
+                    Edit
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -213,15 +220,15 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const Quatation = async() => {
+    const Quatation = async () => {
       await axios.get(Quatations).then((res) => {
-        var data = res.data;
-        entries.value = data;
+        var data = res.data
+        entries.value = data
       })
     }
 
     onMounted(() => {
-      Quatation();
+      Quatation()
     })
 
     // Computed properties for filtering and pagination
@@ -257,7 +264,7 @@ export default defineComponent({
     )
 
     const viewData = (id) => {
-      router.push("/quotation/view/" + id);      
+      router.push('/quotation/view/' + id)
     }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
@@ -303,12 +310,12 @@ export default defineComponent({
 
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        code_quatation : entry.code_quatation,
-        customer : entry.customer.customer_name,
-        termin : entry.termin,
-        sub_total : entry.sub_total,
-        issue_at : entry.issue_at,
-        due_at : entry.due_at,
+        code_quatation: entry.code_quatation,
+        customer: entry.customer.customer_name,
+        termin: entry.termin,
+        sub_total: entry.sub_total,
+        issue_at: entry.issue_at,
+        due_at: entry.due_at,
       }))
 
       // Create CSV content
