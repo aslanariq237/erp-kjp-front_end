@@ -278,7 +278,7 @@ export default defineComponent({
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
     const viewData = (id) => {
-      router.push('/delivery-order/view' + id);
+      router.push('/delivery-order/view/' + id);
     }
 
     const displayedPages = computed(() => {

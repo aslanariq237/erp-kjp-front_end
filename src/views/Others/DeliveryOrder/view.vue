@@ -9,11 +9,11 @@
             <div class="bg-white rounded-lg shadow-md mb-6">
                 <div class="flex justify-between items-center p-6 border-b">
                     <div class="breadcrumb">
-                        <h1 class="text-2xl font-bold text-gray-800">Detail View Sales Order</h1>
-                        <p class="text-gray-500 text-sm mt-1">Sales / Sales Order / View</p>
+                        <h1 class="text-2xl font-bold text-gray-800">Detail View Delivery Order</h1>
+                        <p class="text-gray-500 text-sm mt-1">Sales / Delivery Order / View</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <RouterLink to="/sales-order"
+                        <RouterLink to="/delivery-order"
                             class="px-4 py-2 bg-red-400 rounded-lg hover:bg-red-500 transition-colors duration-200 flex items-center gap-2 text-white">
                             <i class="fas fa-times"></i>
                             Back
@@ -28,12 +28,7 @@
                     <!-- Termin -->
                     <FormGroup label="Code Sales Order" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
-                        <input type="text" id="due_at" name="due_at" v-model="code_so" disabled
-                            :class="inputClass(rules.due_at)" />
-                    </FormGroup>
-                    <FormGroup label="Termin" :required="true" :error="rules.po_type"
-                        errorMessage="PO Type is required">
-                        <input type="text" id="due_at" name="due_at" v-model="termin" disabled
+                        <input type="text" id="due_at" name="due_at" v-model="code_do" disabled
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
 
@@ -56,11 +51,11 @@
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                     <!-- Code PO -->
-                    <FormGroup label="Employee" :required="true" :error="rules.id_payment_type"
+                    <!-- <FormGroup label="Employee" :required="true" :error="rules.id_payment_type"
                         errorMessage="Employee is Required">
                         <input type="text" id="due_at" name="due_at" v-model="employee_name" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>
+                    </FormGroup> -->
                 </div>
                 <div class=" mt-5">
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
@@ -70,8 +65,7 @@
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Amount</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>                                
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -80,8 +74,7 @@
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_sn }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_desc }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>                                
                             </tr>
                         </tbody>
                     </table>
@@ -108,7 +101,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
-import { SalesOrders, DetailSo } from '@/core/utils/url_api';
+import { DetailSo, DeliveryOrder, DetailDo } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
 
 export default defineComponent({
@@ -124,7 +117,7 @@ export default defineComponent({
 
     data() {
         return {
-            code_so: '',
+            code_do: '',
             customer_name: '',
             employee_name: '',                                
             termin: "",
@@ -163,7 +156,7 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(SalesOrders + '/' + id).then(
+            axios.get(DeliveryOrder + '/' + id).then(
                 (res) => {
                     var data = res.data;                       
                     this.issue_at = data.issue_at;
@@ -172,12 +165,12 @@ export default defineComponent({
                     this.customer_name = data.customer.customer_name;                                                                                                             
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
-                    this.code_so = data.code_so;
+                    this.code_do = data.code_do;
                 }
             )            
         },
         getDetail(id){
-            axios.get(DetailSo + '/' + id).then(
+            axios.get(DetailDo + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.sales_orders_details = data;

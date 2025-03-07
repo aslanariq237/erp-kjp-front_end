@@ -9,11 +9,11 @@
             <div class="bg-white rounded-lg shadow-md mb-6">
                 <div class="flex justify-between items-center p-6 border-b">
                     <div class="breadcrumb">
-                        <h1 class="text-2xl font-bold text-gray-800">Detail View Sales Order</h1>
-                        <p class="text-gray-500 text-sm mt-1">Sales / Sales Order / View</p>
+                        <h1 class="text-2xl font-bold text-gray-800">Detail View Invoices</h1>
+                        <p class="text-gray-500 text-sm mt-1">Sales / Invoices / View</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <RouterLink to="/sales-order"
+                        <RouterLink to="/invoice"
                             class="px-4 py-2 bg-red-400 rounded-lg hover:bg-red-500 transition-colors duration-200 flex items-center gap-2 text-white">
                             <i class="fas fa-times"></i>
                             Back
@@ -26,16 +26,16 @@
             <div class="bg-white rounded-lg shadow-md p-6">                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                     <!-- Termin -->
-                    <FormGroup label="Code Sales Order" :required="true" :error="rules.po_type"
+                    <FormGroup label="Code Invoice" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
-                        <input type="text" id="due_at" name="due_at" v-model="code_so" disabled
+                        <input type="text" id="due_at" name="due_at" v-model="code_invoice" disabled
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
-                    <FormGroup label="Termin" :required="true" :error="rules.po_type"
+                    <!-- <FormGroup label="Termin" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
                         <input type="text" id="due_at" name="due_at" v-model="termin" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>
+                    </FormGroup> -->
 
                     <FormGroup label="Issue Date" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
@@ -54,18 +54,13 @@
                         errorMessage="Customer is Required">
                         <input type="text" id="due_at" name="due_at" v-model="customer_name" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>
-                    <!-- Code PO -->
-                    <FormGroup label="Employee" :required="true" :error="rules.id_payment_type"
-                        errorMessage="Employee is Required">
-                        <input type="text" id="due_at" name="due_at" v-model="employee_name" disabled
-                            :class="inputClass(rules.due_at)" />
-                    </FormGroup>
+                    </FormGroup>                                        
                 </div>
                 <div class=" mt-5">
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
                         <thead>
                             <tr class="text-left">
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code DO</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
@@ -76,6 +71,7 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
                             <tr v-for="poDetail in sales_orders_details" :key="poDetail.product_id">
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.do.code_do }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_code }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_sn }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_desc }}</td>
@@ -93,6 +89,14 @@
                                 <p>Sub Total</p>
                                 <p>{{ formatCurrency(sub_total) }}</p>
                             </div>
+                            <div class="sub_total flex justify-between mt-3">
+                                <p>PPN</p>
+                                <p>{{ formatCurrency(ppn) }}</p>
+                            </div>
+                            <div class="sub_total flex justify-between mt-3">
+                                <p>Grand Total</p>
+                                <p>{{ formatCurrency(grand_total) }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -108,7 +112,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
-import { SalesOrders, DetailSo, DeliveryOrder, DetailDo, DetailInvoice } from '@/core/utils/url_api';
+import { SalesOrders, DetailSo, DeliveryOrder, DetailDo, DetailInvoice, Invoice } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
 
 export default defineComponent({
@@ -124,14 +128,16 @@ export default defineComponent({
 
     data() {
         return {
-            code_so: '',
+            code_invoice: '',
             customer_name: '',
             employee_name: '',                                
             termin: "",
             po_type: "",    
-            issue_at: '',
+            issue_at: '',            
             due_at: '',    
             sub_total : 0,        
+            ppn : 0,
+            grand_total: 0,
             sales_orders_details : [],
             isSubmitting: false,
             notification: {
@@ -163,16 +169,18 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(DeliveryOrder + '/' + id).then(
+            axios.get(Invoice + '/' + id).then(
                 (res) => {
-                    var data = res.data;                       
+                    var data = res.data[0];                       
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
-                    this.termin = data.termin
+                    this.termin = data.termin;
                     this.customer_name = data.customer.customer_name;                                                                                                             
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
-                    this.code_so = data.code_so;
+                    this.code_invoice = data.code_invoice;
+                    this.ppn = data.sub_total * 0.11;
+                    this.grand_total = data.sub_total + this.ppn;
                 }
             )            
         },

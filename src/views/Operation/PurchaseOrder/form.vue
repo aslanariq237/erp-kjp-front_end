@@ -83,10 +83,10 @@
               id="customer_name"
               v-model="customer_name"
               @input="filterCustomers"
-              class="rounded w-full"
+              class="rounded w-full relative"
               placeholder="Type customer name"
             />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white">
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white absolute">
               <li
                 v-for="customer in filteredCustomers"
                 :key="customer.customer_id"
@@ -96,36 +96,7 @@
                 {{ customer.customer_name }}
               </li>
             </ul>
-          </FormGroup>
-          <!-- Code PO -->
-          <FormGroup
-            class="mt-5"
-            label="Employee"
-            :required="true"
-            :error="rules.id_payment_type"
-            errorMessage="Employee is Required"
-          >
-            <input
-              type="text"
-              name="employee_name"
-              id="employee_name"
-              v-model="employee_name"
-              @input="filterEmployees"
-              class="rounded w-full"
-              placeholder="Type employee name"
-            />
-            <ul v-if="filteredEmployees.length" class="border rounded w-full mt-2 bg-white">
-              <li
-                v-for="employee in filteredEmployees"
-                :key="employee.employee_id"
-                @click="selectEmployee(employee)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
-                {{ employee.employee_name }}
-              </li>
-            </ul>
-          </FormGroup>
-
+          </FormGroup>                    
           <!-- Status Payment -->
           <FormGroup
             label="Termin"
@@ -163,7 +134,7 @@
         </div>
         <div class="flex justify-content-between gap-4 items-end">
           <FormGroup
-            class="w-full"
+            class="w-full relative"
             label="product"
             :required="true"
             :error="rules.product_id"
@@ -178,7 +149,7 @@
               class="rounded w-full"
               placeholder="Type product name"
             />
-            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white">
+            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
               <li
                 v-for="product in filteredProducts"
                 :key="product.product_id"
@@ -239,7 +210,10 @@
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Product Price
+                  Price
+                </th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                  Amount
                 </th>
               </tr>
             </thead>
@@ -250,27 +224,29 @@
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.price }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
               </tr>
             </tbody>
           </table>
           <div class="flex justify-between mt-5">
             <div class="w-full"></div>
+            <div class="w-full"></div>
             <div class="w-full">
-              <tr class="flex justify-between">
-                <td>Sub Total</td>
-                <td>{{ formatCurrency(sub_total) }}</td>
-              </tr>
-              <tr class="flex justify-between">
-                <td>PPN</td>
-                <td>{{ formatCurrency(ppn) }}</td>
-              </tr>
-              <tr class="flex justify-between">
-                <td>Grand Total</td>
-                <td>{{ formatCurrency(grand_total) }}</td>
-              </tr>
+              <div class="sub_total flex justify-between mt-3">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3">
+                <p>PPN</p>
+                <p>{{ formatCurrency(ppn) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3">
+                <p>Grand Total</p>
+                <p>{{ formatCurrency(grand_total) }}</p>
+              </div>
             </div>
-          </div>
+          </div>          
         </div>
       </div>
     </Form>
@@ -316,7 +292,7 @@ export default defineComponent({
       employee_id: null,
       price: 0,
       termin: '',
-      po_type: '',
+      po_type: '',      
       status_payment: "Hasn't Payed",
       total_tax: 0,
       total_service: 0,
@@ -431,6 +407,7 @@ export default defineComponent({
           product_desc: data.product_desc,
           quantity: this.quantity,
           price: this.price,
+          amount: this.price * this.quantity,
         }
         this.purchase_order_details.push(object)
         ;(this.product_id = null), (this.quantity = 0), (this.price = 0)

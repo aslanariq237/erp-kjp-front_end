@@ -86,9 +86,13 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input type="text" v-model="products.quantity" class="w-20 rounded-lg border-gray-200 text-center">
+                  <input 
+                    type="text" 
+                    v-model="products.quantity" 
+                    class="w-20 rounded-lg border-gray-200 text-center"                    
+                  >
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.price }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
                   <input type="checkbox" name="check_barang" id="check_barang" v-model="products.id_so" :value="products.id_so" @change="AddDeliverOrderDetails(products)">
                 </td>
