@@ -165,6 +165,7 @@ export default defineComponent({
   async mounted() {
     this.getSalesOrder();
     this.getEmployee();
+    this.issue_at = new Date().toLocaleDateString('en-CA');
   },
 
   computed: {

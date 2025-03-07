@@ -44,13 +44,27 @@ const menuItems = [
 ]
 
 import VueApexCharts from 'vue3-apexcharts'
+import { Invoice } from '@/core/utils/url_api'
+import axios from 'axios'
 
 const series = ref([
   {
     name: 'Sales',
-    data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+    data: [],
   },
 ])
+
+const getInvoice = async() => {
+  await axios.get(Invoice).then(
+    (res) => {
+      var data = res.data
+      series.value = data.length;
+    }
+  )
+}
+onMounted(() => {
+  getInvoice();
+})
 
 const chartOptions = ref({
   colors: ['#465fff'],

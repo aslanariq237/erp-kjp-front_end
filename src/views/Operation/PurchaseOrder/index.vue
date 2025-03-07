@@ -96,31 +96,22 @@
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_type }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_payment }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(0) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.deposit) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.ppn) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.grand_total) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button 
+                    class="bg-green-500 px-3 py-2 rounded-lg text-white"
+                    @click="viewData(entry.id_po)"
+                  >View</button>
                 </td>
               </tr>
             </tbody>
@@ -196,6 +187,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
 import { PurchaseOrder } from '@/core/utils/url_api';
+import router from '@/router';
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -208,16 +200,12 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [      
-      { key: 'code_po', label: 'Code PO' },
-      { key: 'po_type', label: 'PO Type' },
+      { key: 'code_po', label: 'Code PO' },      
       { key: 'status_payment', label: 'Status Payment' },
       { key: 'sub_total', label: 'Sub Total' },      
-      { key: 'total_service', label: 'Total Service' },
-      { key: 'deposit', label: 'Deposit' },
-      { key: 'ppn', label: 'PPN' },
-      { key: 'grand_total', label: 'Grand Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
+      { key: 'Action', label: 'Action' },
     ]
 
     // Filter and sort state
@@ -243,6 +231,10 @@ export default defineComponent({
       getPurchaseOrder();
     })
 
+    const viewData = (id) => {
+      router.push('/purchase-order/view/' + id);
+    }
+
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
       let result = [...entries.value]
@@ -265,7 +257,7 @@ export default defineComponent({
       })
 
       return result
-    })
+    })    
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -351,6 +343,7 @@ export default defineComponent({
     }
 
     return {
+      viewData,
       // State
       loading,
       searchQuery,

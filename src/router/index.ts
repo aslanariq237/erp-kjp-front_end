@@ -344,6 +344,13 @@ const router = createRouter({
           meta: {
             title: 'Purchase Order-Form',
           },
+        },
+        {
+          path: 'view/:id',          
+          component: () => import('../views/Operation/PurchaseOrder/view.vue'),
+          meta: {
+            title: 'Purchase Order-View',
+          },
         },      
       ],
     },    
@@ -389,7 +396,7 @@ const router = createRouter({
         {
           path: 'scm',
           name: 'Report-Form',
-          component: () => import('../views/Others/Report/form.vue'),
+          component: () => import('../views/Others/Report/indexscm.vue'),
           meta: {
             title: 'Report-Form',
           },
@@ -465,7 +472,7 @@ const router = createRouter({
           path: 'form',          
           component: () => import('../views/Others/TandaTerima/form.vue'),
           meta: {
-            title: 'Tanda  Form',
+            title: 'Tanda Terima Form',
           },
         }        
       ]

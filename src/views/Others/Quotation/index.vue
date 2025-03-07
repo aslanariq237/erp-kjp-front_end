@@ -303,9 +303,12 @@ export default defineComponent({
 
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        Description: entry.description,
-        Amount: formatCurrency(entry.amount),
-        Date: entry.date,
+        code_quatation : entry.code_quatation,
+        customer : entry.customer.customer_name,
+        termin : entry.termin,
+        sub_total : entry.sub_total,
+        issue_at : entry.issue_at,
+        due_at : entry.due_at,
       }))
 
       // Create CSV content

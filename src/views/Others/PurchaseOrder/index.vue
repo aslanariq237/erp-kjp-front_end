@@ -97,10 +97,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_type }}
-                </td>
+                </td>  
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_payment }}
                 </td>
@@ -212,8 +209,7 @@ export default defineComponent({
     // Table headers configuration
     const tableHeaders = [
       { key: 'no', label: 'No' },
-      { key: 'code_po', label: 'Code PO' },
-      { key: 'po_type', label: 'PO Type' },
+      { key: 'code_po', label: 'Code PO' },      
       { key: 'status_payment', label: 'Status Payment' },      
       { key: 'total_tax', label: 'Total Tax' },
       { key: 'total_service', label: 'Total Service' },

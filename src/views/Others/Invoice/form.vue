@@ -49,23 +49,13 @@
             </select>
           </FormGroup>
           <FormGroup>
-          </FormGroup>
-          <FormGroup label="Employee" :required="false">
-            <input type="text" id="employee_id" name="employee_id" v-model="employee_name"
-              :class="inputClass(rules.status_payment)" placeholder="Employee" />
-          </FormGroup>
+          </FormGroup>          
           <!-- DO Type -->
           <FormGroup label="Customer" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
               placeholder="Customer" />
-          </FormGroup>
-
-          <!-- Status Payment -->
-          <FormGroup label="NPWP" :required="false" errorMessage="Status Payment is required">
-            <input type="text" id="status_payment" name="status_payment" v-model="customer_npwp"
-              :class="inputClass(rules.status_payment)" placeholder="NPWP" />
-          </FormGroup>
+          </FormGroup>        
 
           <!-- Alamat -->
           <FormGroup label="Alamat" :required="false" errorMessage="Sub Total is required">
@@ -198,6 +188,7 @@ export default defineComponent({
   },
   async mounted() {
     this.getSalesOrder();
+    this.issue_at = new Date().toLocaleDateString('en-CA');
   },
   computed: {
     // Calculate subtotal based on all items in sales_order_details
@@ -231,7 +222,8 @@ export default defineComponent({
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
         this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;        
+        this.employee_name = data.employee.employee_name;
+        this.due_at = data.due_at;        
 
         if (data.id_so) {          
           this.getDeliveryOrder(data.id_so)
