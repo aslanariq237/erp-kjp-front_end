@@ -53,3 +53,6 @@ export const SalesOrderAdd = baseUrl + 'sales_orders_code'
 //v
 export const Vendor = baseUrl + 'vendors'
 export const AddVendor = baseUrl + 'vendors_code'
+
+export const GetFakturPajak = baseUrl + 'faktur-pajak'
+export const AddFakturPajak = baseUrl + 'faktur-pajak-code'
