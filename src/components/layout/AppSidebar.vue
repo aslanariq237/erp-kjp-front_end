@@ -229,6 +229,7 @@ const menuGroups = [
         subItems: [          
           { name: 'Purchase Order', path: '/purchase-order', pro: false },          
           { name: 'Good Receive', path: '/good-receive', pro: false },          
+          { name: 'Stock', path: '/stock', pro: false },          
           { name: 'Report', path: '/report/scm', pro: false },
         ],
       },

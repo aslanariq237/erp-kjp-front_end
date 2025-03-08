@@ -220,7 +220,7 @@
       },
   
       singkatan() {
-        this.vendor_singkatan = this.createSingkatan(this.vendor_toko);
+        this.vendor_singkatan = this.createSingkatan(this.vendor_name);
       },
   
       addPoDetails() {
@@ -244,9 +244,8 @@
             vendor_phone: parseInt(this.vendor_phone) || 0,            
             vendor_email: this.vendor_email,
             vendor_address: this.vendor_address,
-            vendor_npwp: this.vendor_npwp,
-            vendor_contact: this.vendor_contact,
-            vendor_details: this.vendor_details,
+            vendor_npwp: this.vendor_npwp,            
+            vendor_details: this.vendor_details,                   
           }
           ).then((response) => {
             Swal.fire({

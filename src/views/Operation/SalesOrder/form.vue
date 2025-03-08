@@ -3,12 +3,8 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification
-        v-if="notification.show"
-        :type="notification.type"
-        :message="notification.message"
-        @close="notification.show = false"
-      />
+      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+        @close="notification.show = false" />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6">
@@ -18,17 +14,13 @@
             <p class="text-gray-500 text-sm mt-1">Others / Sales Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink
-              to="/sales-order"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
-            >
+            <RouterLink to="/sales-order"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -41,28 +33,12 @@
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
-          <FormGroup
-            label="Issue Date"
-            :required="true"
-            :error="rules.issue_at"
-            errorMessage="Issue Date is required"
-          >
-            <input
-              type="date"
-              id="issue_at"
-              name="issue_at"
-              v-model="issue_at"
-              :class="inputClass(rules.issue_at)"
-            />
+          <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup
-            label="Termin"
-            :required="true"
-            :error="rules.po_type"
-            errorMessage="PO Type is required"
-          >
+          <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
             <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
@@ -77,143 +53,60 @@
           </FormGroup>
 
           <!-- Due Date -->
-          <FormGroup
-            label="Due Date"
-            :required="true"
-            :error="rules.due_at"
-            errorMessage="Due Date is required"
-          >
-            <input
-              type="date"
-              id="due_at"
-              name="due_at"
-              v-model="due_at"
-              :class="inputClass(rules.due_at)"
-            />
+          <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
           </FormGroup>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
-          <FormGroup
-            label="Customer"
-            class="relative"
-            :required="true"
-            :error="rules.customer_id"
-            errorMessage="Customer is Required"
-          >
-            <input
-              type="text"
-              name="customer_name"
-              id="customer_name"
-              v-model="customer_name"
-              @input="filterCustomers"
-              class="rounded w-full"
-              placeholder="Type customer name"
-            />
-            <ul
-              v-if="filteredCustomers.length"
-              class="border rounded w-full mt-2 bg-white absolute"
-            >
-              <li
-                v-for="customer in filteredCustomers"
-                :key="customer.customer_id"
-                @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
+            errorMessage="Customer is Required">
+            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
+              class="rounded w-full" placeholder="Type customer name" />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-10 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ customer.customer_name }}
               </li>
+              <li v-if="filteredCustomers.length === 0"> not found</li>
             </ul>
           </FormGroup>
           <!-- Code PO -->
 
           <!-- Total Service -->
-          <FormGroup
-            label="Deposit"
-            :required="true"
-            :error="rules.deposit"
-            errorMessage="Deposit is required"
-          >
-            <input
-              type="number"
-              id="deposit"
-              name="deposit"
-              v-model="deposit"
-              :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit"
-            />
+          <FormGroup label="Deposit" :required="true" :error="rules.deposit" errorMessage="Deposit is required">
+            <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit" />
           </FormGroup>
 
           <!-- Deposit -->
           <FormGroup> </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end">
-          <FormGroup
-            class="w-full relative"
-            label="product"
-            :required="true"
-            :error="rules.product_id"
-            errorMessage="product_id is required"
-          >
-            <input
-              type="text"
-              name="product_name"
-              id="product_name"
-              v-model="product_name"
-              @input="filterProducts"
-              class="rounded w-full"
-              placeholder="Type product name"
-            />
+          <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
+            errorMessage="product_id is required">
+            <input type="text" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
+              class="rounded w-full" placeholder="Type product name" />
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
-              <li
-                v-for="product in filteredProducts"
-                :key="product.product_id"
-                @click="selectProduct(product)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+              <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ product.product_sn }} - {{ product.product_desc }}
               </li>
             </ul>
           </FormGroup>
 
           <!-- Grand Total -->
-          <FormGroup
-            class="w-full"
-            label="Quantity"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Quantity is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="quantity"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+            errorMessage="Quantity is required">
+            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
-          <FormGroup
-            class="w-full"
-            label="Price"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Price is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="price"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Price"
-              :valu="price"
-            />
+          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+            errorMessage="Price is required">
+            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+              placeholder="Enter Price" :valu="price" />
           </FormGroup>
-          <button
-            type="button"
-            class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-            @click="addPoDetails"
-          >
+          <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
             tambah
           </button>
         </div>
@@ -235,19 +128,16 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id">
+              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
+                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input
-                    type="text"
-                    v-model="poDetail.discount"
-                    class="w-20 rounded-lg"
-                    @change="updateAmount(poDetail)"
-                  />
+                  <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
+                    @change="updateAmount(poDetail)" />
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
               </tr>
@@ -277,8 +167,8 @@ import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { computed } from 'vue'
 import { Customer, Employee, Product, SalesOrderAdd } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -312,6 +202,7 @@ export default defineComponent({
       total_service: 0,
       discount: 0,
       deposit: 0,
+      searchTerm : '',
       issue_at: '',
       due_at: '',
       isSubmitting: false,
@@ -336,7 +227,7 @@ export default defineComponent({
   async mounted() {
     this.getCustomer()
     this.getEmployee()
-    this.getProducts()
+    this.getProducts()    
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
@@ -352,9 +243,17 @@ export default defineComponent({
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
       return this.sales_order_details.reduce((total, item) => {
-        return total + item.amount || 0
-      }, 0)
+        return total + (item.amount) || 0
+      }, 0);
     },
+
+    ppn() {
+      return this.sub_total * 0.11;
+    },
+
+    grand_total() {
+      return this.ppn + this.sub_total;
+    }
   },
 
   methods: {
@@ -393,18 +292,31 @@ export default defineComponent({
     addPoDetails() {
       axios.get(Product + '/' + this.product_id).then((res) => {
         var data = res.data
-        var object = {
-          product_id: data.product_id,
-          product_code: data.product_code,
-          product_pn: data.product_sn,
-          product_desc: data.product_desc,
-          quantity: this.quantity,
-          price: this.price,
-          discount: this.discount,
-          amount: this.price * this.quantity,
+        if (this.quantity > data.product_stock) {
+          Swal.fire({
+            icon : 'warning',
+            title: 'Warning',
+            text: `Stock ${data.product_desc} Less Than Quantity`
+          }).then((result) => {
+            var msg = ''
+            if (result.isConfirmed) {
+              msg = `stock ${data.product_desc} is Less than Quantity`
+            }            
+          })            
+        } else {
+          var object = {
+            product_id: data.product_id,
+            product_code: data.product_code,
+            product_pn: data.product_sn,
+            product_desc: data.product_desc,
+            product_stock: data.product_stock,
+            quantity: this.quantity,
+            price: this.price,
+            discount: this.discount,
+            amount: this.price * this.quantity,
+          }
+          this.sales_order_details.push(object)
         }
-        this.sales_order_details.push(object)
-
         this.product_id = null
         this.quantity = 0
         this.price = 0
@@ -514,6 +426,9 @@ export default defineComponent({
             deposit: this.deposit,
             issue_at: this.issue_at,
             due_at: this.due_at,
+            sub_total: this.sub_total,
+            ppn: this.ppn,
+            grand_total: this.grand_total,
             sales_order_details: this.sales_order_details,
           })
           .then(
@@ -531,8 +446,7 @@ export default defineComponent({
                   } else {
                     mssg = 'Success Create Employee'
                   }
-                  await router.push('/employee')
-                  this.alertStore.success(mssg)
+                  await router.push('/employee')                  
                 }
               })
             },

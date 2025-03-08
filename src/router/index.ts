@@ -183,6 +183,32 @@ const router = createRouter({
       ],
     },
     //g
+    {
+      path: '/good-receive',
+      children: [
+        {
+          path: '',          
+          component: () => import('../views/Others/GoodReceive/index.vue'),
+          meta: {
+            title: 'Good-Receive',
+          },
+        },
+        {
+          path: 'form',          
+          component: () => import('../views/Others/GoodReceive/form.vue'),
+          meta: {
+            title: 'Good-Receive-Form',
+          },
+        },
+        {
+          path: 'add/:id',          
+          component: () => import('../views/Others/GoodReceive/form.vue'),
+          meta: {
+            title: 'Good-Receive-View',
+          },
+        },
+      ],
+    },
     //h
     //i
     {
@@ -414,6 +440,19 @@ const router = createRouter({
     },
 
     //s
+    {
+      path: '/stock',
+      children: [
+        {
+          path: '',
+          name: 'Stock',
+          component: () => import('../views/Others/Stock/index.vue'),
+          meta: {
+            title: 'Product',
+          },
+        },        
+      ],
+    },
     {
       path: '/sales-order',
       children: [

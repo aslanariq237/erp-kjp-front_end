@@ -114,7 +114,7 @@
                     {{ entry.code_po }}
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ entry.customer.customer_name }}
+                    {{ entry.employee.employee_name }}
                   </td> 
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {{ entry.employee.employee_name }}
@@ -257,7 +257,7 @@
       // Table headers configuration
       const tableHeaders = [
         { key: 'code_po', label: 'Code PO' },      
-        { key: 'Customer', label: 'Customer' },
+        { key: 'vendor', label: 'Vendor' },
         { key: 'Employee', label: 'Employee' },
         { key: 'sub_total', label: 'Sub Total' },                 
         { key: 'ppn', label: 'PPN' },

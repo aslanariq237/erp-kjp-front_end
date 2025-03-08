@@ -89,7 +89,9 @@
                   <input 
                     type="text" 
                     v-model="products.quantity" 
-                    class="w-20 rounded-lg border-gray-200 text-center"                    
+                    class="w-20 rounded-lg border-gray-200 text-center"  
+                    @change="changeQuantity"  
+                    :max="products.quantity"                
                   >
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
@@ -182,6 +184,9 @@ export default defineComponent({
   },
 
   methods: {
+    changeQuantity(poDetail){      
+      poDetail.amount = poDetail.price * poDetail.quantity;
+    },
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;

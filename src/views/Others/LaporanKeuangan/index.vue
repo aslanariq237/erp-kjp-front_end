@@ -109,15 +109,18 @@
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_invoice"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >                                
+              > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.code_invoice }}
+                  {{ entry.purchaseorders.code_po }}
+                </td>                               
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.detailso.salesorders.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_name }}
+                  {{ entry.detailso.salesorders.customer.customer_name }}
                 </td> 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.employee.employee_name }}
+                  {{ entry.detailso.salesorders.employee.employee_name }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
@@ -129,10 +132,10 @@
                   {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.issue_at }}
+                  {{ entry.detailso.salesorders.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
+                  {{ entry.detailso.salesorders.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
@@ -241,7 +244,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
-import { Invoice } from '@/core/utils/url_api'
+import { LaporUang } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'LaporanKeuanganPage',
@@ -258,7 +261,8 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [      
-      { key: 'code_invoice', label: 'Code Invoice' },      
+      { key: 'code_po', label: 'Code PO' },      
+      { key: 'code_so', label: 'Code SO' },      
       { key: 'Customer', label: 'Customer' },
       { key: 'Employee', label: 'Employee' },
       { key: 'sub_total', label: 'Sub Total' },                 
@@ -281,13 +285,13 @@ export default defineComponent({
     const accounts = ref([])
 
     const getInvoices = async() => {
-      const response = await axios.get(Invoice)
+      const response = await axios.get(LaporUang)
       accounts.value = response.data
-
-      if (accounts.value.length > 0) {
-        const invoiceId = accounts.value[0].id_invoice; // Assuming 'id_transaksi' is the ID to use
-        getById(invoiceId);
-      }
+      console.log(accounts.value);
+      // if (accounts.value.length > 0) {
+      //   const invoiceId = accounts.value[0].id_po; // Assuming 'id_transaksi' is the ID to use
+      //   // getById(invoiceId);
+      // }
     }
 
     onMounted(() => {

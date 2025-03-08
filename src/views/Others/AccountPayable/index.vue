@@ -120,7 +120,7 @@
                   {{ account.code_po }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name}}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ account.vendor.vendor_name}}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.deposit) }}
@@ -130,23 +130,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total - account.deposit) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
-                    <button
-                      @click="editAccount(account)"
-                      class="text-green-600 hover:text-green-900"
-                    >
-                      Edit
-                    </button>
-                    <button @click="confirmDelete(account)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
-                  </div>
-                </td>
+                </td>                
               </tr>
             </tbody>
           </table>
@@ -269,8 +253,7 @@ export default defineComponent({
       { key: 'name', label: 'Name' },
       { key: 'Deposit', label: 'Deposit' },
       { key: 'Amount', label: 'Amount' },      
-      { key: 'Debt', label: 'Debt' },      
-      { key: 'actions', label: 'Actions' },
+      { key: 'Debt', label: 'Debt' },            
     ]
 
     // Filter and sort state
