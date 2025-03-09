@@ -69,7 +69,7 @@
                                 <div class="product Weight w-full">
                                     <label>product UoM</label>
                                     <input type="text" id="product-weight" name="product-weight"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product UoM"
                                         v-model="product_uom">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
@@ -79,8 +79,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="stock w-full">
-                                    
+                                <div class="Cat Weight w-full">
+                                    <label>product Category</label>
+                                    <input type="text" id="product-weight" name="product-weight"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Category"
+                                        v-model="product_uom">
+                                    <div class="fv-plugins-message-container">
+                                        <div class="fv-help-block">
+                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
+                                                Product Price is required
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>                            
                             <div class="flex justify-between gap-5 align-top mt-3">                                

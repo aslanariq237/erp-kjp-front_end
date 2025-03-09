@@ -82,6 +82,11 @@
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 UoM
+              </th> 
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Category
               </th>              
             </tr>
           </thead>
@@ -105,6 +110,9 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="text-sm font-medium text-gray-900">{{ product.product_uom }}</div>
+              </td>  
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div class="text-sm font-medium text-gray-900">{{ }}</div>
               </td>                          
             </tr>
           </tbody>

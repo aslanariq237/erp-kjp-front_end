@@ -32,13 +32,38 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <!-- No -->                   
+           <!-- Total Service -->
+          <FormGroup label="PO Number" :required="true" :error="rules.deposit" errorMessage="po Number is required">
+            <input type="text" id="deposit" name="deposit" v-model="po_number" :class="inputClass(rules.deposit)"
+              placeholder="Enter Po Number" />
+          </FormGroup>  
+          <!-- customer -->
+          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
+            errorMessage="Customer is Required">
+            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
+              class="rounded w-full" placeholder="Type customer name" />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-10 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
+                {{ customer.customer_toko }}
+              </li>
+              <li v-if="filteredCustomers.length === 0"> not found</li>
+            </ul>
+          </FormGroup> 
+
+          <!-- Total Service -->
+          <FormGroup label="Deposit" :required="true" :error="rules.deposit" errorMessage="Deposit is required">
+            <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit" />
+          </FormGroup> 
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
+          <FormGroup label="Term of Payment" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
             <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
@@ -55,34 +80,9 @@
           <!-- Due Date -->
           <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
             <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
-          </FormGroup>
+          </FormGroup>           
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-          <!-- No -->
-          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
-            errorMessage="Customer is Required">
-            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
-              class="rounded w-full" placeholder="Type customer name" />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-10 bg-white">
-              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_name }}
-              </li>
-              <li v-if="filteredCustomers.length === 0"> not found</li>
-            </ul>
-          </FormGroup>
-          <!-- Code PO -->
-
-          <!-- Total Service -->
-          <FormGroup label="Deposit" :required="true" :error="rules.deposit" errorMessage="Deposit is required">
-            <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit" />
-          </FormGroup>
-
-          <!-- Deposit -->
-          <FormGroup> </FormGroup>
-        </div>
-        <div class="flex justify-content-between gap-4 items-end">
+        <div class="flex justify-content-between gap-4 items-end mt-5">
           <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
             errorMessage="product_id is required">
             <input type="text" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
@@ -119,11 +119,11 @@
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Product Price
+                  Price
                 </th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Discount</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Product Amount
+                  Amount
                 </th>
               </tr>
             </thead>
@@ -202,6 +202,7 @@ export default defineComponent({
       total_service: 0,
       discount: 0,
       deposit: 0,
+      po_number: '',
       searchTerm : '',
       issue_at: '',
       due_at: '',
@@ -297,13 +298,7 @@ export default defineComponent({
             icon : 'warning',
             title: 'Warning',
             text: `Stock ${data.product_desc} Less Than Quantity`
-          }).then((result) => {
-            var msg = ''
-            if (result.isConfirmed) {
-              msg = `stock ${data.product_desc} is Less than Quantity`
-            }            
-          })            
-        } else {
+          });
           var object = {
             product_id: data.product_id,
             product_code: data.product_code,
@@ -315,12 +310,25 @@ export default defineComponent({
             discount: this.discount,
             amount: this.price * this.quantity,
           }
-          this.sales_order_details.push(object)
+          this.sales_order_details.push(object)      
+        }else{
+          var object = {
+            product_id: data.product_id,
+            product_code: data.product_code,
+            product_pn: data.product_sn,
+            product_desc: data.product_desc,
+            product_stock: data.product_stock,
+            quantity: this.quantity,
+            price: this.price,
+            discount: this.discount,
+            amount: this.price * this.quantity,
+          }
+          this.sales_order_details.push(object)   
         }
         this.product_id = null
         this.quantity = 0
         this.price = 0
-      })
+      });
     },
 
     calculateDueDate(issueDate, termin) {
@@ -364,13 +372,13 @@ export default defineComponent({
     filterCustomers() {
       const searchTerm = this.customer_name.toLowerCase()
       this.filteredCustomers = this.customers.filter((customer) => {
-        const name = customer.customer_name.toLowerCase()
+        const name = customer.customer_toko.toLowerCase()
         return name.includes(searchTerm)
       })
     },
     selectCustomer(customer) {
       this.customer_id = customer.customer_id
-      this.customer_name = customer.customer_name
+      this.customer_name = customer.customer_toko
       this.filteredCustomers = []
     },
     filterProducts() {
@@ -421,14 +429,12 @@ export default defineComponent({
             customer_id: this.customer_id,
             employee_id: 1,
             termin: this.termin,
+            po_number : this.po_number,
             total_tax: this.total_tax,
             status_payment: this.status_payment,
             deposit: this.deposit,
             issue_at: this.issue_at,
-            due_at: this.due_at,
-            sub_total: this.sub_total,
-            ppn: this.ppn,
-            grand_total: this.grand_total,
+            due_at: this.due_at,            
             sales_order_details: this.sales_order_details,
           })
           .then(

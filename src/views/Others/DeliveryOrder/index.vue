@@ -99,23 +99,32 @@
                   {{ entry.salesorder.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_name }}
+                  {{ entry.salesorder.po_number}}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.employee.employee_name }}
+                  {{ entry.customer.customer_toko }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button 
-                    class="bg-green-500 text-white px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_do)"
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
-                  View
+                    View
+                  </button>
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="shadow-lg px-3 py-2 rounded-lg border"
+                  >
+                    Export
                   </button>
                 </td>
               </tr>
@@ -353,12 +362,11 @@ export default defineComponent({
       currentPage,
       itemsPerPage,
       tableHeaders: [        
-        { key: 'code_do', label: 'Code DO' },
-        { key: 'code_so', label: 'Code SO' },
-        { key: 'customer', label: 'Customer' },
-        { key: 'employee', label: 'Employee' },                
-        { key: 'issue_at', label: 'Issue Date' },
-        { key: 'due_at', label: 'Due Date' },
+        { key: 'code_do', label: 'DO Number' },
+        { key: 'code_so', label: 'SO Number' },
+        { key: 'po_number', label: 'Po Number' },
+        { key: 'customer', label: 'Customer Name' },                      
+        { key: 'issue_at', label: 'Issue Date' },        
         { key: 'action', label: 'Action' },
       ],
 

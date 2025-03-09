@@ -26,12 +26,17 @@
             <div class="bg-white rounded-lg shadow-md p-6">                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                     <!-- Termin -->
-                    <FormGroup label="Code Sales Order" :required="true" :error="rules.po_type"
+                    <FormGroup label="Sales Order Number" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
                         <input type="text" id="due_at" name="due_at" v-model="code_so" disabled
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
-                    <FormGroup label="Termin" :required="true" :error="rules.po_type"
+                    <FormGroup label="Po Number" :required="true" :error="rules.po_type"
+                        errorMessage="PO Type is required">
+                        <input type="text" id="due_at" name="due_at" v-model="po_number" disabled
+                            :class="inputClass(rules.due_at)" />
+                    </FormGroup>
+                    <FormGroup label="Term of Payment" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
                         <input type="text" id="due_at" name="due_at" v-model="termin" disabled
                             :class="inputClass(rules.due_at)" />
@@ -50,15 +55,9 @@
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                     <!-- No -->
-                    <FormGroup label="Customer" :required="true" :error="rules.customer_id"
+                    <FormGroup label="Customer Name" :required="true" :error="rules.customer_id"
                         errorMessage="Customer is Required">
                         <input type="text" id="due_at" name="due_at" v-model="customer_name" disabled
-                            :class="inputClass(rules.due_at)" />
-                    </FormGroup>
-                    <!-- Code PO -->
-                    <FormGroup label="Employee" :required="true" :error="rules.id_payment_type"
-                        errorMessage="Employee is Required">
-                        <input type="text" id="due_at" name="due_at" v-model="employee_name" disabled
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                 </div>
@@ -70,8 +69,8 @@
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Amount</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Price</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -128,7 +127,7 @@ export default defineComponent({
             customer_name: '',
             employee_name: '',                                
             termin: "",
-            po_type: "",    
+            po_number: "",    
             issue_at: '',
             due_at: '',    
             sub_total : 0,        
@@ -169,10 +168,11 @@ export default defineComponent({
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
                     this.termin = data.termin
-                    this.customer_name = data.customer.customer_name;                                                                                                             
+                    this.customer_name = data.customer.customer_toko;                                                                                                             
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
                     this.code_so = data.code_so;
+                    this.po_number = data.po_number;
                 }
             )            
         },

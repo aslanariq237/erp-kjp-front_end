@@ -68,6 +68,19 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="status w-full">
+                                    <label>Book Value</label>
+                                    <input type="text" id="status_asset" name="status_asset"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Masukkan Nilai buku"
+                                        v-model="status">
+                                    <div class="fv-plugins-message-container">
+                                        <div class="fv-help-block">
+                                            <p class="text-red-400 text-md italic" v-if="rules.status == true">
+                                                Status is required
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

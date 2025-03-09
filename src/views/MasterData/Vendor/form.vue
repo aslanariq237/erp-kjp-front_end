@@ -60,40 +60,7 @@
               </FormGroup>
               <FormGroup>              
               </FormGroup>
-            </div>
-            <div class="flex justify-content-between gap-4 items-end mt-5">
-              <!-- Grand Total -->
-              <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
-                errorMessage="Quantity is required">
-                <input type="text" id="quantity" name="point" v-model="point" :class="inputClass(rules.quantity)"
-                  placeholder="Enter vendor Point" />
-              </FormGroup>
-              <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
-                errorMessage="Price is required">
-                <input type="text" id="quantity" name="alamat" v-model="alamat" :class="inputClass(rules.quantity)"
-                  placeholder="Enter vendor Address" />
-              </FormGroup>
-              <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-                @click="addPoDetails">tambah</button>
-            </div>
-            <div class=" mt-5">
-              <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
-                <thead>
-                  <tr class="text-left">
-                    <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
-                    <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Point</th>
-                    <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Alamat</th>
-                  </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                  <tr v-for="poDetail in vendor_details" :key="poDetail.product_id">
-                    <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.no }}</td>
-                    <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.point }}</td>
-                    <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.alamat }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            </div>        
           </div>
         </div>
       </Form>

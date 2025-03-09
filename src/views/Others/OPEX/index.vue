@@ -138,10 +138,7 @@
                     </button>
                     <button @click="editOpex(opex)" class="text-green-600 hover:text-green-900">
                       Edit
-                    </button>
-                    <button @click="confirmDelete(opex)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
+                    </button>                  
                   </div>
                 </td>
               </tr>

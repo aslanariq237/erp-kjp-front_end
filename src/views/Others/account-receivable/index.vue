@@ -13,13 +13,7 @@
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
-          </button>
-          <RouterLink
-            to="/account-receivable/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Add New Account
-          </RouterLink>
+          </button>          
         </div>
       </div>
 
@@ -131,8 +125,14 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total - account.deposit) }}
                 </td> 
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ account.has_invoice != 0 ? "Has Invoice" : "Hasn't Invoice" }}
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at}}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.due_at}}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at - account.due_at}}</div>
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
@@ -144,9 +144,6 @@
                       class="text-green-600 hover:text-green-900"
                     >
                       Edit
-                    </button>
-                    <button @click="confirmDelete(account)" class="text-red-600 hover:text-red-900">
-                      Delete
                     </button>
                   </div>
                 </td>
@@ -273,7 +270,9 @@ export default defineComponent({
       { key: 'Depoit', label: 'Depoit' },
       { key: 'Amount', label: 'Amount' },
       { key: 'Debt', label: 'Debt' },
-      { key: 'Invoice', label: 'Invoice' },
+      { key: 'Debt', label: 'Issue Date' },
+      { key: 'Debt', label: 'Due Date' },
+      { key: 'Debt', label: 'Aging' },
       { key: 'actions', label: 'Actions' },
     ]
 

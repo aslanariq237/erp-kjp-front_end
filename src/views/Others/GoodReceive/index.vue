@@ -73,7 +73,10 @@
                   {{ entry.vendor.vendor_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.has_gr == 1 ? "Verified" : "not Verified" }}
+                  {{ entry.has_gr == 1 ? "Full" : "Parsial" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.quantity }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
@@ -169,6 +172,7 @@ export default defineComponent({
       { key: 'code_po', label: 'Code PO' },
       { key: 'vendor_name', label: 'Vendor' },
       { key: 'quality_check', label: 'Quality Check' },
+      { key: 'quality_check', label: 'Amount Pending' },
       { key: 'sub_total', label: 'Sub Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },

@@ -47,18 +47,21 @@
                 {{ po.code_so }}
               </option>
             </select>
-          </FormGroup>
-          <FormGroup>
           </FormGroup>          
+          <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
+            <input type="text" v-model="customer_id" hidden>
+            <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
+              placeholder="Customer" />
+          </FormGroup>         
           <!-- DO Type -->
-          <FormGroup label="Customer" :required="true" :error="rules.customer" errorMessage="DO Type is required">
+          <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
               placeholder="Customer" />
           </FormGroup>        
 
           <!-- Alamat -->
-          <FormGroup label="Alamat" :required="false" errorMessage="Sub Total is required">
+          <FormGroup label="Address" :required="false" errorMessage="Sub Total is required">
             <input type="text" id="alamat" name="alamat" v-model="customer_address" :class="inputClass(rules.alamat)"
               placeholder="Enter Alamat" />
           </FormGroup>
@@ -174,7 +177,8 @@ export default defineComponent({
       id_so: null,
       id_do: null,      
       customer_id: null,
-      employee_id: null,      
+      employee_id: null,
+      po_number: '',      
       customer_name: '',
       customer_npwp: 0,
       customer_address: '',
@@ -227,7 +231,7 @@ export default defineComponent({
       axios.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
         this.customer_id = data.customer.customer_id;
-        this.customer_name = data.customer.customer_name;
+        this.customer_name = data.customer.customer_toko;
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
         this.employee_id = data.employee.employee_id;
@@ -244,9 +248,13 @@ export default defineComponent({
     getDeliveryOrder(id) {
       axios.get(DeliverSales + '/' + id).then((res) => {
         var data = res.data
-        this.deliveryOrders = data;        
-
+        if (data.has_inv != 1) {
+          this.deliveryOrders = data;             
+        } 
       })
+    },
+    hasInvoice(){
+
     },
 
     formatCurrency(value) {
@@ -277,45 +285,7 @@ export default defineComponent({
           }
         }
       )      
-    },
-
-    // SelectDataPo(id) {
-    //   this.delivery_order_details.splice(0);
-    //   if (id != null) {
-    //     axios.get(DetailDo + '/' + id).then(
-    //       (res) => {
-    //         var data = res.data;
-    //         if (!Array.isArray(data)) {
-    //           data = data.data || [data]
-    //         }
-    //         for (let i = 0; i < data.length; i++) {
-    //           let detail = data[i];
-    //           var newObject = {
-    //             id_detail_do: detail.id_detail_do,
-    //             id_do: detail.id_do,                
-    //             product_id: detail.product_id,
-    //             product_desc: detail.product.product_desc,
-    //             product_brand: detail.product.product_brand,
-    //             product_sn: detail.product.product_sn,
-    //             quantity: detail.quantity,
-    //             price: detail.price,
-    //           }
-    //           this.delivery_order_details.push(newObject)
-    //         }
-    //       }
-    //     )
-    //   }
-    // },
-    // async AddDeliverOrderDetails(products) {
-    //   for (let i = 0; i < [products].length; i++) {
-    //     var objectInclude = {
-    //       product_id: products.product_id,
-    //       quantity: products.quantity,
-    //       price: products.price
-    //     }
-    //     this.delivery_order_details.push(objectInclude);
-    //   }
-    // },
+    },    
     showNotification(type, message) {
       this.notification = {
         show: true,

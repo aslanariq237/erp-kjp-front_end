@@ -21,7 +21,7 @@
       <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
+            <label class="text-sm font-medium text-gray-600 mb-2 block">Customer name</label>
             <div class="relative">
               <input
                 type="text"
@@ -36,172 +36,25 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Amount Range</label>
+            <label class="text-sm font-medium text-gray-600 mb-2 block">Issue At</label>
             <div class="flex gap-2">
               <input
-                type="number"
-                v-model="minAmount"
+                type="date"                
                 placeholder="Min"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
-                type="number"
-                v-model="maxAmount"
+                type="date"                
                 placeholder="Max"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="name">Name</option>
-              <option value="amount">Amount</option>
-              <option value="accountNumber">Account Number</option>
-              <option value="date">Date Created</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-              <option :value="50">50</option>
-            </select>
-          </div>
+          </div>          
         </div>
       </div>
 
       <!-- Enhanced Table Section -->
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
-                  <div class="flex items-center gap-2">
-                    {{ header.label }}
-                    <span v-if="sortBy === header.key">↓</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-if="loading" class="text-center">
-                <td colspan="5" class="px-6 py-4">Loading...</td>
-              </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center">
-                <td colspan="5" class="px-6 py-4">No data found</td>
-              </tr>
-              <tr
-                v-for="(entry, index) in paginatedData"
-                :key="entry.id_invoice"
-                class="hover:bg-gray-50 transition-colors duration-150"
-              >                                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.code_invoice }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_name }}
-                </td> 
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.employee.employee_name }}
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.issue_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button class="bg-green-500 text-white px-3 py-2 rounded-lg">View</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
 
-        <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
-          <div class="flex items-center justify-between">
-            <div class="text-sm text-gray-700">
-              Showing
-              <span class="font-medium">{{ startIndex + 1 }}</span>
-              to
-              <span class="font-medium">{{ endIndex }}</span>
-              of
-              <span class="font-medium">{{ filteredData.length }}</span>
-              results
-            </div>
-            <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
-                First
-              </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
-                Previous
-              </button>
-              <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
-                  {{ page }}
-                </button>
-              </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
-                Next
-              </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
-                Last
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Delete Confirmation Modal -->
       <div
@@ -255,16 +108,10 @@ export default defineComponent({
     const reportToDelete = ref(null)
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'code_invoice', label: 'Code Invoice' },      
-      { key: 'Customer', label: 'Customer' },
-      { key: 'Employee', label: 'Employee' },
-      { key: 'sub_total', label: 'Sub Total' },                 
-      { key: 'ppn', label: 'PPN' },
-      { key: 'grand_total', label: 'Grand Total' },
+    const tableHeaders = [          
+      { key: 'Customer', label: 'Customer Name' },      
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
-      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state

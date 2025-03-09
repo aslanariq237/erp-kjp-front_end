@@ -45,6 +45,7 @@ export const ProductSearch = baseUrl + 'products/search'
 export const ProductCode = baseUrl + 'products_code'
 
 export const PurchaseOrder = baseUrl + 'purchase_orders'
+export const PurchaseOrderMonthly = baseUrl + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = baseUrl + 'purchase_orders_code'
 //Q
 export const Quatations = baseUrl + 'quatations'

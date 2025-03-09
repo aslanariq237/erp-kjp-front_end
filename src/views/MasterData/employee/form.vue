@@ -88,8 +88,46 @@
                 </div>
               </div>
               <div class="flex justify-between gap-5 align-top mt-3">
+                <div class="employee-email w-full">
+                  <label>No BPJS Kesehatan<label class="text-red-500">*</label></label>
+                  <input
+                    type="text"
+                    id="employee_email"
+                    name="employee_email"
+                    class="w-full rounded-md px-3 py-3 my-2"
+                    placeholder="Masukkan BPJS Kesehatan"
+                    v-model="employee_email"
+                  />
+                  <div class="fv-plugins-message-container">
+                    <div class="fv-help-block">
+                      <p class="text-red-400 text-md italic" v-if="rules.employee_email == true">
+                        Employee Email is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="employee-address w-full">
+                  <label>No BPJS Ketenagakerjaan<label class="text-red-500">*</label></label>
+                  <input
+                    type="text"
+                    id="employee_address"
+                    name="employee_address"
+                    class="w-full rounded-md px-3 py-3 my-2"
+                    placeholder="Masukkan BPJS Ketenagakerjaan"
+                    v-model="employee_address"
+                  />
+                  <div class="fv-plugins-message-container">
+                    <div class="fv-help-block">
+                      <p class="text-red-400 text-md italic" v-if="rules.employee_address == true">
+                        Employee Address is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-between gap-5 align-top mt-3">
                 <div class="nik w-full">
-                  <label>nik<label class="text-red-500">*</label></label>
+                  <label>Nik<label class="text-red-500">*</label></label>
                   <input
                     type="text"
                     id="nik"
@@ -120,6 +158,44 @@
                     <div class="fv-help-block">
                       <p class="text-red-400 text-md italic" v-if="rules.position == true">
                         Position is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-between gap-5 align-top mt-3">
+                <div class="employee-email w-full">
+                  <label>Salary<label class="text-red-500">*</label></label>
+                  <input
+                    type="text"
+                    id="employee_email"
+                    name="employee_email"
+                    class="w-full rounded-md px-3 py-3 my-2"
+                    placeholder="Masukkan Salary"
+                    v-model="employee_email"
+                  />
+                  <div class="fv-plugins-message-container">
+                    <div class="fv-help-block">
+                      <p class="text-red-400 text-md italic" v-if="rules.employee_email == true">
+                        Employee Email is required
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="employee-address w-full">
+                  <label>Tunjangan<label class="text-red-500">*</label></label>
+                  <input
+                    type="text"
+                    id="employee_address"
+                    name="employee_address"
+                    class="w-full rounded-md px-3 py-3 my-2"
+                    placeholder="Masukkan Tunjangan"
+                    v-model="employee_address"
+                  />
+                  <div class="fv-plugins-message-container">
+                    <div class="fv-help-block">
+                      <p class="text-red-400 text-md italic" v-if="rules.employee_address == true">
+                        Employee Address is required
                       </p>
                     </div>
                   </div>
