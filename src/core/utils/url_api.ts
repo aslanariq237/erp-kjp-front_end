@@ -51,6 +51,7 @@ export const Quatations = baseUrl + 'quatations'
 export const QuatationsAdd = baseUrl + 'quatations_code'
 //S
 export const SalesOrders = baseUrl + 'sales_orders'
+export const SalesOrdersMonthly = baseUrl + 'sales_orders/monthly'
 export const SalesOrderAdd = baseUrl + 'sales_orders_code'
 
 //v

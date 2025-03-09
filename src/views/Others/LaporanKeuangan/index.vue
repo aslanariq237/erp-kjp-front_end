@@ -111,31 +111,28 @@
                 class="hover:bg-gray-50 transition-colors duration-150"
               > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.purchaseorders.code_po }}
+                  {{ entry.id_po }}
                 </td>                               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.detailso.salesorders.code_so }}
+                  {{ entry.id_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.detailso.salesorders.customer.customer_name }}
-                </td> 
+                  {{ entry.customer }}
+                </td>                               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.detailso.salesorders.employee.employee_name }}
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total) }}
+                  {{ formatCurrency(entry.harga_beli) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11) }}
+                  {{ formatCurrency(entry.harga_jual) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.detailso.salesorders.issue_at }}
+                  {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.detailso.salesorders.due_at }}
+                  {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
@@ -263,8 +260,7 @@ export default defineComponent({
     const tableHeaders = [      
       { key: 'code_po', label: 'Code PO' },      
       { key: 'code_so', label: 'Code SO' },      
-      { key: 'Customer', label: 'Customer' },
-      { key: 'Employee', label: 'Employee' },
+      { key: 'Customer', label: 'Customer' },      
       { key: 'sub_total', label: 'Sub Total' },                 
       { key: 'ppn', label: 'PPN' },
       { key: 'grand_total', label: 'Grand Total' },

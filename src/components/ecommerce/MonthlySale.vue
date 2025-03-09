@@ -44,7 +44,7 @@ const menuItems = [
 ]
 
 import VueApexCharts from 'vue3-apexcharts'
-import { Invoice } from '@/core/utils/url_api'
+import { SalesOrdersMonthly } from '@/core/utils/url_api'
 import axios from 'axios'
 
 const series = ref([
@@ -55,7 +55,7 @@ const series = ref([
 ])
 
 const getInvoice = async() => {
-  await axios.get(Invoice).then(
+  await axios.get(SalesOrdersMonthly).then(
     (res) => {
       var data = res.data
       series.value = data.length;
