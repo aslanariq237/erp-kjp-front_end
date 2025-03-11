@@ -82,17 +82,12 @@
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 UoM
-              </th>
+              </th> 
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Stock
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Actions
-              </th>
+                Category
+              </th>              
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
@@ -115,20 +110,10 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="text-sm font-medium text-gray-900">{{ product.product_uom }}</div>
-              </td>
+              </td>  
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ product.product_stock }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex space-x-2">
-                  <button @click="editProduct(product)" class="text-blue-600 hover:text-blue-900">
-                    Edit
-                  </button>
-                  <button @click="deleteProduct(product)" class="text-red-600 hover:text-red-900">
-                    Delete
-                  </button>
-                </div>
-              </td>
+                <div class="text-sm font-medium text-gray-900">{{ }}</div>
+              </td>                          
             </tr>
           </tbody>
         </table>

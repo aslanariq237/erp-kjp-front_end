@@ -33,6 +33,9 @@ export const InvoiceAdd = baseUrl + 'invoices_code'
 
 export const Inquiry = baseUrl + 'inquiry'
 export const InquiryAdd = baseUrl + 'inquiry_code'
+
+//L
+export const LaporUang = baseUrl + 'laporan_keuangan';
 //O
 export const GetOpex = baseUrl + 'opex'
 export const AddOpex = baseUrl + 'opex_code'
@@ -42,12 +45,14 @@ export const ProductSearch = baseUrl + 'products/search'
 export const ProductCode = baseUrl + 'products_code'
 
 export const PurchaseOrder = baseUrl + 'purchase_orders'
+export const PurchaseOrderMonthly = baseUrl + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = baseUrl + 'purchase_orders_code'
 //Q
 export const Quatations = baseUrl + 'quatations'
 export const QuatationsAdd = baseUrl + 'quatations_code'
 //S
 export const SalesOrders = baseUrl + 'sales_orders'
+export const SalesOrdersMonthly = baseUrl + 'sales_orders/monthly'
 export const SalesOrderAdd = baseUrl + 'sales_orders_code'
 
 //v

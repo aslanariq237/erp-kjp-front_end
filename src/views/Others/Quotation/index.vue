@@ -96,23 +96,32 @@
                   {{ entry.code_quatation }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_name }}
+                  {{ entry.customer.customer_toko }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sub_total }}
+                  {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.created_at }}
+                  {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
                     @click="viewData(entry.id_quatation)"
-                    class="bg-blue-500 mx-4 px-3 py-2 rounded-lg text-white"
+                    class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
                     View
                   </button>
-                  <button @click="viewData" class="bg-success-500 px-3 py-2 rounded-lg text-white">
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
                     Edit
+                  </button>
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="shadow-lg px-3 py-2 rounded-lg border"
+                  >
+                    Export
                   </button>
                 </td>
               </tr>
@@ -202,8 +211,8 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'Code', label: 'Code' },
-      { key: 'Customer', label: 'Customer' },
+      { key: 'Quotation Number', label: 'Quotation Number' },
+      { key: 'Customer', label: 'Customer Name' },
       { key: 'amount', label: 'Amount' },
       { key: 'date', label: 'Date' },
       { key: 'action', label: 'Action' },
@@ -304,7 +313,7 @@ export default defineComponent({
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'IDR',
       }).format(value)
     }
 

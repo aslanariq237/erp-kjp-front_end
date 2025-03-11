@@ -57,22 +57,12 @@
 
           <!-- Due Date -->
           <FormGroup
-            label="Due Date"
-            :required="true"
-            :error="rules.due_at"
-            errorMessage="Due Date is required"
-          >
-            <input
-              type="date"
-              id="due_at"
-              name="due_at"
-              v-model="due_at"
-              :class="inputClass(rules.due_at)"
-            />
+
+          >            
           </FormGroup>
           <!-- Id_Purchase order -->
           <FormGroup
-            label="Sales Order"
+            label="Invoice Number"
             :required="true"
             :error="rules.no"
             errorMessage="Purchase Order is required"
@@ -88,33 +78,6 @@
                 {{ po.code_so }}
               </option>
             </select>
-          </FormGroup>
-          <FormGroup
-            class="mt-5"
-            label="Employee"
-            :required="true"
-            :error="rules.id_payment_type"
-            errorMessage="Employee is Required"
-          >
-            <input
-              type="text"
-              name="employee_name"
-              id="employee_name"
-              v-model="employee_name"
-              @input="filterEmployees"
-              class="rounded w-full"
-              placeholder="Type employee name"
-            />
-            <ul v-if="filteredEmployees.length" class="border rounded w-full mt-2 bg-white">
-              <li
-                v-for="employee in filteredEmployees"
-                :key="employee.employee_id"
-                @click="selectEmployee(employee)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
-                {{ employee.employee_name }}
-              </li>
-            </ul>
           </FormGroup>
           <!-- DO Type -->
           <FormGroup
@@ -145,14 +108,14 @@
           </FormGroup>
 
           <!-- Status Payment -->
-          <FormGroup label="NPWP" :required="false" errorMessage="Status Payment is required">
+          <FormGroup label="Resi Pengiriman" :required="false" errorMessage="Status Payment is required">
             <input
               type="text"
               id="status_payment"
               name="status_payment"
-              v-model="customer_npwp"
+              v-model="resi"
               :class="inputClass(rules.status_payment)"
-              placeholder="NPWP"
+              placeholder="Nomor Resi"
             />
           </FormGroup>
 
@@ -168,75 +131,7 @@
             />
           </FormGroup>
           <FormGroup> </FormGroup>
-        </div>
-        <div class="flex items-end gap-5">
-          <FormGroup
-            label="Delivery Order"
-            :required="true"
-            :error="rules.no"
-            class="w-full"
-            errorMessage="Purchase Order is required"
-          >
-            <select name="id_so" id="id_so" v-model="id_do" class="rounded w-full">
-              <option v-for="delo in deliveryOrders" :key="delo.id_do" :value="delo.id_do">
-                {{ delo.code_do }}
-              </option>
-            </select>
-          </FormGroup>
-          <button class="bg-blue-400 rounded-lg px-3 py-2" type="button" @click="addDoDetail">
-            Tambah
-          </button>
-        </div>
-        <div class="mt-8">
-          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
-            <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code_DO</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Desc</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">brand</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Product Price
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="products in delivery_order_details" :key="products.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.id_do }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_pn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <input
-                    type="text"
-                    v-model="products.quantity"
-                    class="w-20 rounded-lg border-gray-200 text-center"
-                  />
-                </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.price }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="flex justify-between mt-5">
-            <div class="w-full"></div>
-            <div class="w-full"></div>
-            <div class="w-full">
-              <div class="sub_total flex justify-between mt-3">
-                <p>Sub Total</p>
-                <p>{{ formatCurrency(sub_total) }}</p>
-              </div>
-              <div class="sub_total flex justify-between mt-3">
-                <p>PPN</p>
-                <p>{{ formatCurrency(ppn) }}</p>
-              </div>
-              <div class="sub_total flex justify-between mt-3">
-                <p>Grand Total</p>
-                <p>{{ formatCurrency(grand_total) }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        </div>        
       </div>
     </Form>
   </AdminLayout>
@@ -288,7 +183,7 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       customer_name: '',
-      customer_npwp: 0,
+      resi: '',
       customer_address: '',
       employee_name: '',
       checklist_prod: 0,
@@ -307,6 +202,8 @@ export default defineComponent({
     this.getSalesOrder()
     this.getCustomer()
     this.getEmployee()
+    this.issue_at = new Date().toLocaleDateString('en-CA')
+
   },
   computed: {
     // Calculate subtotal based on all items in sales_order_details

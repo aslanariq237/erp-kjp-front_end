@@ -66,17 +66,7 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Account Name
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Name
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Type
+                Vendor Name
               </th>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -96,11 +86,6 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
-                Tax Number
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
                 Actions
               </th>
             </tr>
@@ -112,10 +97,7 @@
               class="hover:bg-gray-50"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ vendor.account_name }}
+                {{ vendor.vendor_id }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
@@ -134,9 +116,6 @@
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ vendor.vendor_type }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ vendor.vendor_phone }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -145,17 +124,11 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ vendor.vendor_address }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ vendor.tax_number }}
-              </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
                   <button @click="editVendor(vendor)" class="text-blue-600 hover:text-blue-900">
                     Edit
-                  </button>
-                  <button @click="deleteVendor(vendor)" class="text-red-600 hover:text-red-900">
-                    Delete
-                  </button>
+                  </button> 
                 </div>
               </td>
             </tr>

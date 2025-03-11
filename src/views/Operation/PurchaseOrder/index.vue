@@ -95,11 +95,17 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ entry.vendor.vendor_name }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total * 0.11) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -109,9 +115,21 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
-                    class="bg-green-500 px-3 py-2 rounded-lg text-white"
-                    @click="viewData(entry.id_po)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
                   >View</button>
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >Edit</button>
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >Export</button>                  
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >Approve</button>                  
                 </td>
               </tr>
             </tbody>
@@ -200,9 +218,11 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [      
-      { key: 'code_po', label: 'Code PO' },      
-      { key: 'status_payment', label: 'Status Payment' },
+      { key: 'code_po', label: 'Po Number' },      
+      { key: 'code_po', label: 'Vendor name' },            
       { key: 'sub_total', label: 'Sub Total' },      
+      { key: 'sub_total', label: 'PPn' },      
+      { key: 'sub_total', label: 'Grand Total' },      
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'Action', label: 'Action' },

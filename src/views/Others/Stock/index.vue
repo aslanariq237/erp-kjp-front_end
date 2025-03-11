@@ -4,15 +4,9 @@
         <!-- Header Section -->
         <div class="flex justify-between items-center mb-6">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Asset Management</h1>
-            <p class="text-gray-500 text-sm mt-1">Master Data / Assets</p>
-          </div>
-          <RouterLink
-            to="/customer/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
-          >
-            Add New Asset
-          </RouterLink>
+            <h1 class="text-2xl font-bold text-gray-800">Stock Management</h1>
+            <p class="text-gray-500 text-sm mt-1">SCM / Stock</p>
+          </div>          
         </div>
   
         <!-- Filter Section -->
@@ -23,7 +17,7 @@
               <input
                 type="text"
                 v-model="searchQuery"
-                placeholder="Search customers..."
+                placeholder="Search products..."
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -34,7 +28,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="name">Name</option>
-                <option value="email">Email</option>
+                <option value="price">Price</option>
                 <option value="id">ID</option>
               </select>
             </div>
@@ -55,7 +49,7 @@
   
         <!-- Table Section -->
         <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200 table-fixed">
+          <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
                 <th
@@ -66,84 +60,46 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Asset Name
+                  PN
                 </th>
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Vendor Name
-                </th>
+                  Desc
+                </th>                
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Price
-                </th>
+                  UoM
+                </th> 
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Issue Date
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Umur Assets
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Book Value
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Actions
-                </th>
+                  Stock
+                </th>              
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr
-                v-for="(customer, index) in paginatedData"
-                :key="customer.id_customer"
+                v-for="(product, index) in paginatedData"
+                :key="product.id"
                 class="hover:bg-gray-50"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ customer.customer_code }}
+                  {{ product.product_code }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center">
-                    <div class="h-10 w-10 flex-shrink-0">
-                      <img
-                        class="h-10 w-10 rounded-full"
-                        :src="getAvatarUrl(customer.customer_toko)"
-                        alt=""
-                      />
-                    </div>
-                    <div class="ml-4">
-                      <div class="text-sm font-medium text-gray-900">
-                        {{ customer.customer_toko }}
-                      </div>
-                    </div>
-                  </div>
+                  <div class="text-sm font-medium text-gray-900">{{ product.product_sn }}</div>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ product.product_desc }}</div>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ customer.customer_phone }}
-                </td>
+                  <div class="text-sm font-medium text-gray-900">{{ product.product_uom }}</div>
+                </td>                    
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ customer.customer_email }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ customer.customer_address }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ customer.customer_contact }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-2">
-                    <button @click="editCustomer(customer)" class="text-blue-600 hover:text-blue-900">
-                      Edit
-                    </button>
-                  </div>
-                </td>
+                  <div class="text-sm font-medium text-gray-900">{{ product.product_stock }}</div>
+                </td>                          
               </tr>
             </tbody>
           </table>
@@ -220,61 +176,60 @@
   
   <script>
   import { defineComponent, ref, computed, onMounted } from 'vue'
-  import axios from 'axios'
   import AdminLayout from '@/components/layout/AdminLayout.vue'
   import { RouterLink } from 'vue-router'
-  import { Customer } from '@/core/utils/url_api'
+  import { Product } from '@/core/utils/url_api';
+  import axios from 'axios';
   
   export default defineComponent({
-    name: 'CustomerPage',
+    name: 'ProductPage',
     components: {
       AdminLayout,
-    },
+    },  
   
     setup() {
-      // Data
-      const customers = ref([])
+      const products = ref([]);
+      // Data   
   
-      // Fetch customers from API
-      const fetchCustomers = async () => {
-        try {
-          const response = await axios.get(Customer)
-          customers.value = response.data                
-        } catch (error) {
-          console.error('Error fetching customers:', error)
+      const getProduct = async () => {
+        try{
+          const res = await axios.get(Product)
+          products.value = res.data        
+        }catch(error){
+          console.error('Error Fetching : ', error)
         }
       }
   
       onMounted(() => {
-        fetchCustomers()
+        getProduct();
       })
   
       // Filtering and Sorting
       const searchQuery = ref('')
       const sortBy = ref('name')
       const currentPage = ref(1)
-      const itemsPerPage = ref(10)
+      const itemsPerPage = ref(10)    
   
       const filteredData = computed(() => {
-        let result = [...customers.value]
+        let result = [...products.value]
   
         // Search
         if (searchQuery.value) {
           const query = searchQuery.value.toLowerCase()
           result = result.filter(
-            (customer) =>
-              customer.customer_name.toLowerCase().includes(query) ||
-              customer.customer_email.toLowerCase().includes(query) ||
-              customer.customer_phone.includes(query),
+            (product) =>
+              product.name.toLowerCase().includes(query) ||
+              product.category.toLowerCase().includes(query),
           )
         }
   
         // Sort
-        result.sort((a, b) => {
-          const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
-          const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
-          return fieldA.localeCompare(fieldB)
-        })
+        // result.sort((a, b) => {
+        //   if (sortBy.value === 'id') {
+        //     return a.id - b.id
+        //   }
+        //   return a[sortBy.value].localeCompare(b[sortBy.value])
+        // })
   
         return result
       })
@@ -291,18 +246,14 @@
       const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
   
       // Utility functions
-      const getAvatarUrl = (name) => {
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
-      }
-  
-      const editCustomer = (customer) => {
-        console.log('Edit customer:', customer)
+      const editProduct = (product) => {
+        console.log('Edit product:', product)
         // Implement edit logic
       }
   
-      const deleteCustomer = (customer) => {
-        if (confirm('Are you sure you want to delete this customer?')) {
-          console.log('Delete customer:', customer)
+      const deleteProduct = (product) => {
+        if (confirm('Are you sure you want to delete this product?')) {
+          console.log('Delete product:', product)
           // Implement delete logic
         }
       }
@@ -317,11 +268,11 @@
         totalPages,
         startIndex,
         endIndex,
-        getAvatarUrl,
-        editCustomer,
-        deleteCustomer,
-        customers, // <--- Tambahkan ini
+        editProduct,
+        deleteProduct,
+        products,
       }
     },
   })
   </script>
+  

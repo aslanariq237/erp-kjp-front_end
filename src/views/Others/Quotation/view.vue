@@ -33,7 +33,7 @@
                     </FormGroup>
 
                     <!-- Termin -->
-                    <FormGroup label="Termin" :required="true" :error="rules.po_type"
+                    <FormGroup label="Term of Payment" :required="true" :error="rules.po_type"
                         errorMessage="PO Type is required">
                         <input type="text" id="due_at" name="due_at" v-model="termin"
                             :class="inputClass(rules.due_at)" />
@@ -68,8 +68,8 @@
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Amount</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Price</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
@@ -166,7 +166,7 @@ export default defineComponent({
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
                     this.termin = data.termin
-                    this.customer_name = data.customer.customer_name;                                                                                                             
+                    this.customer_name = data.customer.customer_toko;                                                                                                             
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
                 }

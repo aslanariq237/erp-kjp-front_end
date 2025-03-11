@@ -57,9 +57,12 @@
           </FormGroup>
 
           <!-- Status Payment -->
-          <FormGroup label="NPWP" :required="false" errorMessage="Status Payment is required">
-            <input type="text" id="status_payment" name="status_payment" v-model="customer_npwp"
-              :class="inputClass(rules.status_payment)" placeholder="Enter NPWP" />
+          <FormGroup label="Delivery Option" :required="false" errorMessage="Status Payment is required">
+            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full" @change="selectedSalesOrder">
+              <option v-for="po in points" :key="po.id_customer_point" :value="po.id_customer_point">
+                {{ po.point }} 
+              </option>
+            </select>
           </FormGroup>
 
           <!-- Alamat -->
@@ -86,9 +89,15 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input type="text" v-model="products.quantity" class="w-20 rounded-lg border-gray-200 text-center">
+                  <input 
+                    type="text" 
+                    v-model="products.quantity" 
+                    class="w-20 rounded-lg border-gray-200 text-center"  
+                    @change="changeQuantity"  
+                    :max="products.quantity"                
+                  >
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.price }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
                   <input type="checkbox" name="check_barang" id="check_barang" v-model="products.id_so" :value="products.id_so" @change="AddDeliverOrderDetails(products)">
                 </td>
@@ -122,6 +131,7 @@ import Swal from 'sweetalert2'
 import axios from 'axios'
 import {
   AddDeliveryOrder,
+  Customer,
   DetailSo,
   Employee,  
   SalesOrders
@@ -139,10 +149,12 @@ export default defineComponent({
   data() {
     return {
       salesOrders: [], 
-      employee: [],     
+      employee: [],
+      points: [],     
       sales_order_details: [],   
       delivery_order_details: [],   
       id_so: null, 
+      id_customer_point : null,
       customer_id: null,
       employee_id: null, 
       customer_name: '',
@@ -178,6 +190,9 @@ export default defineComponent({
   },
 
   methods: {
+    changeQuantity(poDetail){      
+      poDetail.amount = poDetail.price * poDetail.quantity;
+    },
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;
@@ -190,16 +205,25 @@ export default defineComponent({
         this.employee = data;
       })
     },
+    getDeliveryOption(id){
+      axios.get(Customer + '/' + id).then((res) => {
+        var data = res.data;        
+        this.points = data.point;
+      })
+    },
     selectedSalesOrder() {
       axios.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
         this.customer_id = data.customer.customer_id;                
-        this.customer_name = data.customer.customer_name;        
+        this.customer_name = data.customer.customer_toko;        
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address; 
-        this.due_at = data.due_at;       
+        this.due_at = data.due_at;              
         if (data.id_so) {
           this.SelectDataPo(data.id_so)
+        }
+        if (data.customer.customer_id) {
+          this.getDeliveryOption(data.customer.customer_id)
         }
       })
     },
@@ -278,8 +302,7 @@ export default defineComponent({
           delivery_order_details : this.delivery_order_details,
         },{
           headers: {"Content-Type": "application/json"}
-        }).then((response) => {
-          console.log(response)
+        }).then((response) => {          
           Swal.fire({
             icon: "success",
             title: 'Success',

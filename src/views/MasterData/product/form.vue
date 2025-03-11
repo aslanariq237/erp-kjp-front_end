@@ -69,7 +69,7 @@
                                 <div class="product Weight w-full">
                                     <label>product UoM</label>
                                     <input type="text" id="product-weight" name="product-weight"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product UoM"
                                         v-model="product_uom">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
@@ -79,14 +79,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="stock w-full">
-                                    <label>Stock</label>
-                                    <input type="text" id="stock" name="stock" class="w-full rounded-md px-3 py-3 my-2"
-                                        placeholder="Insert Stock" v-model="stock">
+                                <div class="Cat Weight w-full">
+                                    <label>product Category</label>
+                                    <input type="text" id="product-weight" name="product-weight"
+                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Category"
+                                        v-model="product_uom">
                                     <div class="fv-plugins-message-container">
                                         <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.stock == true">
-                                                Stock is required
+                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
+                                                Product Price is required
                                             </p>
                                         </div>
                                     </div>
@@ -137,7 +138,7 @@ export default {
             product_sn : "",
             product_brand : "",
             product_uom : "",            
-            stock: null,            
+            stock: 0,            
             rules: {
                 product_image: false,
                 product_name: false,
@@ -191,7 +192,7 @@ export default {
                     product_sn : this.product_sn,
                     product_uom : this.product_uom,
                     product_brand : this.product_brand,                    
-                    product_stock : parseInt(this.stock) || 0,                    
+                    product_stock : this.stock || 0,                    
                 }).then((response) => {
                     Swal.fire({
                         icon: "success",

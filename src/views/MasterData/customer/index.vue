@@ -109,13 +109,13 @@
                   <div class="h-10 w-10 flex-shrink-0">
                     <img
                       class="h-10 w-10 rounded-full"
-                      :src="getAvatarUrl(customer.customer_name)"
+                      :src="getAvatarUrl(customer.customer_toko)"
                       alt=""
                     />
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      {{ customer.customer_name }}
+                      {{ customer.customer_toko }}
                     </div>
                   </div>
                 </div>

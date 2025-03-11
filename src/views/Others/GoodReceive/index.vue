@@ -4,23 +4,13 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
-          <p class="text-gray-500 text-sm mt-1">Sales / Sales Order</p>
+          <h1 class="text-2xl font-bold text-gray-800">Good Receive</h1>
+          <p class="text-gray-500 text-sm mt-1">SCM / Good Receive</p>
         </div>
         <div class="flex gap-3">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
-          </button>
-          <button>
-            <RouterLink
-              to="/sales-order/form"
-              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            >
-              Add New Sales Order
-            </RouterLink>
           </button>
         </div>
       </div>
@@ -31,12 +21,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search by code..."
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Search by code..."
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -46,16 +32,10 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
-              <input
-                type="date"
-                v-model="startDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="date"
-                v-model="endDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="date" v-model="startDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="date" v-model="endDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         </div>
@@ -67,12 +47,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -87,40 +64,44 @@
               <tr v-else-if="paginatedData.length === 0" class="text-center">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
-              <tr
-                v-for="(entry, index) in paginatedData"
-                :key="entry.id_so"
-                class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              <tr v-for="(entry, index) in paginatedData" :key="entry.id_po"
+                class="hover:bg-gray-50 transition-colors duration-150">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
-                </td>  
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.po_number}}</div>
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_toko }}
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
+                  {{ entry.vendor.vendor_name }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.has_gr == 1 ? "Full" : "Parsial" }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.quantity }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
-                </td>               
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
                 </td>
-                <td class="">
-                  <button 
-                    type="button" 
-                    class="bg-green-500 text-white rounded-lg px-3 py-2"
-                    @click="viewData(entry.id_so)"
-                  >
-                    View
-                  </button>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <div v-if="entry.has_gr == 1">
+                    <button class="bg-green-300 px-3 py-2 rounded-lg text-white"
+                      @click="viewData(entry.id_po)" disabled
+                    >
+                    Add
+                    </button>
+                  </div>
+                  <div v-else>
+                    <button class="bg-green-500 px-3 py-2 rounded-lg text-white"
+                      @click="viewData(entry.id_po)"
+                    >
+                    Add
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -140,47 +121,26 @@
               results
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 First
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Previous
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Next
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Last
               </button>
             </div>
@@ -194,11 +154,12 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios'
-import { SalesOrders } from '@/core/utils/url_api'
-import router from '@/router'
+import axios from 'axios';
+import { PurchaseOrder } from '@/core/utils/url_api';
+import router from '@/router';
+
 export default defineComponent({
-  name: 'SalesOrderPage',
+  name: 'PurchaseOrderPage',
   components: {
     AdminLayout,
   },
@@ -207,20 +168,20 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [      
-      { key: 'code_so', label: 'So Number' },      
-      { key: 'po_number', label: 'Po Number' },      
-      { key: 'customer', label: 'Customer' },      
-      { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },    
+    const tableHeaders = [
+      { key: 'code_po', label: 'Code PO' },
+      { key: 'vendor_name', label: 'Vendor' },
+      { key: 'quality_check', label: 'Quality Check' },
+      { key: 'quality_check', label: 'Amount Pending' },
+      { key: 'sub_total', label: 'Sub Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
-      { key: 'action', label: 'Action' },
+      { key: 'Action', label: 'Action' },
     ]
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('code_so')
+    const sortBy = ref('code_po')
     const startDate = ref('')
     const endDate = ref('')
     const currentPage = ref(1)
@@ -229,17 +190,21 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const GetSalesOrder = async ()  => {
+    const getPurchaseOrder = async () => {
       try {
-        const res = await axios.get(SalesOrders)
-        entries.value = res.data
+        const res = await axios.get(PurchaseOrder)
+        entries.value = res.data;
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
     onMounted(() => {
-      GetSalesOrder()
+      getPurchaseOrder();
     })
+
+    const viewData = (id) => {
+      router.push('/good-receive/add/' + id);
+    }
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -247,7 +212,7 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_so.toLowerCase().includes(query))
+        result = result.filter((entry) => entry.code_po.toLowerCase().includes(query))
       }
 
       if (startDate.value) {
@@ -265,10 +230,6 @@ export default defineComponent({
       return result
     })
 
-    const viewData = (id) => {
-      router.push('/sales-order/view/' + id);
-    }
-
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
     const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value)
@@ -276,13 +237,6 @@ export default defineComponent({
     const endIndex = computed(() =>
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
-    
-    const formatCurrency = (value) => {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'IDR',
-      }).format(value)
-    }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
@@ -320,8 +274,8 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        'Code SO': entry.code_so,
-        'SO Type': entry.so_type,
+        'Code PO': entry.code_po,
+        'PO Type': entry.po_type,
         'Status Payment': entry.status_payment,
         'Sub Total': entry.sub_total,
         'Total Tax': entry.total_tax,
@@ -345,16 +299,22 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `sales-order-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `purchase-order-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
     }
 
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    }
+
     return {
       viewData,
-      
       // State
       loading,
       searchQuery,
@@ -372,7 +332,6 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
-      entries,
 
       // Methods
       exportData,

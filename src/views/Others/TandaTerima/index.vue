@@ -112,12 +112,17 @@
                 </td>
                 <td class="">
                   <button
-                    type="button"
-                    class="bg-green-500 text-white rounded-lg px-3 py-2"
-                    @click="viewData(entry.id_so)"
+                    @click="viewData(entry.id_quatation)"
+                    class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
                     View
                   </button>
+                  <button
+                    @click="viewData(entry.id_quatation)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Edit
+                  </button>                  
                 </td>
               </tr>
             </tbody>

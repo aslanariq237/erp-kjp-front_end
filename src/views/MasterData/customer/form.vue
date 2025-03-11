@@ -40,7 +40,7 @@
             </FormGroup>
 
             <!-- No -->
-            <FormGroup label="Customer Email" :required="true" :error="rules.due_at"
+            <FormGroup label="Customer Email" :required="false" :error="rules.due_at"
               errorMessage="Due Date is required">
               <input type="text" id="customer_email" name="customer_email" v-model="customer_email"
                 :class="inputClass(rules.due_at)" />
@@ -55,7 +55,7 @@
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup label="Customer NPWP" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+            <FormGroup label="Customer NPWP" :required="false" :error="rules.due_at" errorMessage="Due Date is required">
               <input type="number" id="customer_npwp" name="customer_npwp" v-model="customer_npwp"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>

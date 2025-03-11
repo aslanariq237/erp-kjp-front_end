@@ -60,6 +60,26 @@
               placeholder="Enter opex name"
               autofocus
             />
+          </FormGroup> 
+          <FormGroup
+            label="Customer"
+            :required="false"
+            :error="rules.customerName"
+            errorMessage="Opex is required"
+          >
+            <input
+              type="text"
+              id="customer_name"
+              name="customer_name"              
+              :class="[
+                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+                rules.customerName
+                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                  : 'border-gray-300 focus:ring-blue-500',
+              ]"
+              placeholder="Enter opex name"
+              autofocus
+            />
           </FormGroup>          
 
           <!-- Amount -->

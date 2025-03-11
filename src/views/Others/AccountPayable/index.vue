@@ -13,13 +13,7 @@
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
-          </button>
-          <RouterLink
-            to="/account-payable/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Add New Account
-          </RouterLink>
+          </button>          
         </div>
       </div>
 
@@ -42,46 +36,22 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Balance Range</label>
+            <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
               <input
-                type="number"
+                type="date"
                 v-model="minBalance"
-                placeholder="Min"
+                placeholder="Issue Date"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
-                type="number"
+                type="date"
                 v-model="maxBalance"
-                placeholder="Max"
+                placeholder="Due Date"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="name">Name</option>
-              <option value="balance">Balance</option>
-              <option value="accountNumber">Account Number</option>
-              <option value="date">Date Created</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="text-sm font-medium text-gray-600 mb-2 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-              <option :value="50">50</option>
-            </select>
-          </div>
+          </div>                    
         </div>
       </div>
 
@@ -120,7 +90,7 @@
                   {{ account.code_po }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name}}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ account.vendor.vendor_name}}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.deposit) }}
@@ -130,7 +100,16 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total - account.deposit) }}
+                </td> 
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at}}</div>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.due_at}}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at - account.due_at}}</div>
+                </td>  
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
                     <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
@@ -142,11 +121,8 @@
                     >
                       Edit
                     </button>
-                    <button @click="confirmDelete(account)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
                   </div>
-                </td>
+                </td>             
               </tr>
             </tbody>
           </table>
@@ -269,8 +245,11 @@ export default defineComponent({
       { key: 'name', label: 'Name' },
       { key: 'Deposit', label: 'Deposit' },
       { key: 'Amount', label: 'Amount' },      
-      { key: 'Debt', label: 'Debt' },      
-      { key: 'actions', label: 'Actions' },
+      { key: 'Debt', label: 'Debt' },                              
+      { key: 'Debt', label: 'Issue Date' },            
+      { key: 'Debt', label: 'Due Date' },            
+      { key: 'Debt', label: 'Aging' },  
+      { key: 'actions', label: 'Actions' },          
     ]
 
     // Filter and sort state

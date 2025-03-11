@@ -13,8 +13,8 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Quatation</h1>
-            <p class="text-gray-500 text-sm mt-1">Others / Quatation / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800">Create New Quotation</h1>
+            <p class="text-gray-500 text-sm mt-1">Others / Quotation / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink

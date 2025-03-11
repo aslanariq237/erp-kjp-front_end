@@ -14,12 +14,6 @@
           >
             <span>Export</span>
           </button>
-          <RouterLink
-            to="/laporan-keuangan/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
-            Tambah Laporan Baru
-          </RouterLink>
         </div>
       </div>
 
@@ -112,37 +106,39 @@
                 <td colspan="5" class="px-6 py-4">Tidak ada data</td>
               </tr>
               <tr
-                v-for="(account, index) in paginatedData"
-                :key="account.id"
+                v-for="(entry, index) in paginatedData"
+                :key="entry.id_invoice"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ (currentPage - 1) * itemsPerPage + index + 1 }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.name }}</div>
-                </td>
+                  {{ entry.id_po }}
+                </td>                               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.balance) }}
+                  {{ entry.id_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatAccountNumber(account.accountNumber) }}
+                  {{ entry.customer }}
+                </td>                               
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.harga_beli) }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
-                      Lihat
-                    </button>
-                    <button
-                      @click="editAccount(account)"
-                      class="text-green-600 hover:text-green-900"
-                    >
-                      Edit
-                    </button>
-                    <button @click="confirmDelete(account)" class="text-red-600 hover:text-red-900">
-                      Hapus
-                    </button>
-                  </div>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.harga_jual) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.issue_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.due_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button 
+                    class="bg-green-500 text-white px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >View</button>
                 </td>
               </tr>
             </tbody>
@@ -241,9 +237,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
+import axios from 'axios'
+import { LaporUang } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'LaporanKeuanganPage',
@@ -259,12 +257,16 @@ export default defineComponent({
     const accountToDelete = ref(null)
 
     // Table headers configuration
-    const tableHeaders = [
-      { key: 'no', label: 'No' },
-      { key: 'name', label: 'Nama' },
-      { key: 'balance', label: 'Saldo' },
-      { key: 'accountNumber', label: 'Nomor Akun' },
-      { key: 'actions', label: 'Aksi' },
+    const tableHeaders = [      
+      { key: 'code_po', label: 'Code PO' },      
+      { key: 'code_so', label: 'Code SO' },      
+      { key: 'Customer', label: 'Customer' },      
+      { key: 'sub_total', label: 'Sub Total' },                 
+      { key: 'ppn', label: 'PPN' },
+      { key: 'grand_total', label: 'Grand Total' },
+      { key: 'issue_at', label: 'Issue Date' },
+      { key: 'due_at', label: 'Due Date' },
+      { key: 'action', label: 'Action' },
     ]
 
     // Filter and sort state
@@ -276,22 +278,21 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const accounts = ref([
-      {
-        id: 1,
-        name: 'Akun A',
-        balance: 1000,
-        accountNumber: '1234567890',
-        dateCreated: '2024-02-20',
-      },
-      {
-        id: 2,
-        name: 'Akun B',
-        balance: 2000,
-        accountNumber: '0987654321',
-        dateCreated: '2024-02-21',
-      },
-    ])
+    const accounts = ref([])
+
+    const getInvoices = async() => {
+      const response = await axios.get(LaporUang)
+      accounts.value = response.data
+      console.log(accounts.value);
+      // if (accounts.value.length > 0) {
+      //   const invoiceId = accounts.value[0].id_po; // Assuming 'id_transaksi' is the ID to use
+      //   // getById(invoiceId);
+      // }
+    }
+
+    onMounted(() => {
+      getInvoices();
+    })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
