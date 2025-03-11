@@ -138,9 +138,6 @@
                   <button @click="editEmployee(employee)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
-                  <button @click="deleteEmployee(employee)" class="text-red-600 hover:text-red-900">
-                    Delete
-                  </button>
                 </div>
               </td>
             </tr>

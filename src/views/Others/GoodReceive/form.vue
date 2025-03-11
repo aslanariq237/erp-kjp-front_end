@@ -13,7 +13,7 @@
             <p class="text-gray-500 text-sm mt-1">SCM / Good Receive / Add</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/purchase-order"
+            <RouterLink to="/good-receive"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -38,17 +38,7 @@
 
           <!-- Termin -->
           <FormGroup label="Termin" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full" disabled>
-              <option value="">-- termin --</option>
-              <option value="CBD">CBD(Cash Before Delivery)</option>
-              <option value="CAD">CAD(Cash After Delivery)</option>
-              <option value="N14">N14</option>
-              <option value="N30">N30</option>
-              <option value="N45">N45</option>
-              <option value="N60">N60</option>
-              <option value="N75">N75</option>
-              <option value="N90">N90</option>
-            </select>
+            <input type="text" id="due_at" name="due_at" v-model="termin" :class="inputClass(rules.due_at)" disabled/>                          
           </FormGroup>
 
           <!-- Due Date -->
@@ -76,8 +66,7 @@
         <div class="">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
+              <tr class="text-left">                                                
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
@@ -89,17 +78,14 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
-                </td>
+              <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">                                
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <input 
                     type="text" 
                     name="quantity" 
                     id="quantity" 
-                    v-model="poDetail.quantity"
+                    v-model="poDetail.quantity_left"
                     class="w-15 rounded-lg text-center"
                     @change="changeQuantity(poDetail)"
                   >
@@ -242,7 +228,8 @@ export default defineComponent({
             var object = {
               id_detail_po: data[i].id_detail_po,
               product_id: data[i].product_id,
-              product_desc: data[i].product.product_desc,
+              product_desc: data[i].product.product_desc,              
+              quantity_left: data[i].quantity_left,
               quantity: data[i].quantity,
               price: data[i].price,
               amount: data[i].amount,
@@ -283,10 +270,11 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = 2
+      const result = 2      
       if (result != 0) {
         await axios
           .post(PurchaseOrder + '/good-receive', {                                  
+            id_po: this.id_po,
             purchase_order_details: this.purchase_order_details,
           })
           .then(

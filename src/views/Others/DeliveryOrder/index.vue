@@ -102,14 +102,14 @@
                   {{ entry.salesorder.po_number}}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_toko }}
+                  {{ entry.customer.customer_name }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button
-                    @click="viewData(entry.id_quatation)"
+                    @click="viewData(entry.id_do)"
                     class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
                     View

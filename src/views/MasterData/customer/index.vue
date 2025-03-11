@@ -115,7 +115,7 @@
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
-                      {{ customer.customer_toko }}
+                      {{ customer.customer_name }}
                     </div>
                   </div>
                 </div>

@@ -215,7 +215,7 @@ const menuGroups = [
         name: 'Sales',
         icon: BoxCubeIcon,
         subItems: [
-          { name: 'Quatation', path: '/quotation', pro: false },      
+          { name: 'Quotation', path: '/quotation', pro: false },      
           { name: 'Sales Order', path: '/sales-order', pro: false },    
           { name: 'Delivery Order', path: '/delivery-order', pro: false },      
           { name: 'Invoice', path: '/invoice', pro: false },

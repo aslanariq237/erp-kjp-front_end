@@ -94,10 +94,10 @@
                   {{ entry.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_number ? "": "" }}
+                  {{ entry.salesorder.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_toko }}
+                  {{ entry.customer.customer_name }}
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
@@ -234,7 +234,7 @@ export default defineComponent({
     
     const getInvoices = async() => {
       const response = await axios.get(Invoice)
-      invoice.value = response.data
+      invoice.value = response.data      
 
       if (invoice.value.length > 0) {
         const invoiceId = invoice.value[0].id_transaksi; // Assuming 'id_transaksi' is the ID to use

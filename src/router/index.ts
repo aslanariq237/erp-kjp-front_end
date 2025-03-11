@@ -194,13 +194,6 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',          
-          component: () => import('../views/Others/GoodReceive/form.vue'),
-          meta: {
-            title: 'Good-Receive-Form',
-          },
-        },
-        {
           path: 'add/:id',          
           component: () => import('../views/Others/GoodReceive/form.vue'),
           meta: {
@@ -401,6 +394,13 @@ const router = createRouter({
         {
           path: 'view/:id',
           component: () => import('../views/Others/Quotation/view.vue'),
+          meta: {
+            title: 'Quotation-Form',
+          },
+        },
+        {
+          path: 'add/:id',
+          component: () => import('../views/Others/Quotation/form.vue'),
           meta: {
             title: 'Quotation-Form',
           },

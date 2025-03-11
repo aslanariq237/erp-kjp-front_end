@@ -7,13 +7,7 @@
           <h1 class="text-2xl font-bold text-gray-800">Purchase Order</h1>
           <p class="text-gray-500 text-sm mt-1">Others / Purchase Order</p>
         </div>
-        <div class="flex gap-3">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
-            <span>Export</span>
-          </button>
+        <div class="flex gap-3">          
           <button>
             <RouterLink
               to="/purchase-order/form"
@@ -116,7 +110,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
+                    @click="viewData(entry.id_po)"
                   >View</button>
                   <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"

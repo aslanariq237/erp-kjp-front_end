@@ -150,8 +150,7 @@ export default defineComponent({
                     this.issue_at = data.issue_at;
                     this.point = data.point.point;
                     this.termin = data.termin
-                    this.customer_name = data.customer.customer_toko;                                                                                                             
-                    this.employee_name = data.employee.employee_name;
+                    this.customer_name = data.customer.customer_name;                                                                                                                                 
                     this.sub_total = data.sub_total;
                     this.code_do = data.code_do;
                 }

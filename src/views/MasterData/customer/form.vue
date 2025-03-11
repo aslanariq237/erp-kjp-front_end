@@ -21,7 +21,12 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
             <FormGroup label="Customer Name" :required="true" :error="rules.issue_at"
               errorMessage="Issue Date is required">
-              <input type="text" id="customer_name" name="customer_name" v-model="customer_name"
+              <input 
+                type="text" 
+                id="customer_name" 
+                name="customer_name" 
+                v-model="customer_name"
+                @change="singkatan"
                 :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
@@ -30,14 +35,7 @@
               errorMessage="Due Date is required">
               <input type="text" id="customer_phone" name="customer_phone" v-model="customer_phone"
                 :class="inputClass(rules.due_at)" />
-            </FormGroup>
-
-            <!-- customerToko -->
-            <FormGroup label="Customer Toko" :required="true" :error="rules.issue_at"
-              errorMessage="Issue Date is required">
-              <input type="text" id="customer_name" name="customer_name" v-model="customer_toko"
-                :class="inputClass(rules.issue_at)" @change="singkatan" />
-            </FormGroup>
+            </FormGroup>           
 
             <!-- No -->
             <FormGroup label="Customer Email" :required="false" :error="rules.due_at"
@@ -68,7 +66,7 @@
             <FormGroup>              
             </FormGroup>
           </div>
-          <div class="flex justify-content-between gap-4 items-end mt-5">
+          <div class="flex justify-content-between gap-4 items-end">
             <!-- Grand Total -->
             <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
               errorMessage="Quantity is required">
@@ -100,7 +98,7 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div>          
         </div>
       </div>
     </Form>
@@ -131,8 +129,7 @@ export default defineComponent({
     return {
       customer_name: '',
       customer_phone: 0,
-      customer_email: '',
-      customer_toko: '',
+      customer_email: '',      
       customer_singkatan: '',
       customer_address: '',
       customer_npwp : 0,
@@ -227,7 +224,7 @@ export default defineComponent({
     },
 
     singkatan() {
-      this.customer_singkatan = this.createSingkatan(this.customer_toko);
+      this.customer_singkatan = this.createSingkatan(this.customer_name);
     },
 
     addPoDetails() {
@@ -248,8 +245,7 @@ export default defineComponent({
         await axios.post(
           AddCustomer, {
           customer_name: this.customer_name,
-          customer_phone: parseInt(this.customer_phone) || 0,
-          customer_toko: this.customer_toko,
+          customer_phone: parseInt(this.customer_phone) || 0,          
           customer_singkatan: this.customer_singkatan,
           customer_email: this.customer_email,
           customer_address: this.customer_address,

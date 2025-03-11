@@ -96,7 +96,7 @@
                   {{ entry.code_quatation }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_toko }}
+                  {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
@@ -112,7 +112,7 @@
                     View
                   </button>
                   <button
-                    @click="viewData(entry.id_quatation)"
+                    @click="editData(entry.id_quatation)"
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
                   >
                     Edit
@@ -275,6 +275,9 @@ export default defineComponent({
     const viewData = (id) => {
       router.push('/quotation/view/' + id)
     }
+    const editData = (id) => {
+      router.push('/quotation/add/' + id)
+    }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
@@ -348,6 +351,7 @@ export default defineComponent({
 
     return {
       viewData,
+      editData,
 
       // State
       loading,
