@@ -91,12 +91,14 @@
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              >                
+              >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.vendor.vendor_name }}</div>
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ entry.vendor.vendor_name }}
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
@@ -114,22 +116,27 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button 
+                  <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >View</button>
-                  <button 
+                  >
+                    View
+                  </button>
+                  <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >Edit</button>
-                  <button 
+                  >
+                    Edit
+                  </button>
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
+                    Export
+                  </button>
+                  <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >Export</button>                  
-                  <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
-                  >Approve</button>                  
+                  >
+                    Approve
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -203,9 +210,10 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios';
-import { PurchaseOrder } from '@/core/utils/url_api';
-import router from '@/router';
+import axios from 'axios'
+import { PurchaseOrder } from '@/core/utils/url_api'
+import router from '@/router'
+import jsPDF from 'jspdf'
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -217,12 +225,12 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [      
-      { key: 'code_po', label: 'Po Number' },      
-      { key: 'code_po', label: 'Vendor name' },            
-      { key: 'sub_total', label: 'Sub Total' },      
-      { key: 'sub_total', label: 'PPn' },      
-      { key: 'sub_total', label: 'Grand Total' },      
+    const tableHeaders = [
+      { key: 'code_po', label: 'Po Number' },
+      { key: 'code_po', label: 'Vendor name' },
+      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'sub_total', label: 'PPn' },
+      { key: 'sub_total', label: 'Grand Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'Action', label: 'Action' },
@@ -239,20 +247,20 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const getPurchaseOrder = async() => {
+    const getPurchaseOrder = async () => {
       try {
         const res = await axios.get(PurchaseOrder)
-        entries.value = res.data;
+        entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
     onMounted(() => {
-      getPurchaseOrder();
+      getPurchaseOrder()
     })
 
     const viewData = (id) => {
-      router.push('/purchase-order/view/' + id);
+      router.push('/purchase-order/view/' + id)
     }
 
     // Computed properties for filtering and pagination
@@ -277,7 +285,7 @@ export default defineComponent({
       })
 
       return result
-    })    
+    })
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -355,6 +363,220 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
 
+    const exportToPDF = (entry) => {
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.width
+      const margin = 20
+      const tableWidth = pageWidth - margin * 2
+
+      // Helper function to draw table row
+      const drawTableRow = (columns, y, isHeader = false) => {
+        const colWidths = [0.25, 0.35, 0.2, 0.2] // Proportions of table width
+        let x = margin
+
+        // Background for header
+        if (isHeader) {
+          doc.setFillColor(240, 240, 240)
+          doc.rect(margin, y - 6, tableWidth, 10, 'F')
+          doc.setFont('helvetica', 'bold')
+        } else {
+          doc.setFont('helvetica', 'normal')
+        }
+
+        // Draw cell content
+        columns.forEach((text, i) => {
+          const cellWidth = tableWidth * colWidths[i]
+          doc.text(text || '', x, y)
+          x += cellWidth
+        })
+
+        return y + 10 // Return next line position
+      }
+
+      // Header with logo and company info
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'bold')
+      doc.text('DARSA MIGUNA INTERNATIONAL', margin, 20)
+
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Jl. Mampang Prapatan Raya 15, No. 73A', pageWidth - margin, 15, { align: 'right' })
+      doc.text('Tegal Parang, Mampang Prapatan, Jakarta 12790', pageWidth - margin, 20, {
+        align: 'right',
+      })
+      doc.text('admin@darsainternational.co.id', pageWidth - margin, 25, { align: 'right' })
+      doc.text('(021)87909871', pageWidth - margin, 30, { align: 'right' })
+
+      // Line separator
+      doc.line(margin, 35, pageWidth - margin, 35)
+
+      // Quotation title
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('QUOTATION', pageWidth / 2, 45, { align: 'center' })
+
+      // Quotation info in a table format
+      doc.setFontSize(10)
+      let y = 60
+
+      // Customer info
+      doc.setFont('helvetica', 'bold')
+      doc.text('Customer Information:', margin, y)
+      y += 10
+
+      const customerTable = [
+        ['Vendor', ':', entry.vendor.vendor_name, ''],
+        ['PO Type', ':', entry.po_type, ''],
+        ['Status Payment', ':', entry.status_payment, ''],
+        ['Sub Total', ':', formatCurrency(entry.sub_total)],
+        ['Total Tax', ':', formatCurrency(entry.total_tax)],
+        ['Total Service', ':', formatCurrency(entry.total_service)],
+        ['Deposit', ':', formatCurrency(entry.deposit)],
+        ['PPN', ':', formatCurrency(entry.ppn)],
+        ['Grand Total', ':', formatCurrency(entry.grand_total)],
+        ['Issue Date', ':', entry.issue_at],
+        ['Due Date', ':', entry.due_at],
+      ]
+
+      // Draw customer info table
+      customerTable.forEach((row) => {
+        doc.setFont('helvetica', 'bold')
+        doc.text(row[0] || '', margin, y)
+        doc.setFont('helvetica', 'normal')
+        doc.text(row[1] || '', margin + 35, y)
+        doc.text(row[2] || '', margin + 40, y)
+        y += 8
+      })
+
+      y += 15
+
+      // Items table header
+      doc.setFont('helvetica', 'bold')
+      doc.text('Quotation Details:', margin, y)
+      y += 10
+
+      // Draw table border
+      doc.rect(margin, y - 6, tableWidth, 10 + (entry.items?.length || 3) * 10, 'S')
+
+      // Table header
+      y = drawTableRow(['Item', 'Description', 'Quantity', 'Price'], y, true)
+
+      // Draw horizontal line after header
+      doc.line(margin, y - 6, pageWidth - margin, y - 6)
+
+      // Table content
+      if (entry.items && entry.items.length > 0) {
+        entry.items.forEach((item, index) => {
+          const itemNo = item.code || `${index + 1}`
+          const desc = item.name || item.description || '-'
+          const qty = `${item.qty} ${item.unit || 'Pcs'}`
+          const price = formatCurrency(item.price)
+
+          y = drawTableRow([itemNo, desc, qty, price], y)
+
+          // Draw horizontal line between rows
+          doc.line(margin, y - 6, pageWidth - margin, y - 6)
+        })
+      } else {
+        // Example items if no data
+        ;[
+          ['45-SW-041-001', 'WATER PUMP A650', '1 PL', 'Rp -'],
+          ['45-SW-041-002', 'WATER PUMP PV400', '1 PL', 'Rp -'],
+          ['45-SW-041-003', 'WATER PUMP PV500', '1 PL', 'Rp -'],
+        ].forEach((row) => {
+          y = drawTableRow(row, y)
+
+          // Draw horizontal line between rows
+          doc.line(margin, y - 6, pageWidth - margin, y - 6)
+        })
+      }
+
+      // Draw vertical lines for columns
+      let colX = margin
+      const colWidths = [0.25, 0.35, 0.2, 0.2] // Same proportions as in drawTableRow
+
+      colWidths.forEach((width, i) => {
+        if (i < colWidths.length - 1) {
+          colX += tableWidth * width
+          doc.line(colX, y - 6 - (entry.items?.length || 3) * 10 - 10, colX, y - 6)
+        }
+      })
+
+      y += 15
+
+      // Total information table
+      const totalTable = [
+        ['Subtotal', ':', formatCurrency(entry.sub_total || 0)],
+        ['Tax', ':', formatCurrency(entry.total_tax || 0)],
+        ['TOTAL', ':', formatCurrency(entry.grand_total || entry.sub_total || 0)],
+      ]
+
+      // Draw total info right-aligned
+      totalTable.forEach((row, index) => {
+        const labelX = pageWidth - margin - 80
+        const colonX = pageWidth - margin - 30
+        const valueX = pageWidth - margin
+
+        if (index === 2) {
+          doc.setFont('helvetica', 'bold') // Make the total line bold
+        } else {
+          doc.setFont('helvetica', 'normal')
+        }
+
+        doc.text(row[0] || '', labelX, y)
+        doc.text(row[1] || '', colonX, y)
+        doc.text(row[2] || '', valueX, y, { align: 'right' })
+
+        y += 8
+      })
+
+      y += 15
+
+      // Payment terms
+      doc.setFont('helvetica', 'bold')
+      doc.text('Terms of Payment:', margin, y)
+      y += 8
+
+      doc.setFont('helvetica', 'normal')
+      doc.text(entry.termin || 'Payment due within 30 days after delivery', margin, y)
+
+      y += 20
+
+      // Notes section
+      doc.setFont('helvetica', 'bold')
+      doc.text('Note:', margin, y)
+      y += 8
+
+      doc.setFont('helvetica', 'normal')
+      doc.text('- Delivery time: READY 3 WEEKS AFTER PO', margin, y)
+      y += 8
+      doc.text('- Prices are valid for 7 days from quotation date', margin, y)
+      y += 8
+      doc.text(
+        '- If you have any questions concerning this quotation, please contact us',
+        margin,
+        y,
+      )
+
+      y += 20
+
+      // Signature
+      doc.text('Yours Sincerely,', margin, y)
+      y += 30
+
+      doc.line(margin, y, margin + 50, y)
+      y += 8
+      doc.text('(                                 )', margin, y)
+
+      // Footer
+      const footerY = doc.internal.pageSize.height - 20
+      doc.setFontSize(8)
+      doc.text('THANK YOU FOR YOUR BUSINESS!', pageWidth / 2, footerY, { align: 'center' })
+
+      // Save the PDF
+      doc.save(`purchaseorder-${entry.code_po}.pdf`)
+    }
+
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -384,12 +606,12 @@ export default defineComponent({
 
       // Methods
       exportData,
+      exportToPDF,
       formatCurrency,
     }
   },
 })
 </script>
-
 <style scoped>
 .pagination-button {
   @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;

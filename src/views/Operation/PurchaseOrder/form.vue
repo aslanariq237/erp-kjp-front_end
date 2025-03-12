@@ -91,7 +91,7 @@
             />
           </FormGroup>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">                    
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
           <FormGroup
             label="Vendor"
@@ -119,7 +119,7 @@
                 {{ vendor.vendor_name }}
               </li>
             </ul>
-          </FormGroup>                              
+          </FormGroup>
 
           <!-- Total Service -->
           <FormGroup
@@ -218,12 +218,8 @@
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Price
-                </th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
-                  Amount
-                </th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Price</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
@@ -255,7 +251,7 @@
                 <p>{{ formatCurrency(grand_total) }}</p>
               </div>
             </div>
-          </div>          
+          </div>
         </div>
       </div>
     </Form>
@@ -301,7 +297,7 @@ export default defineComponent({
       employee_id: null,
       price: 0,
       termin: '',
-      po_type: '',      
+      po_type: '',
       status_payment: "Hasn't Payed",
       total_tax: 0,
       total_service: 0,
@@ -330,10 +326,9 @@ export default defineComponent({
   async mounted() {
     this.getvendor()
     this.getEmployee()
-    this.getProducts() 
+    this.getProducts()
 
-    this.issue_at = new Date().toLocaleDateString('en-CA');
-
+    this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
     issue_at(newIssueDate) {
@@ -477,7 +472,7 @@ export default defineComponent({
         style: 'currency',
         currency: 'IDR',
       }).format(value)
-    },  
+    },
 
     showNotification(type, message) {
       this.notification = {
@@ -503,7 +498,7 @@ export default defineComponent({
       if (result != 0) {
         await axios
           .post(PurchaseOrderAdd, {
-            vendor_id : this.vendor_id,
+            vendor_id: this.vendor_id,
             employee_id: 1,
             termin: this.termin,
             total_tax: this.total_tax,
