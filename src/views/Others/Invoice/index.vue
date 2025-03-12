@@ -91,7 +91,7 @@
                   {{ entry.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_number ? entry.po_number : '-' }}
+                  {{ entry.salesorder.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}

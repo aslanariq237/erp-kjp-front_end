@@ -50,20 +50,20 @@
           </FormGroup>          
           <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
-              placeholder="Customer" />
+            <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
+              placeholder="Po Number" />
           </FormGroup>         
           <!-- DO Type -->
           <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
-              placeholder="Customer" />
+              placeholder="Customer Name" />
           </FormGroup>        
 
           <!-- Alamat -->
           <FormGroup label="Address" :required="false" errorMessage="Sub Total is required">
             <input type="text" id="alamat" name="alamat" v-model="customer_address" :class="inputClass(rules.alamat)"
-              placeholder="Enter Alamat" />
+              placeholder="Enter Address" />
           </FormGroup>
           <FormGroup>
           </FormGroup>
@@ -198,7 +198,8 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.getSalesOrder();    
+    this.getSalesOrder(); 
+    this.issue_at = new Date().toLocaleDateString('en-CA');
   },
   computed: {
     // Calculate subtotal based on all items in sales_order_details
@@ -231,12 +232,12 @@ export default defineComponent({
       axios.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
         this.customer_id = data.customer.customer_id;
-        this.customer_name = data.customer.customer_toko;
+        this.customer_name = data.customer.customer_name;
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
         this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;
-        this.issue_at = data.issue_at;
+        this.employee_name = data.employee.employee_name;  
+        this.po_number = data.po_number;      
         this.due_at = data.due_at;        
 
         if (data.id_so) {          
@@ -248,9 +249,8 @@ export default defineComponent({
     getDeliveryOrder(id) {
       axios.get(DeliverSales + '/' + id).then((res) => {
         var data = res.data
-        if (data.has_inv != 1) {
-          this.deliveryOrders = data;             
-        } 
+        data = data.filter(detail => detail.has_inv == 0);
+        this.deliveryOrders = data;                   
       })
     },
     hasInvoice(){
@@ -305,9 +305,10 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation()      
+      const result = await this.validation()            
       if (result != 0) {
-        await axios.post(InvoiceAdd, {          
+        await axios.post(InvoiceAdd, {  
+          id_so : this.id_so,        
           customer_id : this.customer_id,
           employee_id : this.employee_id,
           issue_at : this.issue_at,
@@ -323,15 +324,8 @@ export default defineComponent({
             title: 'Success',
             text: "Data has been Saved"
           }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Employee";
-              } else {
-                mssg = "Success Create Employee";
-              }
-              await router.push("/employee");
-              this.alertStore.success(mssg);
+            if (result.isConfirmed) {              
+              await router.push("/invoice");              
             }
           })
         }, (error) => {

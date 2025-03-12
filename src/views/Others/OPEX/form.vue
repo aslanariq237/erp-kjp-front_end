@@ -59,7 +59,15 @@
               ]"
               placeholder="Enter opex name"
               autofocus
+              @input="filterCustomers"
             />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
+                {{ customer.customer_name }}
+              </li>
+              <li v-if="filteredCustomers.length === 0"> not found</li>
+            </ul>
           </FormGroup> 
           <FormGroup
             label="Customer"
@@ -144,6 +152,7 @@ import axios from 'axios'
 import { AddOpex } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
+import { Customer } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'AccountReceivableForm',
@@ -159,6 +168,10 @@ export default defineComponent({
       opex_name : '',
       opex_price: 0,
       opex_type: '',
+      customers: [],
+      filteredCustomers: [],
+      customer_name: '',
+      customer_id: null,
       isSubmitting: false,
       notification: {
         show: false,
@@ -175,6 +188,24 @@ export default defineComponent({
   },
 
   methods: {
+    getCustomer() {
+      axios.get(Customer).then((res) => {
+        var data = res.data
+        this.customers = data
+      })
+    },
+    filterCustomers() {
+      const searchTerm = this.customer_name.toLowerCase()
+      this.filteredCustomers = this.customers.filter((customer) => {
+        const name = customer.customer_name.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    },
+    selectCustomer(customer) {
+      this.customer_id = customer.customer_id
+      this.customer_name = customer.customer_name
+      this.filteredCustomers = []
+    },
     showNotification(type, message) {
       this.notification = {
         show: true,

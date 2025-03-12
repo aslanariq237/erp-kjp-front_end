@@ -99,11 +99,8 @@
                   <div class="text-sm font-medium text-gray-900">{{ entry.po_number}}</div>
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer.customer_toko }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
-                </td>
+                  {{ entry.customer.customer_name }}
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
                 </td>               
@@ -210,8 +207,7 @@ export default defineComponent({
     const tableHeaders = [      
       { key: 'code_so', label: 'So Number' },      
       { key: 'po_number', label: 'Po Number' },      
-      { key: 'customer', label: 'Customer' },      
-      { key: 'status_payment', label: 'Status Payment' },
+      { key: 'customer', label: 'Customer' },            
       { key: 'sub_total', label: 'Sub Total' },    
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },

@@ -112,7 +112,7 @@
                 <div class="text-sm font-medium text-gray-900">{{ product.product_uom }}</div>
               </td>  
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <div class="text-sm font-medium text-gray-900">{{ }}</div>
+                <div class="text-sm font-medium text-gray-900">{{ product.product_category_id == 1? "Coms":"Bms"}}</div>
               </td>                          
             </tr>
           </tbody>

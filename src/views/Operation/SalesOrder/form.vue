@@ -43,10 +43,10 @@
             errorMessage="Customer is Required">
             <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
               class="rounded w-full" placeholder="Type customer name" />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-10 bg-white">
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
               <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_toko }}
+                {{ customer.customer_name }}
               </li>
               <li v-if="filteredCustomers.length === 0"> not found</li>
             </ul>
@@ -372,13 +372,13 @@ export default defineComponent({
     filterCustomers() {
       const searchTerm = this.customer_name.toLowerCase()
       this.filteredCustomers = this.customers.filter((customer) => {
-        const name = customer.customer_toko.toLowerCase()
+        const name = customer.customer_name.toLowerCase()
         return name.includes(searchTerm)
       })
     },
     selectCustomer(customer) {
       this.customer_id = customer.customer_id
-      this.customer_name = customer.customer_toko
+      this.customer_name = customer.customer_name
       this.filteredCustomers = []
     },
     filterProducts() {
@@ -430,11 +430,11 @@ export default defineComponent({
             employee_id: 1,
             termin: this.termin,
             po_number : this.po_number,
-            total_tax: this.total_tax,
-            status_payment: this.status_payment,
+            total_tax: this.total_tax,            
             deposit: this.deposit,
             issue_at: this.issue_at,
-            due_at: this.due_at,            
+            due_at: this.due_at,  
+            has_invoice: 0,          
             sales_order_details: this.sales_order_details,
           })
           .then(

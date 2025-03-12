@@ -111,7 +111,7 @@
             />
             <ul
               v-if="filteredCustomers.length"
-              class="border rounded w-full mt-2 bg-white absolute"
+              class="border rounded w-full mt-2 bg-white absolute z-40"
             >
               <li
                 v-for="customer in filteredCustomers"
@@ -517,7 +517,7 @@ export default defineComponent({
                   } else {
                     mssg = 'Success Create Employee'
                   }
-                  await router.push('/employee')
+                  await router.push('/quotation')
                   this.alertStore.success(mssg)
                 }
               })

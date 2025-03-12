@@ -1,231 +1,197 @@
+<!-- eslint-disable vue/block-lang -->
 <template>
     <AdminLayout>
-        <Form @submit="onSubmit">
-            <div class="">
-                <div class="flex justify-between items-center shadow-lg rounded-lg p-4">
-                    <div class="card">
-                        <p class="text-xl font-semibold">Form Product</p>
-                        <p class="text-gray-400">Master Data / Product / Form</p>
+        <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
+            <!-- Notification -->
+            <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+                @close="notification.show = false" />
+  
+            <!-- Header Card -->
+            <div class="bg-white rounded-lg shadow-md mb-6">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <div class="breadcrumb">
+                        <h1 class="text-2xl font-bold text-gray-800">Create New Product</h1>
+                        <p class="text-gray-500 text-sm mt-1">Master Data / Product / Form</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <RouterLink to="/employee"
+                            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </RouterLink>
+                        <button type="submit"
+                            class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                            <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                            <i v-else class="fas fa-check"></i>
+                            {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+                        </button>
                     </div>
                 </div>
-                <div class="flex justify-between mt-4 gap-10">
-                    <div class="input shadow-lg rounded-lg p-4 mt-4 w-full">
-                        <div class="field mt-3 text-lg font-semibold">
-                            <div class="flex justify-between align-top gap-5">
-                                <div class="product-image w-full">
-                                    <label>Product Image</label>
-                                    <input type="file" id="product_image" name="product_image"
-                                        class="w-full rounded-md px-3 my-2" @change="handleFileUpload" accept="image/*">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_image == true">
-                                                Image is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="product-name w-full">
-                                    <label>Product Desc</label>
-                                    <input type="text" id="product_image" name="product_image"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Name"
-                                        v-model="product_name">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_name == true">
-                                                product Name is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between gap-5 align-top mt-3">
-                                <div class="product Weight w-full">
-                                    <label>Part Number</label>
-                                    <input type="text" id="product-weight" name="product-weight"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Weight"
-                                        v-model="product_sn">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
-                                                Product Price is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="stock w-full">
-                                    <label>Brand</label>
-                                    <input type="text" id="stock" name="stock" class="w-full rounded-md px-3 py-3 my-2"
-                                        placeholder="Insert Stock" v-model="product_brand">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.stock == true">
-                                                Stock is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> 
-                            <div class="flex justify-between gap-5 align-top mt-3">
-                                <div class="product Weight w-full">
-                                    <label>product UoM</label>
-                                    <input type="text" id="product-weight" name="product-weight"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product UoM"
-                                        v-model="product_uom">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
-                                                Product Price is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="Cat Weight w-full">
-                                    <label>product Category</label>
-                                    <input type="text" id="product-weight" name="product-weight"
-                                        class="w-full rounded-md px-3 py-3 my-2" placeholder="Insert Product Category"
-                                        v-model="product_uom">
-                                    <div class="fv-plugins-message-container">
-                                        <div class="fv-help-block">
-                                            <p class="text-red-400 text-md italic" v-if="rules.product_price == true">
-                                                Product Price is required
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                            
-                            <div class="flex justify-between gap-5 align-top mt-3">                                
-                                <div class="contact-person w-full">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btun flex justify-center items-center gap-4 w-60">
-                        <div class="contain">
-                            <div class="btn">
-                                <RouterLink to="/product" class="p-10 py-3 text-xl cursor-pointer">Cancel</RouterLink>
-                            </div>
-                            <div class="btn">
-                                <button type="submit"
-                                    class="p-10 py-3 text-xl mt-10 bg-green-400 rounded-md text-white">Submit</button>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+  
+            <!-- Form Card -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
+                    <FormGroup label="Employee Address" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="file" id="issue_at" name="issue_at"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup>  
+                    
+                    <FormGroup label="Product Desc" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" name="issue_at" v-model="product_desc"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup> 
+                    <FormGroup label="Product SN" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" name="issue_at" v-model="product_sn"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup>  
+                    <FormGroup label="Product Brand" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" name="issue_at" v-model="product_brand"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup>  
+                    <FormGroup label="Product UoM" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" name="issue_at" v-model="product_uom"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup>  
+                    <FormGroup label="Product Category" :required="true" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" name="issue_at" v-model="product_category_id"
+                            :class="inputClass(rules.issue_at)" />
+                    </FormGroup>                                                                            
                 </div>
             </div>
         </Form>
     </AdminLayout>
-</template>
-<script>
-import AdminLayout from '@/components/layout/AdminLayout.vue';
-import { ProductCode } from '@/core/utils/url_api';
-import axios from 'axios';
-import router from '@/router';  
-import Swal from 'sweetalert2';
-import { Form, Field, ErrorMessage } from "vee-validate";
-import { RouterLink } from 'vue-router';
-
-
-export default {
-    name: "assets-forms",
+  </template>
+  
+  <script>
+  import { defineComponent } from 'vue'
+  import AdminLayout from '@/components/layout/AdminLayout.vue'
+  import { Form, Field, ErrorMessage } from 'vee-validate'
+  import Swal from 'sweetalert2'
+  import Notification from '@/components/Notification.vue'
+  import FormGroup from '@/components/FormGroup.vue'
+  import axios from 'axios'
+  import { ProductCode } from '@/core/utils/url_api'
+  import router from '@/router'
+  
+  export default defineComponent({
+    name: 'PurchaseOrderForm',
     components: {
         AdminLayout,
         Form,
+        Field,
+        ErrorMessage,
+        Notification,
+        FormGroup,
     },
+  
     data() {
-        return {            
-            product_image: "",
-            product_name: "",
-            product_sn : "",
-            product_brand : "",
-            product_uom : "",            
-            stock: 0,            
+        return {   
+            product_desc: '',
+            product_sn : '',
+            product_brand : '',
+            product_uom : '',
+            product_category_id : '',
+            product_stock : 0,           
+            //others
+            isSubmitting: false,
+            notification: {
+                show: false,
+                type: 'success',
+                message: '',
+            },
             rules: {
-                product_image: false,
-                product_name: false,
-                product_price: false,
-                stock: false,
-                status: false
-            }
+                vendor_id: false,
+                id_payment_type: false,
+            },
+            sales_order_details: [],
         }
     },
-    mounted() { },
+  
     methods: {
+        showNotification(type, message) {
+            this.notification = {
+                show: true,
+                type,
+                message,
+            }
+  
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                this.notification.show = false
+            }, 3000)
+        },
+  
         async validation() {
-            var count = 0;
-
-            if (this.product_name == "" || this.product_name == null) {
-                this.rules.product_name = true;
-                count++;
+            var count = 0
+  
+            if (this.vendor_id == '' || this.vendor_id == null) {
+                this.rules.vendor_id = true
+                count++
             } else {
-                this.rules.product_name = false;
+                this.rules.vendor_id = false
             }
-            
-
-
-            return count;
+  
+            return count
         },
-
-        handleFileUpload(event) {
-            const input = event.target;
-            if (!input.files || input.files.target === 0) {
-                console.log("no File Selected")
-            }
-
-            const file = input.files[0]
-            const reader = new FileReader();
-            reader.readAsDataURL(file)
-
-            reader.onload = (e) => {
-                this.product_image = e.target.result
-            }
-
-        },
-
+  
         async onSubmit() {
-            const result = await this.validation();
-
-            if (result == 0) {
-
-                await axios.post(ProductCode, {
-                    product_image : "rajut.jpg",
-                    product_desc : this.product_name,
-                    product_sn : this.product_sn,
-                    product_uom : this.product_uom,
-                    product_brand : this.product_brand,                    
-                    product_stock : this.stock || 0,                    
-                }).then((response) => {
-                    Swal.fire({
-                        icon: "success",
-                        title: 'Success',
-                        text: "Data has been Saved"
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            var mssg = "";
-                            if (this.id != null) {
-                                mssg = "Success Update Employee";
-                            } else {
-                                mssg = "Success Create Employee";
-                            }
-                            await router.push("/products");
-                            this.alertStore.success(mssg);
-                        }
+            const result = 2
+            if (result != 0) {
+                await axios
+                    .post(ProductCode, {   
+                        product_desc: this.product_desc,
+                        product_sn : this.product_sn,   
+                        product_brand : this.product_brand,
+                        product_uom : this.product_uom,
+                        product_category_id : this.product_category_id,
+                        product_stock : this.product_stock,                     
                     })
-                },
-                    (error) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text:
-                                (error.response &&
-                                    error.response &&
-                                    error.response.message) ||
-                                error.message ||
-                                error.toString(),
-                        });
-                    },
-                )
+                    .then(
+                        (response) => {
+                            console.log(response)
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Data has been Saved',
+                            }).then((res) => {
+                                if (res.isConfirmed) {
+                                    router.push('/product')
+                                }
+                            })
+                        },
+                        (error) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text:
+                                    (error.response && error.response && error.response.message) ||
+                                    error.message ||
+                                    error.toString(),
+                            })
+                        },
+                    )
             }
-        }
-    }
-}
-</script>
+        },
+  
+        inputClass(error) {
+            return [
+                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+                error
+                    ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                    : 'border-gray-300 focus:ring-blue-500',
+            ]
+        },
+    },
+  })
+  </script>
+  
+  <style scoped>
+  /* Add your styles here */
+  </style>

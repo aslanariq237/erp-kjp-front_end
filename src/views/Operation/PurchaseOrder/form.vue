@@ -268,6 +268,7 @@ import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import { computed } from 'vue'
 import { Employee, Product, PurchaseOrderAdd, Vendor } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -516,15 +517,8 @@ export default defineComponent({
                 title: 'Success',
                 text: 'Data has been Saved',
               }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Employee'
-                  } else {
-                    mssg = 'Success Create Employee'
-                  }
-                  await router.push('/employee')
-                  this.alertStore.success(mssg)
+                if (result.isConfirmed) {                  
+                  await router.push('/employee')                  
                 }
               })
             },

@@ -4,8 +4,10 @@ baseUrl = import.meta.env.VITE_APP_API_URL + '/api/'
 let laraUrl = 'http://127.0.0.1:8000/api/'
 
 //A
-export const AccReceive = baseUrl + 'account_receivable'
-export const AccPayable = baseUrl + 'account_payable'
+export const AccReceive = baseUrl + 'account_receivable';
+export const AccPayable = baseUrl + 'account_payable';
+export const Asset = baseUrl + 'assets';
+export const AddAsset = baseUrl + 'assets_code';
 //B
 export const BankAccount = baseUrl + 'bank_accounts'
 //C

@@ -44,37 +44,39 @@
           <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
             <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder">
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so">
-                {{ po.code_so }} 
+                {{ po.code_so }}
               </option>
             </select>
           </FormGroup>
-       
+
           <!-- DO Type -->
           <FormGroup label="Customer" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" name="do_type" v-model="customer_name"
-              :class="inputClass(rules.do_type)" placeholder="Enter Customer" />
+            <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
+              placeholder="Enter Customer" />
           </FormGroup>
 
           <!-- Status Payment -->
           <FormGroup label="Delivery Option" :required="false" errorMessage="Status Payment is required">
-            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full" @change="selectedSalesOrder">
+            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full"
+              @change="selectedSalesOrder">
               <option v-for="po in points" :key="po.id_customer_point" :value="po.id_customer_point">
-                {{ po.point }} 
+                {{ po.point }}
               </option>
             </select>
           </FormGroup>
 
           <!-- Alamat -->
           <FormGroup label="Alamat" :required="false" errorMessage="Sub Total is required">
-            <input type="text" id="alamat" name="alamat" v-model="customer_address"
-              :class="inputClass(rules.alamat)" placeholder="Enter Alamat" />
+            <input type="text" id="alamat" name="alamat" v-model="customer_address" :class="inputClass(rules.alamat)"
+              placeholder="Enter Alamat" />
           </FormGroup>
         </div>
         <div class=" mt-8">
+          <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">                
+              <tr class="text-left">
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Desc</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">brand</th>
@@ -84,22 +86,29 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="products in sales_order_details" :key="products.product_id">                
+              <tr v-for="products in sales_order_details" :key="products.product_id">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_sn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <input 
                     type="text" 
-                    v-model="products.quantity" 
-                    class="w-20 rounded-lg border-gray-200 text-center"  
-                    @change="changeQuantity"  
-                    :max="products.quantity"                
-                  >
+                    v-model="products.quantity_left" 
+                    class="w-20 rounded-lg border-gray-200 text-center"
+                    @change="changeQuantity(products)" 
+                    :disabled="products.has_do === 1"
+                    :max="products.product_stock">
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
-                  <input type="checkbox" name="check_barang" id="check_barang" v-model="products.id_so" :value="products.id_so" @change="AddDeliverOrderDetails(products)">
+                  <input 
+                    type="checkbox" 
+                    name="check_barang" 
+                    id="check_barang" 
+                    v-model="products.id_so"                    
+                    :disabled="products.product_stock == 0 || products.has_do === 1" 
+                    @change="AddDeliverOrderDetails(products)
+                  ">
                 </td>
               </tr>
             </tbody>
@@ -133,9 +142,10 @@ import {
   AddDeliveryOrder,
   Customer,
   DetailSo,
-  Employee,  
+  Employee,
   SalesOrders
 } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -148,22 +158,23 @@ export default defineComponent({
 
   data() {
     return {
-      salesOrders: [], 
+      salesOrders: [],
       employee: [],
-      points: [],     
-      sales_order_details: [],   
-      delivery_order_details: [],   
-      id_so: null, 
-      id_customer_point : null,
+      points: [],
+      sales_order_details: [],
+      delivery_order_details: [],
+      id_so: null,
+      id_customer_point: null,
       customer_id: null,
-      employee_id: null, 
+      employee_id: null,
       customer_name: '',
-      customer_npwp : 0 ,
-      customer_address : '',
-      checklist_prod : 0,               
+      customer_npwp: 0,
+      customer_address: '',
+      checklist_prod: 0,
       issue_at: '',
       due_at: '',
       isSubmitting: false,
+      errorMessage: '',
       notification: {
         show: false,
         type: 'success',
@@ -176,7 +187,6 @@ export default defineComponent({
   },
   async mounted() {
     this.getSalesOrder();
-    this.getEmployee();
     this.issue_at = new Date().toLocaleDateString('en-CA');
   },
 
@@ -186,12 +196,18 @@ export default defineComponent({
       return this.sales_order_details.reduce((total, item) => {
         return total + item.quantity * item.price;
       }, 0);
-    },    
+    },
   },
 
   methods: {
-    changeQuantity(poDetail){      
-      poDetail.amount = poDetail.price * poDetail.quantity;
+    changeQuantity(product) {
+      if (product.quantity_left > product.product_stock) {
+        this.errorMessage = `Stok produk ${product.product_desc} tidak mencukupi!`;
+        product.quantity_left = product.product_stock;
+      }else{
+        this.errorMessage = '';
+      }
+      product.amount = product.price * product.quantity;
     },
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
@@ -199,26 +215,20 @@ export default defineComponent({
         this.salesOrders = data;
       })
     },
-    getEmployee(){
-      axios.get(Employee).then((res) => {
+    getDeliveryOption(id) {
+      axios.get(Customer + '/point/' + id).then((res) => {
         var data = res.data;
-        this.employee = data;
-      })
-    },
-    getDeliveryOption(id){
-      axios.get(Customer + '/' + id).then((res) => {
-        var data = res.data;        
-        this.points = data.point;
+        this.points = data;
       })
     },
     selectedSalesOrder() {
       axios.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
-        this.customer_id = data.customer.customer_id;                
-        this.customer_name = data.customer.customer_toko;        
+        this.customer_id = data.customer.customer_id;
+        this.customer_name = data.customer.customer_name;
         this.customer_npwp = data.customer.customer_npwp;
-        this.customer_address = data.customer.customer_address; 
-        this.due_at = data.due_at;              
+        this.customer_address = data.customer.customer_address;
+        this.due_at = data.due_at;
         if (data.id_so) {
           this.SelectDataPo(data.id_so)
         }
@@ -231,7 +241,7 @@ export default defineComponent({
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'IDR',  
+        currency: 'IDR',
       }).format(value)
     },
 
@@ -244,6 +254,7 @@ export default defineComponent({
             if (!Array.isArray(data)) {
               data = data.data || [data]
             }
+
             for (let i = 0; i < data.length; i++) {
               let detail = data[i];
               var newObject = {
@@ -251,25 +262,34 @@ export default defineComponent({
                 id_so: detail.id_so,
                 product_id: detail.product_id,
                 product_desc: detail.product.product_desc,
-                product_brand: detail.product.product_brand,
+                product_brand: detail.product.product_brand,                
+                product_stock: detail.product.product_stock,
                 product_sn: detail.product.product_sn,
+                has_do : detail.has_do,
                 quantity: detail.quantity,
+                quantity_left: detail.quantity_left,
                 price: detail.price,
               }
-              this.sales_order_details.push(newObject)
+              this.sales_order_details.push(newObject)              
             }
           }
         )
       }
     },
-    async AddDeliverOrderDetails(products){           
+    async AddDeliverOrderDetails(products) {
+      if (products.quantity_left > products.product_stock) {
+        this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
+        products.quantity_left = products.product_stock;        
+      }
       for (let i = 0; i < [products].length; i++) {
         var objectInclude = {
-          product_id : products.product_id,
-          quantity : products.quantity,
-          price : products.price
+          id_detail_so : products.id_detail_so,
+          product_id: products.product_id,
+          quantity: products.quantity,
+          quantity_left: products.quantity_left,
+          price: products.price
         }
-        this.delivery_order_details.push(objectInclude);
+        this.delivery_order_details.push(objectInclude);         
       }
     },
     showNotification(type, message) {
@@ -286,51 +306,46 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 2
+      var count = 2            
       return count
     },
 
-    async onSubmit() {       
+    async onSubmit() {
       const result = await this.validation()
+      // console.log(this.delivery_order_details);
       if (result != 0) {
         await axios.post(AddDeliveryOrder, {
-          customer_id : this.customer_id,
-          employee_id : 1,
-          id_so       : this.id_so,
-          issue_at    : this.issue_at,
-          due_at      : this.due_at,
-          delivery_order_details : this.delivery_order_details,
-        },{
-          headers: {"Content-Type": "application/json"}
-        }).then((response) => {          
+          customer_id: this.customer_id,
+          id_customer_point: this.id_customer_point,
+          employee_id: 1,
+          id_so: this.id_so,
+          issue_at: this.issue_at,
+          due_at: this.due_at,
+          delivery_order_details: this.delivery_order_details,
+        }, {
+          headers: { "Content-Type": "application/json" }
+        }).then((response) => {
           Swal.fire({
             icon: "success",
             title: 'Success',
             text: "Data has been Saved"
           }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Employee";
-              } else {
-                mssg = "Success Create Employee";
-              }
-              await router.push("/employee");
-              this.alertStore.success(mssg);
+            if (result.isConfirmed) {              
+              await router.push("/delivery-order");              
             }
           })
-        },(error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
+        }, (error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text:
+              (error.response &&
+                error.response &&
+                error.response.message) ||
+              error.message ||
+              error.toString(),
+          });
+        },
         )
       }
     },

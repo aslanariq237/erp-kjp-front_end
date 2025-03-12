@@ -1,356 +1,216 @@
+<!-- eslint-disable vue/block-lang -->
 <template>
   <AdminLayout>
-    <Form @submit="onSubmit">
-      <div class="">
-        <div class="flex justify-between items-center shadow-lg rounded-lg p-4">
-          <div class="card">
-            <p class="text-xl font-semibold">Form Employee</p>
-            <p class="text-gray-400">Master Data - Employee - Form</p>
+      <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
+          <!-- Notification -->
+          <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+              @close="notification.show = false" />
+
+          <!-- Header Card -->
+          <div class="bg-white rounded-lg shadow-md mb-6">
+              <div class="flex justify-between items-center p-6 border-b">
+                  <div class="breadcrumb">
+                      <h1 class="text-2xl font-bold text-gray-800">Create New Employee</h1>
+                      <p class="text-gray-500 text-sm mt-1">Master Data / Employee / Form</p>
+                  </div>
+                  <div class="flex items-center gap-3">
+                      <RouterLink to="/employee"
+                          class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
+                          <i class="fas fa-times"></i>
+                          Cancel
+                      </RouterLink>
+                      <button type="submit"
+                          class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                          <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
+                          <i v-else class="fas fa-check"></i>
+                          {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+                      </button>
+                  </div>
+              </div>
           </div>
-        </div>
-        <div class="flex justify-between gap-10 mt-4">
-          <div class="input shadow-lg rounded-lg p-4 w-full">
-            <div class="field mt-5 text-lg font-semibold text-gray-800">
-              <div class="flex justify-between align-top gap-5">
-                <div class="employee-name w-full">
-                  <label>Employee Name<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_name"
-                    name="employee_name"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Insert Employee Name"
-                    v-model="employee_name"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_name == true">
-                        Employee Name is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="employee-phone w-full">
-                  <label>Employee Phone<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_phone"
-                    name="employee_phone"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Insert Employee Phone"
-                    v-model="employee_phone"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_phone == true">
-                        Employee Phone is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
+
+          <!-- Form Card -->
+          <div class="bg-white rounded-lg shadow-md p-6">
+              <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
+                  <!-- No -->
+                  <!-- Total Service -->
+                  <!-- Issue Date -->
+                  <FormGroup label="Employee Name" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="employee_name"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup> 
+                  <FormGroup label="Employee Phone" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="number" id="issue_at" name="issue_at" v-model="employee_phone"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>  
+                  <FormGroup label="Employee Email" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="employee_email"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>  
+                  <FormGroup label="Employee Nik" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="number" id="issue_at" name="issue_at" v-model="employee_nik"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>  
+                  <FormGroup label="Employee Position" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="employee_position"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>  
+                  <FormGroup label="Employee Address" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="employee_address"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>  
+                  <FormGroup label="Bpjs Kesehatan" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="bpjs_kesehatan"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup> 
+                  <FormGroup label="Bpjs Ketenagakerjaan" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="bpjs_ketenagakerjaan"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup> 
+                  <FormGroup label="Salary" :required="true" :error="rules.issue_at"
+                      errorMessage="Issue Date is required">
+                      <input type="text" id="issue_at" name="issue_at" v-model="employee_salary"
+                          :class="inputClass(rules.issue_at)" />
+                  </FormGroup>                                   
               </div>
-              <div class="flex justify-between gap-5 align-top mt-3">
-                <div class="employee-email w-full">
-                  <label>Email<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_email"
-                    name="employee_email"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan employee Email"
-                    v-model="employee_email"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_email == true">
-                        Employee Email is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="employee-address w-full">
-                  <label>Employee Address<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_address"
-                    name="employee_address"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan employee Address"
-                    v-model="employee_address"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_address == true">
-                        Employee Address is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex justify-between gap-5 align-top mt-3">
-                <div class="employee-email w-full">
-                  <label>No BPJS Kesehatan<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_email"
-                    name="employee_email"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan BPJS Kesehatan"
-                    v-model="employee_email"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_email == true">
-                        Employee Email is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="employee-address w-full">
-                  <label>No BPJS Ketenagakerjaan<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_address"
-                    name="employee_address"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan BPJS Ketenagakerjaan"
-                    v-model="employee_address"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_address == true">
-                        Employee Address is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex justify-between gap-5 align-top mt-3">
-                <div class="nik w-full">
-                  <label>Nik<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="nik"
-                    name="nik"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan nik"
-                    v-model="employee_nik"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.nik == true">
-                        nik is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="position w-full">
-                  <label>Position<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="position"
-                    name="position"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan position"
-                    v-model="employee_position"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.position == true">
-                        Position is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="flex justify-between gap-5 align-top mt-3">
-                <div class="employee-email w-full">
-                  <label>Salary<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_email"
-                    name="employee_email"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan Salary"
-                    v-model="employee_email"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_email == true">
-                        Employee Email is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="employee-address w-full">
-                  <label>Tunjangan<label class="text-red-500">*</label></label>
-                  <input
-                    type="text"
-                    id="employee_address"
-                    name="employee_address"
-                    class="w-full rounded-md px-3 py-3 my-2"
-                    placeholder="Masukkan Tunjangan"
-                    v-model="employee_address"
-                  />
-                  <div class="fv-plugins-message-container">
-                    <div class="fv-help-block">
-                      <p class="text-red-400 text-md italic" v-if="rules.employee_address == true">
-                        Employee Address is required
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="btn flex justify-center items-center gap-5 shadow-md w-60 rounded-md">
-            <div class="contain">
-              <div class="btn">
-                <RouterLink to="/employee" class="p-10 py-3 text-xl cursor-pointer"
-                  >Cancel</RouterLink
-                >
-              </div>
-              <div class="btn">
-                <button
-                  type="submit"
-                  class="text-xl bg-green-400 p-10 py-3 mt-10 rounded-md text-white"
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Form>
+      </Form>
   </AdminLayout>
 </template>
+
 <script>
+import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import { EmployeeCode } from '@/core/utils/url_api'
-import router from '@/router'
-import axios from 'axios'
-import Swal from 'sweetalert2'
 import { Form, Field, ErrorMessage } from 'vee-validate'
-import { RouterLink } from 'vue-router'
+import Swal from 'sweetalert2'
+import Notification from '@/components/Notification.vue'
+import FormGroup from '@/components/FormGroup.vue'
+import axios from 'axios'
+import { AddAsset, EmployeeCode, Vendor } from '@/core/utils/url_api'
+import router from '@/router'
 
-export default {
-  name: 'assets-forms',
+export default defineComponent({
+  name: 'PurchaseOrderForm',
   components: {
-    AdminLayout,
-    Form,
+      AdminLayout,
+      Form,
+      Field,
+      ErrorMessage,
+      Notification,
+      FormGroup,
   },
+
   data() {
-    return {
-      employee_name: '',
-      employee_phone: 0,
-      employee_email: '',
-      employee_address: '',
-      employee_salary: 0,
-      employee_nik: 0,
-      employee_position: '',
-      rules: {
-        employee_name: false,
-        employee_phone: false,
-        employee_email: false,
-        employee_address: false,
-        nik: false,
-        position: false,
-      },
-    }
+      return {
+        employee_name : '',
+        employee_phone : 0,
+        employee_email : '',
+        employee_nik : 0,
+        employee_position : '',
+        employee_address : '',
+        bpjs_kesehatan : '',
+        bpjs_ketenagakerjaan : '',   
+        empoyee_salary: 0,       
+          //others
+          isSubmitting: false,
+          notification: {
+              show: false,
+              type: 'success',
+              message: '',
+          },
+          rules: {
+              vendor_id: false,
+              id_payment_type: false,
+          },
+          sales_order_details: [],
+      }
   },
+
   methods: {
-    async validation() {
-      var count = 0
-      if (this.employee_name == '' || this.employee_name == null) {
-        this.rules.employee_name = true
-        count++
-      } else {
-        this.rules.employee_name = false
-      }
+      showNotification(type, message) {
+          this.notification = {
+              show: true,
+              type,
+              message,
+          }
 
-      if (this.employee_phone == '' || this.employee_phone == null) {
-        this.rules.employee_phone = true
-        count++
-      } else {
-        this.rules.employee_phone = false
-      }
+          // Hide notification after 3 seconds
+          setTimeout(() => {
+              this.notification.show = false
+          }, 3000)
+      },
 
-      if (this.employee_email == '' || this.employee_email == null) {
-        this.rules.employee_email = true
-        count++
-      } else {
-        this.rules.employee_email = false
-      }
-      if (this.employee_address == '' || this.employee_address == null) {
-        this.rules.employee_address = true
-        count++
-      } else {
-        this.rules.employee_address = false
-      }
+      async validation() {
+          var count = 0
 
-      if (this.employee_nik == null) {
-        this.rules.nik = true
-        count++
-      } else {
-        this.rules.nik = false
-      }
+          if (this.vendor_id == '' || this.vendor_id == null) {
+              this.rules.vendor_id = true
+              count++
+          } else {
+              this.rules.vendor_id = false
+          }
 
-      if (this.employee_position == '' || this.employee_position == null) {
-        this.rules.position = true
-        count++
-      } else {
-        this.rules.position = false
-      }
+          return count
+      },
 
-      return count
-    },
-    async onSubmit() {
-      const result = await this.validation()
+      async onSubmit() {
+          const result = 2
+          if (result != 0) {
+              await axios
+                  .post(EmployeeCode, {
+                      employee_name : this.employee_name,
+                      employee_phone : this.employee_phone,
+                      employee_email : this.employee_email,
+                      employee_nik : this.employee_nik,
+                      employee_position : this.employee_position,
+                      employee_address : this.employee_address,
+                      employee_salary : this.employee_salary,
+                      bpjs_kesehatan : this.bpjs_kesehatan,
+                      bpjs_ketenagakerjaan : this.bpjs_ketenagakerjaan,                      
+                  })
+                  .then(
+                      (response) => {
+                          console.log(response)
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Success',
+                              text: 'Data has been Saved',
+                          });
+                      },
+                      (error) => {
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Error',
+                              text:
+                                  (error.response && error.response && error.response.message) ||
+                                  error.message ||
+                                  error.toString(),
+                          })
+                      },
+                  )
+          }
+      },
 
-      if (result == 0) {
-        await axios
-          .post(EmployeeCode, {
-            employee_name: this.employee_name,
-            employee_phone: this.employee_phone,
-            employee_email: this.employee_email,
-            employee_address: this.employee_address,
-            employee_salary: this.employee_salary,
-            employee_nik: parseInt(this.employee_nik) || 0,
-            employee_position: this.employee_position,
-          })
-          .then(
-            (response) => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Data has been Saved',
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Employee'
-                  } else {
-                    mssg = 'Success Create Employee'
-                  }
-                  await router.push('/employee')
-                  this.alertStore.success(mssg)
-                }
-              })
-            },
-            (error) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text:
-                  (error.response && error.response && error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              })
-            },
-          )
-      }
-    },
+      inputClass(error) {
+          return [
+              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+              error
+                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                  : 'border-gray-300 focus:ring-blue-500',
+          ]
+      },
   },
-}
+})
 </script>
+
+<style scoped>
+/* Add your styles here */
+</style>

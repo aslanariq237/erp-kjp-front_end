@@ -97,7 +97,7 @@
                     View
                   </button>
                   <button
-                    @click="viewData(entry.id_quatation)"
+                    @click="editData(entry.id_quatation)"
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
                   >
                     Edit
@@ -252,6 +252,9 @@ export default defineComponent({
 
     const viewData = (id) => {
       router.push('/quotation/view/' + id)
+    }
+    const editData = (id) => {
+      router.push('/quotation/add/' + id)
     }
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
@@ -537,6 +540,7 @@ export default defineComponent({
 
     return {
       viewData,
+      editData,
 
       // State
       loading,
