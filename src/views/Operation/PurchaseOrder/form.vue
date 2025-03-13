@@ -10,11 +10,11 @@
       />
 
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Purchase Order</h1>
-            <p class="text-gray-500 text-sm mt-1">Others / Purchase Order / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Purchase Order</h1>
+            <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink
@@ -37,7 +37,7 @@
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
           <FormGroup
@@ -62,7 +62,7 @@
             :error="rules.po_type"
             errorMessage="PO Type is required"
           >
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
+          <select id="po_type" name="po_type" :class="inputClass(rules.deposit)" v-model="termin" class="rounded w-full">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -107,9 +107,10 @@
               v-model="vendor_name"
               @input="filtervendors"
               class="rounded w-full"
+              :class="inputClass(rules.deposit)"
               placeholder="Type Vendor Name"
             />
-            <ul v-if="filteredvendors.length" class="border rounded w-full mt-2 bg-white absolute">
+            <ul v-if="filteredvendors.length" class="border rounded w-full mt-2 bg-white absolute z-40">
               <li
                 v-for="vendor in filteredvendors"
                 :key="vendor.vendor_id"
@@ -156,13 +157,14 @@
               v-model="product_name"
               @input="filterProducts"
               class="rounded w-full"
+              :class="inputClass(rules.deposit)"
               placeholder="Type product name"
             />
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
               <li
                 v-for="product in filteredProducts"
                 :key="product.product_id"
-                @click="selectProduct(product)"
+                @click="selectProduct(product)"                
                 class="p-2 cursor-pointer hover:bg-gray-200"
               >
                 {{ product.product_sn }} - {{ product.product_desc }}
@@ -214,14 +216,14 @@
         <div class="mt-5">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">#</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                <th class="px-3 py-2 font-semibold text-left border-b">#</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Price
                 </th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Amount
                 </th>
               </tr>
@@ -523,7 +525,7 @@ export default defineComponent({
                 text: 'Data has been Saved',
               }).then(async (result) => {
                 if (result.isConfirmed) {                  
-                  await router.push('/employee')                  
+                  await router.push('/purchase-order')                  
                 }
               })
             },
@@ -543,7 +545,7 @@ export default defineComponent({
 
     inputClass(error) {
       return [
-        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+        'w-full dark:bg-gray-800 dark:text-gray-400 rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
         error
           ? 'border-red-300 focus:ring-red-500 bg-red-50'
           : 'border-gray-300 focus:ring-blue-500',

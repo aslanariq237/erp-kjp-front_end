@@ -138,6 +138,25 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/document',
+      children: [
+        {
+          path: '',
+          component: () => import('../views/MasterData/document/index.vue'),
+          meta: {
+            title: 'Delivery Order',
+          },
+        },
+        {
+          path: 'form',
+          component: () => import('../views/MasterData/document/form.vue'),
+          meta: {
+            title: 'Delivery Order-Form',
+          },
+        },        
+      ],
+    },
     //e
     {
       path: '/employee',
@@ -216,16 +235,21 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',
-          name: 'Invoice-Form',
+          path: 'form',          
           component: () => import('../views/Others/Invoice/form.vue'),
           meta: {
             title: 'Invoice-Form',
           },
         },
         {
-          path: 'view/:id',
-          name: 'Invoice-View',
+          path: 'edit/:id',          
+          component: () => import('../views/Others/Invoice/form.vue'),
+          meta: {
+            title: 'Invoice-Edit',
+          },
+        },
+        {
+          path: 'view/:id',          
           component: () => import('../views/Others/Invoice/view.vue'),
           meta: {
             title: 'Invoice-View',
@@ -399,7 +423,7 @@ const router = createRouter({
           },
         },
         {
-          path: 'add/:id',
+          path: 'edit/:id',
           component: () => import('../views/Others/Quotation/form.vue'),
           meta: {
             title: 'Quotation-Form',

@@ -2,9 +2,9 @@
   <AdminLayout>
     <div class="container mx-auto px-6 py-4">
       <!-- Header Section with Enhanced Styling -->
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex justify-between items-center mb-6  dark:text-gray-400">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Sales Order</h1>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Sales Order</h1>
           <p class="text-gray-500 text-sm mt-1">Sales / Sales Order</p>
         </div>
         <div class="flex gap-3">
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Enhanced Filter Section -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
@@ -64,13 +64,13 @@
       <!-- Enhanced Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400">
             <thead class="bg-gray-50">
               <tr>
                 <th
                   v-for="header in tableHeaders"
                   :key="header.key"
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-400"
                   @click="sortBy = header.key"
                 >
                   <div class="flex items-center gap-2">
@@ -80,44 +80,49 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400 ">
               <tr v-if="loading" class="text-center">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
               <tr v-else-if="paginatedData.length === 0" class="text-center">
-                <td colspan="14" class="px-6 py-4">No data found</td>
+                <td colspan="14" class="px-6 py-4 dark:bg-gray-800 dark:text-gray-400">No data found</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_so"
-                class="hover:bg-gray-50 transition-colors duration-150"
+                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
+                  <div class="text-sm font-medium text-gray-500">{{ entry.code_so }}</div>
                 </td>  
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.po_number}}</div>
+                  <div class="text-sm font-medium text-gray-500">{{ entry.po_number}}</div>
                 </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.customer.customer_name }}
                 </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ formatCurrency(entry.sub_total) }}
                 </td>               
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.issue_at }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.due_at }}
                 </td>
-                <td class="">
-                  <button 
-                    type="button" 
-                    class="bg-green-500 text-white rounded-lg px-3 py-2"
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                  <button
                     @click="viewData(entry.id_so)"
+                    class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
                     View
-                  </button>                
+                  </button>
+                  <button
+                    @click="editData(entry.id_so)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Edit
+                  </button>                  
                 </td>
               </tr>
             </tbody>
@@ -125,7 +130,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -380,15 +385,15 @@ export default defineComponent({
 
 <style scoped>
 .pagination-button {
-  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-gray-400;
 }
 
 .form-group label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400;
 }
 
 .form-group input,
 .form-group select {
-  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-800 dark:text-gray-400;
 }
 </style>

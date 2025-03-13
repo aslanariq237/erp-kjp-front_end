@@ -26,7 +26,7 @@
       </div>
 
       <!-- Enhanced Filter Section -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
@@ -66,7 +66,7 @@
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
-              <tr>
+              <tr class="dark:bg-gray-800 dark:text-gray-400">
                 <th
                   v-for="header in tableHeaders"
                   :key="header.key"
@@ -80,29 +80,32 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-if="loading" class="text-center">
+            <tbody class="bg-white divide-y divide-gray-200 ">
+              <tr v-if="loading" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center">
+              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
-                :key="entry.id_so"
-                class="hover:bg-gray-50 transition-colors duration-150"
+                :key="entry.id_tandater"
+                class="hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_so }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_tandater }}</div>
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.so.code_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.so.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_payment }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total) }}
+                  {{ entry.resi }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -110,19 +113,19 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.due_at }}
                 </td>
-                <td class="">
-                  <button
-                    @click="viewData(entry.id_quatation)"
-                    class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
-                  >
-                    View
-                  </button>
-                  <button
-                    @click="viewData(entry.id_quatation)"
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
-                  >
-                    Edit
-                  </button>                  
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.tandater)"
+                  >View</button>
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >Edit</button>
+                  <button 
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_invoice)"
+                  >Export</button>                                      
                 </td>
               </tr>
             </tbody>
@@ -130,7 +133,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -197,7 +200,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { SalesOrders } from '@/core/utils/url_api'
+import { SalesOrders, Tandater } from '@/core/utils/url_api'
 import router from '@/router'
 export default defineComponent({
   name: 'SalesOrderPage',
@@ -210,10 +213,11 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_so', label: 'Code SO' },
-      { key: 'customer', label: 'Customer' },
-      { key: 'status_payment', label: 'Status Payment' },
-      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'code_so', label: 'Tandater Number' },      
+      { key: 'customer', label: 'So Number' },      
+      { key: 'customer', label: 'Po Number' },      
+      { key: 'sub_total', label: 'Customer' },
+      { key: 'sub_total', label: 'Resi' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
@@ -232,7 +236,7 @@ export default defineComponent({
 
     const GetSalesOrder = async () => {
       try {
-        const res = await axios.get(SalesOrders)
+        const res = await axios.get(Tandater)        
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -248,7 +252,7 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_so.toLowerCase().includes(query))
+        result = result.filter((entry) => entry.code_tandater.toLowerCase().includes(query))
       }
 
       if (startDate.value) {
@@ -267,7 +271,7 @@ export default defineComponent({
     })
 
     const viewData = (id) => {
-      router.push('/sales-order/view/' + id)
+      router.push('/tanda-terima/view/' + id)
     }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
@@ -385,15 +389,15 @@ export default defineComponent({
 
 <style scoped>
 .pagination-button {
-  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply px-3 py-1 border dark:text-gray-400 border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
 }
 
 .form-group label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm dark:text-gray-400 font-medium text-gray-700 mb-1;
 }
 
 .form-group input,
 .form-group select {
-  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  @apply block w-full dark:bg-gray-800 dark:text-gray-400 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
 }
 </style>

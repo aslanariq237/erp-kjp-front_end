@@ -197,8 +197,7 @@ export default defineComponent({
           vendor_email: this.vendor_email,
           vendor_singkatan : this.vendor_singkatan,
           vendor_address: this.vendor_address,
-          vendor_npwp: this.vendor_npwp,            
-          vendor_details: this.vendor_details,                   
+          vendor_npwp: this.vendor_npwp,                                      
         }
         ).then((response) => {
           Swal.fire({

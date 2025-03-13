@@ -7,10 +7,10 @@
         @close="notification.show = false" />
 
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Sales Order</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Sales Order</h1>
             <p class="text-gray-500 text-sm mt-1">Others / Sales Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -30,7 +30,7 @@
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- No -->                   
            <!-- Total Service -->
@@ -42,7 +42,7 @@
           <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
             errorMessage="Customer is Required">
             <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
-              class="rounded w-full" placeholder="Type customer name" />
+              class="rounded w-full" placeholder="Type customer name" :class="inputClass(rules.issue_at)"/>
             <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
               <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -64,7 +64,7 @@
 
           <!-- Termin -->
           <FormGroup label="Term of Payment" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
+            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full" :class="inputClass(rules.issue_at)">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -86,7 +86,7 @@
           <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
             errorMessage="product_id is required">
             <input type="text" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
-              class="rounded w-full" placeholder="Type product name" />
+              class="rounded w-full" placeholder="Type product name" :class="inputClass(rules.due_at)"/>
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
               <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -113,21 +113,21 @@
         <div class="mt-5">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Price
                 </th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Discount</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Amount
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
+            <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
               <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
                 :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
@@ -472,7 +472,7 @@ export default defineComponent({
 
     inputClass(error) {
       return [
-        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-400',
         error
           ? 'border-red-300 focus:ring-red-500 bg-red-50'
           : 'border-gray-300 focus:ring-blue-500',

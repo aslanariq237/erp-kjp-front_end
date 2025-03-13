@@ -125,6 +125,9 @@
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ opex.opex_name }}</div>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ opex.customer.customer_name }}</div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(opex.opex_price) }}
                 </td>
@@ -230,8 +233,9 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'opex_code', label: 'Code' },
-      { key: 'opex_name', label: 'Name' },
+      { key: 'opex_code', label: 'Opex Number' },
+      { key: 'opex_name', label: 'Opex Name' },
+      { key: 'customer_name', label: 'Customer name' },
       { key: 'opex_price', label: 'Price' },
       { key: 'opex_type', label: 'Type' },
       { key: 'actions', label: 'Actions' },

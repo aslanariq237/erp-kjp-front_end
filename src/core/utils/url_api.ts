@@ -24,10 +24,14 @@ export const DetailPo = baseUrl + 'detail_po'
 export const DetailSo = baseUrl + 'details_so'
 export const DetailDo = baseUrl + 'detail_do'
 export const DetailQuatation = baseUrl + 'detail_quatation'
+
 //E
 export const Employee = baseUrl + 'employees'
 export const EmployeeCode = baseUrl + 'employees_code'
 
+//F
+export const fileUpload = baseUrl + 'file-upload';
+export const file = baseUrl + 'file';
 //I
 export const Invoice = baseUrl + 'invoices'
 export const DetailInvoice = baseUrl + 'detail_invoices'
@@ -56,7 +60,9 @@ export const QuatationsAdd = baseUrl + 'quatations_code'
 export const SalesOrders = baseUrl + 'sales_orders'
 export const SalesOrdersMonthly = baseUrl + 'sales_orders/monthly'
 export const SalesOrderAdd = baseUrl + 'sales_orders_code'
-
+//T
+export const Tandater = baseUrl + 'tandater';
+export const TandaterAdd = baseUrl + 'addTandater';
 //v
 export const Vendor = baseUrl + 'vendors'
 export const AddVendor = baseUrl + 'vendors_code'

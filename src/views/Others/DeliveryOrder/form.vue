@@ -6,10 +6,10 @@
         @close="notification.show = false" />
 
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Delivery Order</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Delivery Order</h1>
             <p class="text-gray-500 text-sm mt-1">Others / Delivery Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -29,7 +29,7 @@
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
@@ -42,7 +42,7 @@
           </FormGroup>
           <!-- Id_Purchase order -->
           <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder">
+            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder" :class="inputClass(rules.do_type)">
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so">
                 {{ po.code_so }}
               </option>
@@ -58,7 +58,7 @@
 
           <!-- Status Payment -->
           <FormGroup label="Delivery Option" :required="false" errorMessage="Status Payment is required">
-            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full"
+            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full" :class="inputClass(rules.do_type)"
               @change="selectedSalesOrder">
               <option v-for="po in points" :key="po.id_customer_point" :value="po.id_customer_point">
                 {{ po.point }}
@@ -76,17 +76,21 @@
           <p class="text-red-500 font-semibold">{{ errorMessage }}</p>
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Desc</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">brand</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Price</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Checklist</th>
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                <th class="px-3 py-2 font-semibold border-b">PN</th>
+                <th class="px-3 py-2 font-semibold border-b">Product Desc</th>
+                <th class="px-3 py-2 font-semibold border-b">brand</th>
+                <th class="px-3 py-2 font-semibold border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold border-b">Product Price</th>
+                <th class="px-3 py-2 font-semibold border-b">Checklist</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="products in sales_order_details" :key="products.product_id">
+              <tr 
+                v-for="products in sales_order_details" 
+                :key="products.product_id"
+                class="text-center dark:bg-gray-800 dark:text-gray-400"
+              >
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_sn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
@@ -102,7 +106,7 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
                   <input 
-                    type="checkbox" 
+                    type="checkbox"                     
                     name="check_barang" 
                     id="check_barang" 
                     v-model="products.id_so"                    
@@ -211,7 +215,8 @@ export default defineComponent({
     },
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
-        var data = res.data;
+        var data = res.data;        
+        data = data.filter(detail => detail.has_do == 0);
         this.salesOrders = data;
       })
     },
@@ -228,12 +233,14 @@ export default defineComponent({
         this.customer_name = data.customer.customer_name;
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
-        this.due_at = data.due_at;
-        if (data.id_so) {
-          this.SelectDataPo(data.id_so)
-        }
+        this.due_at = data.due_at;        
         if (data.customer.customer_id) {
           this.getDeliveryOption(data.customer.customer_id)
+          if (this.id_customer_point) {
+            if (data.id_so) {
+              this.SelectDataPo(data.id_so)
+            }
+          }
         }
       })
     },
@@ -267,7 +274,7 @@ export default defineComponent({
                 product_sn: detail.product.product_sn,
                 has_do : detail.has_do,
                 quantity: detail.quantity,
-                quantity_left: detail.quantity_left,
+                quantity_left: detail.quantity - detail.quantity_left,
                 price: detail.price,
               }
               this.sales_order_details.push(newObject)              
@@ -277,6 +284,7 @@ export default defineComponent({
       }
     },
     async AddDeliverOrderDetails(products) {
+      this.delivery_order_details.splice(products.product_id);
       if (products.quantity_left > products.product_stock) {
         this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
         products.quantity_left = products.product_stock;        
@@ -311,8 +319,7 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation()
-      // console.log(this.delivery_order_details);
+      const result = await this.validation()            
       if (result != 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id: this.customer_id,
@@ -352,7 +359,7 @@ export default defineComponent({
 
     inputClass(error) {
       return [
-        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+        'w-full dark:bg-gray-800 dark:text-gray-400 rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
         error
           ? 'border-red-300 focus:ring-red-500 bg-red-50'
           : 'border-gray-300 focus:ring-blue-500',

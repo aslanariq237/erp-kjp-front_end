@@ -6,11 +6,11 @@
                 @close="notification.show = false" />
 
             <!-- Header Card -->
-            <div class="bg-white rounded-lg shadow-md mb-6">
+            <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
                 <div class="flex justify-between items-center p-6 border-b">
                     <div class="breadcrumb">
-                        <h1 class="text-2xl font-bold text-gray-800">Detail View Quatation</h1>
-                        <p class="text-gray-500 text-sm mt-1">Others / Quatation / View</p>
+                        <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Detail View Quatation</h1>
+                        <p class="text-gray-400 text-sm mt-1">Others / Quatation / View</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <RouterLink to="/quotation"
@@ -23,7 +23,7 @@
             </div>
 
             <!-- Form Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <!-- Issue Date -->
                     <FormGroup label="Issue Date" :required="true" :error="rules.issue_at"
@@ -54,25 +54,25 @@
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                     <!-- Code PO -->
-                    <FormGroup class="mt-5" label="Employee" :required="true" :error="rules.id_payment_type"
+                    <FormGroup class="mt-5 dark:text-gray-400" label="Quotation Number" :required="true" :error="rules.id_payment_type"
                         errorMessage="Employee is Required">
-                        <input type="text" id="due_at" name="due_at" v-model="employee_name"
+                        <input type="text" id="due_at" name="due_at" v-model="code_quatation"
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                 </div>
                 <div class=" mt-5">
-                    <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+                    <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400">
                         <thead>
-                            <tr class="text-left">
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Price</th>
-                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
+                            <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+                                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
+                                <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
+                        <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
                             <tr v-for="poDetail in quatation_details" :key="poDetail.product_id">
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_code }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_sn }}</td>
@@ -127,7 +127,8 @@ export default defineComponent({
             termin: "",
             po_type: "",    
             issue_at: '',
-            due_at: '',    
+            due_at: '',
+            code_quatation : '',    
             sub_total : 0,        
             quatation_details : [],
             isSubmitting: false,
@@ -166,9 +167,10 @@ export default defineComponent({
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
                     this.termin = data.termin
-                    this.customer_name = data.customer.customer_toko;                                                                                                             
+                    this.customer_name = data.customer.customer_name;                                                                                                             
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
+                    this.code_quatation = data.code_quatation;
                 }
             )            
         },
@@ -215,7 +217,7 @@ export default defineComponent({
 
         inputClass(error) {
             return [
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-400',
                 error
                     ? 'border-red-300 focus:ring-red-500 bg-red-50'
                     : 'border-gray-300 focus:ring-blue-500',

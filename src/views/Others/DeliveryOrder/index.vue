@@ -26,7 +26,7 @@
       </div>
 
       <!-- Enhanced Filter Section -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
@@ -66,7 +66,7 @@
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
-              <tr>
+              <tr class="dark:bg-gray-800 dark:text-gray-400">
                 <th
                   v-for="header in tableHeaders"
                   :key="header.key"
@@ -81,16 +81,16 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-if="loading" class="text-center">
+              <tr v-if="loading" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center">
+              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_do"
-                class="hover:bg-gray-50 transition-colors duration-150"
+                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
               > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.code_do}}
@@ -133,7 +133,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -389,15 +389,15 @@ export default defineComponent({
 
 <style scoped>
 .pagination-button {
-  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply px-3 py-1 dark:text-gray-400 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
 }
 
 .form-group label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm font-medium text-gray-700 mb-1 dark:text-gray-400;
 }
 
 .form-group input,
 .form-group select {
-  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  @apply block w-full rounded-md dark:bg-gray-800 dark:text-gray-400 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
 }
 </style>

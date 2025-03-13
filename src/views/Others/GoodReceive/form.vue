@@ -67,8 +67,8 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-left">                                                
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>                                                
+                <th class="px-3 py-2 font-semibold text-center bg-gray-100 border-b">Quantity Received</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
                   Price
                 </th>
@@ -79,10 +79,10 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
               <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">                                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>              
+                <td class="px-3 py-2 whitespace-no-wrap text-center">
                   <input 
-                    type="text" 
+                    type="number" 
                     name="quantity" 
                     id="quantity" 
                     v-model="poDetail.quantity_left"
@@ -135,6 +135,7 @@ import {
   DetailPo
 } from '@/core/utils/url_api'
 import { useRoute } from 'vue-router'
+import router from '@/router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -229,7 +230,7 @@ export default defineComponent({
               id_detail_po: data[i].id_detail_po,
               product_id: data[i].product_id,
               product_desc: data[i].product.product_desc,              
-              quantity_left: data[i].quantity_left,
+              quantity_left: data[i].quantity - data[i].quantity_left,
               quantity: data[i].quantity,
               price: data[i].price,
               amount: data[i].amount,
@@ -270,7 +271,7 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = 2      
+      const result = 2;                           
       if (result != 0) {
         await axios
           .post(PurchaseOrder + '/good-receive', {                                  
@@ -285,15 +286,8 @@ export default defineComponent({
                 title: 'Success',
                 text: 'Data has been Saved',
               }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Employee'
-                  } else {
-                    mssg = 'Success Create Employee'
-                  }
-                  await router.push('/employee')
-                  this.alertStore.success(mssg)
+                if (result.isConfirmed) {                  
+                  await router.push('/good-receive')                  
                 }
               })
             },

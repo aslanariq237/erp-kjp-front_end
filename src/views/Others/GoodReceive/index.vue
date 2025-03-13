@@ -4,7 +4,7 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Good Receive</h1>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Good Receive</h1>
           <p class="text-gray-500 text-sm mt-1">SCM / Good Receive</p>
         </div>
         <div class="flex gap-3">
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Enhanced Filter Section -->
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
@@ -46,7 +46,7 @@
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
-              <tr>
+              <tr class="dark:bg-gray-800 dark:text-gray-400">
                 <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   @click="sortBy = header.key">
@@ -57,15 +57,15 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400">
               <tr v-if="loading" class="text-center">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center">
+              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr v-for="(entry, index) in paginatedData" :key="entry.id_po"
-                class="hover:bg-gray-50 transition-colors duration-150">
+                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
@@ -88,20 +88,12 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div v-if="entry.has_gr == 1">
-                    <button class="bg-green-300 px-3 py-2 rounded-lg text-white"
-                      @click="viewData(entry.id_po)" disabled
-                    >
+                  <div>                         
+                    <button :class="{'bg-green-500': entry.has_gr != 1, 'bg-green-300': entry.has_gr == 1, 'px-3 py-2 rounded-lg text-white': true}"
+                      @click="viewData(entry.id_po)" :disabled="entry.has_gr == 1">                    
                     Add
                     </button>
-                  </div>
-                  <div v-else>
-                    <button class="bg-green-500 px-3 py-2 rounded-lg text-white"
-                      @click="viewData(entry.id_po)"
-                    >
-                    Add
-                    </button>
-                  </div>
+                  </div>                  
                 </td>
               </tr>
             </tbody>
@@ -109,7 +101,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200">
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -203,6 +195,7 @@ export default defineComponent({
     })
 
     const viewData = (id) => {
+      
       router.push('/good-receive/add/' + id);
     }
 
@@ -343,15 +336,15 @@ export default defineComponent({
 
 <style scoped>
 .pagination-button {
-  @apply px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply px-3 py-1 border border-gray-300 rounded-md dark:text-gray-400 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
 }
 
 .form-group label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1;
 }
 
 .form-group input,
 .form-group select {
-  @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  @apply block w-full dark:bg-gray-800 dark:text-gray-400 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
 }
 </style>

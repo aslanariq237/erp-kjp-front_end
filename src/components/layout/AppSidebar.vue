@@ -166,8 +166,7 @@
             </ul>
           </div>
         </div>
-      </nav>
-      <SidebarWidget v-if="isExpanded || isHovered || isMobileOpen" />
+      </nav>      
     </div>
   </aside>
 </template>
@@ -242,6 +241,7 @@ const menuGroups = [
           { name: 'Vendor', path: '/vendor', pro: false },
           { name: 'Employee', path: '/employee', pro: false },
           { name: 'Product', path: '/product', pro: false },
+          { name: 'Document', path: '/document', pro: false },
         ],
       },
       {

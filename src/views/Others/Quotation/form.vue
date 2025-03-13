@@ -10,10 +10,10 @@
       />
 
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-md mb-6">
+      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Quotation</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Quotation</h1>
             <p class="text-gray-500 text-sm mt-1">Others / Quotation / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -37,10 +37,10 @@
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
-          <FormGroup
+          <FormGroup          
             label="Issue Date"
             :required="true"
             :error="rules.issue_at"
@@ -58,12 +58,12 @@
 
           <!-- Termin -->
           <FormGroup
-            label="Termin"
+            label="Term of Payment"
             :required="true"
             :error="rules.po_type"
             errorMessage="PO Type is required"
           >
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full">
+            <select id="po_type" name="po_type" v-model="termin" :class="inputClass(rules.due_at)">
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
               <option value="N14">N14</option>
@@ -106,7 +106,7 @@
               id="customer_name"
               v-model="customer_name"
               @input="filterCustomers"
-              class="rounded w-full"
+              :class="inputClass(rules.due_at)"
               placeholder="Type customer name"
             />
             <ul
@@ -122,10 +122,10 @@
                 {{ customer.customer_code }} - {{ customer.customer_name }}
               </li>
             </ul>
-          </FormGroup>
+          </FormGroup>          
           <!-- Code PO -->
         </div>
-        <div class="flex justify-content-between gap-4 items-end mt-8">
+        <div class="flex justify-content-between gap-4 items-end mt-8 ">
           <FormGroup
             class="w-full relative"
             label="product"
@@ -139,7 +139,7 @@
               id="product_name"
               v-model="product_name"
               @input="filterProducts"
-              class="rounded w-full"
+              class="rounded w-full dark:bg-gray-800"
               placeholder="Type product name"
             />
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
@@ -189,30 +189,30 @@
           </FormGroup>
           <button
             type="button"
-            class="border-gray-300 border-2 px-3 h-12 rounded-lg"
+            class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
             @click="addPoDetails"
           >
             tambah
           </button>
         </div>
         <div class="mt-5">
-          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90">
             <thead>
-              <tr class="text-left">
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+              <tr class="text-center">
+                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Product Price
                 </th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Discount</th>
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
+                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">
                   Product Amount
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
+            <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800">
               <tr v-for="poDetail in inquiry_details" :key="poDetail.product_id">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
@@ -223,7 +223,7 @@
                   <input
                     type="text"
                     v-model="poDetail.discount"
-                    class="w-20 rounded-lg"
+                    class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400"                    
                     @change="updateAmount(poDetail)"
                   />
                 </td>
@@ -235,10 +235,11 @@
             <div class="w-full"></div>
             <div class="w-full"></div>
             <div class="w-full">
-              <div class="sub_total flex justify-between mt-3">
+              <div class="sub_total flex justify-between mt-3 text-gray-500">
                 <p>Sub Total</p>
-                <p>{{ formatCurrency(sub_total) }}</p>
+                <p>{{ formatCurrency(sub_total) }}</p>                
               </div>
+              <input type="text" v-model="code_quatation" hidden>
             </div>
           </div>
         </div>
@@ -256,8 +257,9 @@ import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import { computed } from 'vue'
-import { Customer, Employee, Product, QuatationsAdd } from '@/core/utils/url_api'
+import { Customer, DetailQuatation, Employee, Product, Quatations, QuatationsAdd } from '@/core/utils/url_api'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -272,6 +274,7 @@ export default defineComponent({
 
   data() {
     return {
+      id : null,
       customers: [],
       customer_name: '',
       filteredCustomers: [],
@@ -286,6 +289,7 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       price: 0,
+      code_quatation : null,
       termin: '',
       total_tax: 0,
       discount: 0,
@@ -311,10 +315,17 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.getCustomer()
-    this.getEmployee()
+    const route = useRoute();
+    const id = route.params.id;    
+
+    this.getCustomer()      
     this.getProducts()
-    this.issue_at = new Date().toLocaleDateString('en-CA')
+    if (id) {
+      this.getById(id); 
+      this.id = id;           
+    }else{      
+      this.issue_at = new Date().toLocaleDateString('en-CA')
+    }
   },
 
   watch: {
@@ -353,12 +364,6 @@ export default defineComponent({
       axios.get(Product).then((res) => {
         var data = res.data
         this.products = data
-      })
-    },
-    getEmployee() {
-      axios.get(Employee).then((res) => {
-        var data = res.data
-        this.employees = data
       })
     },
     filterProducts() {
@@ -487,15 +492,91 @@ export default defineComponent({
 
       return count
     },
+    getDetailQuotation(id){
+      axios.get(DetailQuatation + '/' + id).then(
+        (res) => {
+          var data = res.data;                    
+          for (let i = 0; i < data.length; i++) {
+            var object = {
+              id_detail_quatation : data[i].id_detail_quatation,
+              product_id: data[i].product_id,
+              product_code: data[i].product.product_code,              
+              product_pn: data[i].product.product_sn,
+              discount : 0,
+              product_desc: data[i].product.product_desc,
+              quantity: data[i].quantity,
+              price: data[i].price,              
+              amount: data[i].amount,  
+            }       
+            this.inquiry_details.push(object);         
+          }
+        }
+      )
+    },
+    async getById(id){
+      await axios.get(Quatations + '/' + id).then(
+        (res) => {
+          var data = res.data;          
+          this.issue_at = data[0].issue_at;         
+          this.due_at = data[0].due_at;
+          this.customer_name = data[0].customer.customer_name;
+          this.customer_id = data[0].customer_id;
+          this.termin = data[0].termin;
+          this.code_quatation = data[0].code_quatation;
+          var id = data[0].id_quatation;          
+          if (id) {
+            this.getDetailQuotation(id);
+          }
+        }
+      )
+    },
 
     async onSubmit() {
-      const result = 2
-      if (result != 0) {
-        await axios
+      const result = 2      
+      if (result != 0) {                
+        if (this.id == null) { 
+          await axios
           .post(QuatationsAdd, {
             customer_id: this.customer_id,
             employee_id: 1,
             termin: this.termin,
+            total_tax: this.total_tax,
+            issue_at: this.issue_at,            
+            due_at: this.due_at,
+            sub_total: this.sub_total,
+            inquiry_details: this.inquiry_details,
+          })
+          .then(
+            (response) => {
+              console.log(response)
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Data has been Saved',
+              }).then(async (result) => {
+                if (result.isConfirmed) {                  
+                  await router.push('/quotation')
+                }
+              })
+            },
+            (error) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text:
+                  (error.response && error.response && error.response.message) ||
+                  error.message ||
+                  error.toString(),
+              })
+            },
+          )         
+        }else{          
+          await axios
+          .put(QuatationsAdd + "/" + this.id, {
+            customer_id: this.customer_id,
+            employee_id: 1,
+            termin: this.termin,
+            code_quatation: this.code_quatation,
             total_tax: this.total_tax,
             issue_at: this.issue_at,
             due_at: this.due_at,
@@ -510,15 +591,8 @@ export default defineComponent({
                 title: 'Success',
                 text: 'Data has been Saved',
               }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Employee'
-                  } else {
-                    mssg = 'Success Create Employee'
-                  }
-                  await router.push('/quotation')
-                  this.alertStore.success(mssg)
+                if (result.isConfirmed) {                  
+                  await router.push('/quotation')                  
                 }
               })
             },
@@ -533,12 +607,13 @@ export default defineComponent({
               })
             },
           )
+        }
       }
     },
 
     inputClass(error) {
       return [
-        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-400',
         error
           ? 'border-red-300 focus:ring-red-500 bg-red-50'
           : 'border-gray-300 focus:ring-blue-500',

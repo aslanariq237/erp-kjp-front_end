@@ -48,47 +48,19 @@
           >
             <input
               type="text"
-              id="customer_name"
-              name="customer_name"
+              id="name"
+              name="name"
               v-model="opex_name"
+              min="0"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.customerName
+                rules.amount
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter opex name"
-              autofocus
-              @input="filterCustomers"
-            />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
-              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_name }}
-              </li>
-              <li v-if="filteredCustomers.length === 0"> not found</li>
-            </ul>
-          </FormGroup> 
-          <FormGroup
-            label="Customer"
-            :required="false"
-            :error="rules.customerName"
-            errorMessage="Opex is required"
-          >
-            <input
-              type="text"
-              id="customer_name"
-              name="customer_name"              
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.customerName
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-              placeholder="Enter opex name"
-              autofocus
-            />
-          </FormGroup>          
+              placeholder="Enter price"
+            />            
+          </FormGroup>                     
 
           <!-- Amount -->
           <FormGroup
@@ -126,13 +98,37 @@
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-            >
-              <option value="">-- select opex type --</option>
+            >              
               <option value="internal">Internal</option>
               <option value="eksternal">Eksternal</option>
               <option value="cogs">COGS</option>
             </select>
           </FormGroup>
+          <FormGroup
+            v-if="opex_type != 'internal'" 
+            label="Customer" 
+            class="relative" 
+            :required="true" 
+            :error="rules.customer_id"
+            errorMessage="Customer is Required"
+          >          
+            <input 
+              type="text" 
+              name="customer_name" 
+              id="customer_name" 
+              v-model="customer_name" 
+              @input="filterCustomers"
+              class="rounded w-full" 
+              placeholder="Type customer name" 
+            >
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
+                {{ customer.customer_name }}
+              </li>
+              <li v-if="filteredCustomers.length === 0"> not found</li>
+            </ul>
+          </FormGroup> 
 
           <!-- Due Date -->          
         </div>
@@ -167,10 +163,10 @@ export default defineComponent({
     return {                  
       opex_name : '',
       opex_price: 0,
-      opex_type: '',
+      opex_type: 'internal',
       customers: [],
-      filteredCustomers: [],
       customer_name: '',
+      filteredCustomers: [],      
       customer_id: null,
       isSubmitting: false,
       notification: {
@@ -185,6 +181,9 @@ export default defineComponent({
         dueDate: false,
       },
     }
+  },
+  async mounted(){
+    this.getCustomer();
   },
 
   methods: {
@@ -254,8 +253,9 @@ export default defineComponent({
       return isValid
     },
 
-    async onSubmit() {
+    async onSubmit() {      
       await axios.post(AddOpex, {
+        customer_id : this.customer_id,
         opex_name : this.opex_name,
         opex_price: this.opex_price,
         opex_type : this.opex_type,
@@ -266,15 +266,8 @@ export default defineComponent({
             title: 'Success',
             text: "Data has been Saved"
           }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Opex";
-              } else {
-                mssg = "Success Create Opex";
-              }
-              await router.push("/opex");
-              this.alertStore.success(mssg);
+            if (result.isConfirmed) {              
+              await router.push("/opex");              
             }
           })
         }, (error) => {

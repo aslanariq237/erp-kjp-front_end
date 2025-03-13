@@ -117,10 +117,16 @@
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ account.id_invoice }}
+                  {{ account.invoice.code_invoice }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ account.so.po_number }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ account.so.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.customer_id }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
@@ -137,10 +143,7 @@
                       class="text-green-600 hover:text-green-900"
                     >
                       Edit
-                    </button>
-                    <button @click="confirmDelete(account)" class="text-red-600 hover:text-red-900">
-                      Delete
-                    </button>
+                    </button>                
                   </div>
                 </td>
               </tr>
@@ -261,8 +264,10 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'id_invoice', label: 'ID Invoice' },
-      { key: 'customer_id', label: 'Customer ID' },
+      { key: 'id_invoice', label: 'Invoice Number' },
+      { key: 'id_invoice', label: 'Po Number' },
+      { key: 'id_invoice', label: 'So Number' },
+      { key: 'customer_id', label: 'Customer Number' },
       { key: 'code_faktur_pajak', label: 'Kode Faktur Pajak' },
       { key: 'actions', label: 'Actions' },
     ]
