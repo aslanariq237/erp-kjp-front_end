@@ -14,11 +14,8 @@
           >
             <span>Export</span>
           </button>
-          <RouterLink
-            to="/invoice/form"
-            class="bg-blue-500 px-6 py-2 rounded-lg text-white"
-          >
-          Add New Invoice
+          <RouterLink to="/invoice/form" class="bg-blue-500 px-6 py-2 rounded-lg text-white">
+            Add New Invoice
           </RouterLink>
         </div>
       </div>
@@ -98,7 +95,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
-                </td>                
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
                 </td>
@@ -109,22 +106,27 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >View</button>
-                  <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
-                    @click="editData(entry.id_invoice)"
-                  >Edit</button>
-                  <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    View
+                  </button>
+                  <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >Export</button>                  
-                  <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Edit
+                  </button>
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
+                    Export
+                  </button>
+                  <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >Approve</button>                  
+                  >
+                    Approve
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -198,9 +200,10 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios';
-import { Invoice, SalesOrders } from '@/core/utils/url_api';
-import router from '@/router';
+import axios from 'axios'
+import { Invoice, SalesOrders } from '@/core/utils/url_api'
+import router from '@/router'
+import jsPDF from 'jspdf'
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -209,14 +212,14 @@ export default defineComponent({
   },
 
   setup() {
-    const loading = ref(false)    
+    const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [      
-      { key: 'code_invoice', label: 'Invoice Number' },      
-      { key: 'po_number', label: 'Po Number' },      
-      { key: 'Customer', label: 'Customer Name' },      
-      { key: 'sub_total', label: 'Sub Total' },                 
+    const tableHeaders = [
+      { key: 'code_invoice', label: 'Invoice Number' },
+      { key: 'code_po', label: 'Po Number' },
+      { key: 'Customer', label: 'Customer Name' },
+      { key: 'sub_total', label: 'Sub Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
@@ -229,33 +232,33 @@ export default defineComponent({
     const endDate = ref('')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
-    const invoice = ref([]);  
-    const purchaseorders = ref([]) 
-    
-    const getInvoices = async() => {
+    const invoice = ref([])
+    const purchaseorders = ref([])
+
+    const getInvoices = async () => {
       const response = await axios.get(Invoice)
-      invoice.value = response.data      
+      invoice.value = response.data
 
       if (invoice.value.length > 0) {
-        const invoiceId = invoice.value[0].id_transaksi; // Assuming 'id_transaksi' is the ID to use
-        getById(invoiceId);
+        const invoiceId = invoice.value[0].id_transaksi // Assuming 'id_transaksi' is the ID to use
+        getById(invoiceId)
       }
     }
 
     const viewData = (id) => {
-      router.push('/invoice/view/' + id);
+      router.push('/invoice/view/' + id)
     }
     const editData = (id) => {
       router.push('/invoice/edit/' + id);
     }
 
-    const getById = async() => {
+    const getById = async () => {
       const res = await axios.get(SalesOrders)
       purchaseorders.value = res.data
     }
 
-    onMounted(() => {      
-      getInvoices();
+    onMounted(() => {
+      getInvoices()
     })
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -280,7 +283,7 @@ export default defineComponent({
 
       return result
     })
-    
+
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -343,6 +346,8 @@ export default defineComponent({
         'Grand Total': entry.grand_total,
         'Issue Date': entry.issue_at,
         'Due Date': entry.due_at,
+        'Customer Name': entry.customer.customer_name,
+        'PO Number': entry.code_po,
       }))
 
       // Create CSV content
@@ -364,6 +369,135 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
 
+    const exportToPDF = (entry) => {
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.width
+
+      // Header
+      doc.setFontSize(12)
+      doc.setFont('helvetica', 'bold')
+      doc.text('DMI', 10, 15)
+      doc.setFontSize(8)
+      doc.text('DARSA', 10, 20)
+      doc.text('MIZUNA', 10, 24)
+      doc.text('INTERNATIONAL', 10, 28)
+
+      // Contact info - right aligned
+      doc.setFont('helvetica', 'normal')
+      doc.text('E: Mizuna@Propunica Raya 14, No. 23A', pageWidth - 10, 15, { align: 'right' })
+      doc.text('Telp/Fax: +6221-626-6799', pageWidth - 10, 19, { align: 'right' })
+      doc.text('www.dmizuna.co.id', pageWidth - 10, 23, { align: 'right' })
+      doc.text('info@dmizuna.co.id', pageWidth - 10, 27, { align: 'right' })
+
+      // Invoice title
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('INVOICE', pageWidth / 2, 40, { align: 'center' })
+
+      // Invoice details - left side
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'bold')
+      doc.text('Invoice To:', 10, 50)
+      doc.setFont('helvetica', 'normal')
+      doc.text(`${entry.customer.customer_name}`, 10, 55)
+      doc.text(`${entry.customer.address || ''}`, 10, 60)
+      doc.text(`${entry.customer.city || ''}, ${entry.customer.province || ''}`, 10, 65)
+
+      // Invoice details - right side
+      doc.setFont('helvetica', 'bold')
+      doc.text('Tax Invoice Order No', pageWidth - 60, 50)
+      doc.text('Invoice No', pageWidth - 60, 55)
+      doc.text('PO Number', pageWidth - 60, 60)
+      doc.text('Terms of Payment', pageWidth - 60, 65)
+      doc.text('Valid Days', pageWidth - 60, 70)
+
+      doc.setFont('helvetica', 'normal')
+      doc.text(`: ${entry.code_invoice}`, pageWidth - 10, 50, { align: 'right' })
+      doc.text(`: ${entry.invoice_number || entry.code_invoice}`, pageWidth - 10, 55, {
+        align: 'right',
+      })
+      doc.text(`: ${entry.po_number || '-'}`, pageWidth - 10, 60, { align: 'right' })
+      doc.text(`: ${entry.payment_terms || '30 days'}`, pageWidth - 10, 65, { align: 'right' })
+      doc.text(`: ${entry.valid_days || '30 days'}`, pageWidth - 10, 70, { align: 'right' })
+
+      // Table header
+      doc.setFillColor(220, 220, 220)
+      doc.rect(10, 80, pageWidth - 20, 7, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.text('Item Number', 12, 85)
+      doc.text('Description', 45, 85)
+      doc.text('Qty', 120, 85)
+      doc.text('Unit', 135, 85)
+      doc.text('Price', 150, 85)
+      doc.text('Amount', 170, 85)
+      doc.text('Remarks', 190, 85)
+
+      // Table items
+      let y = 95
+      if (entry.items && entry.items.length > 0) {
+        entry.items.forEach((item, index) => {
+          doc.setFont('helvetica', 'normal')
+          doc.text(`${item.item_number || index + 1}`, 12, y)
+          doc.text(`${item.description || ''}`, 45, y)
+          doc.text(`${item.quantity || ''}`, 120, y)
+          doc.text(`${item.unit || ''}`, 135, y)
+          doc.text(`${formatCurrency(item.price) || ''}`, 150, y)
+          doc.text(`${formatCurrency(item.amount) || ''}`, 170, y)
+          doc.text(`${item.remarks || ''}`, 190, y)
+          y += 10
+        })
+      }
+
+      // Totals section
+      y = Math.max(y, 140)
+      doc.setFillColor(220, 220, 220)
+      doc.rect(10, y, pageWidth - 20, 7, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.text('CALCULATION', 12, y + 5)
+
+      y += 15
+      doc.setFont('helvetica', 'normal')
+      doc.text('Bank Name', 12, y)
+      doc.text(`: ${entry.bank_name || 'Bank Mandiri KCP Jakarta Belgravia'}`, 50, y)
+      doc.text('Operation/Referral', 120, y)
+      doc.text(`: ${entry.operation_ref || '-'}`, 170, y)
+
+      y += 7
+      doc.text('Bank Account', 12, y)
+      doc.text(`: ${entry.bank_account || 'PT Darsa Mizuna International'}`, 50, y)
+      doc.text('Discount', 120, y)
+      doc.text(`: ${formatCurrency(entry.discount) || '-'}`, 170, y)
+
+      y += 7
+      doc.text('Account No.', 12, y)
+      doc.text(`: ${entry.account_number || '120-00-9923453'}`, 50, y)
+      doc.text('Tax 11%', 120, y)
+      doc.text(`: ${formatCurrency(entry.ppn) || '-'}`, 170, y)
+
+      y += 7
+      doc.setLineWidth(0.1)
+      doc.line(120, y, pageWidth - 10, y)
+
+      y += 7
+      doc.setFont('helvetica', 'bold')
+      doc.text('TOTAL', 120, y)
+      doc.text(`: ${formatCurrency(entry.grand_total) || '-'}`, 170, y)
+
+      // Footer note
+      y += 20
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.text('If you have any questions concerning this invoice please contact us:', 10, y)
+      doc.text('Telp: +62 21 6266 7799, Fax: 6266 9966', 10, y + 5)
+      doc.text('Thank you for your business', 10, y + 10)
+
+      // Signature
+      y += 25
+      doc.text('Authorized Signature', 10, y)
+
+      doc.save(`invoice-${entry.code_invoice}.pdf`)
+    }
+
     return {
       viewData,
       editData,
@@ -378,7 +512,7 @@ export default defineComponent({
       tableHeaders,
 
       //data
-      purchase_order_id : null,
+      purchase_order_id: null,
 
       // Computed
       filteredData,
@@ -387,11 +521,12 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
-      invoice : [],
+      invoice: [],
 
       // Methods
       formatCurrency,
       exportData,
+      exportToPDF,
     }
   },
 })

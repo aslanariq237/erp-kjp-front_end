@@ -41,7 +41,7 @@ export const Inquiry = baseUrl + 'inquiry'
 export const InquiryAdd = baseUrl + 'inquiry_code'
 
 //L
-export const LaporUang = baseUrl + 'laporan_keuangan';
+export const LaporUang = baseUrl + 'laporan_keuangan'
 //O
 export const GetOpex = baseUrl + 'opex'
 export const AddOpex = baseUrl + 'opex_code'

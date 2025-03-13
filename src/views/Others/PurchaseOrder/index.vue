@@ -12,16 +12,14 @@
             @click="exportData"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
-            <span>Export</span>
+            <span>Export PDF</span>
           </button>
-          <button>
-            <RouterLink
-              to="/purchase-order/form"
-              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            >
-              Add New Purchase Order
-            </RouterLink>
-          </button>
+          <RouterLink
+            to="/purchase-order/form"
+            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          >
+            Add New Purchase Order
+          </RouterLink>
         </div>
       </div>
 
@@ -97,7 +95,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
-                </td>  
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_payment }}
                 </td>
@@ -196,6 +194,8 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { PurchaseOrder } from '@/core/utils/url_api'
+import jsPDF from 'jspdf'
+import 'jspdf-autotable'
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -209,9 +209,9 @@ export default defineComponent({
     // Table headers configuration
     const tableHeaders = [
       { key: 'no', label: 'No' },
-      { key: 'code_po', label: 'Code PO' },      
-      { key: 'status_payment', label: 'Status Payment' },      
-      { key: 'total_tax', label: 'Total Tax' },
+      { key: 'code_po', label: 'Code PO' },
+      { key: 'status_payment', label: 'Status Payment' },
+      { key: 'sub_total', label: 'Sub Total' },
       { key: 'total_service', label: 'Total Service' },
       { key: 'deposit', label: 'Deposit' },
       { key: 'ppn', label: 'PPN' },
@@ -235,6 +235,7 @@ export default defineComponent({
       try {
         const res = await axios.get(PurchaseOrder)
         entries.value = res.data
+        console.log('Fetched Entries:', entries.value) // Log fetched data
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
@@ -264,6 +265,7 @@ export default defineComponent({
         return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
       })
 
+      console.log('Filtered Data:', result) // Log filtered data
       return result
     })
 
@@ -317,6 +319,41 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
+      if (filteredData.value.length === 0) {
+        alert('No data to export')
+        return
+      }
+      const exportToPDF = (entries) => {
+        const doc = new jsPDF()
+        doc.autoTable({
+          head: [
+            [
+              'Code PO',
+              'Status Payment',
+              'Sub Total',
+              'Total Service',
+              'Deposit',
+              'PPN',
+              'Grand Total',
+              'Issue Date',
+              'Due Date',
+            ],
+          ],
+          body: entries.map((entry) => [
+            entry.code_po,
+            entry.status_payment,
+            entry.sub_total,
+            entry.total_service,
+            entry.deposit,
+            entry.ppn,
+            entry.grand_total,
+            entry.issue_at,
+            entry.due_at,
+          ]),
+        })
+        doc.save(`purchase-order-${new Date().toISOString().split('T')[0]}.pdf`)
+      }
+
       const data = filteredData.value.map((entry) => ({
         'Code PO': entry.code_po,
         'PO Type': entry.po_type,

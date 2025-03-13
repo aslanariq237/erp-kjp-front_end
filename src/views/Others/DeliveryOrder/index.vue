@@ -93,17 +93,17 @@
                 class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
               > 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.code_do}}
-                </td>                          
+                  {{ entry.code_do }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.salesorder.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.salesorder.po_number}}
+                  {{ entry.salesorder.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
-                </td>                
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
@@ -115,15 +115,12 @@
                     View
                   </button>
                   <button
-                    @click="viewData(entry.id_quatation)"
+                    @click="viewData(entry.id_do)"
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
                   >
                     Edit
                   </button>
-                  <button
-                    @click="viewData(entry.id_quatation)"
-                    class="shadow-lg px-3 py-2 rounded-lg border"
-                  >
+                  <button @click="exportToPDF(entry)" class="shadow-lg px-3 py-2 rounded-lg border">
                     Export
                   </button>
                 </td>
@@ -203,6 +200,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { DeliveryOrder } from '@/core/utils/url_api'
 import router from '@/router'
+import jsPDF from 'jspdf'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -220,7 +218,7 @@ export default defineComponent({
     const fetchDeliveryOrders = async () => {
       loading.value = true
       try {
-        const response = await axios.get(DeliveryOrder)        
+        const response = await axios.get(DeliveryOrder)
         entries.value = response.data
       } catch (error) {
         console.error('Error fetching delivery orders:', error)
@@ -287,7 +285,7 @@ export default defineComponent({
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
     const viewData = (id) => {
-      router.push('/delivery-order/view/' + id);
+      router.push('/delivery-order/view/' + id)
     }
 
     const displayedPages = computed(() => {
@@ -327,7 +325,7 @@ export default defineComponent({
         'Code DO': entry.code_do,
         'Customer ID': entry.id_customer,
         'Employee ID': entry.id_employee,
-        'Bank Account ID': entry.id_bank_account,        
+        'Bank Account ID': entry.id_bank_account,
         'Issue Date': entry.issue_at,
         'Due Date': entry.due_at,
       }))
@@ -351,6 +349,198 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
 
+    const exportToPDF = (entry) => {
+      const doc = new jsPDF()
+      const pageWidth = doc.internal.pageSize.width
+      const margin = 20
+      const tableWidth = pageWidth - margin * 2
+
+      // Company header section
+      // DMI Logo and company name
+      doc.setFontSize(16)
+      doc.setFont('helvetica', 'bold')
+      doc.text('D', margin, 20)
+      doc.text('M', margin, 30)
+      doc.text('I', margin, 40)
+
+      doc.setFontSize(12)
+      doc.text('DARSA', margin + 10, 20)
+      doc.text('MIGUNA', margin + 10, 30)
+      doc.text('INTERNATIONAL', margin + 10, 40)
+
+      // Company address
+      doc.setFontSize(9)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Jl. Mampang Prapatan Raya 15, No. 73A', pageWidth - margin, 20, { align: 'right' })
+      doc.text('Tegal Parang, Mampang Prapatan, Jakarta 12790', pageWidth - margin, 25, {
+        align: 'right',
+      })
+      doc.text('admin@darsainternational.co.id', pageWidth - margin, 30, { align: 'right' })
+      doc.text('(021) 87909871', pageWidth - margin, 35, { align: 'right' })
+
+      // Horizontal line
+      doc.setLineWidth(0.5)
+      doc.line(margin, 45, pageWidth - margin, 45)
+
+      // Delivery Order title
+      doc.setFontSize(14)
+      doc.setFont('helvetica', 'bold')
+      doc.text('DELIVERY ORDER', pageWidth / 2, 55, { align: 'center' })
+
+      // Customer section - left side
+      let y = 70
+      doc.setFontSize(10)
+      doc.text('Kepada Yth,', margin, y)
+      y += 7
+      doc.setFont('helvetica', 'normal')
+      doc.text(`${entry.customer.customer_name}`, margin, y)
+      y += 7
+
+      // Use customer address if available, or placeholder
+      const address1 = entry.customer.customer_address || 'PT. Jusindo Mitra Kontraktor Indonesia'
+      const address2 = 'Gedung Talavera Office Park Lantai 17 Suite 17-07'
+      const address3 = 'Jl. TB Simatupang Kav 22-26, Cilandak Barat, Cilandak'
+
+      doc.text(address1, margin, y)
+      y += 7
+      doc.text(address2, margin, y)
+      y += 7
+      doc.text(address3, margin, y)
+
+      // Order information - right side
+      y = 70
+      doc.setFont('helvetica', 'bold')
+      doc.text('Delivery Date', pageWidth - margin - 80, y)
+      doc.text(':', pageWidth - margin - 30, y)
+      doc.setFont('helvetica', 'normal')
+      doc.text(entry.issue_at || '4/12/2024', pageWidth - margin, y, { align: 'right' })
+
+      y += 7
+      doc.setFont('helvetica', 'bold')
+      doc.text('Delivery Order No', pageWidth - margin - 80, y)
+      doc.text(':', pageWidth - margin - 30, y)
+      doc.setFont('helvetica', 'normal')
+      doc.text(entry.code_do || 'DO-02/04/2024', pageWidth - margin, y, { align: 'right' })
+
+      y += 7
+      doc.setFont('helvetica', 'bold')
+      doc.text('Delivery Order Date', pageWidth - margin - 80, y)
+      doc.text(':', pageWidth - margin - 30, y)
+      doc.setFont('helvetica', 'normal')
+      doc.text(entry.issue_at || '30/04/2024', pageWidth - margin, y, { align: 'right' })
+
+      y += 7
+      doc.setFont('helvetica', 'bold')
+      doc.text('Delivery Method', pageWidth - margin - 80, y)
+      doc.text(':', pageWidth - margin - 30, y)
+      doc.setFont('helvetica', 'normal')
+      doc.text('Courier', pageWidth - margin, y, { align: 'right' })
+
+      y = 100
+
+      // Table header
+      const colWidths = [0.15, 0.4, 0.15, 0.15, 0.15]
+
+      // Draw table border
+      doc.rect(margin, y, tableWidth, 180, 'S')
+
+      // Table header
+      doc.setFillColor(220, 220, 220)
+      doc.rect(margin, y, tableWidth, 10, 'F')
+
+      // Vertical lines for columns
+      let xPosition = margin
+      colWidths.forEach((width) => {
+        xPosition += tableWidth * width
+        if (xPosition < pageWidth - margin) {
+          doc.line(xPosition, y, xPosition, y + 180)
+        }
+      })
+
+      // Header text
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(9)
+      let xPos = margin + 5
+      doc.text('Part Number', xPos, y + 7)
+
+      xPos += tableWidth * colWidths[0]
+      doc.text('Description', xPos + 5, y + 7)
+
+      xPos += tableWidth * colWidths[1]
+      doc.text('Qty', xPos + 5, y + 7)
+
+      xPos += tableWidth * colWidths[2]
+      doc.text('UOM', xPos + 5, y + 7)
+
+      xPos += tableWidth * colWidths[3]
+      doc.text('Remarks', xPos + 5, y + 7)
+
+      // Add one row as example or use entry items if available
+      y += 10
+      doc.setFont('helvetica', 'normal')
+
+      if (entry.items && entry.items.length > 0) {
+        entry.items.forEach((item) => {
+          let xPos = margin + 5
+          doc.text(item.code || '', xPos, y + 7)
+
+          xPos += tableWidth * colWidths[0]
+          doc.text(item.name || item.description || '', xPos + 5, y + 7)
+
+          xPos += tableWidth * colWidths[1]
+          doc.text(item.qty?.toString() || '1', xPos + 5, y + 7)
+
+          xPos += tableWidth * colWidths[2]
+          doc.text(item.unit || 'PCS', xPos + 5, y + 7)
+
+          xPos += tableWidth * colWidths[3]
+          doc.text('', xPos + 5, y + 7) // Remarks field
+
+          y += 10
+
+          // Draw horizontal line after each row except the last one
+          doc.line(margin, y, pageWidth - margin, y)
+        })
+      } else {
+        // Example row
+        let xPos = margin + 5
+        doc.text('', xPos, y + 7) // Part number
+
+        xPos += tableWidth * colWidths[0]
+        doc.text('', xPos + 5, y + 7) // Description
+
+        xPos += tableWidth * colWidths[1]
+        doc.text('1', xPos + 5, y + 7) // Qty
+
+        xPos += tableWidth * colWidths[2]
+        doc.text('SET', xPos + 5, y + 7) // UOM
+
+        xPos += tableWidth * colWidths[3]
+        const remarks = entry.customer.customer_address
+        // Handle long remarks by wrapping text
+        const splitRemarks = doc.splitTextToSize(remarks, tableWidth * colWidths[4] - 10)
+        doc.text(splitRemarks, xPos + 5, y + 7)
+      }
+
+      // Signature section
+      y = 300
+
+      // Left signature
+      doc.text('Disetujui Oleh', margin + 40, y, { align: 'center' })
+      y += 30
+      doc.line(margin + 10, y, margin + 70, y) // Signature line
+      doc.text('Fatimah Tutradewi', margin + 40, y + 7, { align: 'center' })
+
+      // Right signature
+      doc.text('Diterima Oleh', pageWidth - margin - 40, 300, { align: 'center' })
+      y = 330
+      doc.line(pageWidth - margin - 70, y, pageWidth - margin - 10, y) // Signature line
+      doc.text('Nama :', pageWidth - margin - 40, y + 7, { align: 'center' })
+      doc.text('Tanggal :', pageWidth - margin - 40, y + 14, { align: 'center' })
+
+      // Save the PDF
+      doc.save(`delivery-order-${entry.code_do || 'new'}.pdf`)
+    }
     return {
       viewData,
       // State
@@ -361,12 +551,12 @@ export default defineComponent({
       endDate,
       currentPage,
       itemsPerPage,
-      tableHeaders: [        
+      tableHeaders: [
         { key: 'code_do', label: 'DO Number' },
         { key: 'code_so', label: 'SO Number' },
         { key: 'po_number', label: 'Po Number' },
-        { key: 'customer', label: 'Customer Name' },                      
-        { key: 'issue_at', label: 'Issue Date' },        
+        { key: 'customer', label: 'Customer Name' },
+        { key: 'issue_at', label: 'Issue Date' },
         { key: 'action', label: 'Action' },
       ],
 
@@ -382,6 +572,7 @@ export default defineComponent({
       // Methods
       exportData,
       formatCurrency,
+      exportToPDF,
     }
   },
 })
