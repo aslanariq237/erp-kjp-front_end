@@ -8,9 +8,7 @@
             <p class="text-gray-400">Master Data / vendor / Form</p>
           </div>
           <div class="btn flex justify-between items-center gap-3 text-lg">
-            <RouterLink to="/vendor" class="px-3 py-3 my-2 text-lg cursor-pointer"
-              >Cancel</RouterLink
-            >
+            <RouterLink to="/vendor" class="px-3 py-3 my-2 text-lg cursor-pointer">Cancel</RouterLink>
             <div class="btn">
               <button type="submit" class="bg-green-400 px-3 py-2 rounded-md text-white">
                 Submit
@@ -21,103 +19,42 @@
 
         <div class="bg-white rounded-lg shadow-md p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-            <FormGroup
-              label="vendor Name"
-              :required="true"
-              :error="rules.issue_at"
-              errorMessage="Issue Date is required"
-            >
-              <input
-                type="text"
-                id="vendor_name"
-                name="vendor_name"
-                v-model="vendor_name"
-                @input="singkatan"
-                :class="inputClass(rules.issue_at)"
-              />
+            <FormGroup label="vendor Name" :required="true" :error="rules.issue_at"
+              errorMessage="Issue Date is required">
+              <input type="text" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
+                :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup
-              label="vendor Phone"
-              :required="true"
-              :error="rules.due_at"
-              errorMessage="Due Date is required"
-            >
-              <input
-                type="text"
-                id="vendor_phone"
-                name="vendor_phone"
-                v-model="vendor_phone"
-                :class="inputClass(rules.due_at)"
-              />
+            <FormGroup label="vendor Phone" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+              <input type="text" id="vendor_phone" name="vendor_phone" v-model="vendor_phone"
+                :class="inputClass(rules.due_at)" />
             </FormGroup>
 
             <!-- No -->
-            <FormGroup
-              label="vendor Email"
-              :required="true"
-              :error="rules.due_at"
-              errorMessage="Due Date is required"
-            >
-              <input
-                type="text"
-                id="vendor_email"
-                name="vendor_email"
-                v-model="vendor_email"
-                :class="inputClass(rules.due_at)"
-              />
+            <FormGroup label="vendor Email" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+              <input type="text" id="vendor_email" name="vendor_email" v-model="vendor_email"
+                :class="inputClass(rules.due_at)" />
             </FormGroup>
             <!-- Code PO -->
 
             <!-- Total Service -->
-            <FormGroup
-              label="vendor Address"
-              :required="true"
-              :error="rules.deposit"
-              errorMessage="Deposit is required"
-            >
-              <input
-                type="text"
-                id="vendor_address"
-                name="vendor_address"
-                v-model="vendor_address"
-                :class="inputClass(rules.deposit)"
-                placeholder="Insert vendor Address"
-              />
+            <FormGroup label="vendor Address" :required="true" :error="rules.deposit"
+              errorMessage="Deposit is required">
+              <input type="text" id="vendor_address" name="vendor_address" v-model="vendor_address"
+                :class="inputClass(rules.deposit)" placeholder="Insert vendor Address" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup
-              label="vendor NPWP"
-              :required="true"
-              :error="rules.due_at"
-              errorMessage="Due Date is required"
-            >
-              <input
-                type="number"
-                id="vendor_npwp"
-                name="vendor_npwp"
-                v-model="vendor_npwp"
-                @input="singkatan"
-                :class="inputClass(rules.due_at)"
-              />
+            <FormGroup label="vendor NPWP" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+              <input type="number" id="vendor_npwp" name="vendor_npwp" v-model="vendor_npwp" @input="singkatan"
+                :class="inputClass(rules.due_at)" />
             </FormGroup>
 
-            <FormGroup
-              label="Contact Person"
-              :required="true"
-              :error="rules.deposit"
-              errorMessage="Deposit is required"
-            >
-              <input
-                type="text"
-                id="contact_person"
-                name="contact_person"
-                v-model="vendor_contact"
-                :class="inputClass(rules.deposit)"
-                placeholder="Insert Contact Person"
-              />
+            <FormGroup label="Contact Person" :required="true" :error="rules.deposit"
+              errorMessage="Deposit is required">
+              <input type="text" id="contact_person" name="contact_person" v-model="vendor_contact"
+                :class="inputClass(rules.deposit)" placeholder="Insert Contact Person" />
             </FormGroup>
             <FormGroup> </FormGroup>
           </div>
@@ -182,45 +119,6 @@ export default defineComponent({
     // }
   },
   methods: {
-    async validation() {
-      var count = 0
-      if (this.vendor_name == '' || this.vendor_name == null) {
-        this.rules.vendor_name = true
-        count++
-      } else {
-        this.rules.vendor_name = false
-      }
-
-      if (this.vendor_phone == null && this.vendor_phone <= 16) {
-        this.rules.vendor_phone = true
-        count++
-      } else {
-        this.rules.vendor_phone = false
-      }
-
-      if (this.vendor_email == '' || this.vendor_email == null) {
-        this.rules.vendor_email = true
-        count++
-      } else {
-        this.rules.vendor_email = false
-      }
-
-      if (this.vendor_npwp == null && this.vendor_npwp <= 16) {
-        this.rules.npwp = true
-        count++
-      } else {
-        this.rules.npwp = false
-      }
-
-      if (this.vendor_contact == '' || this.vendor_contact == null) {
-        this.rules.contact_person = true
-        count++
-      } else {
-        this.rules.contact_person = false
-      }
-
-      return count
-    },
     inputClass(error) {
       return [
         'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
@@ -229,7 +127,6 @@ export default defineComponent({
           : 'border-gray-300 focus:ring-blue-500',
       ]
     },
-
     createSingkatan(input) {
       const ignoreWords = [
         'PT.',
@@ -261,136 +158,20 @@ export default defineComponent({
       this.vendor_singkatan = this.createSingkatan(this.vendor_name)
     },
 
-    getById() {},
-    async onSubmit() {
-      const result = 2      
-      if (result != 0) {        
-        await axios.post(
-          AddVendor, {
+    getById(id){},
+    async onSubmit(){
+      const result = 2;
+      if (result != 0) {
+        await axios.post(AddVendor, {
           vendor_name: this.vendor_name,
-          vendor_phone: parseInt(this.vendor_phone) || 0,            
+          vendor_phone: parseInt(this.vendor_phone) || 0,
           vendor_email: this.vendor_email,
-          vendor_singkatan : this.vendor_singkatan,
+          vendor_singkatan: this.vendor_singkatan,
           vendor_address: this.vendor_address,
-          vendor_npwp: this.vendor_npwp,                                      
-        }
-        ).then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: 'Success',
-            text: "vendor Data has been Saved"
-          }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Purchase Order";
-              } else {
-                mssg = "Success Create Purchase Order";
-              }
-              await router.push("/vendor");
-              this.alertStore.success(mssg);
-            }
-          })
-          .then(
-            (response) => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'vendor Data has been Saved',
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Purchase Order'
-                  } else {
-                    mssg = 'Success Create Purchase Order'
-                  }
-                  await router.push('/vendor')
-                  this.alertStore.success(mssg)
-                }
-              })
-            },
-            (error) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text:
-                  (error.response && error.response && error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              })
-            },
-          )
+          vendor_npwp: this.vendor_npwp,
+        })
       }
-
-      try {
-        // Tampilkan notifikasi sukses (jika menggunakan library toast, bisa pakai ini)
-        // Redirect atau reset form setelah submit
-      } catch (error) {
-        if (error.response) {
-          // Server responded dengan status di luar 2xx
-          alert(`Gagal: ${error.response.data.message || 'Terjadi kesalahan'}`)
-        } else if (error.request) {
-          // Request dikirim tapi tidak ada respons
-          alert('Tidak ada respon dari server, cek koneksi!')
-        } else {
-          // Error lainnya
-          alert(`Error: ${error.message}`)
-        }
-        console.error('Error adding vendor:', error)
-      }
-
-      if (this.vendor_name == '' || this.vendor_name == null) {
-        this.rules.vendor_name = true
-        count++
-      } else {
-        this.rules.vendor_name = false
-      }
-
-      if (this.vendor_type == '' || this.vendor_type == null) {
-        this.rules.vendor_type = true
-        count++
-      } else {
-        this.rules.vendor_type = false
-      }
-
-      if (this.vendor_phone == '' || this.vendor_phone == null) {
-        this.rules.vendor_phone = true
-        count++
-      } else {
-        this.rules.vendor_phone = false
-      }
-
-      if (this.vendor_email == '' || this.vendor_email == null) {
-        this.rules.vendor_email = true
-        count++
-      } else {
-        this.rules.vendor_email = false
-      }
-
-      if (this.vendor_address == '' || this.vendor_address == null) {
-        this.rules.vendor_address = true
-        count++
-      } else {
-        this.rules.vendor_address = false
-      }
-
-      if (this.tax_number == '' || this.tax_number == null) {
-        this.rules.tax_number = true
-        count++
-      } else {
-        this.rules.tax_number = false
-      }
-
-      if (this.vendor_contact == '' || this.vendor_contact == null) {
-        this.rules.contact_person = true
-        count++
-      } else {
-        this.rules.contact_person = false
-      }
-
-      return count
-    },
-  },
+    }
+  }
 })
 </script>

@@ -540,6 +540,39 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: '/template',
+      children: [
+        {
+          path : 'quotation_pdf',
+          component: () => import('../components/templates/pdf/quotation_pdf.vue'),
+          meta : {
+            title: 'Quotation Form',
+          }
+        },
+        {
+          path : 'po_pdf',
+          component: () => import('../components/templates/pdf/purchase_pdf.vue'),
+          meta : {
+            title: 'Quotation Form',
+          }
+        },
+        {
+          path : 'invoice_pdf',
+          component: () => import('../components/templates/pdf/invoice_pdf.vue'),
+          meta : {
+            title: 'Quotation Form',
+          }
+        },
+        {
+          path : 'do_pdf',
+          component: () => import('../components/templates/pdf/do_pdf.vue'),
+          meta : {
+            title: 'Quotation Form',
+          }
+        }
+      ]
+    },
     //u
     //v
     {
