@@ -57,6 +57,7 @@ import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
+import { PDFDocument } from 'pdf-lib'
 import { fileUpload, ProductCode } from '@/core/utils/url_api'
 import router from '@/router'
 
@@ -75,7 +76,8 @@ export default defineComponent({
             document_name: '',
             document_path: '',
             document_file: '',
-            file : null,
+            compressedFile: null,
+            file: null,
             //others
             isSubmitting: false,
             notification: {
@@ -84,8 +86,8 @@ export default defineComponent({
                 message: '',
             },
             rules: {
-                vendor_id: false,
-                id_payment_type: false,
+                file: false,
+                document_name: false,
             },
             sales_order_details: [],
         }
@@ -93,23 +95,25 @@ export default defineComponent({
     methods: {
         async handleFileUpload(event) {
             this.file = event.target.files[0];
-
-            // if (file) {
-            //     const formData = new FormData();
-            //     formData.append('file', file);
-            //     try {
-            //         const response = await axios.post('/upload', formData, {
-            //             headers: {
-            //                 'Content-Type': 'multipart/form-data',
-            //             },
-            //         });
-            //         this.document_path = response.data.filePath; // Assuming the server returns the file path
-            //         console.log(response.data.filePath);
-            //     } catch (error) {
-            //         console.error('Error uploading file:', error);
-            //     }
-            // }
+            await this.compressedFile(this.file);
         },
+
+        async compressedFile(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            
+            pdfDoc.setTitle("");
+            pdfDoc.setAuthor("");
+            pdfDoc.setSubject("");
+            
+            pdfDoc.getForm().flatten();
+
+            const compressedPdfBytes = await pdfDoc.save();
+            this.compressedFile = new File([compressedPdfBytes], `compressed_${file.name}`, { type: "application/pdf" });
+
+            console.log("Original PDF size:", file.size, "Compressed PDF size:", this.compressedFile.size);
+        },
+
         showNotification(type, message) {
             this.notification = {
                 show: true,
@@ -124,51 +128,56 @@ export default defineComponent({
         },
 
         async validation() {
-            var count = 2
+            var count = 0;
+            if (this.file == '' || this.file.length == 0) {
+                this.rules.file = false;
+                count++;
+            }
 
             return count
         },
 
         async onSubmit() {
-            const result = await this.validation();            
-            if (result != 0) {
-                const formData = new FormData();
-                formData.append('file', this.file);
-                formData.append('document_name', this.document_name)
-                await axios
-                    .post(fileUpload, formData, {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    })
-                    .then(
-                        (response) => {
-                            console.log(response)
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: 'Data has been Saved',
-                            }).then((res) => {
-                                if (res.isConfirmed) {
-                                    router.push('/product')
-                                }
-                            })
-                        },
-                        (error) => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text:
-                                    (error.response && error.response && error.response.message) ||
-                                    error.message ||
-                                    error.toString(),
-                            })
-                        },
-                    )
-                    .finally(() => {
-                        this.isSubmitting = false;
-                    });
-            }
+            const result = await this.validation();
+            console.log(this.file);
+            // if (result != 0) {
+            //     const formData = new FormData();
+            //     formData.append('file', this.file);
+            //     formData.append('document_name', this.document_name)
+            //     await axios
+            //         .post(fileUpload, formData, {
+            //             headers: {
+            //                 'Content-Type': 'multipart/form-data',
+            //             },
+            //         })
+            //         .then(
+            //             (response) => {
+            //                 console.log(response)
+            //                 Swal.fire({
+            //                     icon: 'success',
+            //                     title: 'Success',
+            //                     text: 'Data has been Saved',
+            //                 }).then((res) => {
+            //                     if (res.isConfirmed) {
+            //                         router.push('/product')
+            //                     }
+            //                 })
+            //             },
+            //             (error) => {
+            //                 Swal.fire({
+            //                     icon: 'error',
+            //                     title: 'Error',
+            //                     text:
+            //                         (error.response && error.response && error.response.message) ||
+            //                         error.message ||
+            //                         error.toString(),
+            //                 })
+            //             },
+            //         )
+            //         .finally(() => {
+            //             this.isSubmitting = false;
+            //         });
+            // }
         },
 
         inputClass(error) {

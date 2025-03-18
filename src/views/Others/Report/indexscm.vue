@@ -231,10 +231,17 @@
   
       const exportData = () => {
         const data = filteredData.value.map((report) => ({
-          Name: report.name,
-          'Account Number': report.accountNumber,
-          Amount: formatCurrency(report.amount),
-          'Date Created': report.dateCreated,
+          'Po Number' : report.code_po,
+          'Vendor' : report.vendor.vendor_name,
+          'Address' : report.vendor.vendor_address,
+          'Term Of Payment' : report.termin,
+          'Product' : report.detail_po.product_id,
+          'quantity' : report.detail_po.quantity,
+          'Sub Total' : report.sub_total,
+          'Ppn' : report.ppn,
+          'Total' : report.grand_total,
+          'Issue Date' : report.issue_at,
+          'Due Date' : report.due_at,
         }))
   
         // Create CSV content

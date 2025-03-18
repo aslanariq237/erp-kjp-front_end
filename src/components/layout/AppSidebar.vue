@@ -18,20 +18,20 @@
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="dark:hidden"
-          src="/images/logo/logo.svg"
+          src="/images/logos/KJP_Logo.png"
           alt="Logo"
-          width="150"
-          height="40"
+          width="120"
+          height="100"
         />
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="hidden dark:block"
-          src="/images/logo/logo-dark.svg"
+          src="/images/logos/KJP_Logo.png"        
           alt="Logo"
           width="150"
           height="40"
         />
-        <img v-else src="/images/logo/logo-icon.svg" alt="Logo" width="32" height="32" />
+        <h1 v-else class="text-xl font-bold text-green-600">KJP</h1>
       </router-link>
     </div>
     <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">

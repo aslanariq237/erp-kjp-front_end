@@ -34,14 +34,16 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- No -->                   
            <!-- Total Service -->
-          <FormGroup label="PO Number" :required="true" :error="rules.deposit" errorMessage="po Number is required">
+          <FormGroup label="PO Number" :required="true">
             <input type="text" id="deposit" name="deposit" v-model="po_number" :class="inputClass(rules.deposit)"
               placeholder="Enter Po Number" />
+              <div class="" v-if="rules.po_number == true">
+                <p class="text-red-500 text-sm">Purchase Order Number Dibutuhkan</p>
+              </div>
           </FormGroup>  
           <!-- customer -->
-          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
-            errorMessage="Customer is Required">
-            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
+          <FormGroup label="Customer" class="relative" :required="true">
+            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
               class="rounded w-full" placeholder="Type customer name" :class="inputClass(rules.issue_at)"/>
             <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
               <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
@@ -50,12 +52,15 @@
               </li>
               <li v-if="filteredCustomers.length === 0"> not found</li>
             </ul>
+            <div class="" v-if="rules.customer_id == true">
+              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
+            </div>
           </FormGroup> 
 
           <!-- Total Service -->
-          <FormGroup label="Deposit" :required="true" :error="rules.deposit" errorMessage="Deposit is required">
+          <FormGroup label="Deposit" :required="true">
             <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit" />
+              placeholder="Enter Deposit" />            
           </FormGroup> 
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
@@ -83,9 +88,8 @@
           </FormGroup>           
         </div>
         <div class="flex justify-content-between gap-4 items-end mt-5">
-          <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
-            errorMessage="product_id is required">
-            <input type="text" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
+          <FormGroup class="w-full relative" label="product" :required="true">
+            <input type="text" autocomplete="off" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
               class="rounded w-full" placeholder="Type product name" :class="inputClass(rules.due_at)"/>
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
               <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
@@ -169,6 +173,7 @@ import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import { Customer, Employee, Product, SalesOrderAdd } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -182,7 +187,9 @@ export default defineComponent({
   },
 
   data() {
+    const {user} = useAuthStore();
     return {
+      user: user,
       customers: [],
       customer_name: '',
       filteredCustomers: [],
@@ -214,21 +221,19 @@ export default defineComponent({
       },
       rules: {
         customer_id: false,
-        id_payment_type: false,
-        id_bank_account: false,
-        po_type: false,
-        status_payment: false,
-        total_tax: false,
-        total_service: false,
-        deposit: false,
+        po_number : false,        
+        issue_at : false,
+        termin : false,
+        due_at: false,
+        sales_order_details : false,
       },
       sales_order_details: [],
     }
   },
   async mounted() {
-    this.getCustomer()
-    this.getEmployee()
-    this.getProducts()    
+    this.employee_id = this.user.employee_id;
+    this.getCustomer();    
+    this.getProducts();    
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
@@ -274,12 +279,6 @@ export default defineComponent({
       axios.get(Product).then((res) => {
         var data = res.data
         this.products = data
-      })
-    },
-    getEmployee() {
-      axios.get(Employee).then((res) => {
-        var data = res.data
-        this.employees = data
       })
     },
 
@@ -352,9 +351,21 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 14) // Add 30 days
         this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'N45') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 45) // Add 30 days
+        this.due_at = this.formatDate(date)
       } else if (issueDate && termin === 'N60') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
+        this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'CBD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'CAD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
         this.due_at = this.formatDate(date)
       } else {
         this.due_at = '' // Reset due_at if termin is not type3
@@ -409,25 +420,65 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 0
+      var count = 0;
 
       if (this.customer_id == '' || this.customer_id == null) {
-        this.rules.customer_id = true
-        count++
+        this.rules.customer_id = true;
+        count++;
       } else {
-        this.rules.customer_id = false
+        this.rules.customer_id = false;
       }
 
+      if (this.po_number == '' || this.po_number == null) {
+        this.rules.po_number = true;
+        count++
+      }else{
+        this.rules.po_number = false;
+      }
+
+      if (this.issue_at == '' || this.issue_at == null) {
+        this.rules.issue_at = true;
+        count++;
+      }else{
+        this.rules.issue_at = false;
+      }
+
+      if(this.termin == '' || this.termin == null){
+        this.rules.termin = true;
+        count++;
+      }else{
+        this.rules.termin = false;
+      }
+
+      if (this.due_at == '' || this.due_at == null) {
+        this.rules.due_at = true;
+        count++;        
+      }else{
+        this.rules.due_at = false;
+      }
+
+      if (this.sales_order_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },
+        })
+      }
       return count
     },
 
     async onSubmit() {
-      const result = 2
-      if (result != 0) {
+      const result = await this.validation();
+      if (result == 0) {
         await axios
           .post(SalesOrderAdd, {
             customer_id: this.customer_id,
-            employee_id: 1,
+            employee_id: this.employee_id,
             termin: this.termin,
             po_number : this.po_number,
             total_tax: this.total_tax,            
@@ -445,14 +496,8 @@ export default defineComponent({
                 title: 'Success',
                 text: 'Data has been Saved',
               }).then(async (result) => {
-                if (result.isConfirmed) {
-                  var mssg = ''
-                  if (this.id != null) {
-                    mssg = 'Success Update Employee'
-                  } else {
-                    mssg = 'Success Create Employee'
-                  }
-                  await router.push('/employee')                  
+                if (result.isConfirmed) {                  
+                  await router.push('/sales-order')                  
                 }
               })
             },

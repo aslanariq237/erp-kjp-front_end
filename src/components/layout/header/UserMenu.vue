@@ -8,7 +8,7 @@
         <img src="/images/user/user-01.jpg" alt="User" />
       </span>
 
-      <span class="block mr-1 font-medium text-theme-sm"> Emirhan Boruch </span>
+      <span class="block mr-1 font-medium text-theme-sm"> {{ username }} </span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
     </button>
@@ -19,11 +19,11 @@
       class="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
     >
       <div>
-        <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          Emirhan Boruch
+        <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">          
+          {{ username }}
         </span>
-        <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-          emirhanboruch51@gmail.com
+        <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">          
+          {{ email }}
         </span>
       </div>
 
@@ -61,15 +61,18 @@
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
 import { RouterLink } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
-
-const dropdownOpen = ref(false)
-const dropdownRef = ref(null)
+import { useAuthStore } from '@/stores/authStores'
 
 const menuItems = [
   { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' },
   { href: '/chat', icon: SettingsIcon, text: 'Account settings' },
   { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
 ]
+const dropdownOpen = ref(false)
+const dropdownRef = ref(null)
+const username = ref('');
+const email = ref('');
+const authStore = useAuthStore();
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
@@ -78,9 +81,19 @@ const toggleDropdown = () => {
 const closeDropdown = () => {
   dropdownOpen.value = false
 }
+const getItem = () => {
+  username.value = authStore.user.name;
+  email.value = authStore.user.email;
+}
+onMounted((res) => {
+  getItem();  
+});
 
 const signOut = () => {
-  // Implement sign out logic here
+  localStorage.removeItem('isAuthenticated');
+  localStorage.removeItem('name');
+  localStorage.removeItem('token');
+  localStorage.removeItem('email');
   console.log('Signing out...')
   closeDropdown()
 }
@@ -95,7 +108,7 @@ onMounted(() => {
   document.addEventListener('click', handleClickOutside)
 })
 
-onUnmounted(() => {
+onUnmounted(() => {  
   document.removeEventListener('click', handleClickOutside)
 })
 </script>

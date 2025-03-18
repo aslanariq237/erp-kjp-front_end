@@ -32,7 +32,7 @@
             <!-- Form Card -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
-                    <FormGroup label="Employee Address" :required="true" :error="rules.issue_at"
+                    <FormGroup label="Image Product" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
                         <input type="file" id="issue_at" name="issue_at"
                             :class="inputClass(rules.issue_at)" />

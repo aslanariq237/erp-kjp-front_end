@@ -24,7 +24,8 @@
               <input 
                 type="text" 
                 id="customer_name" 
-                name="customer_name" 
+                name="customer_name"
+                autocomplete="off" 
                 v-model="customer_name"
                 @change="singkatan"
                 :class="inputClass(rules.issue_at)" />
@@ -33,14 +34,14 @@
             <!-- Due Date -->
             <FormGroup label="Customer Phone" :required="true" :error="rules.due_at"
               errorMessage="Due Date is required">
-              <input type="text" id="customer_phone" name="customer_phone" v-model="customer_phone"
+              <input type="text" id="customer_phone" autocomplete="off" name="customer_phone" v-model="customer_phone"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>           
 
             <!-- No -->
             <FormGroup label="Customer Email" :required="false" :error="rules.due_at"
               errorMessage="Due Date is required">
-              <input type="text" id="customer_email" name="customer_email" v-model="customer_email"
+              <input type="text" id="customer_email" autocomplete="off" name="customer_email" v-model="customer_email"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
             <!-- Code PO -->
@@ -48,19 +49,19 @@
             <!-- Total Service -->
             <FormGroup label="Customer Address" :required="true" :error="rules.deposit"
               errorMessage="Deposit is required">
-              <input type="text" id="customer_address" name="customer_address" v-model="customer_address"
+              <input type="text" id="customer_address" autocomplete="off" name="customer_address" v-model="customer_address"
                 :class="inputClass(rules.deposit)" placeholder="Insert Customer Address" />
             </FormGroup>
 
             <!-- Due Date -->
             <FormGroup label="Customer NPWP" :required="false" :error="rules.due_at" errorMessage="Due Date is required">
-              <input type="number" id="customer_npwp" name="customer_npwp" v-model="customer_npwp"
+              <input type="number" id="customer_npwp" autocomplete="off" name="customer_npwp" v-model="customer_npwp"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
 
             <FormGroup label="Contact Person" :required="true" :error="rules.deposit"
               errorMessage="Deposit is required">
-              <input type="text" id="contact_person" name="contact_person" v-model="customer_contact"
+              <input type="text" id="contact_person" autocomplete="off" name="contact_person" v-model="customer_contact"
                 :class="inputClass(rules.deposit)" placeholder="Insert Contact Person" />
             </FormGroup>
             <FormGroup>              
@@ -70,12 +71,12 @@
             <!-- Grand Total -->
             <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
               errorMessage="Quantity is required">
-              <input type="text" id="quantity" name="point" v-model="point" :class="inputClass(rules.quantity)"
+              <input type="text" id="quantity" name="point" autocomplete="off" v-model="point" :class="inputClass(rules.quantity)"
                 placeholder="Enter Customer Point" />
             </FormGroup>
             <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
               errorMessage="Price is required">
-              <input type="text" id="quantity" name="alamat" v-model="alamat" :class="inputClass(rules.quantity)"
+              <input type="text" id="quantity" name="alamat" autocomplete="off" v-model="alamat" :class="inputClass(rules.quantity)"
                 placeholder="Enter Customer Address" />
             </FormGroup>
             <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"

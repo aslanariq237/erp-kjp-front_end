@@ -150,6 +150,7 @@ import {
   SalesOrders
 } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -161,7 +162,9 @@ export default defineComponent({
   },
 
   data() {
+    const {user} = useAuthStore();
     return {
+      user: user,
       salesOrders: [],
       employee: [],
       points: [],
@@ -190,6 +193,7 @@ export default defineComponent({
     }
   },
   async mounted() {
+    this.employee_id = this.user.employee_id;
     this.getSalesOrder();
     this.issue_at = new Date().toLocaleDateString('en-CA');
   },
@@ -216,7 +220,7 @@ export default defineComponent({
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;        
-        data = data.filter(detail => detail.has_do == 0);
+        data = data.filter(detail => detail.has_invoice == 0);
         this.salesOrders = data;
       })
     },
@@ -283,13 +287,17 @@ export default defineComponent({
         )
       }
     },
-    async AddDeliverOrderDetails(products) {
-      this.delivery_order_details.splice(products.product_id);
-      if (products.quantity_left > products.product_stock) {
+    async AddDeliverOrderDetails(products) {      
+      if (products.quantity_left > products.product_stock) 
+      {
         this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
         products.quantity_left = products.product_stock;        
       }
-      for (let i = 0; i < [products].length; i++) {
+      else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) 
+      {
+        products.quantity_left = products.quantity
+      }      
+
         var objectInclude = {
           id_detail_so : products.id_detail_so,
           product_id: products.product_id,
@@ -297,8 +305,7 @@ export default defineComponent({
           quantity_left: products.quantity_left,
           price: products.price
         }
-        this.delivery_order_details.push(objectInclude);         
-      }
+        this.delivery_order_details.push(objectInclude);               
     },
     showNotification(type, message) {
       this.notification = {
@@ -320,11 +327,12 @@ export default defineComponent({
 
     async onSubmit() {
       const result = await this.validation()            
+      // console.log(this.delivery_order_details);
       if (result != 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id: this.customer_id,
           id_customer_point: this.id_customer_point,
-          employee_id: 1,
+          employee_id: this.employee_id,
           id_so: this.id_so,
           issue_at: this.issue_at,
           due_at: this.due_at,

@@ -10,7 +10,7 @@
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
             <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Invoice</h1>
-            <p class="text-gray-500 text-sm mt-1">Others / Invoice / Form</p>
+            <p class="text-gray-500 text-sm mt-1">Sales / Invoice / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink to="/invoice"
@@ -156,6 +156,7 @@ import {
   SalesOrders
 } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -167,8 +168,10 @@ export default defineComponent({
   },
 
   data() {
-    return {
+    const {user} = useAuthStore();
+    return {            
       id: null,
+      user: user,
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
@@ -202,7 +205,8 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.total = this.sub_total;
+    this.employee_id = this.user.employee_id;
+    
     this.getSalesOrder();
     if (id) {
       this.getById(id);
@@ -218,6 +222,12 @@ export default defineComponent({
         return total + (item.amount) || 0
       }, 0);
     },
+    ppn(){
+      return this.sub_total * 0.11;
+    },
+    grand_total(){
+      return this.sub_total + this.ppn;
+    }
   },
   methods: {
     changeQuantity(products) {
@@ -226,11 +236,12 @@ export default defineComponent({
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;
-        this.salesOrders = data;
+        data = data.filter((detail) => detail.has_invoice == 0);
+        this.salesOrders = data;        
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
+      axios.get(SalesOrders + '/' + this.id_so).then((res) => {        
         var data = res.data;
         this.customer_id = data.customer.customer_id;
         this.customer_name = data.customer.customer_name;
@@ -345,85 +356,84 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = 2;
-      var total = this.sub_total;
-      if (result != 0) {
-        if (this.id == null) {
-          await axios.post(InvoiceAdd, {
-            id_so: this.id_so,
-            customer_id: this.customer_id,
-            employee_id: 1,
-            issue_at: this.issue_at,
-            due_at: this.due_at,
-            sub_total: total,
-            id_do: this.id_do,
-            delivery_order_details: this.delivery_order_details,
-          }, {
-            headers: { "Content-Type": "application/json" }
-          }).then((response) => {
-            console.log(response)
-            Swal.fire({
-              icon: "success",
-              title: 'Success',
-              text: "Data has been Saved"
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                await router.push("/invoice");
-              }
-            })
-          }, (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
-          )
-        }
-        else {
-          await axios.put(InvoiceAdd + '/' + this.id, {
-            id_so: this.id_so,
-            customer_id: this.customer_id,
-            employee_id: 1,
-            issue_at: this.issue_at,
-            sub_total: total,
-            due_at: this.due_at,
-            id_do: this.id_do,
-            code_invoice: this.code_invoice,
-            delivery_order_details: this.delivery_order_details,
-          }, {
-            headers: { "Content-Type": "application/json" }
-          }).then((response) => {
-            console.log(response)
-            Swal.fire({
-              icon: "success",
-              title: 'Success',
-              text: "Data has been Saved"
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                await router.push("/invoice");
-              }
-            })
-          }, (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
-          )
-        }
-      }
+      const result = 0;            
+      // if (result == 0) {
+      //   if (this.id == null) {
+      //     await axios.post(InvoiceAdd, {
+      //       id_so: this.id_so,
+      //       customer_id: this.customer_id,
+      //       employee_id: this.employee_id,
+      //       issue_at: this.issue_at,
+      //       due_at: this.due_at,
+      //       sub_total: total,
+      //       id_do: this.id_do,
+      //       delivery_order_details: this.delivery_order_details,
+      //     }, {
+      //       headers: { "Content-Type": "application/json" }
+      //     }).then((response) => {
+      //       console.log(response)
+      //       Swal.fire({
+      //         icon: "success",
+      //         title: 'Success',
+      //         text: "Data has been Saved"
+      //       }).then(async (result) => {
+      //         if (result.isConfirmed) {
+      //           await router.push("/invoice");
+      //         }
+      //       })
+      //     }, (error) => {
+      //       Swal.fire({
+      //         icon: "error",
+      //         title: "Error",
+      //         text:
+      //           (error.response &&
+      //             error.response &&
+      //             error.response.message) ||
+      //           error.message ||
+      //           error.toString(),
+      //       });
+      //     },
+      //     )
+      //   }
+      //   else {
+      //     await axios.put(InvoiceAdd + '/' + this.id, {
+      //       id_so: this.id_so,
+      //       customer_id: this.customer_id,
+      //       employee_id: 1,
+      //       issue_at: this.issue_at,
+      //       sub_total: total,
+      //       due_at: this.due_at,
+      //       id_do: this.id_do,
+      //       code_invoice: this.code_invoice,
+      //       delivery_order_details: this.delivery_order_details,
+      //     }, {
+      //       headers: { "Content-Type": "application/json" }
+      //     }).then((response) => {
+      //       console.log(response)
+      //       Swal.fire({
+      //         icon: "success",
+      //         title: 'Success',
+      //         text: "Data has been Saved"
+      //       }).then(async (result) => {
+      //         if (result.isConfirmed) {
+      //           await router.push("/invoice");
+      //         }
+      //       })
+      //     }, (error) => {
+      //       Swal.fire({
+      //         icon: "error",
+      //         title: "Error",
+      //         text:
+      //           (error.response &&
+      //             error.response &&
+      //             error.response.message) ||
+      //           error.message ||
+      //           error.toString(),
+      //       });
+      //     },
+      //     )
+      //   }
+      // }
     },
 
     inputClass(error) {

@@ -67,7 +67,7 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-left">                                                
-                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>                                                
+                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>                                                                
                 <th class="px-3 py-2 font-semibold text-center bg-gray-100 border-b">Quantity Received</th>
                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">
                   Price
@@ -79,7 +79,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
               <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">                                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>              
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>                              
                 <td class="px-3 py-2 whitespace-no-wrap text-center">
                   <input 
                     type="number" 
@@ -242,6 +242,9 @@ export default defineComponent({
     },
     changeQuantity(poDetail){      
       poDetail.amount = poDetail.price * poDetail.quantity;
+      if (poDetail.quantity <= poDetail.quantity_left) {
+        poDetail.quantity_left = poDetail.quantity;
+      }
     },        
 
     formatCurrency(value) {

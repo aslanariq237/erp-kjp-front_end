@@ -115,17 +115,15 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.tandater)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"                    
                   >View</button>
                   <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"                    
                   >Edit</button>
-                  <button 
+                  <!-- <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_invoice)"
-                  >Export</button>                                      
+                  >Export</button>                                       -->
                 </td>
               </tr>
             </tbody>
@@ -252,7 +250,16 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_tandater.toLowerCase().includes(query))
+        result = result.filter((entry) => {
+          const code_tandater = entry.code_tandater.toLowerCase()
+          const code_so = entry.so.code_so.toLowerCase()          
+          const po_number = entry.so.po_number.toLowerCase()
+          const customer = entry.customer.customer_name.toLowerCase()
+          return code_tandater.includes(query)||
+                po_number.includes(query) ||
+                code_so.includes(query) ||
+                customer.includes(query)
+        })
       }
 
       if (startDate.value) {

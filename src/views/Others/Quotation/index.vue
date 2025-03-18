@@ -189,11 +189,12 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (entry) =>
-            entry.description.toLowerCase().includes(query) ||
-            entry.id_quatation.toString().includes(query),
-        )
+        result = result.filter((entry) => {
+          const code_quatation = entry.code_quatation.toLowerCase()
+          const customer = entry.customer.customer_name.toLowerCase()
+          return code_quatation.includes(query) ||
+                 customer.includes(query)
+        });
       }
 
       result.sort((a, b) => {

@@ -308,35 +308,37 @@
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+<script lang="ts">
+import { useRouter } from 'vue-router';
+import { useAuthStore } from "@/stores/authStores";
+import { defineComponent } from 'vue';
 
-const email = ref('')
-const password = ref('')
-const keepLoggedIn = ref(false)
-const showPassword = ref(false)
-const router = useRouter()
+export default defineComponent({
+  name: "sign-in",
+  components: {
 
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
-}
+  },
+  data(){
+    const authStore = useAuthStore();
+    const router = useRouter();
+    return {
+      showPassword : false,
+      keepLoggedIn : false,
+      email : '',
+      password : '',      
 
-const handleSubmit = async () => {
-  try {
-    const response = await axios.post('http://127.0.0.1:8000/api/login', {
-      email: email.value,
-      password: password.value,
-    })
-
-    // Simpan token ke localStorage atau Pinia/Vuex
-    localStorage.setItem('token', response.data.token)
-
-    // Redirect ke dashboard
-    router.push('/')
-  } catch (error) {
-    console.error('Login gagal:', error.response?.data?.message || error.message)
+      //import
+      authStore,
+      router,
+    }
+  },  
+  methods: {
+    togglePasswordVisibility(){
+      this.showPassword = !this.showPassword;
+    },
+    async handleSubmit(){
+      await this.authStore.login(this.email, this.password);            
+    }
   }
-}
+})
 </script>

@@ -42,9 +42,7 @@
           <!-- Issue Date -->
           <FormGroup
             label="Issue Date"
-            :required="true"
-            :error="rules.issue_at"
-            errorMessage="Issue Date is required"
+            :required="true"            
           >
             <input
               type="date"
@@ -53,14 +51,15 @@
               v-model="issue_at"
               :class="inputClass(rules.issue_at)"
             />
+            <div class="" v-if="rules.issue_at == true">
+              <p class="text-red-500 text-sm">Issue Date Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Termin -->
           <FormGroup
             label="Termin"
-            :required="true"
-            :error="rules.po_type"
-            errorMessage="PO Type is required"
+            :required="true"            
           >
           <select id="po_type" name="po_type" :class="inputClass(rules.deposit)" v-model="termin" class="rounded w-full">
               <option value="">-- termin --</option>
@@ -73,14 +72,15 @@
               <option value="N75">N75</option>
               <option value="N90">N90</option>
             </select>
+            <div class="" v-if="rules.termin == true">
+              <p class="text-red-500 text-sm">Termin Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Due Date -->
           <FormGroup
             label="Due Date"
             :required="true"
-            :error="rules.due_at"
-            errorMessage="Due Date is required"
           >
             <input
               type="date"
@@ -89,6 +89,9 @@
               v-model="due_at"
               :class="inputClass(rules.due_at)"
             />
+            <div class="" v-if="rules.due_at == true">
+              <p class="text-red-500 text-sm">Due Date Dibutuhkan</p>
+            </div>
           </FormGroup>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
@@ -97,8 +100,6 @@
             label="Vendor"
             class="relative"
             :required="true"
-            :error="rules.vendor_id"
-            errorMessage="vendor is Required"
           >
             <input
               type="text"
@@ -106,6 +107,7 @@
               id="vendor_name"
               v-model="vendor_name"
               @input="filtervendors"
+              autocomplete="off"
               class="rounded w-full"
               :class="inputClass(rules.deposit)"
               placeholder="Type Vendor Name"
@@ -120,14 +122,15 @@
                 {{ vendor.vendor_name }}
               </li>
             </ul>
+            <div class="" v-if="rules.vendor_id == true">
+              <p class="text-red-500 text-sm">Vendor Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Total Service -->
           <FormGroup
             label="Deposit"
             :required="true"
-            :error="rules.deposit"
-            errorMessage="Deposit is required"
           >
             <input
               type="number"
@@ -155,6 +158,7 @@
               name="product_name"
               id="product_name"
               v-model="product_name"
+              autocomplete="off"
               @input="filterProducts"
               class="rounded w-full"
               :class="inputClass(rules.deposit)"
@@ -216,8 +220,7 @@
         <div class="mt-5">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
-                <th class="px-3 py-2 font-semibold text-left border-b">#</th>
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">                
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">
@@ -229,10 +232,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button class="bg-red-300 p-2 px-5 rounded-lg">Delete</button>
-                </td>
+              <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">                
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
@@ -275,6 +275,7 @@ import axios from 'axios'
 import { computed } from 'vue'
 import { Employee, Product, PurchaseOrderAdd, Vendor } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -288,7 +289,9 @@ export default defineComponent({
   },
 
   data() {
+    const {user} = useAuthStore();    
     return {
+      user : user,
       vendors: [],
       vendor_name: '',
       filteredvendors: [],
@@ -319,21 +322,19 @@ export default defineComponent({
       },
       rules: {
         vendor_id: false,
-        id_payment_type: false,
-        id_bank_account: false,
-        po_type: false,
-        status_payment: false,
-        total_tax: false,
-        total_service: false,
-        deposit: false,
+        issue_at : false,
+        termin: false,
+        due_at : false,
+        purchase_order_details : false,
       },
       purchase_order_details: [],
     }
   },
   async mounted() {
-    this.getvendor()
-    this.getEmployee()
-    this.getProducts()
+    this.employee_id = this.user.employee_id;
+    this.getvendor();
+    this.getEmployee();
+    this.getProducts();
 
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
@@ -409,7 +410,16 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      } else {
+      } else if (issueDate && termin === 'CBD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'CAD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date)
+      }
+       else {
         this.due_at = '' // Reset due_at if termin is not type3
       }
     },
@@ -429,7 +439,7 @@ export default defineComponent({
         const sn = product.product_sn.toLowerCase()
         return desc.includes(searchTerm) || sn.includes(searchTerm)
       })
-    },
+    },    
     selectProduct(product) {
       this.product_id = product.product_id
       this.product_name = `${product.product_sn} - ${product.product_desc}`
@@ -446,18 +456,6 @@ export default defineComponent({
       this.vendor_id = vendor.vendor_id
       this.vendor_name = vendor.vendor_name
       this.filteredvendors = []
-    },
-    filterEmployees() {
-      const searchTerm = this.employee_name.toLowerCase()
-      this.filteredEmployees = this.employees.filter((employee) => {
-        const name = employee.employee_name.toLowerCase()
-        return name.includes(searchTerm)
-      })
-    },
-    selectEmployee(employee) {
-      this.employee_id = employee.employee_id
-      this.employee_name = employee.employee_name
-      this.filteredEmployees = []
     },
     addPoDetails() {
       axios.get(Product + '/' + this.product_id).then((res) => {
@@ -495,18 +493,60 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 2
+      var count = 0;
+
+      if (this.issue_at == '' || this.issue_at == null) {
+        this.rules.issue_at = true;
+        count++;
+      }else{
+        this.rules.issue_at = false;
+      }
+
+      if (this.termin == '' || this.termin == null) {
+        this.rules.termin = true;
+        count++;
+      }else{
+        this.rules.termin = false;
+      }
+
+      if (this.due_at == '' || this.due_at == null) {
+        this.rules.due_at = true;
+        count++;
+      }else{
+        this.rules.due_at = false;
+      }
+
+      if (this.vendor_id == '' || this.vendor_id == null) {
+        this.rules.vendor_id = true;
+        count++;
+      }else{
+        this.rules.vendor_id = false;
+      }
+
+      if (this.purchase_order_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },        
+        });
+        count++;
+      }
 
       return count
     },
 
     async onSubmit() {
-      const result = 2
-      if (result != 0) {
+      const result = await this.validation();
+      if (result == 0) {
         await axios
           .post(PurchaseOrderAdd, {
             vendor_id: this.vendor_id,
-            employee_id: 1,
+            employee_id: this.employee_id,
             termin: this.termin,
             total_tax: this.total_tax,
             status_payment: this.status_payment,

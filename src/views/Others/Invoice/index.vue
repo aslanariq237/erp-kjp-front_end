@@ -267,7 +267,14 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_invoice.toLowerCase().includes(query))
+        result = result.filter((entry) => {
+          const code_inv = entry.code_invoice.toLowerCase()
+          const po_number = entry.salesorder.po_number.toLowerCase()
+          const customer = entry.customer.customer_name.toLowerCase()
+          return code_inv.includes(query)||
+                po_number.includes(query) ||
+                customer.includes(query)
+        })
       }
 
       if (startDate.value) {

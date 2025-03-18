@@ -158,8 +158,8 @@ export default defineComponent({
       this.vendor_singkatan = this.createSingkatan(this.vendor_name)
     },
 
-    getById(id){},
-    async onSubmit(){
+    getById(id) { },
+    async onSubmit() {
       const result = 2;
       if (result != 0) {
         await axios.post(AddVendor, {
@@ -169,7 +169,28 @@ export default defineComponent({
           vendor_singkatan: this.vendor_singkatan,
           vendor_address: this.vendor_address,
           vendor_npwp: this.vendor_npwp,
-        })
+        }).then(
+          (response) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'success save the data',
+              text: 'Data Has Been Saved'
+            }).then((res) => {
+              if (res.isConfirmed) {
+                router.push('vendor');
+              }
+            })
+          }, (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text:
+                (error.response && error.response && error.response.message) ||
+                error.message ||
+                error.toString(),
+            })
+          }
+        )
       }
     }
   }

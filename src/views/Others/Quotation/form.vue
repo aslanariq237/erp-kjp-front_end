@@ -54,6 +54,9 @@
               v-model="issue_at"
               :class="inputClass(rules.issue_at)"
             />
+            <div class="" v-if="rules.issue_at == true">
+              <p class="text-red-500 text-sm">Issue Date Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Termin -->
@@ -73,14 +76,16 @@
               <option value="N75">N75</option>
               <option value="N90">N90</option>
             </select>
+            <div class="" v-if="rules.termin == true">
+              <p class="text-sm text-red-500">Termin Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Due Date -->
           <FormGroup
             label="Due Date"
             :required="true"
-            :error="rules.due_at"
-            errorMessage="Due Date is required"
+            :error="rules.due_at"            
           >
             <input
               type="date"
@@ -89,6 +94,9 @@
               v-model="due_at"
               :class="inputClass(rules.due_at)"
             />
+            <div class="" v-if="rules.due_at == true">
+              <p class="text-sm text-red-500">Due Date Dibutuhkan</p>
+            </div>
           </FormGroup>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
@@ -105,6 +113,7 @@
               name="customer_name"
               id="customer_name"
               v-model="customer_name"
+              autocomplete="off"
               @input="filterCustomers"
               :class="inputClass(rules.due_at)"
               placeholder="Type customer name"
@@ -122,6 +131,9 @@
                 {{ customer.customer_code }} - {{ customer.customer_name }}
               </li>
             </ul>
+            <div class="" v-if="rules.customer_name == true">
+              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
+            </div>
           </FormGroup>          
           <!-- Code PO -->
         </div>
@@ -138,6 +150,7 @@
               name="product_name"
               id="product_name"
               v-model="product_name"
+              autocomplete="off"
               @input="filterProducts"
               class="rounded w-full dark:bg-gray-800"
               placeholder="Type product name"
@@ -230,6 +243,9 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
               </tr>
             </tbody>
+            <div class="" v-if="rules.inquiry_details == true">
+              <p class="text-sm text-red-500">Barang Dibutuhkan</p>
+            </div>
           </table>
           <div class="flex justify-between mt-5">
             <div class="w-full"></div>
@@ -260,6 +276,7 @@ import { computed } from 'vue'
 import { Customer, DetailQuatation, Employee, Product, Quatations, QuatationsAdd } from '@/core/utils/url_api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -273,21 +290,20 @@ export default defineComponent({
   },
 
   data() {
-    return {
+    const {user} = useAuthStore();
+    return {           
       id : null,
+      user : user ,
       customers: [],
       customer_name: '',
-      filteredCustomers: [],
-      employee_name: '',
-      filteredEmployees: [],
+      filteredCustomers: [],            
       product_name: '',
-      filteredProducts: [],
-      employees: [],
+      filteredProducts: [],      
       products: [],
       product_id: [],
       quantity: [],
-      customer_id: null,
-      employee_id: null,
+      customer_id: null,     
+      employee_id: null, 
       price: 0,
       code_quatation : null,
       termin: '',
@@ -302,21 +318,18 @@ export default defineComponent({
         message: '',
       },
       rules: {
-        customer_id: false,
-        id_payment_type: false,
-        id_bank_account: false,
-        po_type: false,
-        status_payment: false,
-        total_tax: false,
-        total_service: false,
-        deposit: false,
+        customer_name : false,
+        inquiry_details : false, 
+        issue_at : false,
+        due_at : false,       
       },
       inquiry_details: [],
     }
   },
   async mounted() {
-    const route = useRoute();
+    const route = useRoute();    
     const id = route.params.id;    
+    this.employee_id = this.user.employee_id;    
 
     this.getCustomer()      
     this.getProducts()
@@ -391,19 +404,7 @@ export default defineComponent({
       this.customer_id = customer.customer_id
       this.customer_name = `${customer.customer_code} - ${customer.customer_name}`
       this.filteredCustomers = []
-    },
-    filterEmployees() {
-      const searchTerm = this.employee_name.toLowerCase()
-      this.filteredEmployees = this.employees.filter((employee) => {
-        const name = employee.employee_name.toLowerCase()
-        return name.includes(searchTerm)
-      })
-    },
-    selectEmployee(employee) {
-      this.employee_id = employee.employee_id
-      this.employee_name = employee.employee_name
-      this.filteredEmployees = []
-    },
+    },    
 
     addPoDetails() {
       axios.get(Product + '/' + this.product_id).then((res) => {
@@ -454,7 +455,16 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      } else {
+      } else if (issueDate && termin === 'CBD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'CAD') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 30) // Add 30 days
+        this.due_at = this.formatDate(date)
+      }
+       else {
         this.due_at = '' // Reset due_at if termin is not type3
       }
     },
@@ -481,13 +491,42 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 0
-
+      var count = 0;
+      
       if (this.customer_id == '' || this.customer_id == null) {
-        this.rules.customer_id = true
-        count++
-      } else {
-        this.rules.customer_id = false
+        this.rules.customer_name = true;
+        count++;
+      } else{
+        this.rules.customer_name = false;
+      } 
+      
+      if (this.issue_at == '' || this.issue_at == null) {
+        this.rules.issue_at = true;
+        count++;
+      }else{
+        this.rules.issue_at = false;
+      }
+
+      if (this.due_at == '' || this.due_at == null) {
+        this.rules.due_at = true;
+        count++;
+      }
+      else{
+        this.rules.due_at == false
+      }
+
+      if (this.inquiry_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },
+        });
+        count++;        
       }
 
       return count
@@ -532,8 +571,9 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = 2      
-      if (result != 0) {                
+      const result = await this.validation(); 
+      console.log(result);
+      if (result == 0) {                
         if (this.id == null) { 
           await axios
           .post(QuatationsAdd, {
@@ -574,7 +614,7 @@ export default defineComponent({
           await axios
           .put(QuatationsAdd + "/" + this.id, {
             customer_id: this.customer_id,
-            employee_id: 1,
+            employee_id: this.employee_id,
             termin: this.termin,
             code_quatation: this.code_quatation,
             total_tax: this.total_tax,

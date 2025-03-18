@@ -9,8 +9,8 @@
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Invoice</h1>
-            <p class="text-gray-500 text-sm mt-1">Others / Invoice / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Tanda Terima</h1>
+            <p class="text-gray-500 text-sm mt-1">Sales / Tanda Terima / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink to="/invoice"
@@ -39,6 +39,9 @@
           <!-- Due Date -->
           <FormGroup label="Resi" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
             <input type="text" id="due_at" name="due_at" placeholder="Input Resi" v-model="resi" :class="inputClass(rules.due_at)" />
+            <div class="" v-if="rules.resi == true">
+              <p class="text-red-500 text-sm">Resi Dibutuhkan</p>
+            </div>
           </FormGroup>
           <!-- Id_Purchase order -->
           <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
@@ -142,8 +145,7 @@ export default defineComponent({
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
-      tandaterima_details: [],
-      tandaterima_details: [],
+      tandaterima_details: [],      
       code_invoice: '',
       id_so: null,
       id_invoice: null,
@@ -159,6 +161,10 @@ export default defineComponent({
       issue_at: '',
       due_at: '',
       isSubmitting: false,
+      rules: {
+        resi: false,
+        tandaterima_details : false,
+      },
       notification: {
         show: false,
         type: 'success',
@@ -196,6 +202,7 @@ export default defineComponent({
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;
+        data = data.filter((res) => res.has_tandater != 1);
         this.salesOrders = data;
       })
     },
@@ -261,7 +268,26 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 2
+      var count = 0;
+      if (this.resi == '' || this.resi == null) {
+        this.rules.resi = true;
+        count++;        
+      }else{
+        this.rules.resi = false;
+      }
+      if (this.tandaterima_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },
+        });
+        count++;
+      }
       return count
     },
     getDetailSo(id) {
@@ -308,9 +334,8 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = 2;
-      var total = this.sub_total;
-      if (result != 0) {
+      const result = await this.validation();      
+      if (result == 0) {
         if (this.id == null) {
           await axios.post(TandaterAdd, {
             id_so: this.id_so,

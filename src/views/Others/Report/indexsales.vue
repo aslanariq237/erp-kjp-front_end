@@ -143,7 +143,7 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_invoice.toLowerCase().includes(query))
+        result = result.filter((entry) => entry.customer.customer_name.toLowerCase().includes(query))
       }
 
       if (startDate.value) {
@@ -252,12 +252,19 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((report) => ({
-        Name: report.name,
-        'Account Number': report.accountNumber,
-        Amount: formatCurrency(report.amount),
-        'Date Created': report.dateCreated,
-      }))
+      const data = filteredData.value.map((report) => ({        
+        'Invoice Number' : report.code_invoice,
+        'SO Number' : report.salesorder.code_so,
+        'Po Number' : report.salesorder.po_number,
+        'Customer' : report.customer.customer_name,
+        'Address' : report.customer.customer_address,
+        'ToP' : report.salesorder.termin,
+        'Sub Total' : report.sub_total,
+        'Ppn' : report.sub_total * 0.11,        
+        'Total' : report.sub_total * 0.11 + report.sub_total,        
+        'Issue Date' : report.issue_at,
+        'due_at' : report.due_at,
+      }));
 
       // Create CSV content
       const headers = Object.keys(data[0])
