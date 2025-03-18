@@ -282,8 +282,7 @@ export default defineComponent({
             purchase_order_details: this.purchase_order_details,
           })
           .then(
-            (response) => {
-              console.log(response)
+            (response) => {              
               Swal.fire({
                 icon: 'success',
                 title: 'Success',

@@ -118,7 +118,7 @@
                   </button>
                   <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
+                    @click="editData(entry.id_po)"
                   >
                     Edit
                   </button>
@@ -257,6 +257,10 @@ export default defineComponent({
 
     const viewData = (id) => {
       router.push('/purchase-order/view/' + id)
+    }
+
+    const editData = (id) => {
+      router.push('purchase-order/edit/' + id);
     }
 
     // Computed properties for filtering and pagination
@@ -405,6 +409,7 @@ export default defineComponent({
 
     return {
       viewData,
+      editData,
       approved,
       // State
       loading,

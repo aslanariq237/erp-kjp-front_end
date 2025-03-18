@@ -47,6 +47,9 @@
                 {{ po.code_so }}
               </option>
             </select>
+            <div class="" v-if="rules.id_so == true">
+              <p class="text-red-500 text-sm">Sales Order Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- DO Type -->
@@ -64,6 +67,9 @@
                 {{ po.point }}
               </option>
             </select>
+            <div class="" v-if="rules.id_customer_point == true">
+              <p class="text-red-500 text-sm">Customer Point Dibutuhkan</p>
+            </div>
           </FormGroup>
 
           <!-- Alamat -->
@@ -182,6 +188,11 @@ export default defineComponent({
       due_at: '',
       isSubmitting: false,
       errorMessage: '',
+      rules : {
+        id_so : false,
+        id_customer_point : false,
+        delivery_order_details : false,
+      },
       notification: {
         show: false,
         type: 'success',
@@ -193,7 +204,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.employee_id = this.user.employee_id;
+    this.employee_id = this.user.employee_id;    
     this.getSalesOrder();
     this.issue_at = new Date().toLocaleDateString('en-CA');
   },
@@ -321,14 +332,42 @@ export default defineComponent({
     },
 
     async validation() {
-      var count = 2            
+      var count = 0;
+      if (this.id_so == '' || this.id_so == null) {
+        this.rules.id_so = true;
+        count++;
+      }        else{
+        this.rules.id_so = false;
+      }   
+
+      if (this.id_customer_point == '' || this.id_customer_point == null) {
+        this.rules.id_customer_point = true;
+        count++;        
+      }else{
+        this.rules.id_customer_point = false;
+      }
+
+      if (this.delivery_order_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },
+        });
+        count++;
+      }
+
       return count
     },
 
     async onSubmit() {
       const result = await this.validation()            
       // console.log(this.delivery_order_details);
-      if (result != 0) {
+      if (result == 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id: this.customer_id,
           id_customer_point: this.id_customer_point,

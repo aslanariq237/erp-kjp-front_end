@@ -114,7 +114,7 @@
                   </button>
                   <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
+                    @click="editData(entry.id_invoice)"
                   >
                     Edit
                   </button>

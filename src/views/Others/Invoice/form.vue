@@ -176,7 +176,6 @@ export default defineComponent({
       deliveryOrders: [],
       employee: [],
       delivery_order_details: [],
-      delivery_order_details: [],
       code_invoice: '',
       id_so: null,
       id_do: null,
@@ -192,6 +191,10 @@ export default defineComponent({
       issue_at: '',
       due_at: '',
       isSubmitting: false,
+      rules: {
+        id_so: false,
+        delivery_order_details : false,
+      },
       notification: {
         show: false,
         type: 'success',
@@ -355,85 +358,109 @@ export default defineComponent({
       )
     },
 
+    async validation(){
+      var count = 0;
+      if (this.id_so == '' || this.id_so == null) {
+        this.rules.id_so = true;
+        count++
+      }else{
+        this.rules.id_so = false;
+      }
+
+      if (this.delivery_order_details.length == 0) {
+        Swal.fire({
+          text: "Tambahkan 1 atau lebih barang!",
+          icon : 'error',
+          buttonsStyling: true,
+          confirmButtonText: 'Try Again!',
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-danger",
+          },
+        });
+        count++;
+      }
+      return count;
+    },
+
     async onSubmit() {
-      const result = 0;            
-      // if (result == 0) {
-      //   if (this.id == null) {
-      //     await axios.post(InvoiceAdd, {
-      //       id_so: this.id_so,
-      //       customer_id: this.customer_id,
-      //       employee_id: this.employee_id,
-      //       issue_at: this.issue_at,
-      //       due_at: this.due_at,
-      //       sub_total: total,
-      //       id_do: this.id_do,
-      //       delivery_order_details: this.delivery_order_details,
-      //     }, {
-      //       headers: { "Content-Type": "application/json" }
-      //     }).then((response) => {
-      //       console.log(response)
-      //       Swal.fire({
-      //         icon: "success",
-      //         title: 'Success',
-      //         text: "Data has been Saved"
-      //       }).then(async (result) => {
-      //         if (result.isConfirmed) {
-      //           await router.push("/invoice");
-      //         }
-      //       })
-      //     }, (error) => {
-      //       Swal.fire({
-      //         icon: "error",
-      //         title: "Error",
-      //         text:
-      //           (error.response &&
-      //             error.response &&
-      //             error.response.message) ||
-      //           error.message ||
-      //           error.toString(),
-      //       });
-      //     },
-      //     )
-      //   }
-      //   else {
-      //     await axios.put(InvoiceAdd + '/' + this.id, {
-      //       id_so: this.id_so,
-      //       customer_id: this.customer_id,
-      //       employee_id: 1,
-      //       issue_at: this.issue_at,
-      //       sub_total: total,
-      //       due_at: this.due_at,
-      //       id_do: this.id_do,
-      //       code_invoice: this.code_invoice,
-      //       delivery_order_details: this.delivery_order_details,
-      //     }, {
-      //       headers: { "Content-Type": "application/json" }
-      //     }).then((response) => {
-      //       console.log(response)
-      //       Swal.fire({
-      //         icon: "success",
-      //         title: 'Success',
-      //         text: "Data has been Saved"
-      //       }).then(async (result) => {
-      //         if (result.isConfirmed) {
-      //           await router.push("/invoice");
-      //         }
-      //       })
-      //     }, (error) => {
-      //       Swal.fire({
-      //         icon: "error",
-      //         title: "Error",
-      //         text:
-      //           (error.response &&
-      //             error.response &&
-      //             error.response.message) ||
-      //           error.message ||
-      //           error.toString(),
-      //       });
-      //     },
-      //     )
-      //   }
-      // }
+      const result = await this.validation();                   
+      if (result == 0) {
+        if (this.id == null) {
+          await axios.post(InvoiceAdd, {
+            id_so: this.id_so,
+            customer_id: this.customer_id,
+            employee_id: this.employee_id,
+            issue_at: this.issue_at,
+            due_at: this.due_at,            
+            id_do: this.id_do,
+            delivery_order_details: this.delivery_order_details,
+          }, {
+            headers: { "Content-Type": "application/json" }
+          }).then((response) => {
+            console.log(response)
+            Swal.fire({
+              icon: "success",
+              title: 'Success',
+              text: "Data has been Saved"
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                await router.push("/invoice");
+              }
+            })
+          }, (error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text:
+                (error.response &&
+                  error.response &&
+                  error.response.message) ||
+                error.message ||
+                error.toString(),
+            });
+          },
+          )
+        }
+        else {
+          await axios.put(InvoiceAdd + '/' + this.id, {
+            id_so: this.id_so,
+            customer_id: this.customer_id,
+            employee_id: 1,
+            issue_at: this.issue_at,
+            sub_total: total,
+            due_at: this.due_at,
+            id_do: this.id_do,
+            code_invoice: this.code_invoice,
+            delivery_order_details: this.delivery_order_details,
+          }, {
+            headers: { "Content-Type": "application/json" }
+          }).then((response) => {
+            console.log(response)
+            Swal.fire({
+              icon: "success",
+              title: 'Success',
+              text: "Data has been Saved"
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                await router.push("/invoice");
+              }
+            })
+          }, (error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text:
+                (error.response &&
+                  error.response &&
+                  error.response.message) ||
+                error.message ||
+                error.toString(),
+            });
+          },
+          )
+        }
+      }
     },
 
     inputClass(error) {

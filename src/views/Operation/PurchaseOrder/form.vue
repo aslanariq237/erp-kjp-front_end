@@ -273,9 +273,10 @@ import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import { computed } from 'vue'
-import { Employee, Product, PurchaseOrderAdd, Vendor } from '@/core/utils/url_api'
+import { DetailPo, Employee, Product, PurchaseOrder, PurchaseOrderAdd, Vendor } from '@/core/utils/url_api'
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -332,9 +333,15 @@ export default defineComponent({
   },
   async mounted() {
     this.employee_id = this.user.employee_id;
-    this.getvendor();
-    this.getEmployee();
+    this.getvendor();    
     this.getProducts();
+
+    const route = useRoute();
+    const id = route.params.id;
+
+    if (id) {
+      this.getById(id);
+    }
 
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
@@ -538,6 +545,48 @@ export default defineComponent({
       }
 
       return count
+    },
+
+    getDetailSo(id) {
+      axios.get(DetailPo + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          for (let i = 0; i < data.length; i++) {
+            var object = {              
+              product_id: data[i].product_id,
+              product_code : data[i].product.product_code,
+              product_desc: data[i].product.product_desc,
+              product_pn: data[i].product.product_sn,
+              product_brand: data[i].product.product_brand,
+              quantity: data[i].quantity,
+              price: data[i].price,
+              discount : data[i].discount,
+              amount: data[i].price * data[i].quantity,
+            }
+            this.sales_order_details.push(object);
+          }
+        }
+      )
+    },
+
+    async getById(id) {
+      await axios.get(PurchaseOrder + '/' + id).then(
+        (res) => {          
+          var data = res.data;
+          this.issue_at = data.issue_at;
+          this.due_at = data.due_at;
+          this.po_number = data.po_number;
+          this.id_so = data.id_so;
+          this.customer_id = data.customer_id;
+          this.code_invoice = data.code_invoice;
+          this.vendor_name = data.vendor.vendor_name;          
+
+          var id = data.id_so;
+          if (id) {
+            this.getDetailSo(id);
+          }
+        }
+      )
     },
 
     async onSubmit() {

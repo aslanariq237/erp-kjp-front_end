@@ -395,6 +395,13 @@ const router = createRouter({
             title: 'Purchase Order-View',
           },
         },
+        {
+          path: 'edit/:id',
+          component: () => import('../views/Operation/PurchaseOrder/form.vue'),
+          meta: {
+            title: 'Purchase Order-Form',
+          },
+        },
       ],
     },
     //q
@@ -498,6 +505,13 @@ const router = createRouter({
         {
           path: 'view/:id',
           component: () => import('../views/Operation/SalesOrder/view.vue'),
+          meta: {
+            title: 'Sales Order-Form',
+          },
+        },
+        {
+          path: 'edit/:id',
+          component: () => import('../views/Operation/SalesOrder/form.vue'),
           meta: {
             title: 'Sales Order-Form',
           },

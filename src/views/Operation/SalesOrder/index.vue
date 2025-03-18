@@ -275,7 +275,11 @@ export default defineComponent({
 
     const viewData = (id) => {
       router.push('/sales-order/view/' + id);
-    }
+    };
+
+    const editData = (id) => {
+      router.push('/sales-order/edit/' + id);
+    };
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -362,6 +366,7 @@ export default defineComponent({
 
     return {
       viewData,
+      editData,
       
       // State
       loading,

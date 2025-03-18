@@ -35,7 +35,7 @@
           <!-- No -->                   
            <!-- Total Service -->
           <FormGroup label="PO Number" :required="true">
-            <input type="text" id="deposit" name="deposit" v-model="po_number" :class="inputClass(rules.deposit)"
+            <input type="text" id="deposit" name="deposit" autocomplete="off" v-model="po_number" :class="inputClass(rules.deposit)"
               placeholder="Enter Po Number" />
               <div class="" v-if="rules.po_number == true">
                 <p class="text-red-500 text-sm">Purchase Order Number Dibutuhkan</p>
@@ -102,12 +102,23 @@
           <!-- Grand Total -->
           <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
             errorMessage="Quantity is required">
-            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+            <input 
+              type="number" 
+              autocomplete="off" 
+              name="quantity" 
+              v-model="quantity" 
+              :class="inputClass(rules.quantity)"
               placeholder="Enter Quantity" />
           </FormGroup>
           <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
             errorMessage="Price is required">
-            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+            <input 
+              type="number" 
+              id="quantity" 
+              autocomplete="off"
+              name="quantity" 
+              v-model="price" 
+              :class="inputClass(rules.quantity)"
               placeholder="Enter Price" :valu="price" />
           </FormGroup>
           <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
@@ -171,9 +182,10 @@ import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { Customer, Employee, Product, SalesOrderAdd } from '@/core/utils/url_api'
+import { Customer, DetailSo, Employee, Product, SalesOrderAdd, SalesOrders } from '@/core/utils/url_api'
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -231,9 +243,14 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.employee_id = this.user.employee_id;
+    this.employee_id = this.user.employee_id;    
     this.getCustomer();    
     this.getProducts();    
+    const route = useRoute();
+    const id = route.params.id
+    if (id) {
+      this.getById(id);
+    }    
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
@@ -470,6 +487,49 @@ export default defineComponent({
         })
       }
       return count
+    },
+
+    getDetailSo(id) {
+      axios.get(DetailSo + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          for (let i = 0; i < data.length; i++) {
+            var object = {              
+              product_id: data[i].product_id,
+              product_code : data[i].product.product_code,
+              product_desc: data[i].product.product_desc,
+              product_pn: data[i].product.product_sn,
+              product_brand: data[i].product.product_brand,
+              quantity: data[i].quantity,
+              price: data[i].price,
+              discount : data[i].discount,
+              amount: data[i].price * data[i].quantity,
+            }
+            this.sales_order_details.push(object);
+          }
+        }
+      )
+    },
+
+    async getById(id) {
+      await axios.get(SalesOrders + '/' + id).then(
+        (res) => {          
+          var data = res.data;
+          this.issue_at = data.issue_at;
+          this.due_at = data.due_at;
+          this.po_number = data.po_number;
+          this.id_so = data.id_so;
+          this.customer_id = data.customer_id;
+          this.code_invoice = data.code_invoice;
+          this.customer_name = data.customer.customer_name;
+          this.customer_address = data.customer.customer_address;
+
+          var id = data.id_so;
+          if (id) {
+            this.getDetailSo(id);
+          }
+        }
+      )
     },
 
     async onSubmit() {

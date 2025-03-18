@@ -32,6 +32,7 @@ export const EmployeeCode = baseUrl + 'employees_code'
 //F
 export const fileUpload = baseUrl + 'file-upload';
 export const file = baseUrl + 'file';
+export const fileDoc = baseUrl + 'documents';
 //I
 export const Invoice = baseUrl + 'invoices'
 export const DetailInvoice = baseUrl + 'detail_invoices'

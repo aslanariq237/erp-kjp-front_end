@@ -260,8 +260,8 @@ export default defineComponent({
         'Address' : report.customer.customer_address,
         'ToP' : report.salesorder.termin,
         'Sub Total' : report.sub_total,
-        'Ppn' : report.sub_total * 0.11,        
-        'Total' : report.sub_total * 0.11 + report.sub_total,        
+        'Ppn' : report.ppn,        
+        'Total' : report.grand_total,        
         'Issue Date' : report.issue_at,
         'due_at' : report.due_at,
       }));

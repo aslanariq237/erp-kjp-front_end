@@ -62,12 +62,12 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
                             <tr class="text-center border-b-2" v-for="(pro, index) in item.detail_do" :key="index">
-                                <td class="text-2xl px-3 py-2">{{pro.product.product_sn}}</td>
-                                <td class="text-2xl px-3 py-2">{{pro.product.product_desc}}</td>
+                                <td class="text-2xl px-3 py-2">{{pro.product.product_sn }}</td>
+                                <td class="text-2xl px-3 py-2">{{pro.product.product_desc }}</td>
                                 <td class="text-2xl px-3 py-2">{{ pro.quantity }}</td>
-                                <td class="text-2xl px-3 py-2">{{ pro.product.product_uom}}</td>
-                                <td class="text-2xl px-3 py-2">SCBD 92</td>
-                                <td class="text-2xl px-3 py-2">Jln. Purposa 12 block b21</td>                                
+                                <td class="text-2xl px-3 py-2">{{ pro.product.product_uom }}</td>
+                                <td class="text-2xl px-3 py-2">{{ item.point.point }}</td>
+                                <td class="text-2xl px-3 py-2">{{ item.point.alamat }}</td>                                
                             </tr>                            
                         </tbody>
                     </table>

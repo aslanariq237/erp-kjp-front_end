@@ -96,7 +96,12 @@
                 <div class="text-sm font-medium text-gray-900">{{ product.document_file }}</div>
               </td> 
               <td class="px-6 py-4 whitespace-nowrap">
-                <button class="px-3 py-1 rounded-lg shadow-md border">View</button>
+                <button 
+                  class="px-3 py-1 rounded-lg shadow-md border"
+                  @click="downloadPdf(product.document_file)"
+                >
+                  Download
+                </button>
               </td>                                                      
             </tr>
           </tbody>
@@ -176,7 +181,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
-import { file, Product } from '@/core/utils/url_api';
+import { file, fileDoc, Product } from '@/core/utils/url_api';
 import axios from 'axios';
 
 export default defineComponent({
@@ -243,17 +248,9 @@ export default defineComponent({
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
-    // Utility functions
-    const editProduct = (product) => {
-      console.log('Edit product:', product)
-      // Implement edit logic
-    }
-
-    const deleteProduct = (product) => {
-      if (confirm('Are you sure you want to delete this product?')) {
-        console.log('Delete product:', product)
-        // Implement delete logic
-      }
+    const downloadPdf = async(filename) => {      
+      window.open(`http://127.0.0.1:8000/api/documents/${filename}`, '_blank');
+      // await axios.get(fileDoc + '/' + filename)
     }
 
     return {
@@ -265,9 +262,8 @@ export default defineComponent({
       paginatedData,
       totalPages,
       startIndex,
+      downloadPdf,
       endIndex,
-      editProduct,
-      deleteProduct,
       products,
     }
   },
