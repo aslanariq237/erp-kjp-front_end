@@ -90,10 +90,7 @@ onMounted((res) => {
 });
 
 const signOut = () => {
-  localStorage.removeItem('isAuthenticated');
-  localStorage.removeItem('name');
-  localStorage.removeItem('token');
-  localStorage.removeItem('email');
+  authStore.logout();
   console.log('Signing out...')
   closeDropdown()
 }

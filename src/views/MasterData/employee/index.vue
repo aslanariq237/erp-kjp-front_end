@@ -135,7 +135,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editEmployee(employee)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editEmployee(employee.employee_id)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
                 </div>
@@ -219,6 +219,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { Employee } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'EmployeePage',
@@ -288,9 +289,8 @@ export default defineComponent({
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
     }
 
-    const editEmployee = (employee) => {
-      console.log('Edit employee:', employee)
-      // Implement edit logic
+    const editEmployee = (id) => {
+      router.push('employee/edit/'+ id);
     }
 
     const deleteEmployee = (employee) => {

@@ -584,7 +584,7 @@ export default defineComponent({
           var id = data.id_so;
           if (id) {
             this.getDetailSo(id);
-          }
+          } 
         }
       )
     },

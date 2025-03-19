@@ -126,7 +126,7 @@
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ customer.customer_email }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 max-w-96 text-ellipsis py-4 whitespace-nowrap text-sm text-gray-500 truncate">
                 {{ customer.customer_address }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -134,7 +134,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editCustomer(customer)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editCustomer(customer.customer_id)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
                 </div>
@@ -219,6 +219,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Customer } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'CustomerPage',
@@ -290,9 +291,8 @@ export default defineComponent({
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
     }
 
-    const editCustomer = (customer) => {
-      console.log('Edit customer:', customer)
-      // Implement edit logic
+    const editCustomer = (id) => {
+      router.push('/customer/edit/'+ id)
     }
 
     const deleteCustomer = (customer) => {

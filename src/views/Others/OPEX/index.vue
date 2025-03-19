@@ -126,7 +126,7 @@
                   <div class="text-sm font-medium text-gray-900">{{ opex.opex_name }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ opex.customer.customer_name }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ opex.customer ? opex.customer.customer_name: "None Customer" }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(opex.opex_price) }}

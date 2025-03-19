@@ -43,6 +43,14 @@ const router = createRouter({
             title: 'Asset-Form',
           },
         },
+        {
+          path: 'edit/:id',
+          name: 'Asset-Edit',
+          component: () => import('../views/MasterData/asset/form.vue'),
+          meta: {
+            title: 'Asset-Form',
+          },
+        },
       ],
     },
     {
@@ -94,19 +102,24 @@ const router = createRouter({
       path: '/customer',
       children: [
         {
-          path: '',
-          name: 'Customer',
+          path: '',          
           component: () => import('../views/MasterData/customer/index.vue'),
           meta: {
             title: 'Customer',
           },
         },
         {
-          path: 'form',
-          name: 'Customer-Form',
+          path: 'form',          
           component: () => import('../views/MasterData/customer/form.vue'),
           meta: {
             title: 'Customer-Form',
+          },
+        },
+        {
+          path: 'edit/:id',          
+          component: () => import('../views/MasterData/customer/form.vue'),
+          meta: {
+            title: 'Customer-Edit',
           },
         },
       ],
@@ -172,6 +185,14 @@ const router = createRouter({
         {
           path: 'form',
           name: 'Employee-Form',
+          component: () => import('../views/MasterData/employee/form.vue'),
+          meta: {
+            title: 'Employee-Form',
+          },
+        },
+        {
+          path: 'edit/:id',
+          name: 'Employee-Edit',
           component: () => import('../views/MasterData/employee/form.vue'),
           meta: {
             title: 'Employee-Form',
@@ -571,6 +592,13 @@ const router = createRouter({
           component: () => import('../views/MasterData/vendor/form.vue'),
           meta: {
             title: 'Vendor',
+          },
+        },
+        {
+          path: 'edit/:id',
+          component: () => import('../views/MasterData/vendor/form.vue'),
+          meta: {
+            title: 'Vendor Edit',
           },
         },
       ],

@@ -49,13 +49,13 @@
                     </FormGroup>
                     <FormGroup label="Assets Name" :required="true" :error="rules.deposit"
                         errorMessage="po Number is required">
-                        <input type="text" id="deposit" name="deposit" v-model="assets_name"
+                        <input type="text" id="deposit" autocomplete="off" name="deposit" v-model="assets_name"
                             :class="inputClass(rules.deposit)" placeholder="Enter Asset Name" />
                     </FormGroup>
                     <!-- vendor -->
                     <FormGroup label="Vendor Name" class="relative" :required="true" :error="rules.vendor_id"
                         errorMessage="vendor is Required">
-                        <input type="text" name="vendor_name" id="vendor_name" v-model="vendor_name"
+                        <input type="text" name="vendor_name" autocomplete="off" id="vendor_name" v-model="vendor_name"
                             @input="filtervendors" class="rounded w-full" placeholder="Type Vendor Name" />
                         <ul v-if="filteredvendors.length" class="border rounded w-full mt-2 bg-white absolute">
                             <li v-for="vendor in filteredvendors" :key="vendor.vendor_id" @click="selectvendor(vendor)"
@@ -89,8 +89,9 @@ import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddAsset, Vendor } from '@/core/utils/url_api'
+import { AddAsset, Asset, Vendor } from '@/core/utils/url_api'
 import router from '@/router'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -105,6 +106,7 @@ export default defineComponent({
 
     data() {
         return {
+            id : null,
             assets_name: '',
             vendor_name: '',
             vendor_id: null,
@@ -127,8 +129,14 @@ export default defineComponent({
             sales_order_details: [],
         }
     },
-    async mounted() {
+    async mounted() {        
         this.getvendor()
+        const route = useRoute();
+        const id = route.params.id
+        if (id) {
+            this.getById(id);
+            this.id = id;
+        }        
         this.issue_at = new Date().toLocaleDateString('en-CA')
     },
 
@@ -204,11 +212,56 @@ export default defineComponent({
 
             return count
         },
+        async getById(id){
+            await axios.get(Asset + '/' + id).then(
+                (res) => {
+                    var data = res.data;
+                    this.issue_at = data[0].issue_at;
+                    this.due_at = data[0].due_at;
+                    this.assets_name = data[0].assets_name;
+                    this.vendor_id = data[0].vendor_id;
+                    this.vendor_name = data[0].vendor.vendor_name;
+                    this.price = data[0].price;
+                    this.umur_assets = data[0].assets_life
+                }
+            )
+        },
 
         async onSubmit() {
             const result = 2
             if (result != 0) {
-                await axios
+                if (this.id) {
+                    await axios
+                    .put(AddAsset + '/' + this.id, {
+                        vendor_id: this.vendor_id,
+                        issue_at: this.issue_at,
+                        due_at: this.due_at,
+                        assets_name: this.assets_name,
+                        price: this.price,
+                        assets_life: this.umur_assets,
+                    })
+                    .then(
+                        (response) => {
+                            console.log(response)
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Data has been Saved',
+                            });
+                        },
+                        (error) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text:
+                                    (error.response && error.response && error.response.message) ||
+                                    error.message ||
+                                    error.toString(),
+                            })
+                        },
+                    )
+                }else{
+                    await axios
                     .post(AddAsset, {
                         vendor_id: this.vendor_id,
                         issue_at: this.issue_at,
@@ -237,6 +290,7 @@ export default defineComponent({
                             })
                         },
                     )
+                }
             }
         },
 

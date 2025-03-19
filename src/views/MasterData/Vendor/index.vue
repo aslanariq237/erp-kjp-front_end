@@ -126,7 +126,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editVendor(vendor)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editData(vendor.vendor_id)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button> 
                 </div>
@@ -211,6 +211,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Vendor } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'VendorPage',
@@ -282,9 +283,8 @@ export default defineComponent({
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
     }
 
-    const editVendor = (vendor) => {
-      console.log('Edit vendor:', vendor)
-      // Implement edit logic
+    const editData = (id) => {
+      router.push('vendor/edit/' + id);
     }
 
     const deleteVendor = (vendor) => {
@@ -305,7 +305,7 @@ export default defineComponent({
       startIndex,
       endIndex,
       getAvatarUrl,
-      editVendor,
+      editData,
       deleteVendor,
       vendors,
     }

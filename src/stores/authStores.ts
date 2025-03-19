@@ -7,14 +7,17 @@ import router from "@/router";
 export const useAuthStore = defineStore('auth',{    
     state: () => ({
         user: JSON.parse(window.localStorage.getItem('user')) || null,  
+        token : '',
         // isAuthenticated : false,              
     }),
 
     actions: {
         setAuth(data){
-            var user = data.user;
+            this.user = data.user;
+            this.token = data.token;
             window.localStorage.setItem('isAuthenticated', 'true');              
-            window.localStorage.setItem('user', JSON.stringify(user));            
+            window.localStorage.setItem('user', JSON.stringify(this.user));                    
+            window.localStorage.setItem('token', data.token);                    
             router.push('/');
         },
 
@@ -25,9 +28,15 @@ export const useAuthStore = defineStore('auth',{
                 password : password
             }).then(
                 ({data}) => {                    
-                    this.setAuth(data);
+                    this.setAuth(data);                    
                 }
             )
+        } ,
+        
+        async logout(){
+            this.token = null;
+            this.user = null;
+            window.localStorage.removeItem(this.token)            
         }
     }
 })

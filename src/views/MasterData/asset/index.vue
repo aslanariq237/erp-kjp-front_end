@@ -99,7 +99,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
-                  <button @click="editCustomer(customer)" class="text-blue-600 hover:text-blue-900">
+                  <button @click="editData(customer.asset_id)" class="text-blue-600 hover:text-blue-900">
                     Edit
                   </button>
                 </div>
@@ -165,6 +165,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Asset } from '@/core/utils/url_api'
+import router from '@/router'
 
 export default defineComponent({
   name: 'CustomerPage',
@@ -243,9 +244,8 @@ export default defineComponent({
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`
     }
 
-    const editCustomer = (customer) => {
-      console.log('Edit customer:', customer)
-      // Implement edit logic
+    const editData = (id) => {
+      router.push('/asset/edit/' + id);
     }
 
     const deleteCustomer = (customer) => {
@@ -266,7 +266,7 @@ export default defineComponent({
       startIndex,
       endIndex,
       getAvatarUrl,
-      editCustomer,
+      editData,
       deleteCustomer,
       formatCurrency,
       customers, // <--- Tambahkan ini

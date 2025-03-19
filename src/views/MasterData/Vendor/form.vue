@@ -70,7 +70,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import router from '@/router'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { AddVendor } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
+import { AddVendor, Vendor } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import FormGroup from '@/components/FormGroup.vue'
@@ -86,6 +86,7 @@ export default defineComponent({
   },
   data() {
     return {
+      id:null,
       vendor_name: '',
       vendor_phone: 0,
       vendor_email: '',
@@ -111,12 +112,12 @@ export default defineComponent({
     const route = useRoute()
     const id = route.params.id
 
-    // if (id) {
-    //   this.id = id;
-    //   this.getById(id);
-    // }else{
+    if (id) {      
+      this.getById(id);
+      this.id = id;
+    }else{
 
-    // }
+    }
   },
   methods: {
     inputClass(error) {
@@ -158,17 +159,31 @@ export default defineComponent({
       this.vendor_singkatan = this.createSingkatan(this.vendor_name)
     },
 
-    getById(id) { },
+    async getById(id) {
+      await axios.get(Vendor + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          this.vendor_name = data.vendor_name;
+          this.vendor_phone = data.vendor_phone;
+          this.vendor_email = data.vendor_email;
+          this.vendor_address = data.vendor_address;
+          this.vendor_npwp = data.vendor_npwp;
+          this.vendor_contact = data.vendor_contact;          
+        }
+      )
+    },
     async onSubmit() {
       const result = 2;
       if (result != 0) {
-        await axios.post(AddVendor, {
+        if (this.id) {
+          await axios.put(AddVendor + '/' + this.id, {
           vendor_name: this.vendor_name,
           vendor_phone: parseInt(this.vendor_phone) || 0,
           vendor_email: this.vendor_email,
           vendor_singkatan: this.vendor_singkatan,
           vendor_address: this.vendor_address,
           vendor_npwp: this.vendor_npwp,
+          vendor_contact : this.vendor_contact,
         }).then(
           (response) => {
             Swal.fire({
@@ -177,7 +192,7 @@ export default defineComponent({
               text: 'Data Has Been Saved'
             }).then((res) => {
               if (res.isConfirmed) {
-                router.push('vendor');
+                router.push('/vendor');
               }
             })
           }, (error) => {
@@ -191,6 +206,38 @@ export default defineComponent({
             })
           }
         )
+        }else{
+          await axios.post(AddVendor, {
+          vendor_name: this.vendor_name,
+          vendor_phone: parseInt(this.vendor_phone) || 0,
+          vendor_email: this.vendor_email,
+          vendor_singkatan: this.vendor_singkatan,
+          vendor_address: this.vendor_address,
+          vendor_npwp: this.vendor_npwp,
+          vendor_contact : this.vendor_contact,
+        }).then(
+          (response) => {
+            Swal.fire({
+              icon: 'success',
+              title: 'success save the data',
+              text: 'Data Has Been Saved'
+            }).then((res) => {
+              if (res.isConfirmed) {
+                router.push('/vendor');
+              }
+            })
+          }, (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text:
+                (error.response && error.response && error.response.message) ||
+                error.message ||
+                error.toString(),
+            })
+          }
+        )
+        }
       }
     }
   }
