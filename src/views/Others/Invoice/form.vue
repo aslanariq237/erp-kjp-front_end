@@ -69,7 +69,9 @@
           <FormGroup>
           </FormGroup>
         </div>
-        <div class="flex items-end gap-5">
+        <div v-if="id">          
+        </div>
+        <div class="flex items-end gap-5 mb-8" v-else>
           <FormGroup label="Delivery Order" :required="true" :error="rules.no" class="w-full"
             errorMessage="Purchase Order is required">
             <select name="id_so" id="id_so" v-model="id_do" class="rounded w-full" :class="inputClass(rules.due_at)">
@@ -78,11 +80,14 @@
               </option>
             </select>
           </FormGroup>
-          <button class="bg-blue-400 rounded-lg px-3 py-2" type="button" @click="addDoDetail">
+          <button 
+            class="bg-blue-400 rounded-lg px-3 py-2" 
+            type="button" 
+            @click="addDoDetail">
             Tambah
           </button>
         </div>
-        <div class=" mt-8">
+        <div class="">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
@@ -277,7 +282,13 @@ export default defineComponent({
     },
 
     addDoDetail() {
-      axios.get(DetailDo + '/' + this.id_do).then(
+      if (this.id_do == '' || this.id_do == null) {
+        Swal.fire({
+          icon : 'warning',
+          text : 'Pilih Delivery Order'
+        });
+      }else{
+        axios.get(DetailDo + '/' + this.id_do).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
@@ -297,6 +308,7 @@ export default defineComponent({
           }
         }
       )
+      }
     },
     showNotification(type, message) {
       this.notification = {
@@ -384,6 +396,7 @@ export default defineComponent({
     },
 
     async onSubmit() {
+      var total = this.sub_total;
       const result = await this.validation();                   
       if (result == 0) {
         if (this.id == null) {
@@ -427,10 +440,10 @@ export default defineComponent({
             id_so: this.id_so,
             customer_id: this.customer_id,
             employee_id: 1,
-            issue_at: this.issue_at,
-            sub_total: total,
+            issue_at: this.issue_at,            
             due_at: this.due_at,
             id_do: this.id_do,
+            sub_total : total,
             code_invoice: this.code_invoice,
             delivery_order_details: this.delivery_order_details,
           }, {

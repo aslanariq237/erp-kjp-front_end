@@ -365,8 +365,7 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation()            
-      // console.log(this.delivery_order_details);
+      const result = await this.validation()                  
       if (result == 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id: this.customer_id,

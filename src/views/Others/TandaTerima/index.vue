@@ -115,10 +115,12 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"                    
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
+                    @click="viewData(entry.id_tandater)"                   
                   >View</button>
                   <button 
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"                    
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
+                    @click="editData(entry.id_tandater)"                   
                   >Edit</button>
                   <!-- <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
@@ -280,6 +282,9 @@ export default defineComponent({
     const viewData = (id) => {
       router.push('/tanda-terima/view/' + id)
     }
+    const editData = (id) => {
+      router.push('/tanda-terima/edit/' + id);
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -366,6 +371,7 @@ export default defineComponent({
 
     return {
       viewData,
+      editData,
 
       // State
       loading,

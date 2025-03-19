@@ -21,14 +21,8 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
             <FormGroup label="Customer Name" :required="true" :error="rules.issue_at"
               errorMessage="Issue Date is required">
-              <input 
-                type="text" 
-                id="customer_name" 
-                name="customer_name"
-                autocomplete="off" 
-                v-model="customer_name"
-                @change="singkatan"
-                :class="inputClass(rules.issue_at)" />
+              <input type="text" id="customer_name" name="customer_name" autocomplete="off" v-model="customer_name"
+                @change="singkatan" :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
             <!-- Due Date -->
@@ -36,7 +30,7 @@
               errorMessage="Due Date is required">
               <input type="text" id="customer_phone" autocomplete="off" name="customer_phone" v-model="customer_phone"
                 :class="inputClass(rules.due_at)" />
-            </FormGroup>           
+            </FormGroup>
 
             <!-- No -->
             <FormGroup label="Customer Email" :required="false" :error="rules.due_at"
@@ -49,12 +43,13 @@
             <!-- Total Service -->
             <FormGroup label="Customer Address" :required="true" :error="rules.deposit"
               errorMessage="Deposit is required">
-              <input type="text" id="customer_address" autocomplete="off" name="customer_address" v-model="customer_address"
-                :class="inputClass(rules.deposit)" placeholder="Insert Customer Address" />
+              <input type="text" id="customer_address" autocomplete="off" name="customer_address"
+                v-model="customer_address" :class="inputClass(rules.deposit)" placeholder="Insert Customer Address" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup label="Customer NPWP" :required="false" :error="rules.due_at" errorMessage="Due Date is required">
+            <FormGroup label="Customer NPWP" :required="false" :error="rules.due_at"
+              errorMessage="Due Date is required">
               <input type="number" id="customer_npwp" autocomplete="off" name="customer_npwp" v-model="customer_npwp"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
@@ -64,20 +59,20 @@
               <input type="text" id="contact_person" autocomplete="off" name="contact_person" v-model="customer_contact"
                 :class="inputClass(rules.deposit)" placeholder="Insert Contact Person" />
             </FormGroup>
-            <FormGroup>              
+            <FormGroup>
             </FormGroup>
           </div>
           <div class="flex justify-content-between gap-4 items-end">
             <!-- Grand Total -->
             <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
               errorMessage="Quantity is required">
-              <input type="text" id="quantity" name="point" autocomplete="off" v-model="point" :class="inputClass(rules.quantity)"
-                placeholder="Enter Customer Point" />
+              <input type="text" id="quantity" name="point" autocomplete="off" v-model="point"
+                :class="inputClass(rules.quantity)" placeholder="Enter Customer Point" />
             </FormGroup>
             <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
               errorMessage="Price is required">
-              <input type="text" id="quantity" name="alamat" autocomplete="off" v-model="alamat" :class="inputClass(rules.quantity)"
-                placeholder="Enter Customer Address" />
+              <input type="text" id="quantity" name="alamat" autocomplete="off" v-model="alamat"
+                :class="inputClass(rules.quantity)" placeholder="Enter Customer Address" />
             </FormGroup>
             <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
               @click="addPoDetails">tambah</button>
@@ -99,7 +94,7 @@
                 </tr>
               </tbody>
             </table>
-          </div>          
+          </div>
         </div>
       </div>
     </Form>
@@ -112,7 +107,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import router from '@/router'
 import axios from 'axios'
 import Swal from "sweetalert2"
-import { AddCustomer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
+import { AddCustomer, Customer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import FormGroup from '@/components/FormGroup.vue'
@@ -128,12 +123,13 @@ export default defineComponent({
   },
   data() {
     return {
+      id: null,
       customer_name: '',
       customer_phone: 0,
-      customer_email: '',      
+      customer_email: '',
       customer_singkatan: '',
       customer_address: '',
-      customer_npwp : 0,
+      customer_npwp: 0,
       customer_contact: '',
       point: '',
       alamat: '',
@@ -154,12 +150,10 @@ export default defineComponent({
     const route = useRoute();
     const id = route.params.id;
 
-    // if (id) {
-    //   this.id = id;
-    //   this.getById(id);
-    // }else{
-
-    // }
+    if (id) {
+      this.getById(id);
+      this.id = id;
+    }
   },
   methods: {
     async validation() {
@@ -229,83 +223,148 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      var object = {
-        no: this.code + 1,
-        point: this.point,
-        alamat: this.alamat
-      };
-      this.customer_details.push(object)
-      this.code++;
+      if (this.id) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Tidak Dapat Menambahkan Point'
+        })
+      } else {
+        var object = {
+          no: this.code + 1,
+          point: this.point,
+          alamat: this.alamat
+        };
+        this.customer_details.push(object)
+        this.code++;
+      }
     },
 
-    getById() { },
+    getPoint(id) {
+      axios.get(Customer + '/point/' + id).then(
+        (res) => {
+          var data = res.data;
+          for (let i = 0; i < data.length; i++) {
+            var object = {
+              no: this.code + 1,
+              point: data[i].point,
+              alamat: data[i].alamat,
+              id_customer_point: data[i].id_customer_point,
+            }
+            this.customer_details.push(object);
+            this.code++;
+          }
+        }
+      )
+    },
+
+    async getById(id) {
+      await axios.get(Customer + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          this.customer_name = data[0].customer_name;
+          this.customer_phone = data[0].customer_phone;
+          this.customer_email = data[0].customer_email;
+          this.customer_address = data[0].customer_address;
+          this.customer_npwp = data[0].customer_npwp;
+          this.customer_singkatan = data[0].customer_singkatan;
+          this.customer_contact = data[0].customer_contact;
+          if (data[0].customer_id) {
+            this.getPoint(data[0].customer_id)
+          }
+        }
+      )
+    },
     async onSubmit() {
       const result = 2
-
-      if (result != 0) {        
-        await axios.post(
-          AddCustomer, {
-          customer_name: this.customer_name,
-          customer_phone: parseInt(this.customer_phone) || 0,          
-          customer_singkatan: this.customer_singkatan,
-          customer_email: this.customer_email,
-          customer_address: this.customer_address,
-          customer_npwp: this.customer_npwp,
-          customer_contact: this.customer_contact,
-          customer_details: this.customer_details,
-        }
-        ).then((response) => {
-          Swal.fire({
-            icon: "success",
-            title: 'Success',
-            text: "Customer Data has been Saved"
-          }).then(async (result) => {
-            if (result.isConfirmed) {
-              var mssg = "";
-              if (this.id != null) {
-                mssg = "Success Update Purchase Order";
-              } else {
-                mssg = "Success Create Purchase Order";
-              }
-              await router.push("/customer");
-              this.alertStore.success(mssg);
-            }
-          })
-        },
-          (error) => {
+      if (result != 0) {
+        if (this.id) {
+          await axios.put(
+            AddCustomer + '/' + this.id, {
+            customer_name: this.customer_name,
+            customer_phone: parseInt(this.customer_phone) || 0,
+            customer_singkatan: this.customer_singkatan,
+            customer_email: this.customer_email,
+            customer_address: this.customer_address,
+            customer_npwp: this.customer_npwp,
+            customer_contact: this.customer_contact,            
+            customer_details: this.customer_details,
+          }
+          ).then((response) => {
             Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
+              icon: "success",
+              title: 'Success',
+              text: "Customer Data has been Saved"
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                var mssg = "";
+                if (this.id != null) {
+                  mssg = "Success Update Purchase Order";
+                } else {
+                  mssg = "Success Create Purchase Order";
+                }
+                await router.push("/customer");
+                this.alertStore.success(mssg);
+              }
+            })
           },
-        )
+            (error) => {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text:
+                  (error.response &&
+                    error.response &&
+                    error.response.message) ||
+                  error.message ||
+                  error.toString(),
+              });
+            },
+          )
+        } else {
+          await axios.post(
+            AddCustomer, {
+            customer_name: this.customer_name,
+            customer_phone: parseInt(this.customer_phone) || 0,
+            customer_singkatan: this.customer_singkatan,
+            customer_email: this.customer_email,
+            customer_address: this.customer_address,
+            customer_npwp: this.customer_npwp,
+            customer_contact: this.customer_contact,
+            customer_details: this.customer_details,
+          }
+          ).then((response) => {
+            Swal.fire({
+              icon: "success",
+              title: 'Success',
+              text: "Customer Data has been Saved"
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                var mssg = "";
+                if (this.id != null) {
+                  mssg = "Success Update Purchase Order";
+                } else {
+                  mssg = "Success Create Purchase Order";
+                }
+                await router.push("/customer");
+                this.alertStore.success(mssg);
+              }
+            })
+          },
+            (error) => {
+              Swal.fire({
+                icon: "error",
+                title: "Error",
+                text:
+                  (error.response &&
+                    error.response &&
+                    error.response.message) ||
+                  error.message ||
+                  error.toString(),
+              });
+            },
+          )
+        }
       }
-
-      // try {
-
-
-      //   // Tampilkan notifikasi sukses (jika menggunakan library toast, bisa pakai ini)
-
-      //   // Redirect atau reset form setelah submit        
-      // } catch (error) {
-      //   if (error.response) {
-      //     // Server responded dengan status di luar 2xx
-      //     alert(`Gagal: ${error.response.data.message || 'Terjadi kesalahan'}`)
-      //   } else if (error.request) {
-      //     // Request dikirim tapi tidak ada respons
-      //     alert('Tidak ada respon dari server, cek koneksi!')
-      //   } else {
-      //     // Error lainnya
-      //     alert(`Error: ${error.message}`)
-      //   }
-      //   console.error('Error adding customer:', error)
-      // }
     },
   },
 })

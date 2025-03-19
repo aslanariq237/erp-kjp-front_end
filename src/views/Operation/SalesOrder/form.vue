@@ -32,19 +32,20 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <!-- No -->                   
-           <!-- Total Service -->
+          <!-- No -->
+          <!-- Total Service -->
           <FormGroup label="PO Number" :required="true">
-            <input type="text" id="deposit" name="deposit" autocomplete="off" v-model="po_number" :class="inputClass(rules.deposit)"
-              placeholder="Enter Po Number" />
-              <div class="" v-if="rules.po_number == true">
-                <p class="text-red-500 text-sm">Purchase Order Number Dibutuhkan</p>
-              </div>
-          </FormGroup>  
+            <input type="text" id="deposit" name="deposit" autocomplete="off" v-model="po_number"
+              :class="inputClass(rules.deposit)" placeholder="Enter Po Number" />
+            <div class="" v-if="rules.po_number == true">
+              <p class="text-red-500 text-sm">Purchase Order Number Dibutuhkan</p>
+            </div>
+          </FormGroup>
           <!-- customer -->
           <FormGroup label="Customer" class="relative" :required="true">
-            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
-              class="rounded w-full" placeholder="Type customer name" :class="inputClass(rules.issue_at)"/>
+            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name"
+              @input="filterCustomers" class="rounded w-full" placeholder="Type customer name"
+              :class="inputClass(rules.issue_at)" />
             <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
               <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -55,13 +56,13 @@
             <div class="" v-if="rules.customer_id == true">
               <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
             </div>
-          </FormGroup> 
+          </FormGroup>
 
           <!-- Total Service -->
           <FormGroup label="Deposit" :required="true">
             <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit" />            
-          </FormGroup> 
+              placeholder="Enter Deposit" />
+          </FormGroup>
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
@@ -69,7 +70,8 @@
 
           <!-- Termin -->
           <FormGroup label="Term of Payment" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
-            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full" :class="inputClass(rules.issue_at)">
+            <select id="po_type" name="po_type" v-model="termin" class="rounded w-full"
+              :class="inputClass(rules.issue_at)">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -85,12 +87,13 @@
           <!-- Due Date -->
           <FormGroup label="Due Date" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
             <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
-          </FormGroup>           
+          </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end mt-5">
           <FormGroup class="w-full relative" label="product" :required="true">
-            <input type="text" autocomplete="off" name="product_name" id="product_name" v-model="product_name" @input="filterProducts"
-              class="rounded w-full" placeholder="Type product name" :class="inputClass(rules.due_at)"/>
+            <input type="text" autocomplete="off" name="product_name" id="product_name" v-model="product_name"
+              @input="filterProducts" class="rounded w-full" placeholder="Type product name"
+              :class="inputClass(rules.due_at)" />
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
               <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -102,28 +105,20 @@
           <!-- Grand Total -->
           <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
             errorMessage="Quantity is required">
-            <input 
-              type="number" 
-              autocomplete="off" 
-              name="quantity" 
-              v-model="quantity" 
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
+            <input type="number" autocomplete="off" name="quantity" v-model="quantity"
+              :class="inputClass(rules.quantity)" placeholder="Enter Quantity" />
           </FormGroup>
           <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
             errorMessage="Price is required">
-            <input 
-              type="number" 
-              id="quantity" 
-              autocomplete="off"
-              name="quantity" 
-              v-model="price" 
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Price" :valu="price" />
+            <input type="number" id="quantity" autocomplete="off" name="quantity" v-model="price"
+              :class="inputClass(rules.quantity)" placeholder="Enter Price" :valu="price" />
           </FormGroup>
-          <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
-            tambah
-          </button>
+          <div class="" v-if="id"></div>
+          <div class="" v-else>
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
+              tambah
+            </button>
+          </div>
         </div>
         <div class="mt-5">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
@@ -199,8 +194,9 @@ export default defineComponent({
   },
 
   data() {
-    const {user} = useAuthStore();
+    const { user } = useAuthStore();
     return {
+      id: null,
       user: user,
       customers: [],
       customer_name: '',
@@ -222,7 +218,7 @@ export default defineComponent({
       discount: 0,
       deposit: 0,
       po_number: '',
-      searchTerm : '',
+      searchTerm: '',
       issue_at: '',
       due_at: '',
       isSubmitting: false,
@@ -233,24 +229,25 @@ export default defineComponent({
       },
       rules: {
         customer_id: false,
-        po_number : false,        
-        issue_at : false,
-        termin : false,
+        po_number: false,
+        issue_at: false,
+        termin: false,
         due_at: false,
-        sales_order_details : false,
+        sales_order_details: false,
       },
       sales_order_details: [],
     }
   },
   async mounted() {
-    this.employee_id = this.user.employee_id;    
-    this.getCustomer();    
-    this.getProducts();    
+    this.employee_id = this.user.employee_id;
+    this.getCustomer();
+    this.getProducts();
     const route = useRoute();
     const id = route.params.id
     if (id) {
       this.getById(id);
-    }    
+      this.id = id;
+    }
     this.issue_at = new Date().toLocaleDateString('en-CA')
   },
   watch: {
@@ -307,44 +304,51 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      axios.get(Product + '/' + this.product_id).then((res) => {
-        var data = res.data
-        if (this.quantity > data.product_stock) {
-          Swal.fire({
-            icon : 'warning',
-            title: 'Warning',
-            text: `Stock ${data.product_desc} Less Than Quantity`
-          });
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            product_stock: data.product_stock,
-            quantity: this.quantity,
-            price: this.price,
-            discount: this.discount,
-            amount: this.price * this.quantity,
+      if (this.product_id == '' || this.product_id == null) {
+        Swal.fire({
+          icon : 'warning',
+          text : "Pilih Barang"
+        });
+      }else{        
+        axios.get(Product + '/' + this.product_id).then((res) => {
+          var data = res.data
+          if (this.quantity > data.product_stock) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Warning',
+              text: `Stock ${data.product_desc} Less Than Quantity`
+            });
+            var object = {
+              product_id: data.product_id,
+              product_code: data.product_code,
+              product_pn: data.product_sn,
+              product_desc: data.product_desc,
+              product_stock: data.product_stock,
+              quantity: this.quantity,
+              price: this.price,
+              discount: this.discount,
+              amount: this.price * this.quantity,
+            }
+            this.sales_order_details.push(object)
+          } else {
+            var object = {
+              product_id: data.product_id,
+              product_code: data.product_code,
+              product_pn: data.product_sn,
+              product_desc: data.product_desc,
+              product_stock: data.product_stock,
+              quantity: this.quantity,
+              price: this.price,
+              discount: this.discount,
+              amount: this.price * this.quantity,
+            }
+            this.sales_order_details.push(object)
           }
-          this.sales_order_details.push(object)      
-        }else{
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            product_stock: data.product_stock,
-            quantity: this.quantity,
-            price: this.price,
-            discount: this.discount,
-            amount: this.price * this.quantity,
-          }
-          this.sales_order_details.push(object)   
-        }
-        this.product_id = null
-        this.quantity = 0
-        this.price = 0
-      });
+          this.product_id = null
+          this.quantity = 0
+          this.price = 0
+        });
+      }
     },
 
     calculateDueDate(issueDate, termin) {
@@ -449,35 +453,35 @@ export default defineComponent({
       if (this.po_number == '' || this.po_number == null) {
         this.rules.po_number = true;
         count++
-      }else{
+      } else {
         this.rules.po_number = false;
       }
 
       if (this.issue_at == '' || this.issue_at == null) {
         this.rules.issue_at = true;
         count++;
-      }else{
+      } else {
         this.rules.issue_at = false;
       }
 
-      if(this.termin == '' || this.termin == null){
+      if (this.termin == '' || this.termin == null) {
         this.rules.termin = true;
         count++;
-      }else{
+      } else {
         this.rules.termin = false;
       }
 
       if (this.due_at == '' || this.due_at == null) {
         this.rules.due_at = true;
-        count++;        
-      }else{
+        count++;
+      } else {
         this.rules.due_at = false;
       }
 
       if (this.sales_order_details.length == 0) {
         Swal.fire({
           text: "Tambahkan 1 atau lebih barang!",
-          icon : 'error',
+          icon: 'error',
           buttonsStyling: true,
           confirmButtonText: 'Try Again!',
           heightAuto: false,
@@ -494,15 +498,15 @@ export default defineComponent({
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
-            var object = {              
+            var object = {
               product_id: data[i].product_id,
-              product_code : data[i].product.product_code,
+              product_code: data[i].product.product_code,
               product_desc: data[i].product.product_desc,
               product_pn: data[i].product.product_sn,
               product_brand: data[i].product.product_brand,
               quantity: data[i].quantity,
               price: data[i].price,
-              discount : data[i].discount,
+              discount: data[i].discount,
               amount: data[i].price * data[i].quantity,
             }
             this.sales_order_details.push(object);
@@ -513,11 +517,13 @@ export default defineComponent({
 
     async getById(id) {
       await axios.get(SalesOrders + '/' + id).then(
-        (res) => {          
+        (res) => {
           var data = res.data;
           this.issue_at = data.issue_at;
           this.due_at = data.due_at;
           this.po_number = data.po_number;
+          this.termin = data.termin;
+          this.deposit = data.deposit;
           this.id_so = data.id_so;
           this.customer_id = data.customer_id;
           this.code_invoice = data.code_invoice;
@@ -535,43 +541,83 @@ export default defineComponent({
     async onSubmit() {
       const result = await this.validation();
       if (result == 0) {
-        await axios
-          .post(SalesOrderAdd, {
-            customer_id: this.customer_id,
-            employee_id: this.employee_id,
-            termin: this.termin,
-            po_number : this.po_number,
-            total_tax: this.total_tax,            
-            deposit: this.deposit,
-            issue_at: this.issue_at,
-            due_at: this.due_at,  
-            has_invoice: 0,          
-            sales_order_details: this.sales_order_details,
-          })
-          .then(
-            (response) => {
-              console.log(response)
-              Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Data has been Saved',
-              }).then(async (result) => {
-                if (result.isConfirmed) {                  
-                  await router.push('/sales-order')                  
-                }
-              })
-            },
-            (error) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text:
-                  (error.response && error.response && error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              })
-            },
-          )
+        if (this.id) {
+          await axios
+            .put(SalesOrderAdd + '/' + this.id, {
+              customer_id: this.customer_id,
+              employee_id: this.employee_id,
+              termin: this.termin,
+              po_number: this.po_number,
+              total_tax: this.total_tax,
+              deposit: this.deposit,
+              issue_at: this.issue_at,
+              due_at: this.due_at,
+              has_invoice: 0,
+              sales_order_details: this.sales_order_details,
+            })
+            .then(
+              (response) => {
+                console.log(response)
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: 'Data has been Saved',
+                }).then(async (result) => {
+                  if (result.isConfirmed) {
+                    await router.push('/sales-order')
+                  }
+                })
+              },
+              (error) => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text:
+                    (error.response && error.response && error.response.message) ||
+                    error.message ||
+                    error.toString(),
+                })
+              },
+            )
+        } else {
+          await axios
+            .post(SalesOrderAdd, {
+              customer_id: this.customer_id,
+              employee_id: this.employee_id,
+              termin: this.termin,
+              po_number: this.po_number,
+              total_tax: this.total_tax,
+              deposit: this.deposit,
+              issue_at: this.issue_at,
+              due_at: this.due_at,
+              has_invoice: 0,
+              sales_order_details: this.sales_order_details,
+            })
+            .then(
+              (response) => {
+                console.log(response)
+                Swal.fire({
+                  icon: 'success',
+                  title: 'Success',
+                  text: 'Data has been Saved',
+                }).then(async (result) => {
+                  if (result.isConfirmed) {
+                    await router.push('/sales-order')
+                  }
+                })
+              },
+              (error) => {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text:
+                    (error.response && error.response && error.response.message) ||
+                    error.message ||
+                    error.toString(),
+                })
+              },
+            )
+        }
       }
     },
 

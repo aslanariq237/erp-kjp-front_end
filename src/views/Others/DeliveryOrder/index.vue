@@ -113,13 +113,7 @@
                     class="mx-2 px-3 py-2 rounded-lg shadow-lg border"
                   >
                     View
-                  </button>
-                  <button
-                    @click="viewData(entry.id_do)"
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
-                  >
-                    Edit
-                  </button>
+                  </button>                  
                   <button @click="exportToPDF(entry)" class="shadow-lg px-3 py-2 rounded-lg border">
                     Export
                   </button>
@@ -386,7 +380,7 @@ export default defineComponent({
       });
     }
     return {
-      viewData,
+      viewData,      
       // State
       loading,
       searchQuery,

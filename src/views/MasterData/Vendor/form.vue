@@ -168,6 +168,7 @@ export default defineComponent({
           this.vendor_email = data.vendor_email;
           this.vendor_address = data.vendor_address;
           this.vendor_npwp = data.vendor_npwp;
+          this.vendor_singkatan = data.vendor_singkatan;
           this.vendor_contact = data.vendor_contact;          
         }
       )

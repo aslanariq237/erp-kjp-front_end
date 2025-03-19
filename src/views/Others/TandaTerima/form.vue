@@ -13,7 +13,7 @@
             <p class="text-gray-500 text-sm mt-1">Sales / Tanda Terima / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/invoice"
+            <RouterLink to="/tanda-terima"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -72,7 +72,9 @@
           <FormGroup>
           </FormGroup>
         </div>
-        <div class="flex items-end gap-5">
+        <div v-if="id">          
+        </div>
+        <div class="flex items-end gap-5 mb-8" v-else>
           <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
             errorMessage="Purchase Order is required">
             <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
@@ -85,7 +87,7 @@
             Tambah
           </button>
         </div>
-        <div class=" mt-8">
+        <div>
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
@@ -126,6 +128,7 @@ import {
   Invoice,
   InvoiceAdd,
   SalesOrders,
+  Tandater,
   TandaterAdd
 } from '@/core/utils/url_api'
 import router from '@/router'
@@ -239,7 +242,13 @@ export default defineComponent({
     },
 
     addDoDetail() {
-      axios.get(Invoice + '/' + this.id_invoice).then(
+      if (this.id_invoice == '' || this.id_invoice == null) {
+       Swal.fire({
+        icon : 'warning',
+        text : "Pilih Invoice"
+       });
+      }else{
+        axios.get(Invoice + '/' + this.id_invoice).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
@@ -253,6 +262,7 @@ export default defineComponent({
           }
         }
       )
+      }
     },
     showNotification(type, message) {
       this.notification = {
@@ -296,16 +306,7 @@ export default defineComponent({
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
             var object = {
-              id_do: data[i].id_do,
-              id_detail_invoice: data[i].id_detail_invoice,
-              code_do: data[i].do.code_do,
-              product_id: data[i].product_id,
-              product_desc: data[i].product.product_desc,
-              product_pn: data[i].product.product_sn,
-              product_brand: data[i].product.product_brand,
-              quantity: data[i].quantity,
-              price: data[i].price,
-              amount: data[i].price * data[i].quantity,
+              
             }
             this.tandaterima_details.push(object);
           }
@@ -313,15 +314,14 @@ export default defineComponent({
       )
     },
     async getById(id) {
-      await axios.get(Invoice + '/' + id).then(
+      await axios.get(Tandater + '/' + id).then(
         (res) => {
           var data = res.data;
           this.issue_at = data[0].issue_at;
-          this.due_at = data[0].due_at;
-          this.po_number = data[0].salesorder.po_number;
+          this.resi = data[0].resi;                    
           this.id_so = data[0].id_so;
-          this.customer_id = data[0].customer_id;
-          this.code_invoice = data[0].code_invoice;
+          this.po_number = data[0].so.po_number;
+          this.customer_id = data[0].customer_id;          
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
 
@@ -390,7 +390,7 @@ export default defineComponent({
               text: "Data has been Saved"
             }).then(async (result) => {
               if (result.isConfirmed) {
-                await router.push("/invoice");
+                await router.push("/tanda-terima");
               }
             })
           }, (error) => {

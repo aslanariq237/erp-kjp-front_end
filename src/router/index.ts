@@ -567,7 +567,21 @@ const router = createRouter({
           },
         },
         {
-          path: '/tanda-terima/form',
+          path: 'form',
+          component: () => import('../views/Others/TandaTerima/form.vue'),
+          meta: {
+            title: 'Tanda Terima Form',
+          },
+        },
+        {
+          path: 'view/:id',
+          component: () => import('../views/Others/TandaTerima/form.vue'),
+          meta: {
+            title: 'Tanda Terima View',
+          },
+        },
+        {
+          path: 'edit/:id',
           component: () => import('../views/Others/TandaTerima/form.vue'),
           meta: {
             title: 'Tanda Terima Form',
