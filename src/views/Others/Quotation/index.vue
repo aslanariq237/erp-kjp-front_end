@@ -143,6 +143,7 @@ import { DetailQuatation, Quatations } from '@/core/utils/url_api'
 import router from '@/router'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import { exportQuoPDF } from '@/core/helpers/exportToPdf'
 
 export default defineComponent({
   name: 'QuotationPage',
@@ -290,29 +291,7 @@ export default defineComponent({
     }
 
     const exportToPDF = (item) => {  
-      var detail = [];         
-      // Buat instance Vue baru untuk merender komponen
-      const container =  document.createElement('div')
-      document.body.appendChild(container)        
-      const app = createApp({
-        render : () => h(QuotationPdfTemplate, {item})
-      });
-
-      const instance = app.mount(container);
-
-      // Gunakan html2canvas untuk mengonversi elemen ke gambar
-      html2canvas(instance.$el).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Tambahkan gambar ke PDF
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-        // Simpan PDF
-        pdf.save(`quotation_${item.code_quatation}.pdf`);
-      });
+      exportQuoPDF(item);
     };
     // const exportToPDF = (entry) => {
     //   const doc = new jsPDF()

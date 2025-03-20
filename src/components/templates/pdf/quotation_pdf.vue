@@ -25,27 +25,27 @@
                 <div class="title text-center">
                     <p class="text-4xl font-semibold mt-5">QUOTATION</p>
                 </div>
-                <div class="flex justify-between text-2xl">
-                    <div class="left">
+                <div class="flex justify-between align-center text-2xl gap-20">
+                    <div class="left w-[50%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right">
+                    <div class="right w-[50%]">
                         <div class="flex">
-                            <p class="w-48">Quotation No </p>
+                            <p class="w-60">Quotation No </p>
                             <p>: {{ item.code_quatation }}</p>
                         </div>
                         <div class="flex">
-                            <p class="w-48">Issue Date </p>
+                            <p class="w-60">Issue Date </p>
                             <p>: {{ item.issue_at }}</p>
                         </div>
                         <div class="flex">
-                            <p class="w-48">Term Of Payment </p>
+                            <p class="w-60">Term Of Payment </p>
                             <p>: {{ item.termin }}</p>
                         </div>
                         <div class="flex">
-                            <p class="w-48">Valid Date </p>
+                            <p class="w-60">Valid Date </p>
                             <p>: {{ item.due_at }}</p>
                         </div>
                     </div>

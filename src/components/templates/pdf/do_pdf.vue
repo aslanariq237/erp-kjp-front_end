@@ -25,13 +25,13 @@
                 <div class="title text-center">
                     <p class="text-4xl font-semibold mt-5">DELIVERY ORDER</p>
                 </div>
-                <div class="flex justify-between text-2xl mt-5">
-                    <div class="left">
+                <div class="flex justify-between items-center text-2xl mt-5 gap-20">
+                    <div class="left w-[50%]">
                         <p class="font-semibold">Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right">                        
+                    <div class="right w-[40%]">                        
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.salesorder.po_number }}</p>

@@ -198,6 +198,7 @@ import html2canvas from 'html2canvas'
 import { createApp, h } from 'vue'
 import router from '@/router'
 import jsPDF from 'jspdf'
+import { exportDoPDF } from '@/core/helpers/exportToPdf'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -356,28 +357,7 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
     const exportToPDF = (item) => {
-      // Buat instance Vue baru untuk merender komponen
-      const container =  document.createElement('div')
-      document.body.appendChild(container)
-      const app = createApp({
-        render : () => h(DoPdfTemplate, {item})
-      });
-
-      const instance = app.mount(container);
-
-      // Gunakan html2canvas untuk mengonversi elemen ke gambar
-      html2canvas(instance.$el).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Tambahkan gambar ke PDF
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-        // Simpan PDF
-        pdf.save(`DeliveryOrder_${item.code_do}.pdf`);
-      });
+      exportDoPDF(item);
     }
     return {
       viewData,      

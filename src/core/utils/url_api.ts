@@ -17,13 +17,14 @@ export const AddCustomer = laraUrl + 'store-customers'
 export const CustomerCode = baseUrl + 'customers_code'
 
 //D
-export const DeliveryOrder = baseUrl + 'delivery_orders'
-export const DeliverSales = baseUrl + 'delivery_sales'
-export const AddDeliveryOrder = baseUrl + 'store-do'
-export const DetailPo = baseUrl + 'detail_po'
-export const DetailSo = baseUrl + 'details_so'
-export const DetailDo = baseUrl + 'detail_do'
-export const DetailQuatation = baseUrl + 'detail_quatation'
+export const DeliveryOrder = baseUrl + 'delivery_orders';
+export const DeliverSales = baseUrl + 'delivery_sales';
+export const AddDeliveryOrder = baseUrl + 'store-do';
+export const DetailPo = baseUrl + 'detail_po';
+export const DetailSo = baseUrl + 'details_so';
+export const DetailDo = baseUrl + 'detail_do';
+export const DetailQuatation = baseUrl + 'detail_quatation';
+export const DetailTandater = baseUrl + 'detail_tandater';
 
 //E
 export const Employee = baseUrl + 'employees'

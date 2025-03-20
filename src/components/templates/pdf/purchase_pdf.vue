@@ -27,12 +27,12 @@
                     <p class="text-4xl font-semibold mt-5" v-else>PURCHASE ORDER</p>
                 </div>
                 <div class="flex justify-between text-2xl mt-5">
-                    <div class="left ml-10">
+                    <div class="left ml-10 w-[50%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.vendor.vendor_name }}</p>
                         <p>{{ item.vendor.vendor_address }}</p>
                     </div>
-                    <div class="right">
+                    <div class="right w-[40%]">
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.code_po }}</p>

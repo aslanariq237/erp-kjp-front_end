@@ -200,6 +200,7 @@ import InvoicePdfTemplate from '@/components/templates/pdf/invoice_pdf.vue'
 import router from '@/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { exportInvPDF } from '@/core/helpers/exportToPdf'
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -378,28 +379,7 @@ export default defineComponent({
     }
 
     const exportToPDF = (item) => {
-      // Buat instance Vue baru untuk merender komponen
-      const container =  document.createElement('div')
-      document.body.appendChild(container)
-      const app = createApp({
-        render : () => h(InvoicePdfTemplate, {item})
-      });
-
-      const instance = app.mount(container);
-
-      // Gunakan html2canvas untuk mengonversi elemen ke gambar
-      html2canvas(instance.$el).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Tambahkan gambar ke PDF
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-        // Simpan PDF
-        pdf.save(`Invoice_${item.code_invoice}.pdf`);
-      });
+      exportInvPDF(item);
     }
     // const exportToPDF = (entry) => {
     //   const doc = new jsPDF()

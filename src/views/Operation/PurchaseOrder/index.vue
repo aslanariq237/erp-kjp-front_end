@@ -210,6 +210,7 @@ import { PurchaseOrder } from '@/core/utils/url_api'
 import router from '@/router'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import { exportPoPDF } from '@/core/helpers/exportToPdf'
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -363,28 +364,7 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
     const exportToPDF = (item) => {
-      // Buat instance Vue baru untuk merender komponen
-      const container =  document.createElement('div')
-      document.body.appendChild(container)
-      const app = createApp({
-        render : () => h(purchase_pdf, {item})
-      });
-
-      const instance = app.mount(container);
-
-      // Gunakan html2canvas untuk mengonversi elemen ke gambar
-      html2canvas(instance.$el).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Tambahkan gambar ke PDF
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-        // Simpan PDF
-        pdf.save(`purchase_order_${item.code_po}.pdf`);
-      });
+      exportPoPDF(item);
     }
     const approved = (id) =>{
       axios.post(PurchaseOrder + '/approve/' + id).then(

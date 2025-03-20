@@ -38,7 +38,8 @@
 
           <!-- Due Date -->
           <FormGroup label="Resi" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
-            <input type="text" id="due_at" name="due_at" placeholder="Input Resi" v-model="resi" :class="inputClass(rules.due_at)" />
+            <input type="text" autocomplete="off" id="due_at" name="due_at" placeholder="Input Resi" v-model="resi"
+              :class="inputClass(rules.due_at)" />
             <div class="" v-if="rules.resi == true">
               <p class="text-red-500 text-sm">Resi Dibutuhkan</p>
             </div>
@@ -72,12 +73,13 @@
           <FormGroup>
           </FormGroup>
         </div>
-        <div v-if="id">          
+        <div v-if="id">
         </div>
         <div class="flex items-end gap-5 mb-8" v-else>
           <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
             errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
+            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full"
+              :class="inputClass(rules.due_at)">
               <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
                 {{ delo.code_invoice }}
               </option>
@@ -93,17 +95,17 @@
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">So Number</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>                
+                <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
               <tr v-for="products in tandaterima_details" :key="products.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>                
+                <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>
               </tr>
             </tbody>
-          </table>          
+          </table>
         </div>
       </div>
     </Form>
@@ -125,6 +127,7 @@ import {
   DetailDo,
   DetailInvoice,
   DetailSo,
+  DetailTandater,
   Invoice,
   InvoiceAdd,
   SalesOrders,
@@ -148,14 +151,14 @@ export default defineComponent({
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
-      tandaterima_details: [],      
+      tandaterima_details: [],
       code_invoice: '',
       id_so: null,
       id_invoice: null,
       customer_id: null,
       employee_id: null,
       po_number: '',
-      resi : '',      
+      resi: '',
       customer_name: '',
       customer_npwp: 0,
       customer_address: '',
@@ -166,7 +169,7 @@ export default defineComponent({
       isSubmitting: false,
       rules: {
         resi: false,
-        tandaterima_details : false,
+        tandaterima_details: false,
       },
       notification: {
         show: false,
@@ -186,9 +189,10 @@ export default defineComponent({
     if (id) {
       this.getById(id);
       this.id = id;
-    } else {
-      this.issue_at = new Date().toLocaleDateString('en-CA');
-    }
+    }else{
+      this.issue_at = new Date().toLocaleDateString('en-CA');    
+    }      
+    this.due_at = new Date().toLocaleDateString('en-CA');
   },
   computed: {
     // Calculate subtotal based on all items in sales_order_details
@@ -229,7 +233,7 @@ export default defineComponent({
 
     getDeliveryOrder(id) {
       axios.get(Invoice + '/code/' + id).then((res) => {
-        var data = res.data        
+        var data = res.data
         this.deliveryOrders = data;
       })
     },
@@ -243,25 +247,25 @@ export default defineComponent({
 
     addDoDetail() {
       if (this.id_invoice == '' || this.id_invoice == null) {
-       Swal.fire({
-        icon : 'warning',
-        text : "Pilih Invoice"
-       });
-      }else{
+        Swal.fire({
+          icon: 'warning',
+          text: "Pilih Invoice"
+        });
+      } else {
         axios.get(Invoice + '/' + this.id_invoice).then(
-        (res) => {
-          var data = res.data;
-          for (let i = 0; i < data.length; i++) {
-            var object = {
-              code_invoice: data[i].code_invoice, 
-              id_invoice : data[i].id_invoice,             
-              code_so: data[i].salesorder.code_so,              
-              po_number: data[i].salesorder.po_number,              
+          (res) => {
+            var data = res.data;
+            for (let i = 0; i < data.length; i++) {
+              var object = {
+                code_invoice: data[i].code_invoice,
+                id_invoice: data[i].id_invoice,
+                code_so: data[i].salesorder.code_so,
+                po_number: data[i].salesorder.po_number,
+              }
+              this.tandaterima_details.push(object);
             }
-            this.tandaterima_details.push(object);
           }
-        }
-      )
+        )
       }
     },
     showNotification(type, message) {
@@ -281,14 +285,14 @@ export default defineComponent({
       var count = 0;
       if (this.resi == '' || this.resi == null) {
         this.rules.resi = true;
-        count++;        
-      }else{
+        count++;
+      } else {
         this.rules.resi = false;
       }
       if (this.tandaterima_details.length == 0) {
         Swal.fire({
           text: "Tambahkan 1 atau lebih barang!",
-          icon : 'error',
+          icon: 'error',
           buttonsStyling: true,
           confirmButtonText: 'Try Again!',
           heightAuto: false,
@@ -301,12 +305,15 @@ export default defineComponent({
       return count
     },
     getDetailSo(id) {
-      axios.get(DetailInvoice + '/' + id).then(
+      axios.get(DetailTandater + '/' + id).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
             var object = {
-              
+              code_invoice: data[i].invoice.code_invoice,
+              id_invoice: data[i].id_invoice,
+              code_so: data[i].so.code_so,
+              po_number: data[i].so.po_number,
             }
             this.tandaterima_details.push(object);
           }
@@ -318,14 +325,14 @@ export default defineComponent({
         (res) => {
           var data = res.data;
           this.issue_at = data[0].issue_at;
-          this.resi = data[0].resi;                    
+          this.resi = data[0].resi;
           this.id_so = data[0].id_so;
           this.po_number = data[0].so.po_number;
-          this.customer_id = data[0].customer_id;          
+          this.customer_id = data[0].customer_id;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
 
-          var id = data[0].id_invoice;
+          var id = data[0].id_tandater;
           if (id) {
             this.getDetailSo(id);
           }
@@ -334,15 +341,15 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation();      
+      const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
           await axios.post(TandaterAdd, {
             id_so: this.id_so,
-            customer_id: this.customer_id,            
+            customer_id: this.customer_id,
             issue_at: this.issue_at,
-            due_at: this.due_at,   
-            resi : this.resi,         
+            due_at: this.due_at,
+            resi: this.resi,
             id_do: this.id_do,
             tandaterima_details: this.tandaterima_details,
           }, {
@@ -376,9 +383,10 @@ export default defineComponent({
           await axios.put(TandaterAdd + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
-            employee_id: 1,
-            issue_at: this.issue_at,            
-            due_at: this.due_at,                      
+            issue_at : this.issue_at,
+            due_at : this.due_at,
+            resi : this.resi,
+            id_do: this.id_do,
             tandaterima_details: this.tandaterima_details,
           }, {
             headers: { "Content-Type": "application/json" }
