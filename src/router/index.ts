@@ -596,21 +596,21 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('../views/MasterData/vendor/index.vue'),
+          component: () => import('../views/MasterData/Vendor/index.vue'),
           meta: {
             title: 'Vendor',
           },
         },
         {
           path: 'form',
-          component: () => import('../views/MasterData/vendor/form.vue'),
+          component: () => import('../views/MasterData/Vendor/form.vue'),
           meta: {
             title: 'Vendor',
           },
         },
         {
           path: 'edit/:id',
-          component: () => import('../views/MasterData/vendor/form.vue'),
+          component: () => import('../views/MasterData/Vendor/form.vue'),
           meta: {
             title: 'Vendor Edit',
           },

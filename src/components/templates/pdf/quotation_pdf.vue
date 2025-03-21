@@ -25,7 +25,7 @@
                 <div class="title text-center">
                     <p class="text-4xl font-semibold mt-5">QUOTATION</p>
                 </div>
-                <div class="flex justify-between align-center text-2xl gap-20">
+                <div class="flex justify-between align-center text-2xl gap-20 my-5">
                     <div class="left w-[50%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>

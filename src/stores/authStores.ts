@@ -3,16 +3,26 @@ import { Login } from "@/core/utils/url_api";
 import { defineStore } from "pinia";
 import router from "@/router";
 
+interface User {
+    id: number;
+    name : string;
+    email : string;
+};
+
+interface authData {
+    user : User;
+    token : string;
+};
 
 export const useAuthStore = defineStore('auth',{    
-    state: () => ({
-        user: JSON.parse(window.localStorage.getItem('user')) || null,  
-        token : '',
+    state: () => ({        
+        user : JSON.parse(window.localStorage.getItem('user') || 'null') as User | null, 
+        token : window.localStorage.getItem('token'),
         // isAuthenticated : false,              
     }),
 
     actions: {
-        setAuth(data){
+        setAuth(data : authData){
             this.user = data.user;
             this.token = data.token;
             window.localStorage.setItem('isAuthenticated', 'true');              
@@ -21,7 +31,7 @@ export const useAuthStore = defineStore('auth',{
             router.push('/');
         },
 
-        async login(email, password)
+        async login(email:string, password:string)
         {
             return axios.post(Login, {
                 email : email,
@@ -33,10 +43,11 @@ export const useAuthStore = defineStore('auth',{
             )
         } ,
         
-        async logout(){
-            this.token = null;
+        async logout(){            
             this.user = null;
-            window.localStorage.removeItem(this.token)            
+            this.token = null;
+            window.localStorage.removeItem('token')            
+            window.localStorage.removeItem('user')            
         }
     }
 })

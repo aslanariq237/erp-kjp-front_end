@@ -7,7 +7,23 @@ import Do_pdf from "@/components/templates/pdf/do_pdf.vue";
 import Invoice_pdf from "@/components/templates/pdf/invoice_pdf.vue";
 import Quotation_pdf from "@/components/templates/pdf/quotation_pdf.vue";
 
-export const exportPoPDF = (item) => {
+interface Purchaseorder {
+  code_po : string;  
+}
+
+interface Deliveryorder {
+  code_do : string;
+}
+
+interface Invoice {
+  code_invoice : string;
+}
+
+interface Quotation {
+  code_quatation : string;
+}
+
+export const exportPoPDF = (item: Purchaseorder) => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
@@ -32,7 +48,7 @@ export const exportPoPDF = (item) => {
     document.body.removeChild(container);
 }
 
-export const exportDoPDF = (item) => {
+export const exportDoPDF = (item: Deliveryorder) => {
     // Buat instance Vue baru untuk merender komponen
     const container =  document.createElement('div')
     document.body.appendChild(container)
@@ -60,7 +76,7 @@ export const exportDoPDF = (item) => {
     document.body.removeChild(container);
 }
 
-export const exportInvPDF = (item) => {
+export const exportInvPDF = (item: Invoice) => {
     // Buat instance Vue baru untuk merender komponen
     const container =  document.createElement('div')
     document.body.appendChild(container)
@@ -88,7 +104,7 @@ export const exportInvPDF = (item) => {
     document.body.removeChild(container);
 }
 
-export const exportQuoPDF = (item) => {
+export const exportQuoPDF = (item : Quotation) => {
     const container =  document.createElement('div')
       document.body.appendChild(container)        
       const app = createApp({
