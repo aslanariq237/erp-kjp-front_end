@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/authStores'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -700,11 +701,23 @@ const router = createRouter({
       },
     },
   ],
+});
+
+router.beforeEach(async(to, from, next) => {
+  const authStore = useAuthStore();
+  const authenticated = authStore.isAuthenticated;  
+
+  // if (authenticated || to.path === '/signin') {
+  //   next();
+  // }else{
+  //   next('/signin');
+  // }
+  if (authenticated == false) {
+    next();
+  }else{
+    next('/signin');
+  }
 })
 
 export default router
 
-router.beforeEach((to, from, next) => {
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
-  next()
-})

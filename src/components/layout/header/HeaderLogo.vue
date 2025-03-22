@@ -1,7 +1,6 @@
 <template>
   <router-link to="/" class="lg:hidden">
-    <img class="dark:hidden" src="/images/logo/logo.svg" alt="Logo" />
-    <img class="hidden dark:block" src="/images/logo/logo-dark.svg" alt="Logo" />
+    <p class="text-green-500 text-2xl font-semibold">KJP</p>    
   </router-link>
 </template>
 
