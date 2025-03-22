@@ -82,8 +82,8 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 const getItem = () => {
-  username.value = authStore.user.name;
-  email.value = authStore.user.email;
+  username.value = authStore?.user?.name ? authStore.user.name : 'Non Login';
+  email.value = authStore?.user?.email ? authStore.user.email : 'Non Login';
 }
 onMounted((res) => {
   getItem();  

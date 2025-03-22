@@ -313,6 +313,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from "@/stores/authStores";
 import { defineComponent } from 'vue';
 import router from '@/router';
+import Swal from 'sweetalert2';
 
 export default defineComponent({
   name: "sign-in",
@@ -338,7 +339,7 @@ export default defineComponent({
       this.showPassword = !this.showPassword;
     },
     async handleSubmit(){
-      await this.authStore.login(this.email, this.password);                        
+      await this.authStore.login(this.email, this.password);
     }
   }
 })

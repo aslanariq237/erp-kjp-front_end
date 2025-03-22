@@ -190,13 +190,6 @@ export default defineComponent({
           this.salesorder = data.length
         }
       )
-
-      axios.get(PurchaseOrder).then(
-        (res) => {
-          var data = res.data;
-          this.purchaseorder = data.length;
-        }
-      ) 
       
       axios.get(Quatations).then(
         (res) => {

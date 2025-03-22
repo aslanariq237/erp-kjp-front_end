@@ -707,10 +707,12 @@ router.beforeEach(async(to, from, next) => {
   const authStore = useAuthStore();
   const authenticated = authStore.isAuthenticated;  
 
-  if (authenticated || to.path === '/signin') {
-    next();
-  }else{
+  if (!authenticated && to.path !== '/signin') {
     next('/signin');
+  }else if(authenticated && to.path == '/signin'){
+    next('/')
+  }else{
+    next();
   }  
 })
 

@@ -2,6 +2,7 @@ import axios from "axios";
 import { Login } from "@/core/utils/url_api";
 import { defineStore } from "pinia";
 import router from "@/router";
+import Swal from "sweetalert2";
 
 interface User {
     id: number;
@@ -17,15 +18,17 @@ interface authData {
 export const useAuthStore = defineStore('auth',{    
     state: () => ({        
         user : JSON.parse(window.localStorage.getItem('user') || 'null') as User | null, 
-        token : window.localStorage.getItem('token'),
-        isAuthenticated : false,                 
+        token : window.localStorage.getItem('token'),       
     }),
+
+    getters: {
+        isAuthenticated: (state) => !!state.token,
+    },
 
     actions: {
         setAuth(data : authData){
             this.user = data.user;
-            this.token = data.token;
-            window.localStorage.setItem('isAuthenticated', 'true');              
+            this.token = data.token;            
             window.localStorage.setItem('user', JSON.stringify(this.user));                    
             window.localStorage.setItem('token', data.token);                    
             router.push('/');
@@ -40,7 +43,12 @@ export const useAuthStore = defineStore('auth',{
                 ({data}) => {                    
                     this.setAuth(data);                    
                 }
-            )
+            ).catch((err) => {
+                Swal.fire({
+                    icon: 'warning',
+                    text: err.message
+                });
+            })
         } ,
         
         async logout(){            
@@ -48,6 +56,7 @@ export const useAuthStore = defineStore('auth',{
             this.token = null;
             window.localStorage.removeItem('token')            
             window.localStorage.removeItem('user')            
+            router.push('/signin');
         }
     }
 })
