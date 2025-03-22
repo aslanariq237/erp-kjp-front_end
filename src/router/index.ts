@@ -707,16 +707,11 @@ router.beforeEach(async(to, from, next) => {
   const authStore = useAuthStore();
   const authenticated = authStore.isAuthenticated;  
 
-  // if (authenticated || to.path === '/signin') {
-  //   next();
-  // }else{
-  //   next('/signin');
-  // }
-  if (authenticated == false) {
+  if (authenticated || to.path === '/signin') {
     next();
   }else{
     next('/signin');
-  }
+  }  
 })
 
 export default router
