@@ -7,11 +7,11 @@
                 @close="notification.show = false" />
 
             <!-- Header Card -->
-            <div class="bg-white rounded-lg shadow-md mb-6">
+            <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800">
                 <div class="flex justify-between items-center p-6 border-b">
                     <div class="breadcrumb">
-                        <h1 class="text-2xl font-bold text-gray-800">Create New Employee</h1>
-                        <p class="text-gray-500 text-sm mt-1">Master Data / Employee / Form</p>
+                        <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Create New Employee</h1>
+                        <p class="text-gray-400 text-sm mt-1">Master Data / Employee / Form</p>
                     </div>
                     <div class="flex items-center gap-3">
                         <RouterLink to="/employee"
@@ -30,7 +30,7 @@
             </div>
 
             <!-- Form Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
                     <!-- No -->
                     <!-- Total Service -->
@@ -98,6 +98,36 @@
                             <p class="text-red-500 text-sm">Salary Dibutuhkan</p>
                         </div>
                     </FormGroup>
+                    <FormGroup>                        
+                    </FormGroup>
+                    <FormGroup 
+                        label="Password" 
+                        :required="true"
+                    >
+                        <input 
+                            type="text" 
+                            id="issue_at" 
+                            name="issue_at" 
+                            v-model="password"
+                            :class="inputClass(rules.issue_at)" />
+                        <div v-if="rules.password == true">
+                            <p class="text-red-500 text-sm">Password Dibutuhkan</p>
+                        </div>
+                    </FormGroup>
+                    <FormGroup 
+                        label="Password Confirmation" 
+                        :required="true"
+                    >
+                        <input 
+                            type="text" 
+                            id="issue_at" 
+                            name="issue_at" 
+                            v-model="password_confirmation"
+                            :class="inputClass(rules.issue_at)" />
+                        <div v-if="rules.password_confirmation == true">
+                            <p class="text-red-500 text-sm" id="message">Password Confirmation Dibutuhkan</p>
+                        </div>
+                    </FormGroup>
                 </div>
             </div>
         </Form>
@@ -139,6 +169,8 @@ export default defineComponent({
             bpjs_kesehatan: '',
             bpjs_ketenagakerjaan: '',
             employee_salary: 0,
+            password : '',
+            password_confirmation: '',
             //others
             isSubmitting: false,
             notification: {
@@ -156,6 +188,8 @@ export default defineComponent({
                 bpjs_kesehatan: false,
                 bpjs_ketenagakerjaan: false,
                 employee_salary: false,
+                password : false,
+                password_confirmation: false,
             },
             sales_order_details: [],
         }
@@ -248,6 +282,22 @@ export default defineComponent({
             }else{
                 this.rules.employee_salary = false;
             }
+            
+            if (this.password == '' || this.password == null) {
+                this.rules.password = true;
+                count++;
+            }else{
+                this.rules.password = false
+            }
+        
+            if (this.password_confirmation == '' || this.password_confirmation == null) {                
+                this.rules.password_confirmation = true;
+                count++;
+            }else if (this.password != this.password_confirmation){
+                if (this.password != this.password_confirmation) {
+                    this.rules.password_confirmation = true;                    
+                }
+            }
             return count
         },
 
@@ -283,6 +333,8 @@ export default defineComponent({
                         employee_salary: this.employee_salary,
                         bpjs_kesehatan: this.bpjs_kesehatan,
                         bpjs_ketenagakerjaan: this.bpjs_ketenagakerjaan,
+                        password : this.password,
+                        passowrd_confirmation : this.password_confirmation,
                     })
                     .then(
                         (response) => {
@@ -343,7 +395,7 @@ export default defineComponent({
 
         inputClass(error) {
             return [
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+                'w-full rounded-lg dark:bg-gray-800 border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
                 error
                     ? 'border-red-300 focus:ring-red-500 bg-red-50'
                     : 'border-gray-300 focus:ring-blue-500',

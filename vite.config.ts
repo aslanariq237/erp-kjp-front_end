@@ -13,7 +13,7 @@ export default defineConfig({
       methods: ["GET", "POST"],
       allowedHeaders: ["Content-type", "Authorization"],
       preflightContinue: true,
-    }
+    },    
   },
   plugins: [
     vue(),

@@ -62,7 +62,9 @@
             <FormGroup>
             </FormGroup>
           </div>
-          <div class="flex justify-content-between gap-4 items-end">
+          <div class="" v-if="id"></div>
+          <div class="my-5" v-else >
+            <div class="flex justify-content-between gap-4 items-end">
             <!-- Grand Total -->
             <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
               errorMessage="Quantity is required">
@@ -77,7 +79,8 @@
             <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
               @click="addPoDetails">tambah</button>
           </div>
-          <div class=" mt-5">
+          </div>
+          <div class="">
             <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
               <thead>
                 <tr class="text-left">
@@ -260,17 +263,27 @@ export default defineComponent({
     async getById(id) {
       await axios.get(Customer + '/' + id).then(
         (res) => {
-          var data = res.data;
-          this.customer_name = data[0].customer_name;
-          this.customer_phone = data[0].customer_phone;
-          this.customer_email = data[0].customer_email;
-          this.customer_address = data[0].customer_address;
-          this.customer_npwp = data[0].customer_npwp;
-          this.customer_singkatan = data[0].customer_singkatan;
-          this.customer_contact = data[0].customer_contact;
-          if (data[0].customer_id) {
-            this.getPoint(data[0].customer_id)
-          }
+          var data = res.data;          
+          this.customer_name = data.customer_name;
+          this.customer_phone = data.customer_phone;
+          this.customer_email = data.customer_email;
+          this.customer_singkatan = data.customer_singkatan;
+          this.customer_address = data.customer_address;
+          this.customer_npwp = data.customer_npwp;
+          this.customer_contact = data.customer_contact;
+          if (data.customer_id) {
+            this.getPoint(data.customer_id);
+          }                    
+          // this.customer_name = data[0].customer_name;
+          // this.customer_phone = data[0].customer_phone;
+          // this.customer_email = data[0].customer_email;
+          // this.customer_address = data[0].customer_address;
+          // this.customer_npwp = data[0].customer_npwp;
+          // this.customer_singkatan = data[0].customer_singkatan;
+          // this.customer_contact = data[0].customer_contact;
+          // if (data[0].customer_id) {
+          //   this.getPoint(data[0].customer_id)
+          // }
         }
       )
     },
@@ -302,8 +315,7 @@ export default defineComponent({
                 } else {
                   mssg = "Success Create Purchase Order";
                 }
-                await router.push("/customer");
-                this.alertStore.success(mssg);
+                await router.push("/customer");                
               }
             })
           },
