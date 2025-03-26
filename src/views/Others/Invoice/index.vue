@@ -59,7 +59,7 @@
       <!-- Enhanced Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200 ">
+          <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
               <tr>
                 <th
@@ -79,14 +79,17 @@
               <tr v-if="loading" class="text-center">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
+              <tr
+                v-else-if="paginatedData.length === 0"
+                class="text-center dark:bg-gray-800 dark:text-gray-400"
+              >
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_invoice"
                 class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
-              >                                
+              >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.code_invoice }}
                 </td>
@@ -120,7 +123,7 @@
                   </button>
                   <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
                     Export
-                  </button>                  
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -128,7 +131,9 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
+        <div
+          class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400"
+        >
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -243,7 +248,7 @@ export default defineComponent({
     }
     const approved = (id) => {
       axios.post(InvoiceAdd + '/appr/' + id).then((res) => {
-        console.log(res);
+        console.log(res)
       })
     }
 
@@ -251,7 +256,7 @@ export default defineComponent({
       router.push('/invoice/view/' + id)
     }
     const editData = (id) => {
-      router.push('/invoice/edit/' + id);
+      router.push('/invoice/edit/' + id)
     }
 
     const getById = async () => {
@@ -272,9 +277,7 @@ export default defineComponent({
           const code_inv = entry.code_invoice.toLowerCase()
           const po_number = entry.salesorder.po_number.toLowerCase()
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_inv.includes(query)||
-                po_number.includes(query) ||
-                customer.includes(query)
+          return code_inv.includes(query) || po_number.includes(query) || customer.includes(query)
         })
       }
 
@@ -379,7 +382,7 @@ export default defineComponent({
     }
 
     const exportToPDF = (item) => {
-      exportInvPDF(item);
+      exportInvPDF(item)
     }
     // const exportToPDF = (entry) => {
     //   const doc = new jsPDF()

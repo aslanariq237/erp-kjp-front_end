@@ -9,7 +9,7 @@
         </div>
         <div class="flex gap-3">
           <button
-            @click="exportData"
+            @click="exportToExcel"
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
@@ -100,45 +100,135 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-if="loading" class="text-center">
-                <td colspan="5" class="px-6 py-4">Loading...</td>
+                <td colspan="42" class="px-6 py-4">Loading...</td>
               </tr>
               <tr v-else-if="paginatedData.length === 0" class="text-center">
-                <td colspan="5" class="px-6 py-4">Tidak ada data</td>
+                <td colspan="42" class="px-6 py-4">Tidak ada data</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
-                :key="entry.id_invoice"
+                :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
-              > 
+              >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_po }}
-                </td>                               
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.id_so }}
+                  {{ entry.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.customer }}
-                </td>                               
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.harga_beli) }}
+                  {{ entry.po_date }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.harga_jual) }}
+                  {{ entry.cust_code }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total)}}
+                  {{ entry.cust_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.issue_at }}
+                  {{ entry.pn }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
+                  {{ entry.desc }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button 
-                    class="bg-green-500 text-white px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
-                  >View</button>
+                  {{ entry.qty_po }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.price_po) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.amount_po) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.product_brand }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.sales_order }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.so_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.price_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.amount_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.delivery_order }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.do_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_do }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.bill_no }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.billing_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.amount_invoice) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.gross_profit) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.gp_percentage }}%
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.faktur_pajak }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.faktur_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice_date || 'N/A' }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.faktur_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.resi }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.diterima }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.received_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.status_ar }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.total_ar) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.aging_ar }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.payment1) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.payment_number }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.payment1_date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.os_ar) }}
                 </td>
               </tr>
             </tbody>
@@ -240,8 +330,8 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { GetReportManagement } from '@/core/utils/url_api'
 import axios from 'axios'
-import { LaporUang } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'LaporanKeuanganPage',
@@ -257,67 +347,90 @@ export default defineComponent({
     const accountToDelete = ref(null)
 
     // Table headers configuration
-    const tableHeaders = [      
-      { key: 'code_po', label: 'Code PO' },      
-      { key: 'code_so', label: 'Code SO' },      
-      { key: 'Customer', label: 'Customer' },      
-      { key: 'sub_total', label: 'Sub Total' },                 
-      { key: 'ppn', label: 'PPN' },
-      { key: 'grand_total', label: 'Grand Total' },
-      { key: 'issue_at', label: 'Issue Date' },
-      { key: 'due_at', label: 'Due Date' },
-      { key: 'action', label: 'Action' },
+    const tableHeaders = [
+      { key: 'po_number', label: 'PO NUMBER' },
+      { key: 'po_date', label: 'PO DATE' },
+      { key: 'cust_code', label: 'CUST CODE' },
+      { key: 'cust_name', label: 'CUST NAME' },
+      { key: 'pn', label: 'PN' },
+      { key: 'desc', label: 'DESC' },
+      { key: 'qty_po', label: 'QTY PO' },
+      { key: 'price_po', label: 'PRICE PO' },
+      { key: 'amount_po', label: 'AMOUNT PO' },
+      { key: 'brand', label: 'BRAND' },
+      { key: 'sales_order', label: 'SALES ORDER' },
+      { key: 'sales_order_date', label: 'SALES ORDER DATE' },
+      { key: 'qty_so', label: 'QTY SO' },
+      { key: 'price_so', label: 'PRICE SO' },
+      { key: 'amount_so', label: 'AMOUNT SO' },
+      { key: 'delivery_order', label: 'DELIVERY ORDER' },
+      { key: 'delivery_order_date', label: 'DELIVERY ORDER DATE' },
+      { key: 'qty_do', label: 'QTY DO' },
+      { key: 'bill_no', label: 'BILL NO' },
+      { key: 'billing_date', label: 'BILLING DATE' },
+      { key: 'amount_invoice', label: 'AMOUNT INVOICE' },
+      { key: 'gross_profit', label: 'GROSS PROFIT' },
+      { key: 'gp_percentage', label: '% GP' },
+      { key: 'faktur_pajak', label: 'FAKTUR PAJAK' },
+      { key: 'faktur_date', label: 'FAKTUR DATE' },
+      { key: 'tanda_terima_invoice', label: 'TANDA TERIMA INVOICE' },
+      { key: 'tanda_terima_invoice_date', label: 'TANDA TERIMA INVOICE DATE' },
+      { key: 'resi', label: 'RESI' },
+      { key: 'diterima', label: 'DITERIMA' },
+      { key: 'received_date', label: 'RECEIVED DATE' },
+      { key: 'status_ar', label: 'STATUS AR' },
+      { key: 'total_ar', label: 'TOTAL AR' },
+      { key: 'aging_ar', label: 'AGING AR' },
+      { key: 'payment1', label: 'PAYMENT1' },
+      { key: 'payment_number', label: 'PAYMENT NUMBER' },
+      { key: 'payment1_date', label: 'PAYMENT1 DATE' },
+      { key: 'os_ar', label: 'OS AR' },
     ]
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('name')
+    const sortBy = ref('po_number')
     const minBalance = ref('')
     const maxBalance = ref('')
     const currentPage = ref(1)
+    const reportManagement = ref([])
     const itemsPerPage = ref(10)
 
-    // Sample data - replace with API call
+    // Sample data
     const accounts = ref([])
 
-    const getInvoices = async() => {
-      const response = await axios.get(LaporUang)
-      accounts.value = response.data
-      console.log(accounts.value);
-      // if (accounts.value.length > 0) {
-      //   const invoiceId = accounts.value[0].id_po; // Assuming 'id_transaksi' is the ID to use
-      //   // getById(invoiceId);
-      // }
+    const GetReport = async () => {
+      loading.value = true
+      try {
+        // Simulate API call
+        const response = await axios.get(GetReportManagement)
+        console.log('Data fetched from GetReportManagement:', response.data)
+        reportManagement.value = response.data
+      } catch (error) {
+        console.error('Error fetching invoices:', error)
+      } finally {
+        loading.value = false
+      }
     }
 
     onMounted(() => {
-      getInvoices();
+      GetReport()
     })
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
-      let result = [...accounts.value]
+      let result = [...reportManagement.value]
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter(
-          (account) =>
-            account.name.toLowerCase().includes(query) || account.accountNumber.includes(query),
+          (reportManagement) =>
+            reportManagement.po_number.toLowerCase().includes(query) ||
+            reportManagement.cust_name.toLowerCase().includes(query),
         )
       }
 
-      if (minBalance.value) {
-        result = result.filter((account) => account.balance >= minBalance.value)
-      }
-
-      if (maxBalance.value) {
-        result = result.filter((account) => account.balance <= maxBalance.value)
-      }
-
       result.sort((a, b) => {
-        if (sortBy.value === 'balance') {
-          return a.balance - b.balance
-        }
         return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
       })
 
@@ -365,62 +478,49 @@ export default defineComponent({
       return rangeWithDots
     })
 
-    // Utility functions
-    const formatCurrency = (value) => {
-      return new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-      }).format(value)
-    }
+    const exportToExcel = () => {
+      const data = filteredData.value.map((entry) => {
+        return {
+          'PO NUMBER': entry.po_number,
+          'PO DATE': entry.po_date,
+          'CUST CODE': entry.cust_code,
+          'CUST NAME': entry.cust_name,
+          PN: entry.pn,
+          DESC: entry.desc,
+          'QTY PO': entry.qty_po,
+          'PRICE PO': entry.price_po,
+          'AMOUNT PO': entry.amount_po,
+          Brand: entry.product_brand,
+          'SALES ORDER': entry.sales_order,
+          'SALES ORDER DATE': entry.sales_order_date,
+          'QTY SO': entry.qty_so,
+          'PRICE SO': entry.price_so,
+          'AMOUNT SO': entry.amount_so,
+          'DELIVERY ORDER': entry.delivery_order,
+          'DELIVERY ORDER DATE': entry.do_date,
+          'QTY DO': entry.qty_do,
+          'BILL NO': entry.bill_no,
+          'BILLING DATE': entry.billing_date,
+          'AMOUNT INVOICE': entry.amount_invoice,
+          'GROSS PROFIT': entry.gross_profit,
+          '% GP': entry.gp_percentage,
+          'FAKTUR PAJAK': entry.faktur_pajak,
+          'FAKTUR DATE': entry.faktur_date,
+          'TANDA TERIMA INVOICE': entry.tanda_terima_invoice,
+          'TANDA TERIMA INVOICE DATE': entry.tanda_terima_invoice_date,
+          RESI: entry.resi,
+          DITERIMA: entry.diterima,
+          'RECEIVED DATE': entry.received_date,
+          'STATUS AR': entry.status_ar,
+          'TOTAL AR': entry.total_ar,
+          'AGING AR': entry.aging_ar,
+          PAYMENT1: entry.payment1,
+          'PAYMENT NUMBER': entry.payment_number,
+          'PAYMENT1 DATE': entry.payment1_date,
+          'OS AR': entry.os_ar,
+        }
+      })
 
-    const formatAccountNumber = (number) => {
-      return number.replace(/(\d{4})/g, '$1 ').trim()
-    }
-
-    const viewDetails = (account) => {
-      router.push(`/laporan-keuangan/${account.id}`)
-    }
-
-    const editAccount = (account) => {
-      router.push(`/laporan-keuangan/edit/${account.id}`)
-    }
-
-    const confirmDelete = (account) => {
-      accountToDelete.value = account
-      showDeleteModal.value = true
-    }
-
-    const deleteAccount = async () => {
-      try {
-        loading.value = true
-        // TODO: Implement API call
-        // await api.delete(`/accounts/${accountToDelete.value.id}`)
-
-        // Remove from local state
-        accounts.value = accounts.value.filter((account) => account.id !== accountToDelete.value.id)
-
-        showDeleteModal.value = false
-        accountToDelete.value = null
-
-        // Show success message
-        alert('Akun berhasil dihapus')
-      } catch (error) {
-        console.error('Error deleting account:', error)
-        alert('Gagal menghapus akun')
-      } finally {
-        loading.value = false
-      }
-    }
-
-    const exportData = () => {
-      const data = filteredData.value.map((account) => ({
-        Nama: account.name,
-        'Nomor Akun': account.accountNumber,
-        Saldo: formatCurrency(account.balance),
-        'Tanggal Dibuat': account.dateCreated,
-      }))
-
-      // Create CSV content
       const headers = Object.keys(data[0])
       const csvContent = [
         headers.join(','),
@@ -432,11 +532,18 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `laporan-keuangan-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `Laporan Keuangan -${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
+    }
+    // Utility functions
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
     }
 
     return {
@@ -445,8 +552,6 @@ export default defineComponent({
       showDeleteModal,
       searchQuery,
       sortBy,
-      minBalance,
-      maxBalance,
       currentPage,
       itemsPerPage,
       tableHeaders,
@@ -461,12 +566,7 @@ export default defineComponent({
 
       // Methods
       formatCurrency,
-      formatAccountNumber,
-      viewDetails,
-      editAccount,
-      confirmDelete,
-      deleteAccount,
-      exportData,
+      exportToExcel,
     }
   },
 })
