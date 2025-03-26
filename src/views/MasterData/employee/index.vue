@@ -4,7 +4,7 @@
       <!-- Header Section -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Employee Management</h1>
+          <h1 class="text-2xl font-bold text-gray-800 dark:text-gray-300">Employee Management</h1>
           <p class="text-gray-500 text-sm mt-1">Master Data / Employee</p>
         </div>
         <RouterLink
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div class="dark:bg-gray-800 bg-white rounded-lg shadow-sm p-4 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="form-group">
             <label class="text-sm text-gray-600 mb-1 block">Search</label>
@@ -54,7 +54,7 @@
       </div>
 
       <!-- Table Section -->
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>

@@ -77,8 +77,9 @@
   import Notification from '@/components/Notification.vue'
   import FormGroup from '@/components/FormGroup.vue'
   import axios from 'axios'
-  import { ProductCode } from '@/core/utils/url_api'
+  import { Product, ProductCode } from '@/core/utils/url_api'
   import router from '@/router'
+import { useRoute } from 'vue-router'
   
   export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -92,7 +93,8 @@
     },
   
     data() {
-        return {   
+        return {  
+            id : null, 
             product_desc: '',
             product_sn : '',
             product_brand : '',
@@ -113,7 +115,16 @@
             sales_order_details: [],
         }
     },
-  
+    mounted(){
+        const route = useRoute();
+        const id = route.params.id;
+
+        if (id) {
+            this.getById(id);
+            this.id = id;
+        }
+    },
+    
     methods: {
         showNotification(type, message) {
             this.notification = {
@@ -140,11 +151,24 @@
   
             return count
         },
+
+        async getById(id){
+            await axios.get(Product + '/' + id).then((res) => {
+                var data = res.data;
+                this.product_desc = data.product_desc;
+                this.product_sn = data.product_sn;
+                this.product_brand = data.product_brand;
+                this.product_uom = data.product_uom;
+                this.product_category_id = data.product_category_id;
+                this.product_stock = data.product_stock;
+            })
+        },
   
         async onSubmit() {
             const result = 2
             if (result != 0) {
-                await axios
+                if (this.id == null) {
+                    await axios
                     .post(ProductCode, {   
                         product_desc: this.product_desc,
                         product_sn : this.product_sn,   
@@ -154,8 +178,7 @@
                         product_stock : this.product_stock,                     
                     })
                     .then(
-                        (response) => {
-                            console.log(response)
+                        (response) => {                            
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Success',
@@ -177,6 +200,40 @@
                             })
                         },
                     )
+                }else{
+                    await axios
+                    .put(ProductCode + '/' + this.id, {   
+                        product_desc: this.product_desc,
+                        product_sn : this.product_sn,   
+                        product_brand : this.product_brand,
+                        product_uom : this.product_uom,
+                        product_category_id : this.product_category_id,
+                        product_stock : this.product_stock,                     
+                    })
+                    .then(
+                        (response) => {                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: 'Data has been Saved',
+                            }).then((res) => {
+                                if (res.isConfirmed) {
+                                    router.push('/product')
+                                }
+                            })
+                        },
+                        (error) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text:
+                                    (error.response && error.response && error.response.message) ||
+                                    error.message ||
+                                    error.toString(),
+                            })
+                        },
+                    )
+                }
             }
         },
   

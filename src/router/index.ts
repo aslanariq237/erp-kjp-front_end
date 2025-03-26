@@ -206,16 +206,21 @@ const router = createRouter({
       path: '/faktur-pajak',
       children: [
         {
-          path: '',
-          name: 'Faktur Pajak',
+          path: '',          
           component: () => import('../views/Others/faktur-pajak/index.vue'),
           meta: {
             title: 'Faktur Pajak',
           },
         },
         {
-          path: '/faktur-pajak/form',
-          name: 'Faktur Pajak-form',
+          path: 'form',          
+          component: () => import('../views/Others/faktur-pajak/form.vue'),
+          meta: {
+            title: 'Faktur Pajak',
+          },
+        },
+        {
+          path: 'edit/:id',          
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
             title: 'Faktur Pajak',
@@ -374,16 +379,21 @@ const router = createRouter({
       path: '/product',
       children: [
         {
-          path: '',
-          name: 'Product',
+          path: '',        
           component: () => import('../views/MasterData/product/index.vue'),
           meta: {
             title: 'Product',
           },
         },
         {
-          path: 'form',
-          name: 'Product-Form',
+          path: 'form',          
+          component: () => import('../views/MasterData/product/form.vue'),
+          meta: {
+            title: 'Product-Form',
+          },
+        },
+        {
+          path: 'edit/:id',          
           component: () => import('../views/MasterData/product/form.vue'),
           meta: {
             title: 'Product-Form',

@@ -3,6 +3,7 @@ import { Login } from '@/core/utils/url_api'
 import { defineStore } from 'pinia'
 import router from '@/router'
 import Swal from 'sweetalert2'
+import JwtServices from '@/core/services/JwtServices'
 
 interface User {
   id: number
@@ -11,25 +12,26 @@ interface User {
 }
 
 interface authData {
-  user: User
+  user: Array<User>
   token: string
 }
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: JSON.parse(window.localStorage.getItem('user') || 'null') as User | null,
+    user: JwtServices.getData(),
     token: window.localStorage.getItem('token'),
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.token,
+    users: (state) => state.user,
   },
 
   actions: {
     setAuth(data: authData) {
-      this.user = data.user
       this.token = data.token
-      window.localStorage.setItem('user', JSON.stringify(this.user))
+      JwtServices.saveData(JSON.stringify(data.user))
+      // window.localStorage.setItem('user', JSON.stringify(data.user));
       window.localStorage.setItem('token', data.token)
       router.push('/')
     },
@@ -42,12 +44,6 @@ export const useAuthStore = defineStore('auth', {
         })
         .then(({ data }) => {
           this.setAuth(data)
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: 'warning',
-            text: err.message,
-          })
         })
     },
 
