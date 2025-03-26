@@ -12,13 +12,13 @@ interface User {
 };
 
 interface authData {
-    user : User;
+    user : Array<User>;
     token : string;
 };
 
 export const useAuthStore = defineStore('auth',{    
     state: () => ({        
-        user : JwtServices.getData(),         
+        user : JwtServices.getData(),                 
         token : window.localStorage.getItem('token'),       
     }),
 
@@ -28,10 +28,12 @@ export const useAuthStore = defineStore('auth',{
     },
 
     actions: {        
-        setAuth(data: { token: string | 'null'; user: string; }) {
-            this.token = data.token;
-            JwtServices.saveData(data.user);
+        setAuth(data: authData) {
+            this.token = data.token;                        
+            JwtServices.saveData(JSON.stringify(data.user));             
+            // window.localStorage.setItem('user', JSON.stringify(data.user));            
             window.localStorage.setItem('token', data.token);
+            router.push('/');
         },
 
         async login(email:string, password:string)
@@ -40,8 +42,7 @@ export const useAuthStore = defineStore('auth',{
                 email : email,
                 password : password,                                
             }).then(({data}) => {
-                this.setAuth(data);
-                router.push('/');
+                this.setAuth(data);                                                             
             })
         } ,
         

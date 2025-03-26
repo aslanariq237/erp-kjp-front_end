@@ -343,6 +343,10 @@ export default defineComponent({
                                 icon: 'success',
                                 title: 'Success',
                                 text: 'Data has been Saved',
+                            }).then((res) => {
+                                if (res.isConfirmed) {
+                                    router.push('/employee');
+                                }
                             });
                         },
                         (error) => {
@@ -368,6 +372,8 @@ export default defineComponent({
                         employee_salary: this.employee_salary,
                         bpjs_kesehatan: this.bpjs_kesehatan,
                         bpjs_ketenagakerjaan: this.bpjs_ketenagakerjaan,
+                        password : this.password,
+                        passowrd_confirmation : this.password_confirmation,
                     })
                     .then(
                         (response) => {
@@ -376,6 +382,10 @@ export default defineComponent({
                                 icon: 'success',
                                 title: 'Success',
                                 text: 'Data has been Saved',
+                            }).then((res) => {
+                                if (res.isConfirmed) {
+                                    router.push('/employee');
+                                }
                             });
                         },
                         (error) => {

@@ -333,7 +333,7 @@ export default defineComponent({
       authStore,
       router,
     }
-  },  
+  },    
   methods: {
     togglePasswordVisibility(){
       this.showPassword = !this.showPassword;

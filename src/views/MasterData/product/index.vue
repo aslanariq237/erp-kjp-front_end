@@ -87,6 +87,11 @@
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Category
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Action
               </th>              
             </tr>
           </thead>
@@ -113,7 +118,14 @@
               </td>  
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="text-sm font-medium text-gray-900">{{ product.product_category_id == 1? "Coms":"Bms"}}</div>
-              </td>                          
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                  <button @click="editProduct(product.product_id)" class="text-blue-600 hover:text-blue-900">
+                    Edit
+                  </button>
+                </div>
+              </td>                         
             </tr>
           </tbody>
         </table>
@@ -194,6 +206,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Product } from '@/core/utils/url_api';
 import axios from 'axios';
+import router from '@/router';
 
 export default defineComponent({
   name: 'ProductPage',
@@ -261,8 +274,7 @@ export default defineComponent({
 
     // Utility functions
     const editProduct = (product) => {
-      console.log('Edit product:', product)
-      // Implement edit logic
+      router.push('/product/edit/' + product);      
     }
 
     const deleteProduct = (product) => {

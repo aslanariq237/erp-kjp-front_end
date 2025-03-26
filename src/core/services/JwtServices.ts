@@ -4,7 +4,8 @@ const ID_TOKEN_KEY = "user" as string;
  * @description get token form localStorage
  */
 export const getData = (): string | null => {
-  return window.localStorage.getItem(ID_TOKEN_KEY);
+  return JSON.parse(window.localStorage.getItem(ID_TOKEN_KEY) || 'null');
+  // return window.localStorage.getItem(ID_TOKEN_KEY);
 };
 
 /**
@@ -12,7 +13,7 @@ export const getData = (): string | null => {
  * @param token: string
  */
 export const saveData = (token: string): void => {
-  window.localStorage.setItem(ID_TOKEN_KEY, token);
+  JSON.stringify(window.localStorage.setItem(ID_TOKEN_KEY, token));
 };
 
 /**
