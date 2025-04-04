@@ -309,38 +309,36 @@
 </template>
 
 <script lang="ts">
-import { useRouter } from 'vue-router';
-import { useAuthStore } from "@/stores/authStores";
-import { defineComponent } from 'vue';
-import router from '@/router';
-import Swal from 'sweetalert2';
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/authStores'
+import { defineComponent } from 'vue'
+import router from '@/router'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
-  name: "sign-in",
-  components: {
-
-  },
-  data(){
-    const authStore = useAuthStore();
-    const router = useRouter();
+  name: 'sign-in',
+  components: {},
+  data() {
+    const authStore = useAuthStore()
+    const router = useRouter()
     return {
-      showPassword : false,
-      keepLoggedIn : false,
-      email : '',
-      password : '',      
+      showPassword: false,
+      keepLoggedIn: false,
+      email: '',
+      password: '',
 
       //import
       authStore,
       router,
     }
-  },    
+  },
   methods: {
-    togglePasswordVisibility(){
-      this.showPassword = !this.showPassword;
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword
     },
-    async handleSubmit(){
-      await this.authStore.login(this.email, this.password);
-    }
-  }
+    async handleSubmit() {
+      await this.authStore.login(this.email, this.password)
+    },
+  },
 })
 </script>
