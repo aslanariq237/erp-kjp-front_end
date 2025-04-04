@@ -140,6 +140,8 @@ const menuItems = [
   { label: 'Delete', onClick: () => console.log('Delete clicked') },
 ]
 import VueApexCharts from 'vue3-apexcharts'
+import axios from 'axios'
+import { SalesOrdersMonthly } from '@/core/utils/url_api'
 
 const props = defineProps({
   value: {
@@ -149,6 +151,13 @@ const props = defineProps({
 })
 
 const series = computed(() => [props.value])
+
+const getSales = async() => {
+  await axios.get(SalesOrdersMonthly).then(
+    (res) => {
+      var data = res.data;    
+  })
+}
 
 const chartOptions = {
   colors: ['#465FFF'],
