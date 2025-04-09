@@ -59,10 +59,12 @@ export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'
 //Q
 export const Quatations = urlLocalhost + 'quatations'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'
+export const QuatationsDelete = urlLocalhost + 'quatations_delete'
 //S
 export const SalesOrders = urlLocalhost + 'sales_orders'
 export const SalesOrdersMonthly = urlLocalhost + 'sales_orders/monthly'
 export const SalesOrderAdd = urlLocalhost + 'sales_orders_code'
+export const SalesOrderDelete = urlLocalhost + 'sales_orders_delete'
 //T
 export const Tandater = urlLocalhost + 'tandater'
 export const TandaterAdd = urlLocalhost + 'addTandater'

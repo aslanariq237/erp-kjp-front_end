@@ -2,7 +2,7 @@
   <AdminLayout>
     <div class="container mx-auto px-6 py-4">
       <!-- Header Section with Enhanced Styling -->
-      <div class="flex justify-between items-center mb-6  dark:text-gray-400">
+      <div class="flex justify-between items-center mb-6 dark:text-gray-400">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Sales Order</h1>
           <p class="text-gray-500 text-sm mt-1">Sales / Sales Order</p>
@@ -80,12 +80,14 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400 ">
+            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400">
               <tr v-if="loading" class="text-center">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
               <tr v-else-if="paginatedData.length === 0" class="text-center">
-                <td colspan="14" class="px-6 py-4 dark:bg-gray-800 dark:text-gray-400">No data found</td>
+                <td colspan="14" class="px-6 py-4 dark:bg-gray-800 dark:text-gray-400">
+                  No data found
+                </td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
@@ -94,16 +96,16 @@
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-500">{{ entry.code_so }}</div>
-                </td>  
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-500">{{ entry.po_number}}</div>
-                </td>                
+                  <div class="text-sm font-medium text-gray-500">{{ entry.po_number }}</div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.customer.customer_name }}
-                </td>                
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ formatCurrency(entry.sub_total) }}
-                </td>               
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.issue_at }}
                 </td>
@@ -122,7 +124,13 @@
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
                   >
                     Edit
-                  </button>                  
+                  </button>
+                  <button
+                    @click="deleteData(entry.id_so)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -130,7 +138,9 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
+        <div
+          class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400"
+        >
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -197,7 +207,8 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { SalesOrders } from '@/core/utils/url_api'
+import { SalesOrders, SalesOrderDelete } from '@/core/utils/url_api'
+import Swal from 'sweetalert2'
 import router from '@/router'
 export default defineComponent({
   name: 'SalesOrderPage',
@@ -209,11 +220,11 @@ export default defineComponent({
     const loading = ref(false)
 
     // Table headers configuration
-    const tableHeaders = [      
-      { key: 'code_so', label: 'So Number' },      
-      { key: 'po_number', label: 'Po Number' },      
-      { key: 'customer', label: 'Customer' },            
-      { key: 'sub_total', label: 'Sub Total' },    
+    const tableHeaders = [
+      { key: 'code_so', label: 'So Number' },
+      { key: 'po_number', label: 'Po Number' },
+      { key: 'customer', label: 'Customer' },
+      { key: 'sub_total', label: 'Sub Total' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
@@ -230,7 +241,7 @@ export default defineComponent({
     // Sample data - replace with API call
     const entries = ref([])
 
-    const GetSalesOrder = async ()  => {
+    const GetSalesOrder = async () => {
       try {
         const res = await axios.get(SalesOrders)
         entries.value = res.data
@@ -252,9 +263,7 @@ export default defineComponent({
           const code_so = entry.code_so.toLowerCase()
           const po_number = entry.po_number.toLowerCase()
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_so.includes(query) ||
-                po_number.includes(query) ||
-                customer.includes(query)
+          return code_so.includes(query) || po_number.includes(query) || customer.includes(query)
         })
       }
 
@@ -274,12 +283,33 @@ export default defineComponent({
     })
 
     const viewData = (id) => {
-      router.push('/sales-order/view/' + id);
-    };
+      router.push('/sales-order/view/' + id)
+    }
 
     const editData = (id) => {
-      router.push('/sales-order/edit/' + id);
-    };
+      router.push('/sales-order/edit/' + id)
+    }
+    const deleteData = async (id) => {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      })
+
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(SalesOrderDelete + '/' + id)
+          await GetSalesOrder()
+          Swal.fire('Deleted!', 'The Sales Order has been deleted.', 'success')
+        } catch (error) {
+          Swal.fire('Error!', 'There was an error deleting the Sales Order.', 'error')
+        }
+      }
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -288,7 +318,7 @@ export default defineComponent({
     const endIndex = computed(() =>
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
-    
+
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -367,7 +397,8 @@ export default defineComponent({
     return {
       viewData,
       editData,
-      
+      deleteData,
+
       // State
       loading,
       searchQuery,

@@ -9,7 +9,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'User Dashbiard',
+      name: 'User Dashboard',
       component: () => import('../views/Ecommerce.vue'),
       meta: {
         title: 'eCommerce Dashboard',
@@ -103,21 +103,21 @@ const router = createRouter({
       path: '/customer',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/MasterData/customer/index.vue'),
           meta: {
             title: 'Customer',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/MasterData/customer/form.vue'),
           meta: {
             title: 'Customer-Form',
           },
         },
         {
-          path: 'edit/:id',          
+          path: 'edit/:id',
           component: () => import('../views/MasterData/customer/form.vue'),
           meta: {
             title: 'Customer-Edit',
@@ -168,7 +168,7 @@ const router = createRouter({
           meta: {
             title: 'Delivery Order-Form',
           },
-        },        
+        },
       ],
     },
     //e
@@ -206,21 +206,21 @@ const router = createRouter({
       path: '/faktur-pajak',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/Others/faktur-pajak/index.vue'),
           meta: {
             title: 'Faktur Pajak',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
             title: 'Faktur Pajak',
           },
         },
         {
-          path: 'edit/:id',          
+          path: 'edit/:id',
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
             title: 'Faktur Pajak',
@@ -233,14 +233,14 @@ const router = createRouter({
       path: '/good-receive',
       children: [
         {
-          path: '',          
+          path: '',
           component: () => import('../views/Others/GoodReceive/index.vue'),
           meta: {
             title: 'Good-Receive',
           },
         },
         {
-          path: 'add/:id',          
+          path: 'add/:id',
           component: () => import('../views/Others/GoodReceive/form.vue'),
           meta: {
             title: 'Good-Receive-View',
@@ -262,21 +262,21 @@ const router = createRouter({
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/Others/Invoice/form.vue'),
           meta: {
             title: 'Invoice-Form',
           },
         },
         {
-          path: 'edit/:id',          
+          path: 'edit/:id',
           component: () => import('../views/Others/Invoice/form.vue'),
           meta: {
             title: 'Invoice-Edit',
           },
         },
         {
-          path: 'view/:id',          
+          path: 'view/:id',
           component: () => import('../views/Others/Invoice/view.vue'),
           meta: {
             title: 'Invoice-View',
@@ -379,21 +379,21 @@ const router = createRouter({
       path: '/product',
       children: [
         {
-          path: '',        
+          path: '',
           component: () => import('../views/MasterData/product/index.vue'),
           meta: {
             title: 'Product',
           },
         },
         {
-          path: 'form',          
+          path: 'form',
           component: () => import('../views/MasterData/product/form.vue'),
           meta: {
             title: 'Product-Form',
           },
         },
         {
-          path: 'edit/:id',          
+          path: 'edit/:id',
           component: () => import('../views/MasterData/product/form.vue'),
           meta: {
             title: 'Product-Form',
@@ -513,7 +513,7 @@ const router = createRouter({
           meta: {
             title: 'Product',
           },
-        },        
+        },
       ],
     },
     {
@@ -711,20 +711,19 @@ const router = createRouter({
       },
     },
   ],
-});
+})
 
-router.beforeEach(async(to, from, next) => {
-  const authStore = useAuthStore();
-  const authenticated = authStore.isAuthenticated;  
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+  const authenticated = authStore.isAuthenticated
 
   if (!authenticated && to.path !== '/signin') {
-    next('/signin');
-  }else if(authenticated && to.path == '/signin'){
+    next('/signin')
+  } else if (authenticated && to.path == '/signin') {
     next('/')
-  }else{
-    next();
-  }  
+  } else {
+    next()
+  }
 })
 
 export default router
-
