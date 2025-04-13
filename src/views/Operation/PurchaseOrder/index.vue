@@ -78,14 +78,17 @@
               <tr v-if="loading" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
+              <tr
+                v-else-if="paginatedData.length === 0"
+                class="text-center dark:bg-gray-800 dark:text-gray-400"
+              >
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
               <tr
                 v-for="(entry, index) in paginatedData"
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
-              >                
+              >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
@@ -131,6 +134,12 @@
                   >
                     Approve
                   </button>
+                  <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="deleteData(entry.id_po)"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -138,7 +147,9 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
+        <div
+          class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400"
+        >
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -205,13 +216,10 @@
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import purchase_pdf from '@/components/templates/pdf/purchase_pdf.vue'
-import { PurchaseOrder } from '@/core/utils/url_api'
+import { PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
-import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 import { exportPoPDF } from '@/core/helpers/exportToPdf'
-
+import Swal from 'sweetalert2'
 export default defineComponent({
   name: 'PurchaseOrderPage',
   components: {
@@ -261,7 +269,28 @@ export default defineComponent({
     }
 
     const editData = (id) => {
-      router.push('purchase-order/edit/' + id);
+      router.push('purchase-order/edit/' + id)
+    }
+    const deleteData = async (id) => {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      })
+
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(PurchaseOrderDelete + '/' + id)
+          await getPurchaseOrder()
+          Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
+        } catch (error) {
+          Swal.fire('Error!', 'There was an error deleting the Purchase Order.', 'error')
+        }
+      }
     }
 
     // Computed properties for filtering and pagination
@@ -332,13 +361,13 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = filteredData.value.map((entry) => ({
-        'Code Invoice': entry.code_invoice,        
-        'Po Number' : entry.salesorder.po_number,
+        'Code Invoice': entry.code_invoice,
+        'Po Number': entry.salesorder.po_number,
         'Status Payment': entry.status_payment,
         'Sub Total': entry.sub_total,
         'Total Tax': entry.total_tax,
         'Total Service': entry.total_service,
-        'Deposit' : entry.salesorder.deposit,
+        Deposit: entry.salesorder.deposit,
         PPN: entry.ppn,
         'Grand Total': entry.grand_total,
         'Issue Date': entry.issue_at,
@@ -364,15 +393,13 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
     const exportToPDF = (item) => {
-      exportPoPDF(item);
+      exportPoPDF(item)
     }
-    const approved = (id) =>{
-      axios.post(PurchaseOrder + '/approve/' + id).then(
-        (res) => {
-          console.log(res);
-        }
-      )
-    }   
+    const approved = (id) => {
+      axios.post(PurchaseOrder + '/approve/' + id).then((res) => {
+        console.log(res)
+      })
+    }
 
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
@@ -382,15 +409,16 @@ export default defineComponent({
     }
 
     const numberWithCommas = (x) => {
-      var x = x.toString().replace(".", ",");
-    
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      var x = x.toString().replace('.', ',')
+
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     }
 
     return {
       viewData,
       editData,
       approved,
+      deleteData,
       // State
       loading,
       searchQuery,

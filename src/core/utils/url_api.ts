@@ -56,6 +56,7 @@ export const ProductCode = urlLocalhost + 'products_code'
 export const PurchaseOrder = urlLocalhost + 'purchase_orders'
 export const PurchaseOrderMonthly = urlLocalhost + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'
+export const PurchaseOrderDelete = urlLocalhost + 'purchase_orders_delete'
 //Q
 export const Quatations = urlLocalhost + 'quatations'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'
