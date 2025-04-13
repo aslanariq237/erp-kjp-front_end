@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('auth', {
     setAuth(data: authData) {
       this.token = data.token
       JwtServices.saveData(JSON.stringify(data.user))
-      // window.localStorage.setItem('user', JSON.stringify(data.user));
+      window.localStorage.setItem('user', JSON.stringify(data.user));
       window.localStorage.setItem('token', data.token)
       router.push('/')
     },
@@ -45,6 +45,29 @@ export const useAuthStore = defineStore('auth', {
         .then(({ data }) => {
           this.setAuth(data)
         })
+        .catch((error) => {
+          if (error.response) {
+            if (error.response.status === 401) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Email or Password is incorrect!',
+              })
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+              })
+            }
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Network Error!',
+            })
+          }
+        });
     },
 
     async logout() {
