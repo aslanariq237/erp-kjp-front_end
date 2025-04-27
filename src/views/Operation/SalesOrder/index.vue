@@ -111,7 +111,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.due_at }}
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   <button
                     @click="viewData(entry.id_so)"
@@ -119,18 +119,20 @@
                   >
                     View
                   </button>
-                  <button
-                    @click="editData(entry.id_so)"
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    @click="deleteData(entry.id_so)"
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
-                  >
-                    Delete
-                  </button>
+                  <span v-if="entry.has_invoice === 0">
+                    <button                    
+                      @click="editData(entry.id_so)"
+                      class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="deleteData(entry.id_so)"
+                      class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                    >
+                      Delete
+                    </button>
+                  </span>
                 </td>
               </tr>
             </tbody>

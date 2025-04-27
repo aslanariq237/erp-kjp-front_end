@@ -8,9 +8,15 @@
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
-          <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Invoice</h1>
-            <p class="text-gray-500 text-sm mt-1">Sales / Invoice / Form</p>
+          <div v-if="id" class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Edit Invoice</h1>
+            <p class="text-gray-500 text-sm mt-1">Invoice / Form</p>
+          </div>
+          <div v-else class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">
+              Create New Invoice
+            </h1>
+            <p class="text-gray-500 text-sm mt-1">Invoice / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink to="/invoice"
