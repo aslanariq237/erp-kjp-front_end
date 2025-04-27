@@ -1,5 +1,5 @@
 let baseUrl = ''
-let urlLocalhost = 'http://127.0.0.1:8000/api/'
+let urlLocalhost = 'http://localhost:8000/api/'
 
 baseUrl = import.meta.env.VITE_APP_API_URL + '/api/'
 

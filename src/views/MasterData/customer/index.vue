@@ -77,12 +77,7 @@
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
                 Email
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
-                Address
-              </th>
+              </th>              
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
@@ -125,10 +120,7 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ customer.customer_email }}
-              </td>
-              <td class="px-6 max-w-96 text-ellipsis py-4 whitespace-nowrap text-sm text-gray-500 truncate">
-                {{ customer.customer_address }}
-              </td>
+              </td>              
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ customer.customer_contact }}
               </td>
