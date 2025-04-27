@@ -13,7 +13,7 @@
             class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
           >
             <span>Export</span>
-          </button>          
+          </button>
         </div>
       </div>
 
@@ -114,7 +114,9 @@
                   {{ account.code_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name }}</div>
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ account.customer.customer_name }}
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.deposit) }}
@@ -124,34 +126,138 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total - account.deposit) }}
-                </td> 
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at}}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.due_at}}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.issue_at - account.due_at}}</div>
-                </td>                
+                  <div class="text-sm font-medium text-gray-900">{{ account.due_at }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ account.issue_at - account.due_at }}
+                  </div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
+                    <!-- <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
                       View
-                    </button>
-                    <button
-                      @click="editAccount(account)"
-                      class="text-green-600 hover:text-green-900"
-                    >
-                      Edit
+                    </button> -->
+                    <button @click="openModal(account)" class="text-green-600 hover:text-green-900">
+                      Edit Deposit
                     </button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-        </div>
+          <div
+            v-if="isModalOpen"
+            class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300"
+          >
+            <div
+              class="bg-white p-8 rounded-xl w-96 shadow-xl transform transition-all duration-300"
+            >
+              <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">Edit Deposit</h2>
 
+              <!-- Total Amount Display -->
+              <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount</label>
+                <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
+                  <span class="text-lg font-semibold text-gray-800"
+                    >Rp. {{ selectedItem ? formatCurrency(selectedItem.grand_total) : 0 }}</span
+                  >
+                </div>
+              </div>
+
+              <!-- Current Deposit Display -->
+              <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Current Deposit</label>
+                <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
+                  <span class="text-lg font-semibold text-gray-800"
+                    >Rp. {{ selectedItem ? formatCurrency(selectedItem.deposit) : 0 }}</span
+                  >
+                </div>
+              </div>
+
+              <!-- New Additional Deposit Input -->
+              <div class="mb-5">
+                <label for="deposit-amount" class="block text-sm font-medium text-gray-700 mb-2">
+                  Additional Deposit Amount
+                </label>
+                <div class="relative">
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"
+                    >Rp.</span
+                  >
+                  <input
+                    id="deposit-amount"
+                    type="number"
+                    v-model.number="additionalDeposit"
+                    class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+
+              <!-- Total After Change -->
+              <div class="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-blue-800">New Total Deposit:</span>
+                  <span class="text-lg font-bold text-blue-800">
+                    Rp.
+                    {{
+                      selectedItem ? formatCurrency(selectedItem.deposit + additionalDeposit) : 0
+                    }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Remaining Balance After New Deposit -->
+              <div class="mb-6 p-3 bg-amber-50 rounded-lg border border-amber-100">
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-medium text-amber-800">Remaining Balance:</span>
+                  <span class="text-lg font-bold text-amber-800">
+                    Rp.
+                    {{
+                      selectedItem
+                        ? formatCurrency(
+                            selectedItem.grand_total - (selectedItem.deposit + additionalDeposit),
+                          )
+                        : 0
+                    }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex justify-end space-x-3">
+                <button
+                  class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-5 rounded-lg transition-colors duration-200"
+                  @click="closeModal"
+                >
+                  Cancel
+                </button>
+                <button
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg transition-colors duration-200 flex items-center"
+                  @click="saveDeposit"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Enhanced Pagination -->
         <div class="bg-white px-6 py-4 border-t border-gray-200">
           <div class="flex items-center justify-between">
@@ -248,7 +354,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
-import { AccReceive } from '@/core/utils/url_api'
+import { AccReceive, AccUpdateDeposit } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -267,7 +373,7 @@ export default defineComponent({
     const tableHeaders = [
       { key: 'no', label: 'Code So' },
       { key: 'name', label: 'Name' },
-      { key: 'Depoit', label: 'Depoit' },
+      { key: 'Deposit', label: 'Deposit' },
       { key: 'Amount', label: 'Amount' },
       { key: 'Debt', label: 'Debt' },
       { key: 'Debt', label: 'Issue Date' },
@@ -287,17 +393,18 @@ export default defineComponent({
     // Sample data - replace with API call
     const accounts = ref([])
 
-    const getArcheive = async() => { 
-      await axios.get(AccReceive).then(
-        (res) => {
-          var data = res.data;
-          accounts.value = data;
-        }
-      )
+    const getArcheive = async () => {
+      try {
+        const res = await axios.get(AccReceive)
+        console.log('Data dari API:', res.data) // Log data untuk memastikan properti `id` ada
+        accounts.value = res.data
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
     }
 
     onMounted(() => {
-      getArcheive();
+      getArcheive()
     })
 
     // Computed properties for filtering and pagination
@@ -311,6 +418,7 @@ export default defineComponent({
             account.name.toLowerCase().includes(query) || account.accountNumber.includes(query),
         )
       }
+      result = result.filter((account) => account.grand_total - account.deposit > 0)
 
       if (minBalance.value) {
         result = result.filter((account) => account.balance >= minBalance.value)
@@ -371,6 +479,8 @@ export default defineComponent({
       return rangeWithDots
     })
 
+    const additionalDeposit = ref(0)
+
     // Utility functions
     const formatCurrency = (value) => {
       return new Intl.NumberFormat('en-US', {
@@ -384,11 +494,45 @@ export default defineComponent({
     }
 
     const viewDetails = (account) => {
-      router.push(`/account-receivable/${account.id}`)
+      router.push(`/account-receivable/${account.id_so}`)
     }
 
     const editAccount = (account) => {
       router.push(`/account-receivable/edit/${account.id}`)
+    }
+    const isModalOpen = ref(false)
+    const selectedItem = ref(null)
+    const editedDeposit = ref(0)
+
+    function openModal(item) {
+      selectedItem.value = item
+      editedDeposit.value = item.deposit
+      additionalDeposit.value = 0
+      isModalOpen.value = true
+    }
+
+    function closeModal() {
+      isModalOpen.value = false
+      selectedItem.value = null
+    }
+
+    async function saveDeposit() {
+      if (selectedItem.value) {
+        try {
+          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
+          const response = await axios.put(`${AccUpdateDeposit}/${selectedItem.value.id_so}`, {
+            deposit: newTotalDeposit,
+          })
+          if (response.status === 200) {
+            selectedItem.value.deposit = newTotalDeposit
+            closeModal()
+            console.log('Deposit updated successfully.')
+          }
+        } catch (error) {
+          console.error('Failed to update deposit:', error)
+        }
+      }
+      closeModal()
     }
 
     const confirmDelete = (account) => {
@@ -399,16 +543,9 @@ export default defineComponent({
     const deleteAccount = async () => {
       try {
         loading.value = true
-        // TODO: Implement API call
-        // await api.delete(`/accounts/${accountToDelete.value.id}`)
-
-        // Remove from local state
         accounts.value = accounts.value.filter((account) => account.id !== accountToDelete.value.id)
-
         showDeleteModal.value = false
         accountToDelete.value = null
-
-        // Show success message
         alert('Account deleted successfully')
       } catch (error) {
         console.error('Error deleting account:', error)
@@ -473,6 +610,14 @@ export default defineComponent({
       confirmDelete,
       deleteAccount,
       exportData,
+      openModal,
+      closeModal,
+      saveDeposit,
+      isModalOpen,
+      selectedItem,
+      editedDeposit,
+      showDeleteModal,
+      additionalDeposit,
     }
   },
 })
