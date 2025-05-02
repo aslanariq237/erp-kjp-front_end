@@ -90,7 +90,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { Invoice } from '@/core/utils/url_api';
+import { DetailInvoice, Invoice } from '@/core/utils/url_api';
 
 import axios from 'axios'
 
@@ -124,6 +124,7 @@ export default defineComponent({
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
     const invoice = ref([]); 
+    const dataexcel = ref([]);
 
     // Sample data - replace with API call
     const reportData = ref([])
@@ -132,9 +133,19 @@ export default defineComponent({
       const response = await axios.get(Invoice)
       invoice.value = response.data;   
     }
+    const getDetailInv = async() => {
+      try {
+        await axios.get(DetailInvoice).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error fetching invoice details:', error)
+      }
+    }
 
     onMounted(() => {
       getInvoices();
+      getDetailInv();
     });
 
     // Computed properties for filtering and pagination
@@ -252,19 +263,19 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((report) => ({        
-        'Invoice Number' : report.code_invoice,
-        'SO Number' : report.salesorder.code_so,
-        'Po Number' : report.salesorder.po_number,
-        'Customer' : report.customer.customer_name,
-        'Address' : report.customer.customer_address,
-        'ToP' : report.salesorder.termin,
-        'Sub Total' : report.sub_total,
-        'Ppn' : report.ppn,        
-        'Total' : report.grand_total,        
-        'Issue Date' : report.issue_at,
-        'due_at' : report.due_at,
-      }));
+      const data = dataexcel.value.map((entry) => ({
+        'Invoice Number': entry.invoice.code_invoice,
+        'SO Number': entry.invoice.salesorder.code_so,
+        'PO Number': entry.invoice.salesorder.po_number,
+        'DO Number' : entry.do.code_do,
+        'Customer' : entry.invoice.customer.customer_name,
+        'Product Desc' : entry.product.product_desc,
+        'Product SN' : entry.product.product_sn,
+        'Quantity' : entry.quantity,
+        'Price' : entry.price,
+        'Issue Date' : entry.invoice.issue_at,
+        'Due Date' : entry.invoice.due_at,
+      })); 
 
       // Create CSV content
       const headers = Object.keys(data[0])
@@ -278,7 +289,7 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `report-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `report-sales-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)

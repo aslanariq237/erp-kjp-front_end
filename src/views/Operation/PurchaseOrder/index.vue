@@ -8,6 +8,12 @@
           <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order</p>
         </div>
         <div class="flex gap-3">
+          <button
+            @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+          >
+            <span>Export</span>
+          </button>
           <button>
             <RouterLink
               to="/purchase-order/form"
@@ -324,7 +330,14 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_po.toLowerCase().includes(query))
+        result = result.filter((entry) => {
+          const code_po = entry.code_po.toLowerCase();
+          const vendor_name = entry.vendor.vendor_name.toLowerCase();
+          return (
+            code_po.includes(query) ||
+            vendor_name.includes(query)
+          )
+        })
       }
 
       if (startDate.value) {
@@ -385,27 +398,14 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data =dataexcel.value.map((entry) => ({
+      const data = dataexcel.value.map((entry) => ({
         'Po Number' : entry.purchaseorders.code_po,
         'Vendor Name' : entry.purchaseorders.vendor.vendor_name,
-        'Total' : entry.purchaseorders.sub_total,
-        'Total' : entry.purchaseorders.grand_total,
+        'Product Decs' : entry.product.product_desc,
+        'product SN' : entry.product.product_sn,        
         'Issue Date' : entry.purchaseorders.issue_at,
         'Due Date' : entry.purchaseorders.due_at,
-      }));
-      const data1 = filteredData.value.map((entry) => ({
-        'Code Invoice': entry.code_invoice,
-        'Po Number': entry.salesorder.po_number,
-        'Status Payment': entry.status_payment,
-        'Sub Total': entry.sub_total,
-        'Total Tax': entry.total_tax,
-        'Total Service': entry.total_service,
-        Deposit: entry.salesorder.deposit,
-        PPN: entry.ppn,
-        'Grand Total': entry.grand_total,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-      }))
+      }));      
 
       // Create CSV content
       const headers = Object.keys(data[0])

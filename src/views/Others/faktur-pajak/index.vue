@@ -119,15 +119,15 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.invoice.code_invoice }}
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name }}</div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.so.po_number }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.so.code_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ account.customer.customer_name }}</div>
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
                     {{ account.code_faktur_pajak }}
@@ -265,9 +265,9 @@ export default defineComponent({
     // Table headers configuration
     const tableHeaders = [
       { key: 'id_invoice', label: 'Invoice Number' },
+      { key: 'customer_id', label: 'Customer Name' },
       { key: 'id_invoice', label: 'Po Number' },
-      { key: 'id_invoice', label: 'So Number' },
-      { key: 'customer_id', label: 'Customer Number' },
+      { key: 'id_invoice', label: 'So Number' },      
       { key: 'code_faktur_pajak', label: 'Kode Faktur Pajak' },
       { key: 'actions', label: 'Actions' },
     ]

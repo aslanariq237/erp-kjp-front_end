@@ -216,10 +216,11 @@
         // Search
         if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((product) =>{
+        result = result.filter((product) =>{          
           const productname = product.product_desc.toLowerCase()
-          const product_sn = product.product_sn.toLowerCase()
-          return productname.includes(query) || product_sn.includes(query)
+          const product_sn = product.product_sn.toLowerCase()                    
+          return productname.includes(query) || 
+                 product_sn.includes(query)                 
         }            
         )
       }

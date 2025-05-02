@@ -8,10 +8,8 @@
           <p class="text-gray-500 text-sm mt-1">Master Data / Account Receivable</p>
         </div>
         <div class="flex gap-3">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
           </button>
         </div>
@@ -23,12 +21,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search by name or account..."
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Search by name or account..."
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -38,26 +32,16 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Balance Range</label>
             <div class="flex gap-2">
-              <input
-                type="number"
-                v-model="minBalance"
-                placeholder="Min"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="number"
-                v-model="maxBalance"
-                placeholder="Max"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="number" v-model="minBalance" placeholder="Min"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="number" v-model="maxBalance" placeholder="Max"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="sortBy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="name">Name</option>
               <option value="balance">Balance</option>
               <option value="accountNumber">Account Number</option>
@@ -66,10 +50,8 @@
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="itemsPerPage"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="20">20</option>
@@ -85,12 +67,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -105,13 +84,10 @@
               <tr v-else-if="paginatedData.length === 0" class="text-center">
                 <td colspan="5" class="px-6 py-4">No data found</td>
               </tr>
-              <tr
-                v-for="(account, index) in paginatedData"
-                :key="account.id"
-                class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              <tr v-for="(account, index) in paginatedData" :key="account.id"
+                class="hover:bg-gray-50 transition-colors duration-150">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ account.code_so }}
+                  {{ account.code_invoice }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
@@ -119,13 +95,13 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.deposit) }}
+                  {{ formatCurrency(account.salesorder.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.grand_total - account.deposit) }}
+                  {{ formatCurrency(account.grand_total - account.salesorder.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ account.issue_at }}</div>
@@ -135,7 +111,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ account.issue_at - account.due_at }}
+                    {{ calculateDay(account.issue_at, account.due_at) }} days
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -144,29 +120,24 @@
                       View
                     </button> -->
                     <button @click="openModal(account)" class="text-green-600 hover:text-green-900">
-                      Edit Deposit
+                      Posting
                     </button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
-          <div
-            v-if="isModalOpen"
-            class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300"
-          >
-            <div
-              class="bg-white p-8 rounded-xl w-96 shadow-xl transform transition-all duration-300"
-            >
+          <div v-if="isModalOpen"
+            class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300">
+            <div class="bg-white p-8 rounded-xl w-96 shadow-xl transform transition-all duration-300">
               <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">Edit Deposit</h2>
 
               <!-- Total Amount Display -->
               <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
-                  <span class="text-lg font-semibold text-gray-800"
-                    >Rp. {{ selectedItem ? formatCurrency(selectedItem.grand_total) : 0 }}</span
-                  >
+                  <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
+                    formatCurrency(selectedItem.grand_total) : 0 }}</span>
                 </div>
               </div>
 
@@ -174,9 +145,8 @@
               <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Current Deposit</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
-                  <span class="text-lg font-semibold text-gray-800"
-                    >Rp. {{ selectedItem ? formatCurrency(selectedItem.deposit) : 0 }}</span
-                  >
+                  <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
+                    formatCurrency(selectedItem.salesorder.deposit) : 0 }}</span>
                 </div>
               </div>
 
@@ -186,16 +156,17 @@
                   Additional Deposit Amount
                 </label>
                 <div class="relative">
-                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"
-                    >Rp.</span
-                  >
-                  <input
-                    id="deposit-amount"
-                    type="number"
-                    v-model.number="additionalDeposit"
-                    class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="0.00"
-                  />
+                  <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">Rp.</span>
+                  <div class="flex space-x-3">
+                    <input id="deposit-amount" type="number" v-model.number="additionalDeposit"
+                      class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      placeholder="0.00" />
+                    <button
+                      class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"                      
+                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.salesorder.deposit">                     
+                     Lunas
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -221,8 +192,8 @@
                     {{
                       selectedItem
                         ? formatCurrency(
-                            selectedItem.grand_total - (selectedItem.deposit + additionalDeposit),
-                          )
+                          selectedItem.grand_total - (selectedItem.deposit + additionalDeposit),
+                        )
                         : 0
                     }}
                   </span>
@@ -232,25 +203,16 @@
               <div class="flex justify-end space-x-3">
                 <button
                   class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-5 rounded-lg transition-colors duration-200"
-                  @click="closeModal"
-                >
+                  @click="closeModal">
                   Cancel
                 </button>
                 <button
                   class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-5 rounded-lg transition-colors duration-200 flex items-center"
-                  @click="saveDeposit"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 mr-2"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fill-rule="evenodd"
+                  @click="saveDeposit">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
                       d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clip-rule="evenodd"
-                    />
+                      clip-rule="evenodd" />
                   </svg>
                   Save Changes
                 </button>
@@ -271,47 +233,26 @@
               results
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 First
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Previous
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Next
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Last
               </button>
             </div>
@@ -320,26 +261,17 @@
       </div>
 
       <!-- Delete Confirmation Modal -->
-      <div
-        v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
           <h3 class="text-lg font-bold mb-4">Confirm Delete</h3>
           <p class="mb-6">
             Are you sure you want to delete this account? This action cannot be undone.
           </p>
           <div class="flex justify-end gap-3">
-            <button
-              @click="showDeleteModal = false"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
+            <button @click="showDeleteModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
               Cancel
             </button>
-            <button
-              @click="deleteAccount"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
+            <button @click="deleteAccount" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
               Delete
             </button>
           </div>
@@ -371,7 +303,7 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'no', label: 'Code So' },
+      { key: 'no', label: 'Code Invoice' },
       { key: 'name', label: 'Name' },
       { key: 'Terbayar', label: 'Terbayar' },
       { key: 'Amount', label: 'Amount' },
@@ -396,7 +328,6 @@ export default defineComponent({
     const getArcheive = async () => {
       try {
         const res = await axios.get(AccReceive)
-        console.log('Data dari API:', res.data) // Log data untuk memastikan properti `id` ada
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -413,12 +344,14 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (account) =>
-            account.name.toLowerCase().includes(query) || account.accountNumber.includes(query),
-        )
+        result = result.filter((entry) => {
+          const name = entry.customer.customer_name.toLowerCase();
+          const code_invoice = entry.code_invoice.toLowerCase();
+          return name.includes(query) ||
+                code_invoice.includes(query)              
+        })
       }
-      result = result.filter((account) => account.grand_total - account.deposit > 0)
+      result = result.filter((account) => account.grand_total - account.salesorder.deposit > 0)
 
       if (minBalance.value) {
         result = result.filter((account) => account.balance >= minBalance.value)
@@ -437,6 +370,15 @@ export default defineComponent({
 
       return result
     })
+
+    const calculateDay = (issue_at, due_at) => {
+      const today = new Date();
+      const due_date = new Date(due_at);
+
+      const timeDiff = due_date.getTime() - today.getTime();
+      const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      return dayDiff;
+    }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
 
@@ -519,10 +461,11 @@ export default defineComponent({
     async function saveDeposit() {
       if (selectedItem.value) {
         try {
-          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
-          const response = await axios.put(`${AccUpdateDeposit}/${selectedItem.value.id_so}`, {
-            deposit: newTotalDeposit,
-          })
+          const newTotalDeposit = selectedItem.value.salesorder.deposit + additionalDeposit.value
+          const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.salesorder.id_so, {
+            deposit : newTotalDeposit
+          });
+
           if (response.status === 200) {
             selectedItem.value.deposit = newTotalDeposit
             closeModal()
@@ -613,6 +556,7 @@ export default defineComponent({
       openModal,
       closeModal,
       saveDeposit,
+      calculateDay,
       isModalOpen,
       selectedItem,
       editedDeposit,

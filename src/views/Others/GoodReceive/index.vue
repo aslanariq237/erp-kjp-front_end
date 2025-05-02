@@ -144,7 +144,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
-import { PurchaseOrder } from '@/core/utils/url_api';
+import { DetailPo, PurchaseOrder } from '@/core/utils/url_api';
 import router from '@/router';
 
 export default defineComponent({
@@ -177,6 +177,7 @@ export default defineComponent({
 
     // Sample data - replace with API call
     const entries = ref([])
+    const dataexcel = ref([]);
 
     const getPurchaseOrder = async () => {
       try {
@@ -186,8 +187,19 @@ export default defineComponent({
         console.error('Error Fetching : ', error)
       }
     }
+
+    const getDetailPO = async() => {
+      try {
+        await axios.get(DetailPo).then((res) => {
+          dataexcel.value = res.data;
+        });
+      } catch (error) {
+        console.error('Error Fetching : ', error)        
+      }
+    }
     onMounted(() => {
       getPurchaseOrder();
+      getDetailPO();
     })
 
     const viewData = (id) => {
@@ -202,10 +214,9 @@ export default defineComponent({
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
-          const code_so = entry.code_so.toLowerCase()
-          const po_number = entry.po_number.toLowerCase()
-          const customer = entry.customer.customer_name.toLowerCase()
-          return code_so.includes(query) || po_number.includes(query) || customer.includes(query)
+          const code_po = entry.code_po.toLowerCase();
+          const vendor_name = entry.vendor.vendor_name.toLowerCase();
+          return code_po.includes(query) || vendor_name.includes(query)
         })
       }
 
@@ -267,19 +278,15 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        'Code PO': entry.code_po,
-        'PO Type': entry.po_type,
-        'Status Payment': entry.status_payment,
-        'Sub Total': entry.sub_total,
-        'Total Tax': entry.total_tax,
-        'Total Service': entry.total_service,
-        Deposit: entry.deposit,
-        PPN: entry.ppn,
-        'Grand Total': entry.grand_total,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-      }))
+      const data = dataexcel.value.map((entry) => ({
+        'Po Number' : entry.purchaseorders.code_po,
+        'Vendor Name' : entry.purchaseorders.vendor.vendor_name,
+        'Product Decs' : entry.product.product_desc,
+        'product SN' : entry.product.product_sn,        
+        'Has GR' : entry.purchaseorders.has_gr == 1 ? "Full" : "Parsial",
+        'Issue Date' : entry.purchaseorders.issue_at,
+        'Due Date' : entry.purchaseorders.due_at,
+      })); 
 
       // Create CSV content
       const headers = Object.keys(data[0])
@@ -293,7 +300,7 @@ export default defineComponent({
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.setAttribute('href', url)
-      a.setAttribute('download', `purchase-order-${new Date().toISOString().split('T')[0]}.csv`)
+      a.setAttribute('download', `good-receive-${new Date().toISOString().split('T')[0]}.csv`)
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)

@@ -135,16 +135,13 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
-                    {{ account.issue_at - account.due_at }}
+                    {{ calculateDay(account.issue_at, account.due_at) }} days
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
+                  <div class="flex space-x-3">                  
                     <button @click="openModal(account)" class="text-green-600 hover:text-green-900">
-                      Edit
+                      Posting
                     </button>
                   </div>
                 </td>
@@ -189,13 +186,16 @@
                   <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500"
                     >Rp.</span
                   >
-                  <input
-                    id="deposit-amount"
-                    type="number"
-                    v-model.number="additionalDeposit"
-                    class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                    placeholder="0.00"
-                  />
+                  <div class="flex space-x-3">
+                    <input id="deposit-amount" type="number" v-model.number="additionalDeposit"
+                      class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      placeholder="0.00" />
+                    <button
+                      class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"                      
+                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.deposit">                     
+                     Lunas
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -354,7 +354,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
-import { AccPayable, AccReceive, AccUpdateDeposit, AccUpdateDepositAp } from '@/core/utils/url_api'
+import { AccPayable } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -399,8 +399,7 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccPayable)
-        console.log('Data dari API:', res.data) // Log data untuk memastikan properti `id` ada
+        const res = await axios.get(AccPayable)        
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -410,6 +409,16 @@ export default defineComponent({
     onMounted(() => {
       getArcheive()
     })
+
+    const calculateDay = (issue_at, due_at) => {
+      const today = new Date();
+      const due_date = new Date(due_at);
+
+      const timeDiff = due_date.getTime() - today.getTime();
+      const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+      return dayDiff;
+    }
+
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -669,6 +678,7 @@ export default defineComponent({
       openModal,
       closeModal,
       saveDeposit,
+      calculateDay,
       isModalOpen,
       selectedItem,
       editedDeposit,

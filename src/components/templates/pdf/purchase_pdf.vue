@@ -6,14 +6,14 @@
             </div>
             <div class="address w-[50%] text-left">
                 <p class="font-semibold text-3xl text-green-600">PT.KHAHAYAN JAYA PERSADA</p>
-                <p class="text-2xl">
+                <p class="text-xl">
                     Garden Loft Grand Wisata CE 2 No 35
                     Lambang Jaya, Tambun, Bekasi, Jawa Barat, 17510</p>
-                <div class="flex text-2xl">
+                <div class="flex text-xl">
                     <p class="w-20">Email </p>
                     <p >: khahayanjayapersada@pt-kjp.com</p>
                 </div>
-                <div class="flex text-2xl">
+                <div class="flex text-xl">
                     <p class="w-20">Contact</p>
                     <p>: 081809000805</p>
                 </div>
@@ -26,7 +26,7 @@
                     <p class="text-4xl font-semibold mt-5" v-if="item.approved == 0">DRAFT PURCHASE ORDER</p>
                     <p class="text-4xl font-semibold mt-5" v-else>PURCHASE ORDER</p>
                 </div>
-                <div class="flex justify-between text-2xl mt-5">
+                <div class="flex justify-between text-xl mt-5">
                     <div class="left ml-10 w-[50%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.vendor.vendor_name }}</p>
@@ -66,13 +66,13 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2 text-2xl" v-for="(pro, index) in item.detail_po" :key="index">
-                                <td class="text-2xl px-3 py-2">{{ pro.product.product_sn }}</td>
-                                <td class="text-2xl px-3 py-2">{{ pro.product.product_desc }}</td>
-                                <td class="text-2xl px-3 py-2">{{ pro.quantity }}</td>
-                                <td class="text-2xl px-3 py-2">{{ pro.product.product_uom }}</td>
-                                <td class="text-2xl px-3 py-2">{{ numberWithCommas(pro.price) }}</td>
-                                <td class="text-2xl px-3 py-2">{{ numberWithCommas(pro.price * pro.quantity) }}</td>
+                            <tr class="text-center border-b-2 text-xl" v-for="(pro, index) in item.detail_po" :key="index">
+                                <td class="text-xl px-3 py-2">{{ pro.product.product_sn }}</td>
+                                <td class="text-xl px-3 py-2">{{ pro.product.product_desc }}</td>
+                                <td class="text-xl px-3 py-2">{{ pro.quantity }}</td>
+                                <td class="text-xl px-3 py-2">{{ pro.product.product_uom }}</td>
+                                <td class="text-xl px-3 py-2">{{ numberWithCommas(pro.price) }}</td>
+                                <td class="text-xl px-3 py-2">{{ numberWithCommas(pro.price * pro.quantity) }}</td>
                             </tr>
                             <tr>
                                 <td class="px-3 py-2 whitespace-nowrap"></td>
@@ -87,9 +87,9 @@
                                 <td class="px-3 py-2 whitespace-nowrap"></td>
                                 <td class="px-3 py-2 whitespace-nowrap"></td>
                                 <td class="px-3 py-2 whitespace-nowrap"></td>
-                                <td class="text-2xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">Purchase
+                                <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">Purchase
                                     SubTotal</td>
-                                <td class="text-2xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">
+                                <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <span>IDR. </span>
                                         <span>
@@ -103,8 +103,8 @@
                                 <td class="px-3 py-2"></td>
                                 <td class="px-3 py-2"></td>
                                 <td class="px-3 py-2"></td>
-                                <td class="text-2xl px-3 py-2 border-gray-200 border-2">PPN 11%</td>
-                                <td class="text-2xl px-3 py-2 border-gray-200 border-2">
+                                <td class="text-xl px-3 py-2 border-gray-200 border-2">PPN 11%</td>
+                                <td class="text-xl px-3 py-2 border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <span>IDR. </span>
                                         <span>{{ numberWithCommas(item.ppn) }},00</span>
@@ -116,8 +116,8 @@
                                 <td class="px-3 py-2"></td>
                                 <td class="px-3 py-2"></td>
                                 <td class="px-3 py-2"></td>
-                                <td class="text-2xl px-3 py-2 border-gray-200 border-2">Total</td>
-                                <td class="text-2xl px-3 py-2 border-gray-200 border-2">
+                                <td class="text-xl px-3 py-2 border-gray-200 border-2">Total</td>
+                                <td class="text-xl px-3 py-2 border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <p>IDR. </p>
                                         {{ numberWithCommas(item.grand_total) }},00
@@ -133,9 +133,9 @@
                 </div> -->
                 <div class="flex justify-between text-center">
                     <div>
-                        <p class="mb-2 text-2xl">Prepared By</p>
+                        <p class="mb-2 text-xl">Prepared By</p>
                         <img :src="getImagePaths('tt-imam-without-stempel.png')" width="190">
-                        <div class="text-2xl">
+                        <div class="text-xl">
                             <p>IMAM FAJRI</p>
                         </div>
                     </div>
@@ -144,9 +144,9 @@
 
                         </div>
                         <div v-else>
-                            <p class="text-2xl">Approved By</p>
+                            <p class="text-xl">Approved By</p>
                             <img :src="getImagePaths('tt-vinvent.png')" width="450">
-                            <div class="text-2xl">
+                            <div class="text-xl">
                                 <p>VINCENTIUS ADITYA HARNAWAN</p>
                             </div>
                         </div>

@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Laporan Keuangan</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / Laporan Keuangan</p>
+          <h1 class="text-2xl font-bold text-gray-800">Finance Report</h1>
+          <p class="text-gray-500 text-sm mt-1">Finance Tools/ Laporan Keuangan</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -111,7 +111,7 @@
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_number }}
+                  {{ entry.po_code }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.po_date }}
@@ -121,6 +121,15 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.cust_name }}
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.price_so }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.amount_so }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.pn }}
@@ -145,16 +154,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.so_date }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.price_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.amount_so }}
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.delivery_order }}
                 </td>
@@ -217,16 +217,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.aging_ar }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.payment1) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.payment_number }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.payment1_date }}
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.os_ar) }}
                 </td>
@@ -348,25 +339,28 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'po_number', label: 'PO NUMBER' },
-      { key: 'po_date', label: 'PO DATE' },
-      { key: 'cust_code', label: 'CUST CODE' },
-      { key: 'cust_name', label: 'CUST NAME' },
-      { key: 'pn', label: 'PN' },
-      { key: 'desc', label: 'DESC' },
-      { key: 'qty_po', label: 'QTY PO' },
-      { key: 'price_po', label: 'PRICE PO' },
-      { key: 'amount_po', label: 'AMOUNT PO' },
-      { key: 'brand', label: 'BRAND' },
-      { key: 'sales_order', label: 'SALES ORDER' },
-      { key: 'sales_order_date', label: 'SALES ORDER DATE' },
-      { key: 'qty_so', label: 'QTY SO' },
-      { key: 'price_so', label: 'PRICE SO' },
-      { key: 'amount_so', label: 'AMOUNT SO' },
-      { key: 'delivery_order', label: 'DELIVERY ORDER' },
-      { key: 'delivery_order_date', label: 'DELIVERY ORDER DATE' },
-      { key: 'qty_do', label: 'QTY DO' },
-      { key: 'bill_no', label: 'BILL NO' },
+      { key: 'po_number', label: 'Po Number' }, // po sales order
+      { key: 'po_date', label: 'Po Date' }, // sales order date
+      { key: 'cust_code', label: 'Customer Code' }, //customer code
+      { key: 'cust_name', label: 'Customer Name' }, // customer name
+      { key: 'pn', label: 'PN' },     // part number product
+      { key: 'desc', label: 'Product Desc' }, //name product
+      { key: 'qty_so', label: 'Quantity SO' }, //quantity sales order
+      { key: 'price_so', label: 'Price So' }, //price per unit sales order
+      { key: 'amount_so', label: 'Amount So' }, //amount sales order
+      { key: 'brand', label: 'Brand' }, // brand product
+      { key: 'sales_order', label: 'SO Number' }, // sales order code
+      { key: 'sales_order_date', label: 'So Date' }, // sales order date
+      { key: 'qty_po', label: 'Quantity PO' }, // quantity purchase order
+      { key: 'price_po', label: 'Price PO' }, // price per unit purchase order
+      { key: 'amount_po', label: 'Amount PO' }, // amount purchase order
+      { key: 'amount_po', label: 'PO Number' }, // amount purchase order
+      { key: 'delivery_order', label: 'Delivery Order' }, // delivery order
+      { key: 'delivery_order_date', label: 'DO Date' }, // delivery order date
+      { key: 'qty_do', label: 'Quantity DO' }, //quantity delivery order
+      { key: 'qty_do', label: 'DO Date' }, //delivery order date
+      { key: 'bill_no', label: 'BILL NO' }, // invoice number
+      // last in here
       { key: 'billing_date', label: 'BILLING DATE' },
       { key: 'amount_invoice', label: 'AMOUNT INVOICE' },
       { key: 'gross_profit', label: 'GROSS PROFIT' },
@@ -380,10 +374,7 @@ export default defineComponent({
       { key: 'received_date', label: 'RECEIVED DATE' },
       { key: 'status_ar', label: 'STATUS AR' },
       { key: 'total_ar', label: 'TOTAL AR' },
-      { key: 'aging_ar', label: 'AGING AR' },
-      { key: 'payment1', label: 'PAYMENT1' },
-      { key: 'payment_number', label: 'PAYMENT NUMBER' },
-      { key: 'payment1_date', label: 'PAYMENT1 DATE' },
+      { key: 'aging_ar', label: 'AGING AR' },      
       { key: 'os_ar', label: 'OS AR' },
     ]
 
@@ -403,8 +394,7 @@ export default defineComponent({
       loading.value = true
       try {
         // Simulate API call
-        const response = await axios.get(GetReportManagement)
-        console.log('Data fetched from GetReportManagement:', response.data)
+        const response = await axios.get(GetReportManagement)        
         reportManagement.value = response.data
       } catch (error) {
         console.error('Error fetching invoices:', error)
@@ -481,29 +471,29 @@ export default defineComponent({
     const exportToExcel = () => {
       const data = filteredData.value.map((entry) => {
         return {
-          'PO NUMBER': entry.po_number,
-          'PO DATE': entry.po_date,
-          'CUST CODE': entry.cust_code,
-          'CUST NAME': entry.cust_name,
+          'Po Number': entry.po_code,          
+          'Customer Code': entry.cust_code,
+          'Customer Name': entry.cust_name,
           PN: entry.pn,
-          DESC: entry.desc,
-          'QTY PO': entry.qty_po,
-          'PRICE PO': entry.price_po,
-          'AMOUNT PO': entry.amount_po,
-          Brand: entry.product_brand,
-          'SALES ORDER': entry.sales_order,
-          'SALES ORDER DATE': entry.sales_order_date,
-          'QTY SO': entry.qty_so,
-          'PRICE SO': entry.price_so,
-          'AMOUNT SO': entry.amount_so,
-          'DELIVERY ORDER': entry.delivery_order,
-          'DELIVERY ORDER DATE': entry.do_date,
-          'QTY DO': entry.qty_do,
-          'BILL NO': entry.bill_no,
-          'BILLING DATE': entry.billing_date,
-          'AMOUNT INVOICE': entry.amount_invoice,
-          'GROSS PROFIT': entry.gross_profit,
+          "Product Desc": entry.desc,
+          'Quantity SO': entry.qty_so,
+          'Price SO': entry.price_so,
+          'Amount SO': entry.amount_so,
+          'SO Number': entry.sales_order,
+          'SO Date': entry.sales_order_date,          
+          'Quantity PO': entry.qty_po,
+          'Price PO': entry.price_po,
+          'Amount PO': entry.amount_po,
+          Brand: entry.product_brand,          
+          'DO Number': entry.delivery_order,
+          'DO Date': entry.do_date,
+          'Quantity DO': entry.qty_do,
+          'Invoice Number': entry.bill_no,
+          'Invoice Date': entry.billing_date,
+          'Amount Invoice': entry.amount_invoice,
+          'Gross Profit': entry.gross_profit,
           '% GP': entry.gp_percentage,
+          //last
           'FAKTUR PAJAK': entry.faktur_pajak,
           'FAKTUR DATE': entry.faktur_date,
           'TANDA TERIMA INVOICE': entry.tanda_terima_invoice,

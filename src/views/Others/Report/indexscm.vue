@@ -62,7 +62,7 @@
   import { defineComponent, ref, computed, onMounted } from 'vue'
   import AdminLayout from '@/components/layout/AdminLayout.vue'
   import { RouterLink, useRouter } from 'vue-router'
-  import { PurchaseOrder } from '@/core/utils/url_api';
+  import { DetailPo, PurchaseOrder } from '@/core/utils/url_api';
   
   import axios from 'axios'
   
@@ -102,6 +102,7 @@
       const currentPage = ref(1)
       const itemsPerPage = ref(10)
       const invoice = ref([]); 
+      const dataexcel = ref([]);
   
       // Sample data - replace with API call
       const reportData = ref([])
@@ -110,9 +111,20 @@
         const response = await axios.get(PurchaseOrder)
         invoice.value = response.data;   
       }
+
+      const detailPo = async() => {
+      try {
+        await axios.get(DetailPo).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error Fetching : ', error)
+      }
+    }
   
       onMounted(() => {
         getInvoices();
+        detailPo();
       });
   
       // Computed properties for filtering and pagination
@@ -230,19 +242,16 @@
       }
   
       const exportData = () => {
-        const data = filteredData.value.map((report) => ({
-          'Po Number' : report.code_po,
-          'Vendor' : report.vendor.vendor_name,
-          'Address' : report.vendor.vendor_address,
-          'Term Of Payment' : report.termin,
-          'Product' : report.detail_po.product_id,
-          'quantity' : report.detail_po.quantity,
-          'Sub Total' : report.sub_total,
-          'Ppn' : report.ppn,
-          'Total' : report.grand_total,
-          'Issue Date' : report.issue_at,
-          'Due Date' : report.due_at,
-        }))
+        const data = dataexcel.value.map((entry) => ({
+        'Po Number' : entry.purchaseorders.code_po,
+        'Vendor Name' : entry.purchaseorders.vendor.vendor_name,
+        'Product Decs' : entry.product.product_desc,
+        'product SN' : entry.product.product_sn,        
+        'Quantity' : entry.quantity,
+        'Price' : entry.price,
+        'Issue Date' : entry.purchaseorders.issue_at,
+        'Due Date' : entry.purchaseorders.due_at,
+      })); 
   
         // Create CSV content
         const headers = Object.keys(data[0])
