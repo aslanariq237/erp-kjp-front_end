@@ -152,10 +152,9 @@ const props = defineProps({
 
 const series = computed(() => [props.value])
 
-const getSales = async() => {
-  await axios.get(SalesOrdersMonthly).then(
-    (res) => {
-      var data = res.data;    
+const getSales = async () => {
+  await axios.get(SalesOrdersMonthly).then((res) => {
+    var data = res.data
   })
 }
 
