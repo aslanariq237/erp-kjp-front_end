@@ -200,7 +200,7 @@
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { Invoice, InvoiceAdd, SalesOrders } from '@/core/utils/url_api'
+import { DetailInvoice, Invoice, InvoiceAdd, SalesOrders } from '@/core/utils/url_api'
 import InvoicePdfTemplate from '@/components/templates/pdf/invoice_pdf.vue'
 import router from '@/router'
 import html2canvas from 'html2canvas'
@@ -237,6 +237,8 @@ export default defineComponent({
     const invoice = ref([])
     const purchaseorders = ref([])
 
+    const dataexcel = ref([]);
+
     const getInvoices = async () => {
       const response = await axios.get(Invoice)
       invoice.value = response.data
@@ -246,6 +248,17 @@ export default defineComponent({
         getById(invoiceId)
       }
     }
+
+    const getDetailInv = async() => {
+      try {
+        await axios.get(DetailInvoice).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error fetching invoice details:', error)
+      }
+    }
+
     const approved = (id) => {
       axios.post(InvoiceAdd + '/appr/' + id).then((res) => {
         console.log(res)
@@ -266,6 +279,7 @@ export default defineComponent({
 
     onMounted(() => {
       getInvoices()
+      getDetailInv();
     })
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -346,21 +360,19 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        'Code Invoice': entry.code_invoice,
-        'Invoice Type': entry.invoice_type,
-        'Status Payment': entry.status_payment,
-        'Sub Total': entry.sub_total,
-        'Total Tax': entry.total_tax,
-        'Total Service': entry.total_service,
-        Deposit: entry.deposit,
-        PPN: entry.ppn,
-        'Grand Total': entry.grand_total,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-        'Customer Name': entry.customer.customer_name,
-        'PO Number': entry.code_po,
-      }))
+      const data = dataexcel.value.map((entry) => ({
+        'Invoice Number': entry.invoice.code_invoice,
+        'SO Number': entry.invoice.salesorder.code_so,
+        'PO Number': entry.invoice.salesorder.po_number,
+        'DO Number' : entry.do.code_do,
+        'Customer' : entry.invoice.customer.customer_name,
+        'Product Desc' : entry.product.product_desc,
+        'Product SN' : entry.product.product_sn,
+        'Quantity' : entry.quantity,
+        'Price' : entry.price,
+        'Issue Date' : entry.invoice.issue_at,
+        'Due Date' : entry.invoice.due_at,
+      }));     
 
       // Create CSV content
       const headers = Object.keys(data[0])

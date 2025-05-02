@@ -192,7 +192,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { DeliveryOrder } from '@/core/utils/url_api'
+import { DeliveryOrder, DetailDo } from '@/core/utils/url_api'
 import DoPdfTemplate from '@/components/templates/pdf/do_pdf.vue'
 import html2canvas from 'html2canvas'
 import { createApp, h } from 'vue'
@@ -209,7 +209,8 @@ export default defineComponent({
 
   setup() {
     // Data
-    const entries = ref([])
+    const entries = ref([]);
+    const dataexcel = ref([]);
     const loading = ref(false)
 
     // Fetch delivery orders from API
@@ -226,8 +227,19 @@ export default defineComponent({
       }
     }
 
+    const getDetailDO = async() => {
+      try {
+        await axios.get(DetailDo).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error fetching delivery orders:', error)
+      } 
+    } 
+
     onMounted(() => {
-      fetchDeliveryOrders()      
+      fetchDeliveryOrders()
+      getDetailDO();      
     })
 
     // Filtering and Sorting
@@ -329,14 +341,17 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        'Code DO': entry.code_do,
-        'Customer ID': entry.id_customer,
-        'Employee ID': entry.id_employee,
-        'Bank Account ID': entry.id_bank_account,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-      }))
+      const data = dataexcel.value.map((entry) => ({
+        'SO Number' : entry.do.salesorder.code_so,
+        'PO Number' : entry.do.salesorder.po_number,
+        'DO Number' : entry.do.code_do,
+        'customer' : entry.do.customer.customer_name,
+        'Product Desc' : entry.product.product_desc,
+        'Product SN' : entry.product.product_sn,
+        'Quantity' : entry.qty,
+        'issue date' : entry.do.issue_at,
+        'due date' : entry.do.due_at,
+      })); 
 
       // Create CSV content
       const headers = Object.keys(data[0])

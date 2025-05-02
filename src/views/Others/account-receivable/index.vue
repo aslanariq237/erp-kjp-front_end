@@ -373,7 +373,7 @@ export default defineComponent({
     const tableHeaders = [
       { key: 'no', label: 'Code So' },
       { key: 'name', label: 'Name' },
-      { key: 'Deposit', label: 'Deposit' },
+      { key: 'Terbayar', label: 'Terbayar' },
       { key: 'Amount', label: 'Amount' },
       { key: 'Debt', label: 'Debt' },
       { key: 'Debt', label: 'Issue Date' },

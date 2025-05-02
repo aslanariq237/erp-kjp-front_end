@@ -200,7 +200,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { SalesOrders, Tandater } from '@/core/utils/url_api'
+import { DetailTandater, SalesOrders, Tandater } from '@/core/utils/url_api'
 import router from '@/router'
 export default defineComponent({
   name: 'SalesOrderPage',
@@ -233,6 +233,7 @@ export default defineComponent({
 
     // Sample data - replace with API call
     const entries = ref([])
+    const dataexcel = ref([])
 
     const GetSalesOrder = async () => {
       try {
@@ -242,8 +243,19 @@ export default defineComponent({
         console.error('Error Fetching : ', error)
       }
     }
+
+    const getDetail = async() => {
+      try {
+        const res = await axios.get(DetailTandater)
+        dataexcel.value = res.data
+      } catch (error) {
+        console.error('Error Fetching : ', error)
+      }
+
+    }
     onMounted(() => {
-      GetSalesOrder()
+      GetSalesOrder();
+      getDetail();
     })
 
     // Computed properties for filtering and pagination
@@ -336,19 +348,16 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        'Code SO': entry.code_so,
-        'SO Type': entry.so_type,
-        'Status Payment': entry.status_payment,
-        'Sub Total': entry.sub_total,
-        'Total Tax': entry.total_tax,
-        'Total Service': entry.total_service,
-        Deposit: entry.deposit,
-        PPN: entry.ppn,
-        'Grand Total': entry.grand_total,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-      }))
+      const data = dataexcel.value.map((entry) => ({
+        'Tandater Number' : entry.tandater.code_tandater,        
+        'PO Number' : entry.so.po_number,
+        'So Number' : entry.so.code_so,                
+        'Invoice Number' : entry.invoice.code_invoice,
+        'Customer' : entry.so.customer.customer_name,        
+        'Resi' : entry.tandater.resi,
+        'issue Date' : entry.tandater.issue_at,
+        'Due Date' : entry.tandater.due_at,
+      }))      
 
       // Create CSV content
       const headers = Object.keys(data[0])

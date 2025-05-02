@@ -209,7 +209,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { SalesOrders, SalesOrderDelete } from '@/core/utils/url_api'
+import { SalesOrders, SalesOrderDelete, DetailSo } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
 import router from '@/router'
 export default defineComponent({
@@ -242,6 +242,7 @@ export default defineComponent({
 
     // Sample data - replace with API call
     const entries = ref([])
+    const dataexcel = ref([])
 
     const GetSalesOrder = async () => {
       try {
@@ -251,8 +252,22 @@ export default defineComponent({
         console.error('Error Fetching : ', error)
       }
     }
+
+    const GetDetailSo = async () => {
+      try {
+        await axios.get(DetailSo).then((res) => {
+          dataexcel.value = res.data;
+        }).catch((error) => {
+          console.error('Error Fetching : ', error)
+        })
+      } catch (error) {
+        console.error('Error Fetching : ', error)  
+      }    
+    }
+
     onMounted(() => {
       GetSalesOrder()
+      GetDetailSo();
     })
 
     // Computed properties for filtering and pagination
@@ -362,20 +377,18 @@ export default defineComponent({
     })
 
     // Utility functions
-    const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        'Code SO': entry.code_so,
-        'SO Type': entry.so_type,
-        'Status Payment': entry.status_payment,
-        'Sub Total': entry.sub_total,
-        'Total Tax': entry.total_tax,
-        'Total Service': entry.total_service,
-        Deposit: entry.deposit,
-        PPN: entry.ppn,
-        'Grand Total': entry.grand_total,
-        'Issue Date': entry.issue_at,
-        'Due Date': entry.due_at,
-      }))
+    const exportData = () => {            
+      const data = dataexcel.value.map((entry) => ({
+        'SO Number' : entry.salesorders.code_so,
+        'PO Number' : entry.salesorders.po_number,
+        'customer' : entry.salesorders.customer.customer_name,        
+        'product description': entry.product.product_desc,
+        'product SN' : entry.product.product_sn,
+        'Quantity': entry.quantity,
+        'Price' : entry.price,        
+        'issue date' : entry.salesorders.issue_at,
+        'due date' : entry.salesorders.due_at,
+      }));      
 
       // Create CSV content
       const headers = Object.keys(data[0])

@@ -222,7 +222,8 @@ export default defineComponent({
     const itemsPerPage = ref(10)
 
     // Sample data - replace with API call
-    const entries = ref([])
+    const entries = ref([]);
+    const dataexcel = ref([]);
 
     const Quatation = async () => {
       await axios.get(Quatations).then((res) => {
@@ -231,9 +232,19 @@ export default defineComponent({
       })
     }
 
+    const detailQuo = async () => {
+      try {
+        await axios.get(DetailQuatation).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error fetching quotation details:', error)
+      }
+    }
+
     onMounted(() => {
-      Quatation()
-      console.log(entries.value)
+      Quatation();
+      detailQuo();    
     })
 
     // Computed properties for filtering and pagination
@@ -334,14 +345,15 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
-        code_quatation: entry.code_quatation,
-        customer: entry.customer.customer_name,
-        termin: entry.termin,
-        sub_total: entry.sub_total,
-        issue_at: entry.issue_at,
-        due_at: entry.due_at,
-      }))
+      const data = dataexcel.value.map((entry) => ({
+        'Quotation Number' : entry.quo.code_quatation,
+        'Customer': entry.quo.customer.customer_name,
+        'Product Desc': entry.product.product_desc,
+        'Product SN' : entry.product.product_sn,
+        'Sub Total': entry.quo.sub_total,
+        'Issue At': entry.quo.issue_at,
+        'Due At': entry.quo.due_at,
+      })); 
 
       // Create CSV content
       const headers = Object.keys(data[0])

@@ -193,7 +193,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { PurchaseOrder } from '@/core/utils/url_api'
+import { DetailPo, PurchaseOrder } from '@/core/utils/url_api'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
@@ -230,6 +230,7 @@ export default defineComponent({
 
     // Sample data - replace with API call
     const entries = ref([])
+    const dataexcel = ref([]);
 
     const getPurchaseOrder = async () => {
       try {
@@ -240,8 +241,19 @@ export default defineComponent({
         console.error('Error Fetching : ', error)
       }
     }
+
+    const detailPo = async() => {
+      try {
+        await axios.get(DetailPo).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error Fetching : ', error)
+      }
+    }
     onMounted(() => {
       getPurchaseOrder()
+      detailPo();
     })
 
     // Computed properties for filtering and pagination
@@ -250,7 +262,11 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter((entry) => entry.code_po.toLowerCase().includes(query))
+        result = result.filter((entry) => {
+          const po_number = entry.code_po.toLowerCase()
+          const vendor = entry.vendor.toLowerCase()
+          return po_number.includes(query) || vendor.includes(query)
+        })
       }
 
       if (startDate.value) {

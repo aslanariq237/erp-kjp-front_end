@@ -9,7 +9,12 @@
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Tanda Terima</h1>
+            <div v-if="id">
+              <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Edit Tanda Terima</h1>
+            </div>
+            <div v-else>
+              <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Tanda Terima</h1>
+            </div>
             <p class="text-gray-500 text-sm mt-1">Sales / Tanda Terima / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -259,6 +264,7 @@ export default defineComponent({
               var object = {
                 code_invoice: data[i].code_invoice,
                 id_invoice: data[i].id_invoice,
+                id_so: data[i].salesorder.id_so,
                 code_so: data[i].salesorder.code_so,
                 po_number: data[i].salesorder.po_number,
               }

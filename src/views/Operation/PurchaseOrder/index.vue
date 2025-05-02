@@ -113,7 +113,19 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
+                  <div v-if="entry.approved = 1">
+                    <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="viewData(entry.id_po)"
+                  >
+                    View
+                  </button>                  
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
+                    Export
+                  </button>                   
+                  </div>
+                  <div v-else>
+                    <button
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="viewData(entry.id_po)"
                   >
@@ -140,6 +152,7 @@
                   >
                     Delete
                   </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -216,7 +229,7 @@
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
+import { DetailPo, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportPoPDF } from '@/core/helpers/exportToPdf'
 import Swal from 'sweetalert2'
@@ -251,6 +264,7 @@ export default defineComponent({
 
     // Sample data - replace with API call
     const entries = ref([])
+    const dataexcel = ref([]);
 
     const getPurchaseOrder = async () => {
       try {
@@ -260,8 +274,19 @@ export default defineComponent({
         console.error('Error Fetching : ', error)
       }
     }
+
+    const detailPo = async() => {
+      try {
+        await axios.get(DetailPo).then((res) => {
+          dataexcel.value = res.data;
+        })
+      } catch (error) {
+        console.error('Error Fetching : ', error)
+      }
+    }
     onMounted(() => {
       getPurchaseOrder()
+      detailPo();
     })
 
     const viewData = (id) => {
@@ -360,7 +385,15 @@ export default defineComponent({
 
     // Utility functions
     const exportData = () => {
-      const data = filteredData.value.map((entry) => ({
+      const data =dataexcel.value.map((entry) => ({
+        'Po Number' : entry.purchaseorders.code_po,
+        'Vendor Name' : entry.purchaseorders.vendor.vendor_name,
+        'Total' : entry.purchaseorders.sub_total,
+        'Total' : entry.purchaseorders.grand_total,
+        'Issue Date' : entry.purchaseorders.issue_at,
+        'Due Date' : entry.purchaseorders.due_at,
+      }));
+      const data1 = filteredData.value.map((entry) => ({
         'Code Invoice': entry.code_invoice,
         'Po Number': entry.salesorder.po_number,
         'Status Payment': entry.status_payment,
