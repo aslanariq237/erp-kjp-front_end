@@ -140,11 +140,11 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <!-- <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
+                    <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
                       View
-                    </button> -->
+                    </button>
                     <button @click="openModal(account)" class="text-green-600 hover:text-green-900">
-                      Edit Payment
+                      Edit
                     </button>
                   </div>
                 </td>
@@ -368,6 +368,10 @@ export default defineComponent({
     const loading = ref(false)
     const showDeleteModal = ref(false)
     const accountToDelete = ref(null)
+    const additionalDeposit = ref(0)
+    const editedDeposit = ref(0)
+    const selectedItem = ref(null)
+    const isModalOpen = ref(false)
 
     // Table headers configuration
     const tableHeaders = [
@@ -479,7 +483,7 @@ export default defineComponent({
       return rangeWithDots
     })
 
-    const additionalDeposit = ref(0)
+    
 
     // Utility functions
     const formatCurrency = (value) => {
@@ -498,11 +502,41 @@ export default defineComponent({
     }
 
     const editAccount = (account) => {
-      router.push(`/account-payable/edit/${account.id}`)
+      router.push(`/account-payable/edit/${account.id_po}`)
     }
-    const isModalOpen = ref(false)
-    const selectedItem = ref(null)
-    const editedDeposit = ref(0)
+
+    function openModal(item) {
+      console.log('Opening modal with item:', item)
+      selectedItem.value = item
+      editedDeposit.value = item.deposit
+      additionalDeposit.value = 0
+      isModalOpen.value = true
+      console.log('Modal state:', isModalOpen.value) // Check if this is true
+    }
+
+    function closeModal() {
+      isModalOpen.value = false
+      selectedItem.value = null
+    }
+
+    async function saveDeposit() {
+      if (selectedItem.value) {
+        try {
+          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
+          const response = await axios.put(`${AccPayableDeposit}/${selectedItem.value.id_po}`, {
+            deposit: newTotalDeposit,
+          })
+          if (response.status === 200) {
+            selectedItem.value.deposit = newTotalDeposit
+            closeModal()
+            console.log('Deposit updated successfully.')
+          }
+        } catch (error) {
+          console.error('Failed to update deposit:', error)
+        }
+      }
+      closeModal()
+    }
 
     function openModal(item) {
       selectedItem.value = item
@@ -616,6 +650,13 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      accounts,
+      selectedItem,
+      isModalOpen,
+      additionalDeposit,
+      editedDeposit,
+      accountToDelete,
+      showDeleteModal,
 
       // Methods
       formatCurrency,

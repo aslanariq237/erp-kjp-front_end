@@ -6,7 +6,7 @@ baseUrl = import.meta.env.VITE_APP_API_URL + '/api/'
 //A
 export const AccReceive = urlLocalhost + 'account_receivable'
 export const AccUpdateDeposit = urlLocalhost + 'account_receivable_deposit'
-export const AccUpdateDepositAp = urlLocalhost + 'account_payable_deposit'
+export const AccPayableDeposit = urlLocalhost + 'account_payable_deposit'
 export const AccPayable = urlLocalhost + 'account_payable'
 export const Asset = urlLocalhost + 'assets'
 export const AddAsset = urlLocalhost + 'assets_code'

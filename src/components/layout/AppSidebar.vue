@@ -230,6 +230,7 @@ const menuGroups = [
           { name: 'Good Receive', path: '/good-receive', pro: false },          
           { name: 'Stock', path: '/stock', pro: false },          
           { name: 'Report', path: '/report/scm', pro: false },
+          { name: 'ADRS', path: '/adrs', pro: false},
         ],
       },
       {
@@ -247,14 +248,17 @@ const menuGroups = [
       {
         name: 'Finance Tools',
         icon: ListIcon,
-        subItems: [
-          { name: 'Bank Account', path: '/bank-account', pro: false },
+        subItems: [          
           { name: 'Faktur Pajak', path: '/faktur-pajak', pro: false },
           { name: 'Account Receivable', path: '/account-receivable', pro: false },
           { name: 'Account Payable', path: '/account-payable', pro: false },
-          { name: 'Laporan Keuangan', path: '/laporan-keuangan', pro: false },
-          { name: 'Laporan Laba Rugi', path: '/laporan-laba-rugi', pro: false },
-          { name: 'OPEX', path: '/opex', pro: false },
+          { name: 'Finance Report', path: '/laporan-keuangan', pro: false },
+          { name: 'Laporan Keuangan', path: '/laporan-laba-rugi', pro: false },
+          { name: 'OPEX Internal', path: '/opex-internal', pro: false },
+          { name: 'Opex External', path: '/opex-external', pro: false },
+          { name: 'Opex Cogs', path: '/opex-cogs', pro: false},
+          { name: 'Opex Absorb', path: '/opex-absorb', pro: false},
+          { name: 'Opex Report', path: '/report/opex', pro: false },          
         ],
       },
       {
