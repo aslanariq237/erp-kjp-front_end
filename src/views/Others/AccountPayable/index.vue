@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">Account Receivable Management</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / Account Receivable</p>
+          <h1 class="text-2xl font-bold text-gray-800">Account Payable Management</h1>
+          <p class="text-gray-500 text-sm mt-1">Finance Tools / Account Payable</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -354,7 +354,8 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
-import { AccPayable } from '@/core/utils/url_api'
+import { AccPayable, AccPayableDeposit } from '@/core/utils/url_api'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -531,20 +532,23 @@ export default defineComponent({
     async function saveDeposit() {
       if (selectedItem.value) {
         try {
-          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
-          const response = await axios.put(`${AccPayableDeposit}/${selectedItem.value.id_po}`, {
-            deposit: newTotalDeposit,
-          })
+          const response = await axios.put(AccPayableDeposit + '/' + selectedItem.value.id_po, {
+            deposit: selectedItem.value.deposit + additionalDeposit.value,
+          });
+          
           if (response.status === 200) {
-            selectedItem.value.deposit = newTotalDeposit
+            selectedItem.value.deposit += additionalDeposit.value
             closeModal()
-            console.log('Deposit updated successfully.')
+            Swal.fire({
+              icon: "success",
+              title: 'Success',
+              text: "Has Been Updated"
+            })
           }
         } catch (error) {
           console.error('Failed to update deposit:', error)
         }
-      }
-      closeModal()
+      }      
     }
 
     function openModal(item) {
@@ -557,41 +561,7 @@ export default defineComponent({
     function closeModal() {
       isModalOpen.value = false
       selectedItem.value = null
-    }
-
-    async function saveDeposit() {
-      if (selectedItem.value) {
-        try {
-          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
-          const response = await axios.put(`${AccUpdateDepositAp}/${selectedItem.value.id_po}`, {
-            deposit: newTotalDeposit,
-          })
-          if (response.status === 200) {
-            selectedItem.value.deposit = newTotalDeposit
-            closeModal()
-            Swal.fire({
-              icon: "success",
-              title: 'Success',
-              text: "Customer Data has been Saved"
-            }).then(async (result) => {
-              if (result.isConfirmed) {
-                var mssg = "";
-                if (this.id != null) {
-                  mssg = "Success Update Purchase Order";
-                } else {
-                  mssg = "Success Create Purchase Order";
-                }
-                await router.push("/customer");
-                this.alertStore.success(mssg);
-              }
-            })
-          }
-        } catch (error) {
-          console.error('Failed to update deposit:', error)
-        }
-      }
-      closeModal()
-    }
+    }    
 
     const confirmDelete = (account) => {
       accountToDelete.value = account

@@ -97,6 +97,36 @@ const router = createRouter({
       ],
     },
 
+    {
+      path: '/adrs',
+      children: [
+        {
+          path: '',
+          name: 'ADRS',
+          component: () => import('../views/Operation/adrs/index.vue'),
+          meta: {
+            title: 'Account Payable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'ADRS-Form',
+          component: () => import('../views/Operation/adrs/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+        {
+          path: 'edit/:id',
+          name: 'ADRS-Edit',
+          component: () => import('../views/Operation/adrs/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+      ],
+    },
+
     //b
     //c
     {

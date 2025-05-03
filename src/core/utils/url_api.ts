@@ -55,6 +55,10 @@ export const Product = urlLocalhost + 'products'
 export const ProductSearch = urlLocalhost + 'products/search'
 export const ProductCode = urlLocalhost + 'products_code'
 
+export const PackageADRS = urlLocalhost + 'package_adrs'
+export const PackageDetails = urlLocalhost + 'package_details'
+export const PackageADRSCode = urlLocalhost + 'package_adrs'
+
 export const PurchaseOrder = urlLocalhost + 'purchase_orders'
 export const PurchaseOrderMonthly = urlLocalhost + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'

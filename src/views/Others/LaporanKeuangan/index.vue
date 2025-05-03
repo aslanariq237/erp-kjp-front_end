@@ -488,6 +488,7 @@ export default defineComponent({
           'DO Number': entry.delivery_order,
           'DO Date': entry.do_date,
           'Quantity DO': entry.qty_do,
+          'Outstanding Supply': entry.qty_so - entry.qty_po,
           'Invoice Number': entry.bill_no,
           'Invoice Date': entry.billing_date,
           'Amount Invoice': entry.amount_invoice,
