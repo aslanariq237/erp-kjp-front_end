@@ -354,14 +354,56 @@ const router = createRouter({
     //n
     //o
     {
-      path: '/opex',
+      path: '/opex-internal',
       children: [
         {
           path: '',
-          name: 'Opex',
-          component: () => import('../views/Others/OPEX/index.vue'),
+          name: 'Opex Internal',
+          component: () => import('../views/Others/OPEXInternal/index.vue'),
           meta: {
-            title: 'Opex',
+            title: 'Opex Internal',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/opex-external',
+      children: [
+        {
+          path: '',
+          name: 'Opex External',
+          component: () => import('../views/Others/OPEXExternal/index.vue'),
+          meta: {
+            title: 'Opex External',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/opex-cogs',
+      children: [
+        {
+          path: '',
+          name: 'Opex Cogs',
+          component: () => import('../views/Others/OPEXCogs/index.vue'),
+          meta: {
+            title: 'Opex Cogs',
           },
         },
         {
