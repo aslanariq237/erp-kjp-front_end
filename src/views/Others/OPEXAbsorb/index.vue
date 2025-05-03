@@ -4,8 +4,8 @@
       <!-- Header Section with Enhanced Styling -->
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
-          <h1 class="text-2xl font-bold text-gray-800">OPEX Managements</h1>
-          <p class="text-gray-500 text-sm mt-1">Master Data / OPEX</p>
+          <h1 class="text-2xl font-bold text-gray-800">OPEX Absorb</h1>
+          <p class="text-gray-500 text-sm mt-1">Opex Absorb</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -15,7 +15,7 @@
             <span>Export</span>
           </button>
           <RouterLink
-            to="/opex/form"
+            to="/opex-absorb/form"
             class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
           >
             Add New OPEX
@@ -25,52 +25,6 @@
 
       <!-- Enhanced Filter Section -->
       <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <div class="type">
-          <div class="ttle">
-            <p>Opex Type</p>
-          </div>
-          <div class="button text-white">
-            <button
-              class="p-2 px-4 border-blue-400 border-2 rounded-l-lg"
-              :class="{ 'bg-blue-400 text-white': po_type === '', 'text-black': po_type !== '' }"
-              @click="po_type = ''"
-            >
-              All
-            </button>
-            <button
-              class="p-2 px-4 border-blue-400 border-2"
-              :class="{
-                'bg-blue-400 text-white': po_type === 'internal',
-                'text-black': po_type !== 'internal',
-              }"
-              @click="po_type = 'internal'"
-            >
-              Internal
-            </button>
-
-            <button
-              class="p-2 px-4 border-blue-400 border-2"
-              :class="{
-                'bg-blue-400 text-white': po_type === 'eksternal',
-                'text-black': po_type !== 'eksternal',
-              }"
-              @click="po_type = 'eksternal'"
-            >
-              External
-            </button>
-
-            <button
-              class="p-2 px-4 rounded-r-lg border-blue-400 border-2"
-              :class="{
-                'bg-blue-400 text-white': po_type === 'cogs',
-                'text-black': po_type !== 'cogs',
-              }"
-              @click="po_type = 'cogs'"
-            >
-              Cogs
-            </button>
-          </div>
-        </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
@@ -347,17 +301,10 @@ export default defineComponent({
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
       let result = [...opexData.value]
-
+      console.log('Filtered Data:', result)
       if (po_type.value === '') {
-        result = result
-      } else if (po_type.value === 'eksternal') {
-        result = result.filter((opex) => opex.opex_type === 'eksternal')
-      } else if (po_type.value === 'cogs') {
-        result = result.filter((opex) => opex.opex_type === 'cogs')
-      } else if (po_type.value === 'internal') {
-        result = result.filter((opex) => opex.opex_type === 'internal')
+        result = result.filter((opex) => opex.opex_type === 'absorb')
       }
-
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter(
@@ -437,7 +384,7 @@ export default defineComponent({
     }
 
     const editOpex = (opex) => {
-      router.push(`/opex/edit/${opex.opex_id}`)
+      router.push(`/opex-absorb/edit/${opex.opex_id}`)
     }
 
     const confirmDelete = (opex) => {

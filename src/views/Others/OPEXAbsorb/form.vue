@@ -12,13 +12,17 @@
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
-          <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Opex</h1>
+          <div v-if="id" class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800">Edit Opex Absorb</h1>
+            <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
+          </div>
+          <div v-else class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800">Create New Opex Absorb</h1>
             <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink
-              to="/opex"
+              to="/opex-absorb"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
             >
               <i class="fas fa-times"></i>
@@ -39,38 +43,37 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Customer Name -->
+          <!-- Opex Name -->
           <FormGroup
-            label="Opex"
+            label="Opex Name"
             :required="true"
-            :error="rules.customerName"
-            errorMessage="Opex is required"
+            :error="rules.opex_name"
+            errorMessage="Opex Name is required"
           >
             <input
               type="text"
               id="name"
               name="name"
               v-model="opex_name"
-              min="0"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.amount
+                rules.opex_name
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
               placeholder="Enter Opex Name"
             />
-            <div class="" v-if="rules.opex_name == true">
-              <p class="text-red-500 text-sm">Opex Name Dibutuhkan</p>
+            <div v-if="rules.opex_name">
+              <p class="text-red-500 text-sm">Opex Name is required</p>
             </div>
           </FormGroup>
 
-          <!-- Amount -->
+          <!-- Price -->
           <FormGroup
             label="Price"
             :required="true"
-            :error="rules.amount"
-            errorMessage="Amount is required and must be greater than 0"
+            :error="rules.opex_price"
+            errorMessage="Price is required and must be greater than 0"
           >
             <input
               type="number"
@@ -80,22 +83,23 @@
               min="0"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.amount
+                rules.opex_price
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
-              placeholder="Enter price"
+              placeholder="Enter Price"
             />
-            <div class="" v-if="rules.opex_price == true">
-              <p class="text-red-500 text-sm">Opex Price Dibutuhkan</p>
+            <div v-if="rules.opex_price">
+              <p class="text-red-500 text-sm">Price is required</p>
             </div>
           </FormGroup>
 
+          <!-- Opex Type -->
           <FormGroup
-            label="Price"
+            label="Opex Type"
             :required="true"
-            :error="rules.amount"
-            errorMessage="Amount is required and must be greater than 0"
+            :error="rules.opex_type"
+            errorMessage="Opex Type is required"
           >
             <select
               name="opex_type"
@@ -103,23 +107,23 @@
               v-model="opex_type"
               :class="[
                 'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.amount
+                rules.opex_type
                   ? 'border-red-300 focus:ring-red-500 bg-red-50'
                   : 'border-gray-300 focus:ring-blue-500',
               ]"
             >
-              <option value="internal">Internal</option>
-              <option value="eksternal">Eksternal</option>
-              <option value="cogs">COGS</option>
+              <option value="absorb">Absorb</option>
             </select>
           </FormGroup>
+
+          <!-- Customer -->
           <FormGroup
-            v-if="opex_type != 'internal'"
+            v-if="opex_type !== 'internal'"
             label="Customer"
             class="relative"
             :required="true"
             :error="rules.customer_id"
-            errorMessage="Customer is Required"
+            errorMessage="Customer is required"
           >
             <input
               type="text"
@@ -143,11 +147,9 @@
               >
                 {{ customer.customer_name }}
               </li>
-              <li v-if="filteredCustomers.length === 0">not found</li>
+              <li v-if="filteredCustomers.length === 0">Not found</li>
             </ul>
           </FormGroup>
-
-          <!-- Due Date -->
         </div>
       </div>
     </Form>
@@ -162,13 +164,12 @@ import { RouterLink } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex } from '@/core/utils/url_api'
+import { AddOpex, Customer, GetOpex } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
-import { Customer } from '@/core/utils/url_api'
 
 export default defineComponent({
-  name: 'AccountReceivableForm',
+  name: 'OpexAbsorbForm',
   components: {
     AdminLayout,
     Form,
@@ -180,16 +181,18 @@ export default defineComponent({
     return {
       opex_name: '',
       opex_price: 0,
-      opex_type: 'internal',
+      opex_type: '',
       customers: [],
       customer_name: '',
       filteredCustomers: [],
       customer_id: null,
       isSubmitting: false,
+      id: null,
       rules: {
         opex_name: false,
         opex_price: false,
         opex_type: false,
+        customer_id: false,
       },
       notification: {
         show: false,
@@ -200,21 +203,24 @@ export default defineComponent({
   },
   async mounted() {
     this.getCustomer()
+    console.log('ID Param', this.$route.params.id)
+    if (this.$route.params.id) {
+      this.id = this.$route.params.id
+      await this.getById(this.id)
+    }
   },
 
   methods: {
     getCustomer() {
       axios.get(Customer).then((res) => {
-        var data = res.data
-        this.customers = data
+        this.customers = res.data
       })
     },
     filterCustomers() {
       const searchTerm = this.customer_name.toLowerCase()
-      this.filteredCustomers = this.customers.filter((customer) => {
-        const name = customer.customer_name.toLowerCase()
-        return name.includes(searchTerm)
-      })
+      this.filteredCustomers = this.customers.filter((customer) =>
+        customer.customer_name.toLowerCase().includes(searchTerm),
+      )
     },
     selectCustomer(customer) {
       this.customer_id = customer.customer_id
@@ -222,72 +228,68 @@ export default defineComponent({
       this.filteredCustomers = []
     },
     showNotification(type, message) {
-      this.notification = {
-        show: true,
-        type,
-        message,
-      }
-
-      // Hide notification after 3 seconds
-      setTimeout(() => {
-        this.notification.show = false
-      }, 3000)
+      this.notification = { show: true, type, message }
+      setTimeout(() => (this.notification.show = false), 3000)
     },
-
     async validation() {
-      var count = 0
+      let count = 0
 
-      if (this.opex_name == '' || this.opex_name == null) {
-        this.rules.opex_name = true
-        count++
-      } else {
-        this.rules.opex_name == false
-      }
+      this.rules.opex_name = !this.opex_name
+      this.rules.opex_price = !this.opex_price || this.opex_price <= 0
+      this.rules.opex_type = !this.opex_type
+      this.rules.customer_id = this.opex_type !== 'internal' && !this.customer_id
 
-      if (this.opex_price == '' || this.opex_price == 0) {
-        this.rules.opex_price = true
-        count++
-      } else {
-        this.rules.opex_price = false
-      }
-
+      count += Object.values(this.rules).filter((rule) => rule).length
       return count
     },
-
+    async getById(id) {
+      await axios.get(GetOpex + '/' + id).then((res) => {
+        var data = res.data
+        this.opex_name = data.opex_name
+        this.opex_price = data.opex_price
+        this.opex_type = data.opex_type
+        this.customer_id = data.customer_id
+        this.customer_name = data.customer.customer_name
+        this.issue_at = data.issue_at
+        this.due_at = data.due_at
+        this.termin = data.termin
+        // this.vendor_id = data.vendor_id
+        // this.vendor_name = data.vendor.vendor_name
+        this.deposit = data.deposit
+        console.log('Data', data)
+        if (data.id_po) {
+          this.getDetailSo(data.id_po)
+        }
+      })
+    },
     async onSubmit() {
       const result = await this.validation()
-      if (result == 0) {
-        await axios
+      if (result === 0) {
+        this.isSubmitting = true
+        axios
           .post(AddOpex, {
             customer_id: this.customer_id,
             opex_name: this.opex_name,
             opex_price: this.opex_price,
             opex_type: this.opex_type,
           })
-          .then(
-            (response) => {
-              console.log(response)
-              Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Data has been Saved',
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  await router.push('/opex')
-                }
-              })
-            },
-            (error) => {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text:
-                  (error.response && error.response && error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              })
-            },
-          )
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Data has been saved',
+            }).then(() => router.push('/opex-absorb'))
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error.response?.data?.message || error.message,
+            })
+          })
+          .finally(() => {
+            this.isSubmitting = false
+          })
       }
     },
   },

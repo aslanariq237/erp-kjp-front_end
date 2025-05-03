@@ -110,114 +110,139 @@
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
+                <!-- Po Number -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_code }}
+                  {{ entry.po_number }}
                 </td>
+                <!-- Po Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.po_date }}
                 </td>
+                <!-- Customer Code -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.cust_code }}
                 </td>
+                <!-- Customer Name -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.cust_name }}
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_so }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.price_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.amount_so }}
-                </td>
+                <!-- PN -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.pn }}
                 </td>
+                <!-- Product Desc -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.desc }}
                 </td>
+                <!-- Quantity SO -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_po }}
+                  {{ entry.qty_so }}
                 </td>
+                <!-- Price SO -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.price_po) }}
+                  {{ formatCurrency(entry.price_so) }}
                 </td>
+                <!-- Amount SO -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.amount_po) }}
+                  {{ formatCurrency(entry.amount_so) }}
                 </td>
+                <!-- Brand -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.product_brand }}
                 </td>
+                <!-- SO Number -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.sales_order }}
                 </td>
+                <!-- SO Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.so_date }}
-                </td>                
+                </td>
+                <!-- Quantity PO -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_po }}
+                </td>
+                <!-- Price PO -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.price_po) }}
+                </td>
+                <!-- Amount PO -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.amount_po) }}
+                </td>
+                <!-- Delivery Order Number -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.delivery_order }}
                 </td>
+                <!-- Delivery Order Date -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.delivery_order }}
+                </td>
+                <!-- DO Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.do_date }}
                 </td>
+                <!-- QUantity DO -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.qty_do }}
                 </td>
+                <!-- Billing No -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.bill_no }}
                 </td>
+                <!-- Billing Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.billing_date }}
                 </td>
+                <!-- Gross Profit -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.amount_invoice) }}
                 </td>
+                <!-- % GP -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.gross_profit) }}
                 </td>
+                <!-- Faktur Pajak -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.gp_percentage }}%
+                  {{ entry.gp_percentage }} %
                 </td>
+                <!-- Faktur Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.faktur_pajak }}
                 </td>
+                <!-- Tanda Terima Invoice -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.faktur_date }}
                 </td>
+                <!-- Tanda Terima Invoice Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.tanda_terima_invoice }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice_date || 'N/A' }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.faktur_date }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice }}
-                </td>
+                <!-- Resi -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.tanda_terima_invoice_date }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.resi }}
-                </td>
+                <!-- Diterima -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.diterima }}
                 </td>
+                <!-- Received Date -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.received_date }}
                 </td>
+                <!-- Status AR -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.status_ar }}
                 </td>
+                <!-- Total AR -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.total_ar) }}
                 </td>
+                <!-- Aging AR -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.aging_ar }}
-                </td>                
+                </td>
+                <!-- OS AR -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.os_ar) }}
                 </td>
@@ -343,7 +368,7 @@ export default defineComponent({
       { key: 'po_date', label: 'Po Date' }, // sales order date
       { key: 'cust_code', label: 'Customer Code' }, //customer code
       { key: 'cust_name', label: 'Customer Name' }, // customer name
-      { key: 'pn', label: 'PN' },     // part number product
+      { key: 'pn', label: 'PN' }, // part number product
       { key: 'desc', label: 'Product Desc' }, //name product
       { key: 'qty_so', label: 'Quantity SO' }, //quantity sales order
       { key: 'price_so', label: 'Price So' }, //price per unit sales order
@@ -354,11 +379,11 @@ export default defineComponent({
       { key: 'qty_po', label: 'Quantity PO' }, // quantity purchase order
       { key: 'price_po', label: 'Price PO' }, // price per unit purchase order
       { key: 'amount_po', label: 'Amount PO' }, // amount purchase order
-      { key: 'amount_po', label: 'PO Number' }, // amount purchase order
+      { key: 'do_number', label: 'DO Number' }, // amount purchase order
       { key: 'delivery_order', label: 'Delivery Order' }, // delivery order
       { key: 'delivery_order_date', label: 'DO Date' }, // delivery order date
       { key: 'qty_do', label: 'Quantity DO' }, //quantity delivery order
-      { key: 'qty_do', label: 'DO Date' }, //delivery order date
+      // { key: 'qty_do', label: 'DO Date' }, //delivery order date
       { key: 'bill_no', label: 'BILL NO' }, // invoice number
       // last in here
       { key: 'billing_date', label: 'BILLING DATE' },
@@ -374,7 +399,7 @@ export default defineComponent({
       { key: 'received_date', label: 'RECEIVED DATE' },
       { key: 'status_ar', label: 'STATUS AR' },
       { key: 'total_ar', label: 'TOTAL AR' },
-      { key: 'aging_ar', label: 'AGING AR' },      
+      { key: 'aging_ar', label: 'AGING AR' },
       { key: 'os_ar', label: 'OS AR' },
     ]
 
@@ -394,15 +419,19 @@ export default defineComponent({
       loading.value = true
       try {
         // Simulate API call
-        const response = await axios.get(GetReportManagement)        
+        const response = await axios.get(GetReportManagement)
         reportManagement.value = response.data
+        console.log('Data', reportManagement.value)
+        console.log('Brand', reportManagement.value[0].sales_order)
       } catch (error) {
         console.error('Error fetching invoices:', error)
       } finally {
         loading.value = false
       }
     }
-
+    const logEntry = (entry) => {
+      console.log('Data', entry)
+    }
     onMounted(() => {
       GetReport()
     })
@@ -471,20 +500,20 @@ export default defineComponent({
     const exportToExcel = () => {
       const data = filteredData.value.map((entry) => {
         return {
-          'Po Number': entry.po_code,          
+          'Po Number': entry.po_code,
           'Customer Code': entry.cust_code,
           'Customer Name': entry.cust_name,
           PN: entry.pn,
-          "Product Desc": entry.desc,
+          'Product Desc': entry.desc,
           'Quantity SO': entry.qty_so,
           'Price SO': entry.price_so,
           'Amount SO': entry.amount_so,
           'SO Number': entry.sales_order,
-          'SO Date': entry.sales_order_date,          
+          'SO Date': entry.sales_order_date,
           'Quantity PO': entry.qty_po,
           'Price PO': entry.price_po,
           'Amount PO': entry.amount_po,
-          Brand: entry.product_brand,          
+          Brand: entry.product_brand,
           'DO Number': entry.delivery_order,
           'DO Date': entry.do_date,
           'Quantity DO': entry.qty_do,

@@ -15,7 +15,77 @@ const router = createRouter({
         title: 'eCommerce Dashboard',
       },
     },
-    //a
+    {
+      path: '/account-payable',
+      children: [
+        {
+          path: '',
+          name: 'Account Payable',
+          component: () => import('../views/Others/AccountPayable/index.vue'),
+          meta: {
+            title: 'Account Payable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Account Payable-Form',
+          component: () => import('../views/Others/AccountPayable/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/account-receivable',
+      children: [
+        {
+          path: '',
+          name: 'Account Receivable',
+          component: () => import('../views/Others/account-receivable/index.vue'),
+          meta: {
+            title: 'Account Recieveable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Account Receivable-Form',
+          component: () => import('../views/Others/account-receivable/form.vue'),
+          meta: {
+            title: 'Account Recieveable-Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/adrs',
+      children: [
+        {
+          path: '',
+          name: 'ADRS',
+          component: () => import('../views/Operation/adrs/index.vue'),
+          meta: {
+            title: 'Account Payable',
+          },
+        },
+        {
+          path: 'form',
+          name: 'ADRS-Form',
+          component: () => import('../views/Operation/adrs/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+        {
+          path: 'edit/:id',
+          name: 'ADRS-Edit',
+          component: () => import('../views/Operation/adrs/form.vue'),
+          meta: {
+            title: 'Account Payable-Form',
+          },
+        },
+      ],
+    },
     {
       path: '/admin-dashboard',
       name: 'Admin Dashboard',
@@ -24,7 +94,6 @@ const router = createRouter({
         title: 'Admin Dashboard',
       },
     },
-
     {
       path: '/asset',
       children: [
@@ -55,81 +124,6 @@ const router = createRouter({
       ],
     },
     {
-      path: '/account-receivable',
-      children: [
-        {
-          path: '',
-          name: 'Account Receivable',
-          component: () => import('../views/Others/account-receivable/index.vue'),
-          meta: {
-            title: 'Account Recieveable',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Account Receivable-Form',
-          component: () => import('../views/Others/account-receivable/form.vue'),
-          meta: {
-            title: 'Account Recieveable-Form',
-          },
-        },
-      ],
-    },
-    {
-      path: '/account-payable',
-      children: [
-        {
-          path: '',
-          name: 'Account Payable',
-          component: () => import('../views/Others/AccountPayable/index.vue'),
-          meta: {
-            title: 'Account Payable',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Account Payable-Form',
-          component: () => import('../views/Others/AccountPayable/form.vue'),
-          meta: {
-            title: 'Account Payable-Form',
-          },
-        },
-      ],
-    },
-
-    {
-      path: '/adrs',
-      children: [
-        {
-          path: '',
-          name: 'ADRS',
-          component: () => import('../views/Operation/adrs/index.vue'),
-          meta: {
-            title: 'Account Payable',
-          },
-        },
-        {
-          path: 'form',
-          name: 'ADRS-Form',
-          component: () => import('../views/Operation/adrs/form.vue'),
-          meta: {
-            title: 'Account Payable-Form',
-          },
-        },
-        {
-          path: 'edit/:id',
-          name: 'ADRS-Edit',
-          component: () => import('../views/Operation/adrs/form.vue'),
-          meta: {
-            title: 'Account Payable-Form',
-          },
-        },
-      ],
-    },
-
-    //b
-    //c
-    {
       path: '/customer',
       children: [
         {
@@ -155,7 +149,6 @@ const router = createRouter({
         },
       ],
     },
-    //d
     {
       path: '/delivery-order',
       children: [
@@ -201,7 +194,6 @@ const router = createRouter({
         },
       ],
     },
-    //e
     {
       path: '/employee',
       children: [
@@ -231,7 +223,14 @@ const router = createRouter({
         },
       ],
     },
-    //f
+    {
+      path: '/error-404',
+      name: '404 Error',
+      component: () => import('../views/Errors/FourZeroFour.vue'),
+      meta: {
+        title: '404 Error',
+      },
+    },
     {
       path: '/faktur-pajak',
       children: [
@@ -258,7 +257,6 @@ const router = createRouter({
         },
       ],
     },
-    //g
     {
       path: '/good-receive',
       children: [
@@ -278,8 +276,27 @@ const router = createRouter({
         },
       ],
     },
-    //h
-    //i
+    {
+      path: '/inquiry',
+      children: [
+        {
+          path: '',
+          name: 'Inquiry',
+          component: () => import('../views/Operation/Inquiry/index.vue'),
+          meta: {
+            title: 'Inquiry',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Inquiry-Form',
+          component: () => import('../views/Operation/Inquiry/form.vue'),
+          meta: {
+            title: 'Inquiry-Form',
+          },
+        },
+      ],
+    },
     {
       path: '/invoice',
       children: [
@@ -314,30 +331,6 @@ const router = createRouter({
         },
       ],
     },
-    {
-      path: '/inquiry',
-      children: [
-        {
-          path: '',
-          name: 'Inquiry',
-          component: () => import('../views/Operation/Inquiry/index.vue'),
-          meta: {
-            title: 'Inquiry',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Inquiry-Form',
-          component: () => import('../views/Operation/Inquiry/form.vue'),
-          meta: {
-            title: 'Inquiry-Form',
-          },
-        },
-      ],
-    },
-    //j
-    //k
-    //l
     {
       path: '/laporan-keuangan',
       children: [
@@ -380,9 +373,6 @@ const router = createRouter({
         },
       ],
     },
-    //m
-    //n
-    //o
     {
       path: '/opex',
       children: [
@@ -396,6 +386,35 @@ const router = createRouter({
         },
         {
           path: 'form',
+          name: 'Opex-Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex-Form',
+          },
+        },
+        {
+          path: 'edit/:id',
+          name: 'Opex-Edit',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex-Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/opex-cogs',
+      children: [
+        {
+          path: '',
+          name: 'Opex Cogs',
+          component: () => import('../views/Others/OPEXCogs/index.vue'),
+          meta: {
+            title: 'Opex Cogs',
+          },
+        },
+        {
+          path: 'form',
           name: 'Opex Form',
           component: () => import('../views/Others/OPEX/form.vue'),
           meta: {
@@ -404,7 +423,106 @@ const router = createRouter({
         },
       ],
     },
-    //p
+    {
+      path: '/opex-external',
+      children: [
+        {
+          path: '',
+          name: 'Opex External',
+          component: () => import('../views/Others/OPEXExternal/index.vue'),
+          meta: {
+            title: 'Opex External',
+          },
+        },
+        {
+          path: 'form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/opex-internal',
+      children: [
+        {
+          path: '',
+          name: 'Opex Internal',
+          component: () => import('../views/Others/OPEXInternal/index.vue'),
+          meta: {
+            title: 'Opex Internal',
+          },
+        },
+        {
+          path: '/form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEX/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/opex-absorb',
+      children: [
+        {
+          path: '',
+          name: 'Opex Absorb',
+          component: () => import('../views/Others/OPEXAbsorb/index.vue'),
+          meta: {
+            title: 'Opex Absorb',
+          },
+        },
+        {
+          path: '/opex-absorb/form',
+          name: 'Opex Form',
+          component: () => import('../views/Others/OPEXAbsorb/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+        {
+          path: '/opex-absorb/edit/:id',
+          name: 'Opex-Absorb-Edit',
+          component: () => import('../views/Others/OPEXAbsorb/form.vue'),
+          meta: {
+            title: 'Opex-Absorb-Form-Edit',
+          },
+        },
+      ],
+    },
+    {
+      path: '/report/opex',
+      children: [
+        {
+          path: '',
+          name: 'Opex Report',
+          component: () => import('../views/Others/OPEXReport/index.vue'),
+          meta: {
+            title: 'Opex Report',
+          },
+        },
+        {
+          path: '/report/opex/form',
+          name: 'Opex Form Report',
+          component: () => import('../views/Others/OPEXReport/form.vue'),
+          meta: {
+            title: 'Opex Form Report',
+          },
+        },
+        {
+          path: '/report/opex/edit/:id',
+          name: 'Opex-report-Edit',
+          component: () => import('../views/Others/OPEXReport/form.vue'),
+          meta: {
+            title: 'Opex-report-Form-Edit',
+          },
+        },
+      ],
+    },
     {
       path: '/product',
       children: [
@@ -466,7 +584,6 @@ const router = createRouter({
         },
       ],
     },
-    //q
     {
       path: '/quotation',
       children: [
@@ -500,7 +617,6 @@ const router = createRouter({
         },
       ],
     },
-    //r
     {
       path: '/report',
       children: [
@@ -518,30 +634,6 @@ const router = createRouter({
           component: () => import('../views/Others/Report/indexscm.vue'),
           meta: {
             title: 'Report-Form',
-          },
-        },
-      ],
-    },
-
-    {
-      path: '/opex',
-      name: 'Opex',
-      component: () => import('../views/Others/OPEX/index.vue'),
-      meta: {
-        title: 'Opex',
-      },
-    },
-
-    //s
-    {
-      path: '/stock',
-      children: [
-        {
-          path: '',
-          name: 'Stock',
-          component: () => import('../views/Others/Stock/index.vue'),
-          meta: {
-            title: 'Product',
           },
         },
       ],
@@ -596,7 +688,19 @@ const router = createRouter({
         title: 'Signup',
       },
     },
-    //t
+    {
+      path: '/stock',
+      children: [
+        {
+          path: '',
+          name: 'Stock',
+          component: () => import('../views/Others/Stock/index.vue'),
+          meta: {
+            title: 'Product',
+          },
+        },
+      ],
+    },
     {
       path: '/tanda-terima',
       children: [
@@ -630,8 +734,6 @@ const router = createRouter({
         },
       ],
     },
-    //u
-    //v
     {
       path: '/vendor',
       children: [
@@ -657,88 +759,6 @@ const router = createRouter({
           },
         },
       ],
-    },
-    //w
-    //x
-    //y
-    //z
-
-    // {
-    //   path: '/profile',
-    //   name: 'Profile',
-    //   component: () => import('../views/MasterData/UserProfile.vue'),
-    //   meta: {
-    //     title: 'Profile',
-    //   },
-    // },
-    // {
-    //   path: '/line-chart',
-    //   name: 'Line Chart',
-    //   component: () => import('../views/Chart/LineChart/LineChart.vue'),
-    // },
-    // {
-    //   path: '/bar-chart',
-    //   name: 'Bar Chart',
-    //   component: () => import('../views/Chart/BarChart/BarChart.vue'),
-    // },
-    // {
-    //   path: '/alerts',
-    //   name: 'Alerts',
-    //   component: () => import('../views/UiElements/Alerts.vue'),
-    //   meta: {
-    //     title: 'Alerts',
-    //   },
-    // },
-    // {
-    //   path: '/avatars',
-    //   name: 'Avatars',
-    //   component: () => import('../views/UiElements/Avatars.vue'),
-    //   meta: {
-    //     title: 'Avatars',
-    //   },
-    // },
-    // {
-    //   path: '/badge',
-    //   name: 'Badge',
-    //   component: () => import('../views/UiElements/Badges.vue'),
-    //   meta: {
-    //     title: 'Badge',
-    //   },
-    // },
-
-    // {
-    //   path: '/buttons',
-    //   name: 'Buttons',
-    //   component: () => import('../views/UiElements/Buttons.vue'),
-    //   meta: {
-    //     title: 'Buttons',
-    //   },
-    // },
-
-    // {
-    //   path: '/images',
-    //   name: 'Images',
-    //   component: () => import('../views/UiElements/Images.vue'),
-    //   meta: {
-    //     title: 'Images',
-    //   },
-    // },
-    // {
-    //   path: '/videos',
-    //   name: 'Videos',
-    //   component: () => import('../views/UiElements/Videos.vue'),
-    //   meta: {
-    //     title: 'Videos',
-    //   },
-    // },
-
-    {
-      path: '/error-404',
-      name: '404 Error',
-      component: () => import('../views/Errors/FourZeroFour.vue'),
-      meta: {
-        title: '404 Error',
-      },
     },
   ],
 })
