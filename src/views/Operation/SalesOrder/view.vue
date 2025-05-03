@@ -23,7 +23,7 @@
             </div>
 
             <!-- Form Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">                
+            <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                     <!-- Termin -->
                     <FormGroup label="Sales Order Number" :required="true" :error="rules.po_type"
@@ -46,7 +46,7 @@
                         errorMessage="Issue Date is required">
                         <input type="date" id="due_at" name="due_at" v-model="issue_at" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>                    
+                    </FormGroup>
 
                     <!-- Due Date -->
                     <FormGroup label="Due Date" :required="true" :error="rules.due_at"
@@ -74,13 +74,18 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
-                            <tr v-for="poDetail in sales_orders_details" :key="poDetail.product_id">
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_code }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_sn }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_desc }}</td>
+                            <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
+                                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">
+                                    <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
+                                        @change="updateAmount(poDetail)" />
+                                </td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>                                
                             </tr>
                         </tbody>
                     </table>
@@ -107,7 +112,7 @@ import { Form, Field, ErrorMessage } from 'vee-validate';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
-import { SalesOrders, DetailSo } from '@/core/utils/url_api';
+import { SalesOrders, DetailSo, PackageADRS } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
 
 export default defineComponent({
@@ -125,13 +130,13 @@ export default defineComponent({
         return {
             code_so: '',
             customer_name: '',
-            employee_name: '',                                
+            employee_name: '',
             termin: "",
-            po_number: "",    
+            po_number: "",
             issue_at: '',
-            due_at: '',    
-            sub_total : 0,        
-            sales_orders_details : [],
+            due_at: '',
+            sub_total: 0,
+            sales_orders_details: [],
             isSubmitting: false,
             notification: {
                 show: false,
@@ -164,25 +169,53 @@ export default defineComponent({
         getById(id) {
             axios.get(SalesOrders + '/' + id).then(
                 (res) => {
-                    var data = res.data;                       
+                    var data = res.data;
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
                     this.termin = data.termin
-                    this.customer_name = data.customer.customer_name;                                                                                                                                 
+                    this.customer_name = data.customer.customer_name;
                     this.sub_total = data.sub_total;
                     this.code_so = data.code_so;
                     this.po_number = data.po_number;
                 }
-            )            
-        },
-        getDetail(id){
-            axios.get(DetailSo + '/' + id).then(
-                (res) => {
-                    var data = res.data;
-                    this.sales_orders_details = data;
-                }
             )
-        },        
+        },
+        getDetail(id) {
+            axios.get(DetailSo + '/' + id).then((res) => {
+                var data = res.data
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].product_type == 'products') {
+                        var object = {                            
+                            product_code: data[i].product.product_code,
+                            product_desc: data[i].product.product_desc,
+                            product_pn: data[i].product.product_sn,
+                            product_brand: data[i].product.product_brand,
+                            quantity: data[i].quantity,
+                            price: data[i].price,
+                            discount: data[i].discount,
+                            amount: data[i].price * data[i].quantity,
+                        }
+                        this.sales_order_details.push(object)
+                    } else {
+                        axios.get(PackageADRS + '/' + data[i].product_id).then((res) => {
+                            var adrs = res.data;
+                            var object = {
+                                product_id: adrs[i].package_id,
+                                product_code: adrs[i].code_package,
+                                product_pn: adrs[i].package_sn,
+                                product_desc: adrs[i].package_desc,
+                                product_type: this.selectedType,
+                                quantity: data[i].quantity,
+                                price: data[i].price,
+                                discount: data[i].discount,
+                                amount: data[i].price * data[i].quantity,
+                            }
+                            this.sales_order_details.push(object)
+                        })
+                    }
+                }
+            })
+        },
         formatCurrency(value) {
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
