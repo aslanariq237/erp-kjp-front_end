@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">OPEX Eksternal</h1>
-          <p class="text-gray-500 text-sm mt-1">Opex Eksternal</p>
+          <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex Eksternal</p>
         </div>
         <div class="flex gap-3">
           <button
@@ -15,7 +15,7 @@
             <span>Export</span>
           </button>
           <RouterLink
-            to="/opex/form"
+            to="/opex-external/form"
             class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
           >
             Add New OPEX

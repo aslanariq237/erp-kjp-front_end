@@ -151,6 +151,91 @@
             </ul>
           </FormGroup>
         </div>
+        <div class="flex justify-content-between gap-4 items-end mt-5">
+          <FormGroup class="w-full relative" label="product" :required="true">
+            <input type="text" autocomplete="off" name="product_name" id="product_name" v-model="product_name"
+              @input="filterProducts" class="rounded w-full" placeholder="Type product name"
+              :class="inputClass(rules.due_at)" />
+            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
+              <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
+                {{
+                  product.type === 'product'
+                    ? `${product.product_sn} - ${product.product_desc}`
+                    : `${product.package_sn} - ${product.package_desc}`
+                }}
+              </li>
+            </ul>
+          </FormGroup>
+
+          <!-- Grand Total -->
+          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+            errorMessage="Quantity is required">
+            <input type="number" autocomplete="off" name="quantity" v-model="quantity"
+              :class="inputClass(rules.quantity)" placeholder="Enter Quantity" />
+          </FormGroup>
+          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+            errorMessage="Price is required">
+            <input type="number" id="quantity" autocomplete="off" name="quantity" v-model="price"
+              :class="inputClass(rules.quantity)" placeholder="Enter Price" :valu="price" />
+          </FormGroup>
+          <div class="" v-if="id">
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
+              tambah
+            </button>
+          </div>
+          <div class="" v-else>
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
+              tambah
+            </button>
+          </div>
+        </div>
+        <div class="mt-5">
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+            <thead>
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
+              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
+                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
+                    @change="updateAmount(poDetail)" />
+                </td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                    @click="sales_order_details.splice(sales_order_details.indexOf(poDetail), 1)">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-between mt-5">
+            <div class="w-full"></div>
+            <div class="w-full"></div>
+            <div class="w-full">
+              <div class="sub_total flex justify-between mt-3">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </Form>
   </AdminLayout>
@@ -164,7 +249,7 @@ import { RouterLink } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex, Customer, GetOpex } from '@/core/utils/url_api'
+import { AddOpex, Customer, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 
@@ -181,10 +266,18 @@ export default defineComponent({
     return {
       opex_name: '',
       opex_price: 0,
-      opex_type: '',
+      opex_type: 'absorb',
       customers: [],
       customer_name: '',
       filteredCustomers: [],
+      sales_order_details: [],
+      selectedType: '',
+      product_name: '',
+      products: [],
+      filteredProducts: [],
+      packages: [],
+      packages_id: [],
+      product_id: [],
       customer_id: null,
       isSubmitting: false,
       id: null,
@@ -202,12 +295,29 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.getCustomer()
-    console.log('ID Param', this.$route.params.id)
+    this.getCustomer();
+    this.getProducts();
+    this.getPackage();    
     if (this.$route.params.id) {
       this.id = this.$route.params.id
       await this.getById(this.id)
     }
+  },
+  computed: {
+    // Calculate subtotal based on all items in sales_order_details
+    sub_total() {
+      return this.sales_order_details.reduce((total, item) => {
+        return total + item.amount || 0
+      }, 0)
+    },
+
+    ppn() {
+      return this.sub_total * 0.11
+    },
+
+    grand_total() {
+      return this.ppn + this.sub_total
+    },
   },
 
   methods: {
@@ -227,6 +337,152 @@ export default defineComponent({
       this.customer_name = customer.customer_name
       this.filteredCustomers = []
     },
+    getProducts() {
+      axios.get(Product).then((res) => {
+        var data = res.data        
+        this.products = data;
+      })
+    },
+    getPackage() {
+      axios.get(PackageADRS).then((res) => {
+        var data = res.data
+        this.packages = data;
+      })
+    },
+
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    },
+
+    addPoDetails() {
+      if (this.packages_id == 0) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Pilih Barang',
+        })
+      } else {
+        if (this.selectedType === 'product') {
+          axios.get(Product + '/' + this.product_id).then((res) => {
+            var data = res.data
+            if (this.quantity > data.product_stock) {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: `Stock ${data.product_desc} Less Than Quantity`,
+              })
+              var object = {
+                product_id: data.product_id,
+                product_code: data.product_code,
+                product_pn: data.product_sn,
+                product_desc: data.product_desc,
+                product_stock: data.product_stock,
+                product_type: this.selectedType,
+                quantity: this.quantity,
+                price: this.price,
+                discount: this.discount,
+                amount: this.price * this.quantity,
+              }
+              this.sales_order_details.push(object)
+            } else {
+              var object = {
+                product_id: data.product_id,
+                product_code: data.product_code,
+                product_pn: data.product_sn,
+                product_desc: data.product_desc,
+                product_stock: data.product_stock,
+                product_type: this.selectedType,
+                quantity: this.quantity,
+                price: this.price,
+                discount: this.discount,
+                amount: this.price * this.quantity,
+              }
+              this.sales_order_details.push(object)
+            }
+            this.product_id = null
+            this.quantity = 0
+            this.price = 0
+          })
+        } else {
+          axios.get(PackageADRS + '/' + this.packages_id).then((res) => {
+            var data = res.data[0]
+            if (this.quantity > data.package_stock) {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Warning',
+                text: `Stock ${data.package_desc} Less Than Quantity`,
+              })
+              var object = {
+                product_id: data.package_id,
+                product_code: data.code_package,
+                product_pn: data.package_sn,
+                product_desc: data.package_desc,
+                product_stock: data.package_stock,
+                product_type: this.selectedType,
+                quantity: this.quantity,
+                price: this.price,
+                discount: this.discount,
+                amount: this.price * this.quantity,
+              }
+              this.sales_order_details.push(object)
+            } else {
+              var object = {
+                product_id: data.package_id,
+                product_code: data.code_package,
+                product_pn: data.package_sn,
+                product_desc: data.package_desc,
+                product_stock: data.package_stock,
+                product_type: this.selectedType,
+                quantity: this.quantity,
+                price: this.price,
+                discount: this.discount,
+                amount: this.price * this.quantity,
+              }
+              this.sales_order_details.push(object)
+            }
+            this.product_id = null
+            this.quantity = 0
+            this.price = 0
+          })
+        }
+      }
+    },
+    filterProducts() {
+      const searchTerm = this.product_name.toLowerCase()
+
+      const filteredProduct = this.products.filter((product) => {
+        const desc = product.product_desc.toLowerCase()
+        const sn = product.product_sn.toLowerCase()
+        return desc.includes(searchTerm) || sn.includes(searchTerm)
+      });
+
+      const filteredPack = this.packages.filter((pack) => {
+        const desc = pack.package_desc.toLowerCase();
+        const sn = pack.package_sn.toLowerCase();
+
+        return desc.includes(searchTerm) || sn.includes(searchTerm);
+      })
+
+      this.filteredProducts = [
+        ...filteredProduct.map(p => ({ ...p, type: 'product' })), // Add a type property to distinguish
+        ...filteredPack.map(p => ({ ...p, type: 'package' })) // Add a type property to distinguish
+      ]
+    },
+
+    selectProduct(product) {
+      if (product.type === 'product') {
+        this.product_id = product.product_id
+        this.product_name = `${product.product_sn} - ${product.product_desc}`
+      } else {
+        this.packages_id = product.package_id,
+          this.product_name = `${product.package_sn} - ${product.package_desc}`
+      }
+      this.selectedType = product.type;
+      this.filteredProducts = []
+    },
+
     showNotification(type, message) {
       this.notification = { show: true, type, message }
       setTimeout(() => (this.notification.show = false), 3000)
@@ -267,11 +523,12 @@ export default defineComponent({
       if (result === 0) {
         this.isSubmitting = true
         axios
-          .post(AddOpex, {
+          .post(AddOpex + '/' + 'absorb', {
             customer_id: this.customer_id,
             opex_name: this.opex_name,
             opex_price: this.opex_price,
             opex_type: this.opex_type,
+            sales_order_details : this.sales_order_details
           })
           .then(() => {
             Swal.fire({
@@ -291,6 +548,14 @@ export default defineComponent({
             this.isSubmitting = false
           })
       }
+    },
+    inputClass(error) {
+      return [
+        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-400',
+        error
+          ? 'border-red-300 focus:ring-red-500 bg-red-50'
+          : 'border-gray-300 focus:ring-blue-500',
+      ]
     },
   },
 })

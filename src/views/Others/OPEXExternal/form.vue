@@ -9,11 +9,11 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Opex</h1>
-            <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800">Create New Opex External</h1>
+            <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex External / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/opex"
+            <RouterLink to="/opex-external"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -56,34 +56,7 @@
             <div class="" v-if="rules.opex_price == true">
               <p class="text-red-500 text-sm">Opex Price Dibutuhkan</p>
             </div>
-          </FormGroup>
-
-          <FormGroup label="Price" :required="true" :error="rules.amount"
-            errorMessage="Amount is required and must be greater than 0">
-            <select name="opex_type" id="opex_type" v-model="opex_type" :class="[
-              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-              rules.amount
-                ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                : 'border-gray-300 focus:ring-blue-500',
-            ]">
-              <option value="internal">Internal</option>
-              <option value="eksternal">Eksternal</option>
-              <option value="cogs">COGS</option>
-            </select>
-          </FormGroup>
-          <FormGroup v-if="opex_type != 'internal'" label="Customer" class="relative" :required="true"
-            :error="rules.customer_id" errorMessage="Customer is Required">
-            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
-              class="rounded w-full" placeholder="Type customer name">
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
-              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_name }}
-              </li>
-              <li v-if="filteredCustomers.length === 0"> not found</li>
-            </ul>
-          </FormGroup>
-
+          </FormGroup>        
           <!-- Due Date -->
         </div>
       </div>
@@ -117,7 +90,7 @@ export default defineComponent({
     return {
       opex_name: '',
       opex_price: 0,
-      opex_type: 'internal',
+      opex_type: 'eksternal',
       customers: [],
       customer_name: '',
       filteredCustomers: [],
@@ -207,7 +180,7 @@ export default defineComponent({
             text: "Data has been Saved"
           }).then(async (result) => {
             if (result.isConfirmed) {
-              await router.push("/opex");
+              await router.push("/opex-external");
             }
           })
         }, (error) => {

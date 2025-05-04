@@ -9,11 +9,11 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Opex</h1>
-            <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
+            <h1 class="text-2xl font-bold text-gray-800">Create New Opex COGS</h1>
+            <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex-cogs / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/opex"
+            <RouterLink to="/opex-cogs"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -32,7 +32,7 @@
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Customer Name -->
-          <FormGroup label="Opex" :required="true" :error="rules.customerName" errorMessage="Opex is required">
+          <FormGroup label="Opex Name" :required="true" :error="rules.customerName" errorMessage="Opex is required">
             <input type="text" id="name" name="name" v-model="opex_name" min="0" :class="[
               'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
               rules.amount
@@ -57,21 +57,8 @@
               <p class="text-red-500 text-sm">Opex Price Dibutuhkan</p>
             </div>
           </FormGroup>
-
-          <FormGroup label="Price" :required="true" :error="rules.amount"
-            errorMessage="Amount is required and must be greater than 0">
-            <select name="opex_type" id="opex_type" v-model="opex_type" :class="[
-              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-              rules.amount
-                ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                : 'border-gray-300 focus:ring-blue-500',
-            ]">
-              <option value="internal">Internal</option>
-              <option value="eksternal">Eksternal</option>
-              <option value="cogs">COGS</option>
-            </select>
-          </FormGroup>
-          <FormGroup v-if="opex_type != 'internal'" label="Customer" class="relative" :required="true"
+          
+          <FormGroup v-if="opex_type == 'cogs'" label="Customer" class="relative" :required="true"
             :error="rules.customer_id" errorMessage="Customer is Required">
             <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
               class="rounded w-full" placeholder="Type customer name">
@@ -117,7 +104,7 @@ export default defineComponent({
     return {
       opex_name: '',
       opex_price: 0,
-      opex_type: 'internal',
+      opex_type: 'cogs',
       customers: [],
       customer_name: '',
       filteredCustomers: [],
@@ -207,7 +194,7 @@ export default defineComponent({
             text: "Data has been Saved"
           }).then(async (result) => {
             if (result.isConfirmed) {
-              await router.push("/opex");
+              await router.push("/opex-cogs");
             }
           })
         }, (error) => {

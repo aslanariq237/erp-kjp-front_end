@@ -201,10 +201,8 @@ import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import {
   Customer,
-  DetailSo,
-  Employee,
-  PackageADRS,
-  PackageDetails,
+  DetailSo,   
+  PackageADRS,  
   Product,
   SalesOrderAdd,
   SalesOrders,

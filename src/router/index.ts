@@ -415,8 +415,8 @@ const router = createRouter({
         },
         {
           path: 'form',
-          name: 'Opex Form',
-          component: () => import('../views/Others/OPEX/form.vue'),
+          name: 'Opex-cogs Form',
+          component: () => import('../views/Others/OPEXCogs/form.vue'),
           meta: {
             title: 'Opex Form',
           },
@@ -436,8 +436,8 @@ const router = createRouter({
         },
         {
           path: 'form',
-          name: 'Opex Form',
-          component: () => import('../views/Others/OPEX/form.vue'),
+          name: 'Opex-external Form',
+          component: () => import('../views/Others/OPEXExternal/form.vue'),
           meta: {
             title: 'Opex Form',
           },
@@ -448,21 +448,16 @@ const router = createRouter({
       path: '/opex-internal',
       children: [
         {
-          path: '',
-          name: 'Opex Internal',
+          path: '',          
           component: () => import('../views/Others/OPEXInternal/index.vue'),
           meta: {
             title: 'Opex Internal',
           },
         },
         {
-          path: '/form',
-          name: 'Opex Form',
-          component: () => import('../views/Others/OPEX/form.vue'),
-          meta: {
-            title: 'Opex Form',
-          },
-        },
+          path : 'form',
+          component: () => import('../views/Others/OPEXInternal/form.vue')
+        }
       ],
     },
     {
