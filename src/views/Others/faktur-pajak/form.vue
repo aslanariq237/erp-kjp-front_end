@@ -9,11 +9,11 @@
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Faktur Pajak</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ id?'Edit Faktur Pajak' :'Create New Faktur Pajak'  }}</h1>
             <p class="text-gray-500 text-sm mt-1">Finance Tools / Faktur Pajak / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink to="/invoice"
+            <RouterLink to="/faktur-pajak"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
@@ -63,7 +63,12 @@
         <div class="flex items-end gap-5">
           <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
             errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
+            <select v-if="id" name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">              
+              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
+                {{ delo.code_invoice }}
+              </option>
+            </select>
+            <select v-else name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
               <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
                 {{ delo.code_invoice }}
               </option>
@@ -87,6 +92,7 @@ import axios from 'axios'
 import { computed } from 'vue'
 import {
   AddFakturPajak,
+  GetFakturPajak,
   Invoice,
   InvoiceAdd,
   SalesOrders,
@@ -107,9 +113,9 @@ export default defineComponent({
     return {
       id: null,    
       salesOrders : [],  
-      deliveryOrders: [],
-      code_invoice: '',
+      deliveryOrders: [],      
       id_so: null,
+      code_invoice: null,
       id_invoice: null,
       customer_id: null,      
       po_number: '',
@@ -119,6 +125,7 @@ export default defineComponent({
       customer_address: '',
       employee_name: '',
       checklist_prod: 0,
+      code_invoice: '',
       issue_at: '',
       due_at: '',
       isSubmitting: false,
@@ -198,22 +205,18 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(Invoice + '/' + id).then(
+      await axios.get(GetFakturPajak + '/' + id).then(        
         (res) => {
           var data = res.data;
-          this.issue_at = data[0].issue_at;
-          this.due_at = data[0].due_at;
-          this.po_number = data[0].salesorder.po_number;
-          this.id_so = data[0].id_so;
-          this.customer_id = data[0].customer_id;
-          this.code_invoice = data[0].code_invoice;
-          this.customer_name = data[0].customer.customer_name;
-          this.customer_address = data[0].customer.customer_address;
-
-          var id = data[0].id_invoice;
-          if (id) {
-            this.getDetailSo(id);
-          }
+          console.log(data)
+          this.id_so = data[0].so.id_so;
+          this.id_invoice = data[0].invoice.id_invoice;
+          this.po_number = data[0].so.po_number
+          this.customer_name = data[0].so.customer.customer_name;
+          this.id_invoice = data[0].invoice.code_invoice;          
+          this.faktur_pajak = data[0].code_faktur_pajak; 
+          
+          getDeliveryOrder(this.id_invoice);
         }
       )
     },

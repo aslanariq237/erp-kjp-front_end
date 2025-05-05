@@ -198,8 +198,7 @@
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>                
                 <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
               </tr>
             </thead>
@@ -210,11 +209,7 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
-                    @change="updateAmount(poDetail)" />
-                </td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>                
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
@@ -358,7 +353,7 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      if (this.packages_id == 0) {
+      if (this.product_id == null) {
         Swal.fire({
           icon: 'warning',
           text: 'Pilih Barang',
@@ -525,10 +520,10 @@ export default defineComponent({
         axios
           .post(AddOpex + '/' + 'absorb', {
             customer_id: this.customer_id,
-            opex_name: this.opex_name,
+            opex_name : this.opex_name,
             opex_price: this.opex_price,
-            opex_type: this.opex_type,
-            sales_order_details : this.sales_order_details
+            opex_type : this.opex_type,
+            sales_order_details: this.sales_order_details,            
           })
           .then(() => {
             Swal.fire({

@@ -373,7 +373,7 @@ export default defineComponent({
     }
 
     const editAccount = (account) => {
-      router.push(`/faktur-pajak/edit/${account.id_invoice}`)
+      router.push(`/faktur-pajak/edit/${account.id}`)
     }
 
     const confirmDelete = (account) => {

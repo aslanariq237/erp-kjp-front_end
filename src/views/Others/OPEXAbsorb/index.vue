@@ -8,16 +8,12 @@
           <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex Absorb</p>
         </div>
         <div class="flex gap-3">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
           </button>
-          <RouterLink
-            to="/opex-absorb/form"
-            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-          >
+          <RouterLink to="/opex-absorb/form"
+            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
             Add New OPEX
           </RouterLink>
         </div>
@@ -29,12 +25,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search by name or code..."
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Search by name or code..."
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -44,26 +36,16 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Price Range</label>
             <div class="flex gap-2">
-              <input
-                type="number"
-                v-model="minPrice"
-                placeholder="Min"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="number"
-                v-model="maxPrice"
-                placeholder="Max"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="number" v-model="minPrice" placeholder="Min"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="number" v-model="maxPrice" placeholder="Max"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="sortBy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="opex_name">Name</option>
               <option value="opex_price">Price</option>
               <option value="opex_code">Code</option>
@@ -72,10 +54,8 @@
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="itemsPerPage"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="20">20</option>
@@ -91,12 +71,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -111,11 +88,8 @@
               <tr v-else-if="paginatedData.length === 0" class="text-center">
                 <td colspan="5" class="px-6 py-4">No data found</td>
               </tr>
-              <tr
-                v-for="(opex, index) in paginatedData"
-                :key="opex.opex_id"
-                class="hover:bg-gray-50 transition-colors duration-150"
-              >
+              <tr v-for="(opex, index) in paginatedData" :key="opex.opex_id"
+                class="hover:bg-gray-50 transition-colors duration-150">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ opex.opex_code }}
                 </td>
@@ -135,11 +109,8 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <button @click="viewDetails(opex)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
-                    <button @click="editOpex(opex)" class="text-green-600 hover:text-green-900">
-                      Edit
+                    <button class="text-green-600 hover:text-green-900" @click="approve(opex)">
+                      Approve
                     </button>
                   </div>
                 </td>
@@ -147,7 +118,6 @@
             </tbody>
           </table>
         </div>
-
         <!-- Enhanced Pagination -->
         <div class="bg-white px-6 py-4 border-t border-gray-200">
           <div class="flex items-center justify-between">
@@ -161,76 +131,44 @@
               results
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 First
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Previous
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Next
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Last
               </button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Delete Confirmation Modal -->
-      <div
-        v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
+      <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
-          <h3 class="text-lg font-bold mb-4">Confirm Delete</h3>
+          <h3 class="text-lg font-bold mb-4">Approve OPEX</h3>
           <p class="mb-6">
-            Are you sure you want to delete this OPEX? This action cannot be undone.
+            Are you sure you want to approve this OPEX? This action cannot be undone.
           </p>
           <div class="flex justify-end gap-3">
-            <button
-              @click="showDeleteModal = false"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
+            <button @click="isModalOpen = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
               Cancel
             </button>
-            <button
-              @click="deleteOpex"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
-              Delete
+            <button @click="approveOpex" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Approve
             </button>
           </div>
         </div>
@@ -244,7 +182,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { GetOpex } from '@/core/utils/url_api'
+import { GetOpex, Product } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'OpexPage',
@@ -259,6 +197,7 @@ export default defineComponent({
     const showDeleteModal = ref(false)
     const opexToDelete = ref(null)
     const po_type = ref('')
+    const isModalOpen = ref(false);
 
     // Table headers configuration
     const tableHeaders = [
@@ -294,6 +233,24 @@ export default defineComponent({
       }
     }
 
+    const getOpex = async(id) => {
+      try {
+        await axios.get(GetOpex + '/absorb/' + id).then((res) => {
+          console.log(res.data)
+        })
+      } catch (error) {
+        console.error('Error fetching product data:', error)
+      } finally {
+        loading.value = false      
+      }
+    }
+
+
+    const approve = async (opex) => {
+      isModalOpen.value = true;
+      getOpex(opex.opex_id)
+    }
+
     onMounted(() => {
       fetchOpexData()
     })
@@ -301,31 +258,20 @@ export default defineComponent({
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
       let result = [...opexData.value]
-      console.log('Filtered Data:', result)
       if (po_type.value === '') {
         result = result.filter((opex) => opex.opex_type === 'absorb')
       }
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (opex) => opex.opex_name.toLowerCase().includes(query) || opex.opex_code.includes(query),
-        )
+        result = result.filter((opex) => {
+          const opexname = opex.opex_name.toLowerCase();
+          const customername = opex.customer ? opex.customer.customer_name.toLowerCase() : '';
+          return (
+            opexname.includes(query) ||
+            customername.includes(query)
+          )
+        })
       }
-
-      if (minPrice.value) {
-        result = result.filter((opex) => opex.opex_price >= minPrice.value)
-      }
-
-      if (maxPrice.value) {
-        result = result.filter((opex) => opex.opex_price <= maxPrice.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'opex_price') {
-          return a.opex_price - b.opex_price
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
 
       return result
     })
@@ -377,19 +323,6 @@ export default defineComponent({
         style: 'currency',
         currency: 'IDR',
       }).format(value)
-    }
-
-    const viewDetails = (opex) => {
-      router.push(`/opex/${opex.opex_id}`)
-    }
-
-    const editOpex = (opex) => {
-      router.push(`/opex-absorb/edit/${opex.opex_id}`)
-    }
-
-    const confirmDelete = (opex) => {
-      opexToDelete.value = opex
-      showDeleteModal.value = true
     }
 
     const deleteOpex = async () => {
@@ -449,6 +382,7 @@ export default defineComponent({
       loading,
       showDeleteModal,
       searchQuery,
+      isModalOpen,
       sortBy,
       minPrice,
       maxPrice,
@@ -466,12 +400,11 @@ export default defineComponent({
       opexData,
 
       // Methods
+      getOpex,
       formatCurrency,
-      viewDetails,
-      editOpex,
-      confirmDelete,
       deleteOpex,
       exportData,
+      approve
     }
   },
 })

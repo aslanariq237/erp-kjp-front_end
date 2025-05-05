@@ -304,9 +304,14 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (opex) => opex.opex_name.toLowerCase().includes(query) || opex.opex_code.includes(query),
-        )
+        result = result.filter((opex) => {
+          const opexname = opex.opex_name.toLowerCase();
+          const customername = opex.customer.customer_name.toLowerCase();
+          return (
+            opexname.includes(query) ||
+            customername.includes(query)            
+          )
+        })
       }
 
       if (minPrice.value) {
