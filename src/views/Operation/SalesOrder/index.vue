@@ -284,18 +284,6 @@ export default defineComponent({
         })
       }
 
-      if (startDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
-      }
-
-      if (endDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
-
       return result
     })
 

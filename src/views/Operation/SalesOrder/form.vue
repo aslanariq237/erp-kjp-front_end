@@ -147,6 +147,7 @@
                 <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Product Type</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
@@ -154,21 +155,40 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
-              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
-                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
+              <tr v-for="(poDetail, index) in sales_order_details" :key="index" :class="{
+                'bg-red-200': poDetail.product_type === 'product' && poDetail.quantity > poDetail.product_stock,
+                'bg-blue-50': poDetail.product_type === 'package'
+              }">
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  {{ poDetail.product_code }}
+                  <span v-if="poDetail.is_package" class="text-xs text-blue-600">(Package)</span>
+                </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  {{ poDetail.product_desc }}
+                  <div v-if="poDetail.is_package" class="text-xs text-gray-500">
+                    Contains multiple items
+                  </div>
+                </td>
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  <span class="px-2 py-1 text-xs rounded-full" :class="{
+                    'bg-green-100 text-green-800': poDetail.product_type === 'product',
+                    'bg-blue-100 text-blue-800': poDetail.product_type === 'package'
+                  }">
+                    {{ poDetail.product_type }}
+                  </span>
+                </td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
-                    @change="updateAmount(poDetail)" />
+                  <input type="number" v-model="poDetail.discount" class="w-20 rounded-lg"
+                    @change="updateAmount(poDetail)" min="0" max="100" /> %
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="sales_order_details.splice(sales_order_details.indexOf(poDetail), 1)">
+                  <button type="button"
+                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400 hover:bg-red-100"
+                    @click="sales_order_details.splice(index, 1)">
                     Delete
                   </button>
                 </td>
@@ -201,8 +221,8 @@ import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import {
   Customer,
-  DetailSo,   
-  PackageADRS,  
+  DetailSo,
+  PackageADRS,
   Product,
   SalesOrderAdd,
   SalesOrders,
@@ -344,7 +364,7 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      if (this.packages_id == 0) {
+      if (this.product_id == null && this.packages_id == null) {
         Swal.fire({
           icon: 'warning',
           text: 'Pilih Barang',
@@ -401,7 +421,7 @@ export default defineComponent({
                 text: `Stock ${data.package_desc} Less Than Quantity`,
               })
               var object = {
-                product_id: data.package_id,
+                package_id: data.package_id,
                 product_code: data.code_package,
                 product_pn: data.package_sn,
                 product_desc: data.package_desc,
@@ -415,7 +435,7 @@ export default defineComponent({
               this.sales_order_details.push(object)
             } else {
               var object = {
-                product_id: data.package_id,
+                package_id: data.package_id,
                 product_code: data.code_package,
                 product_pn: data.package_sn,
                 product_desc: data.package_desc,
@@ -601,40 +621,53 @@ export default defineComponent({
 
     getDetailSo(id) {
       axios.get(DetailSo + '/' + id).then((res) => {
-        var data = res.data
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].product_type == 'products') {
-            var object = {
-              product_id: data[i].product_id,
-              product_code: data[i].product.product_code,
-              product_desc: data[i].product.product_desc,
-              product_pn: data[i].product.product_sn,
-              product_brand: data[i].product.product_brand,              
-              quantity: data[i].quantity,
-              price: data[i].price,
-              discount: data[i].discount,
-              amount: data[i].price * data[i].quantity,
+        const data = res.data;
+        this.sales_order_details = []; // Clear existing data
+
+        // Process each item sequentially using Promise.all
+        const promises = data.map(item => {
+          return new Promise((resolve) => {
+            if (item.product_type === 'product') {
+              // For product type
+              const productObj = {
+                product_id: item.product_id,
+                product_code: item.product?.product_code || '',
+                product_desc: item.product?.product_desc || '',
+                product_pn: item.product?.product_sn || '',
+                product_brand: item.product?.product_brand || '',
+                product_type: item.product_type,
+                quantity: item.quantity,
+                quantity_left: item.quantity_left,
+                price: item.price,
+                discount: item.discount,
+                amount: item.amount,
+                has_do: item.has_do
+              };
+              resolve(productObj);
+            } else {              
+              const packageObj = {
+                  product_id: item.package[0].package_id,
+                  product_code: item.package[0].code_package || '',
+                  product_desc: item.package[0].package_desc || '',
+                  product_pn: item.package[0].package_sn || '',
+                  product_type: item.product_type,
+                  quantity: item.quantity,
+                  quantity_left: item.quantity_left,
+                  price: item.price,
+                  discount: item.discount,
+                  amount: item.amount,
+                  has_do: item.has_do
+                };
+                resolve(packageObj);              
             }
-            this.sales_order_details.push(object)
-          } else {
-            axios.get(PackageADRS + '/' + data[i].product_id).then((res) => {              
-              var adrs = res.data;              
-              var object = {
-                product_id: adrs[i].package_id,
-                product_code: adrs[i].code_package,
-                product_pn: adrs[i].package_sn,
-                product_desc: adrs[i].package_desc,                
-                product_type: this.selectedType,
-                quantity: data[i].quantity,
-                price: data[i].price,
-                discount: data[i].discount,
-                amount: data[i].price * data[i].quantity,
-              }
-              this.sales_order_details.push(object)
-            })
-          }
-        }
-      })
+          });
+        });
+
+        // Wait for all promises to complete
+        Promise.all(promises).then(results => {
+          this.sales_order_details = results.filter(item => item !== null);
+        });
+      });
     },
 
     async getById(id) {
@@ -668,6 +701,8 @@ export default defineComponent({
             return {
               id_detail_so: item.id_detail_so, // Tambahkan jika ada untuk update
               product_id: item.product_id,
+              package_id: item.package_id,
+              product_type: item.product_type,
               quantity: item.quantity,
               quantity_left: item.quantity_left || 0,
               has_do: item.has_do || 0,
@@ -714,6 +749,7 @@ export default defineComponent({
               },
             )
         } else {
+          console.log(this.sales_order_details)
           await axios
             .post(SalesOrderAdd, {
               customer_id: this.customer_id,

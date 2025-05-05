@@ -68,24 +68,45 @@
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">PN</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Name</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Product Type</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Quantity</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Price</th>
+                                <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Discount</th>
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
-                            <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
-                                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">
-                                    <input type="text" v-model="poDetail.discount" class="w-20 rounded-lg"
-                                        @change="updateAmount(poDetail)" />
+                            <tr v-for="poDetail in sales_orders_details" :key="poDetail.i" :class="{
+                                'bg-red-200': poDetail.product_type === 'product' && poDetail.quantity > poDetail.product_stock,
+                                'bg-blue-50': poDetail.product_type === 'package'
+                            }">
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">
+                                    {{ poDetail.product_code }}
+                                    <span v-if="poDetail.is_package" class="text-xs text-blue-600">(Package)</span>
                                 </td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>                                
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ poDetail.product_pn }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">
+                                    {{ poDetail.product_desc }}
+                                    <div v-if="poDetail.is_package" class="text-xs text-gray-500">
+                                        Contains multiple items
+                                    </div>
+                                </td>
+                                <td class="px-3 py-2 whitespace-no-wrap">
+                                    <span class="px-2 py-1 text-xs rounded-full" :class="{
+                                        'bg-green-100 text-green-800': poDetail.product_type === 'product',
+                                        'bg-blue-100 text-blue-800': poDetail.product_type === 'package'
+                                    }">
+                                        {{ poDetail.product_type }}
+                                    </span>
+                                </td>
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ poDetail.quantity }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ formatCurrency(poDetail.price) }}
+                                </td>
+                                <td class="px-3 py-2 whitespace-no-wrap text-left">
+                                    <input type="number" v-model="poDetail.discount" class="w-20 rounded-lg"
+                                        @change="updateAmount(poDetail)" min="0" max="100" /> %
+                                </td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,7 +174,6 @@ export default defineComponent({
                 total_service: false,
                 deposit: false,
             },
-            inquiry_details: [],
         }
     },
     async mounted() {
@@ -181,40 +201,36 @@ export default defineComponent({
             )
         },
         getDetail(id) {
-            axios.get(DetailSo + '/' + id).then((res) => {
-                var data = res.data
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].product_type == 'products') {
-                        var object = {                            
-                            product_code: data[i].product.product_code,
-                            product_desc: data[i].product.product_desc,
-                            product_pn: data[i].product.product_sn,
-                            product_brand: data[i].product.product_brand,
-                            quantity: data[i].quantity,
-                            price: data[i].price,
-                            discount: data[i].discount,
-                            amount: data[i].price * data[i].quantity,
-                        }
-                        this.sales_order_details.push(object)
-                    } else {
-                        axios.get(PackageADRS + '/' + data[i].product_id).then((res) => {
-                            var adrs = res.data;
-                            var object = {
-                                product_id: adrs[i].package_id,
-                                product_code: adrs[i].code_package,
-                                product_pn: adrs[i].package_sn,
-                                product_desc: adrs[i].package_desc,
-                                product_type: this.selectedType,
+            axios.get(DetailSo + '/' + id).then(
+                (res) => {
+                    var data = res.data;
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].product_type == 'product') {
+                            this.sales_orders_details.push({
+                                product_code: data[i].product.product_code,
+                                product_pn: data[i].product.product_sn,
+                                product_desc: data[i].product.product_desc,
+                                product_type: data[i].product_type,
                                 quantity: data[i].quantity,
                                 price: data[i].price,
                                 discount: data[i].discount,
-                                amount: data[i].price * data[i].quantity,
-                            }
-                            this.sales_order_details.push(object)
-                        })
+                                amount: data[i].amount,
+                            });
+                        } else {
+                            this.sales_orders_details.push({
+                                product_code: data[i].package[i].code_package,
+                                product_pn: data[i].package[i].package_sn,
+                                product_desc: data[i].package[i].package_desc,
+                                product_type: data[i].product_type,
+                                quantity: data[i].quantity,
+                                price: data[i].price,
+                                discount: data[i].discount,
+                                amount: data[i].amount,
+                            })
+                        }
                     }
                 }
-            })
+            )
         },
         formatCurrency(value) {
             return new Intl.NumberFormat('en-US', {

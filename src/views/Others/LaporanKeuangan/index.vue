@@ -110,143 +110,17 @@
                 :key="entry.id_po"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
-                <!-- Po Number -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_number }}
-                </td>
-                <!-- Po Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.po_date }}
-                </td>
-                <!-- Customer Code -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_code }}
-                </td>
-                <!-- Customer Name -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_name }}
-                </td>
-                <!-- PN -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.pn }}
-                </td>
-                <!-- Product Desc -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.desc }}
-                </td>
-                <!-- Quantity SO -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_so }}
-                </td>
-                <!-- Price SO -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.price_so) }}
-                </td>
-                <!-- Amount SO -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.amount_so) }}
-                </td>
-                <!-- Brand -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.product_brand }}
-                </td>
-                <!-- SO Number -->
+                <!-- Po Number -->                                                    
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.sales_order }}
-                </td>
-                <!-- SO Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so_date }}
-                </td>
-                <!-- Quantity PO -->
+                </td>                                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.qty_po }}
-                </td>
-                <!-- Price PO -->
+                </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.price_po) }}
-                </td>
-                <!-- Amount PO -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.amount_po) }}
-                </td>
-                <!-- Delivery Order Number -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.delivery_order }}
-                </td>
-                <!-- Delivery Order Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.delivery_order }}
-                </td>
-                <!-- DO Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.do_date }}
-                </td>
-                <!-- QUantity DO -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_do }}
-                </td>
-                <!-- Billing No -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.bill_no }}
-                </td>
-                <!-- Billing Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.billing_date }}
-                </td>
-                <!-- Gross Profit -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.amount_invoice) }}
-                </td>
-                <!-- % GP -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.gross_profit) }}
-                </td>
-                <!-- Faktur Pajak -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.gp_percentage }} %
-                </td>
-                <!-- Faktur Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.faktur_pajak }}
-                </td>
-                <!-- Tanda Terima Invoice -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.faktur_date }}
-                </td>
-                <!-- Tanda Terima Invoice Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice }}
-                </td>
-                <!-- Resi -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice_date }}
-                </td>
-                <!-- Diterima -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.diterima }}
-                </td>
-                <!-- Received Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.received_date }}
-                </td>
-                <!-- Status AR -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.status_ar }}
-                </td>
-                <!-- Total AR -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.total_ar) }}
-                </td>
-                <!-- Aging AR -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.aging_ar }}
-                </td>
-                <!-- OS AR -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.os_ar) }}
-                </td>
-              </tr>
+                  {{ entry.price_po }}
+                </td>                                                                                                 
+              </tr>              
             </tbody>
           </table>
         </div>
@@ -364,8 +238,7 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'po_number', label: 'Po Number' }, // po sales order
-      { key: 'po_date', label: 'Po Date' }, // sales order date
+      { key: 'po_number', label: 'Po Number' }, // po sales order      
       { key: 'cust_code', label: 'Customer Code' }, //customer code
       { key: 'cust_name', label: 'Customer Name' }, // customer name
       { key: 'pn', label: 'PN' }, // part number product
@@ -419,21 +292,18 @@ export default defineComponent({
       loading.value = true
       try {
         // Simulate API call
-        const response = await axios.get(GetReportManagement)
-        reportManagement.value = response.data
-        console.log('Data', reportManagement.value)
-        console.log('Brand', reportManagement.value[0].sales_order)
+        const response = await axios.get(GetReportManagement)        
+        reportManagement.value = response.data                
       } catch (error) {
         console.error('Error fetching invoices:', error)
       } finally {
         loading.value = false
       }
     }
-    const logEntry = (entry) => {
-      console.log('Data', entry)
-    }
+
     onMounted(() => {
-      GetReport()
+      GetReport()   
+      console.log(reportManagement)   
     })
 
     // Computed properties for filtering and pagination
