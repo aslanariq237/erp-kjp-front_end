@@ -491,6 +491,10 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 35) // Add 30 days
         this.due_at = this.formatDate(date)
+      } else if (issueDate && termin === 'N45') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 45) // Add 30 days
+        this.due_at = this.formatDate(date)
       } else if (issueDate && termin === 'N14') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 14) // Add 30 days

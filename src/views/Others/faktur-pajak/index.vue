@@ -306,10 +306,18 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (account) =>
-            account.id_invoice.toLowerCase().includes(query) || account.customer_id.includes(query),
-        )
+        result = result.filter((entry) => {
+          const invoiceNum = entry.invoice.code_invoice.toLowerCase();
+          const customerName = entry.customer.customer_name.toLowerCase();
+          const poNum = entry.so.po_number.toLowerCase();
+          const fakturPajak = entry.code_faktur_pajak.toLowerCase();
+          return (
+            invoiceNum.includes(query) ||
+            customerName.includes(query) ||
+            poNum.includes(query) ||
+            fakturPajak.includes(query)
+          )
+        })
       }
 
       result.sort((a, b) => {
@@ -369,7 +377,7 @@ export default defineComponent({
     }
 
     const viewDetails = (account) => {
-      router.push(`/faktur-pajak/${account.id_invoice}`)
+      router.push(`/faktur-pajak/view/${account.id}`)
     }
 
     const editAccount = (account) => {

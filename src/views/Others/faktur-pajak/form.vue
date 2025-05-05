@@ -240,7 +240,7 @@ export default defineComponent({
               text: "Data has been Saved"
             }).then(async (result) => {
               if (result.isConfirmed) {
-                await router.push("/tanda-terima");
+                await router.push("/faktur-pajak");
               }
             })
           }, (error) => {
@@ -258,7 +258,7 @@ export default defineComponent({
           )
         }
         else {
-          await axios.put(TandaterAdd + '/' + this.id, {
+          await axios.put(AddFakturPajak + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
             employee_id: 1,
@@ -275,7 +275,7 @@ export default defineComponent({
               text: "Data has been Saved"
             }).then(async (result) => {
               if (result.isConfirmed) {
-                await router.push("/invoice");
+                await router.push("/faktur-pajak");
               }
             })
           }, (error) => {

@@ -258,11 +258,7 @@ export default defineComponent({
           const customer = entry.customer.customer_name.toLowerCase()
           return code_quatation.includes(query) || customer.includes(query)
         })
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      }      
 
       return result
     })

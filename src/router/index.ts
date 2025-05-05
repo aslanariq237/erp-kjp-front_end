@@ -245,16 +245,23 @@ const router = createRouter({
           path: 'form',
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
-            title: 'Faktur Pajak',
+            title: 'Faktur Pajak Form',
           },
         },
         {
           path: 'edit/:id',
           component: () => import('../views/Others/faktur-pajak/form.vue'),
           meta: {
-            title: 'Faktur Pajak',
+            title: 'Faktur Pajak Edit',
           },
-        },
+        }, 
+        {
+          path: 'view/:id',
+          component: () => import('../views/Others/faktur-pajak/view.vue'),
+          meta: {
+            title: 'Faktur Pajak View',
+          },
+        },              
       ],
     },
     {

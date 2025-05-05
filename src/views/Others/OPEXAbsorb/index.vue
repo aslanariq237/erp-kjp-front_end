@@ -248,7 +248,7 @@ export default defineComponent({
 
     const approve = async (opex) => {
       isModalOpen.value = true;
-      getOpex(opex.opex_id)
+      console.log(opex.absorb_detail.product_id)
     }
 
     onMounted(() => {
