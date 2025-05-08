@@ -43,6 +43,37 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <FormGroup label="Issue Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
+            <input 
+              type="date" 
+              id="issue_at" 
+              name="issue_at" 
+              v-model="issue_at" min="0" 
+              :class="[
+              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+              rules.amount
+                ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                : 'border-gray-300 focus:ring-blue-500',
+              ]" placeholder="Enter Issue Date" 
+            />            
+          </FormGroup>
+
+          <FormGroup label="Due Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
+            <input 
+              type="date" 
+              id="due_at" 
+              name="due_at" 
+              v-model="due_at" min="0" 
+              :class="[
+              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+              rules.amount
+                ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                : 'border-gray-300 focus:ring-blue-500',
+              ]" placeholder="Enter Due Date" 
+            />            
+          </FormGroup>
+
           <!-- Opex Name -->
           <FormGroup
             label="Opex Name"
@@ -263,6 +294,8 @@ export default defineComponent({
       opex_price: 0,
       opex_type: 'absorb',
       customers: [],
+      issue_at: '',
+      due_at: '',
       customer_name: '',
       filteredCustomers: [],
       sales_order_details: [],
@@ -297,6 +330,8 @@ export default defineComponent({
       this.id = this.$route.params.id
       await this.getById(this.id)
     }
+
+    this.issue_at = new Date().toLocaleDateString('en-ca');
   },
   computed: {
     // Calculate subtotal based on all items in sales_order_details
@@ -524,6 +559,7 @@ export default defineComponent({
             opex_price: this.opex_price,
             opex_type : this.opex_type,
             sales_order_details: this.sales_order_details,            
+            issue_at : this.issue_at,
           })
           .then(() => {
             Swal.fire({

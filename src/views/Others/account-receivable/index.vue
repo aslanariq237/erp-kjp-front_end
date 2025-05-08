@@ -153,6 +153,20 @@
               <!-- New Additional Deposit Input -->
               <div class="mb-5">
                 <label for="deposit-amount" class="block text-sm font-medium text-gray-700 mb-2">
+                  Issue At
+                </label>
+                <div class="relative">                  
+                  <div class="flex space-x-3">
+                    <input id="Issue At" type="date" v-model="issue_today"
+                      class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      />                    
+                  </div>
+                </div>
+              </div>
+
+              <!-- New Additional Deposit Input -->
+              <div class="mb-5">
+                <label for="deposit-amount" class="block text-sm font-medium text-gray-700 mb-2">
                   Additional Deposit Amount
                 </label>
                 <div class="relative">
@@ -173,32 +187,15 @@
               <!-- Total After Change -->
               <div class="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-100">
                 <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-blue-800">New Total Deposit:</span>
+                  <span class="text-sm font-medium text-blue-800">New Deposit:</span>
                   <span class="text-lg font-bold text-blue-800">
                     Rp.
                     {{
-                      selectedItem ? formatCurrency(selectedItem.deposit + additionalDeposit) : 0
+                      selectedItem ? formatCurrency(selectedItem.salesorder.deposit + additionalDeposit) : 0
                     }}
                   </span>
                 </div>
-              </div>
-
-              <!-- Remaining Balance After New Deposit -->
-              <div class="mb-6 p-3 bg-amber-50 rounded-lg border border-amber-100">
-                <div class="flex justify-between items-center">
-                  <span class="text-sm font-medium text-amber-800">Remaining Balance:</span>
-                  <span class="text-lg font-bold text-amber-800">
-                    Rp.
-                    {{
-                      selectedItem
-                        ? formatCurrency(
-                          selectedItem.grand_total - (selectedItem.deposit + additionalDeposit),
-                        )
-                        : 0
-                    }}
-                  </span>
-                </div>
-              </div>
+              </div>              
 
               <div class="flex justify-end space-x-3">
                 <button
@@ -321,13 +318,14 @@ export default defineComponent({
     const maxBalance = ref('')
     const currentPage = ref(1)
     const itemsPerPage = ref(10)
+    const issue_today = new Date().toLocaleDateString('en-CA');
 
     // Sample data - replace with API call
     const accounts = ref([])
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccReceive)
+        const res = await axios.get(AccReceive)        
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -463,7 +461,11 @@ export default defineComponent({
         try {
           const newTotalDeposit = selectedItem.value.salesorder.deposit + additionalDeposit.value
           const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.salesorder.id_so, {
-            deposit : newTotalDeposit
+            id_so : selectedItem.value.salesorder.id_so,
+            payment_method : 'Transfer',
+            deposit : newTotalDeposit,
+            issue_at : issue_today,
+            due_at : issue_today
           });
 
           if (response.status === 200) {
@@ -500,10 +502,14 @@ export default defineComponent({
 
     const exportData = () => {
       const data = filteredData.value.map((account) => ({
-        Name: account.name,
-        'Account Number': account.accountNumber,
-        Balance: formatCurrency(account.balance),
-        'Date Created': account.dateCreated,
+        'Code Po' : account.code_invoice,
+        Customer : account.customer.customer_name,
+        Deposit : account.salesorder.deposit,
+        Amount : account.grand_total,
+        Debt : account.grand_total - account.salesorder.deposit,
+        'Issue Date' : account.issue_at,
+        'Due Date' : account.due_at,
+        Aging : calculateDay(account.issue_at, account.due_at),                
       }))
 
       // Create CSV content
@@ -542,6 +548,7 @@ export default defineComponent({
       paginatedData,
       totalPages,
       startIndex,
+      issue_today,
       endIndex,
       displayedPages,
 
