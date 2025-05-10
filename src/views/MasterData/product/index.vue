@@ -172,7 +172,7 @@
                   Previous
                 </button>
                 <button
-                  v-for="page in totalPages"
+                  v-for="page in displayedPages"
                   :key="page"
                   @click="currentPage = page"
                   :class="[
@@ -271,6 +271,37 @@ export default defineComponent({
       Math.min(startIndex.value + itemsPerPage.value, filteredData.value.length),
     )
 
+    const displayedPages = computed(() => {
+      const delta = 2
+      const range = []
+      const rangeWithDots = []
+      let l
+
+      for (let i = 1; i <= totalPages.value; i++) {
+        if (
+          i === 1 ||
+          i === totalPages.value ||
+          (i >= currentPage.value - delta && i <= currentPage.value + delta)
+        ) {
+          range.push(i)
+        }
+      }
+
+      range.forEach((i) => {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1)
+          } else if (i - l !== 1) {
+            rangeWithDots.push('...')
+          }
+        }
+        rangeWithDots.push(i)
+        l = i
+      })
+
+      return rangeWithDots
+    })
+
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
     // Utility functions
@@ -294,6 +325,7 @@ export default defineComponent({
       paginatedData,
       totalPages,
       startIndex,
+      displayedPages,
       endIndex,
       editProduct,
       deleteProduct,

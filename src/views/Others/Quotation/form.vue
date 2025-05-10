@@ -399,7 +399,7 @@ export default defineComponent({
     getCustomer() {
       axios.get(Customer).then((res) => {
         var data = res.data
-        this.customers = data
+        this.customers = data        
       })
     },
 
@@ -614,8 +614,7 @@ export default defineComponent({
     async onSubmit(e = null) {
       e?.preventDefault?.()
 
-      const result = await this.validation()
-      console.log(result)
+      const result = await this.validation()      
 
       if (result == 0) {
         if (this.id == null) {

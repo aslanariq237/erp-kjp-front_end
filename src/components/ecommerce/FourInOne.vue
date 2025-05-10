@@ -118,7 +118,7 @@ const getSales = async () => {
 const setSalesTarget = () => {
   // Generate random target values between 2-3 million IDR
   const generateTarget = () => {
-    return Math.floor(Math.random() * (3000000 - 2000000 + 1) + 2000000)
+    return Math.floor(200000000)
   }
 
   // Create an array of target values for each month

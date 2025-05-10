@@ -112,14 +112,83 @@
               >
                 <!-- Po Number -->                                                    
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sales_order }}
+                  {{ entry.po_number }}
                 </td>                                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_po }}
+                  {{ entry.cust_code }}
                 </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.cust_name }}
+                </td>               
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.pn }}
+                </td>        
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.desc }}
+                </td>          
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_so }}
+                </td>            
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.price_so }}
+                </td>              
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.amount_so }}
+                </td>               
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.product_brand }}
+                </td>                   
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.sales_order }}
+                </td>                 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.so_date }}
+                </td>             
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_po }}
+                </td>             
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.price_po }}
-                </td>                                                                                                 
+                </td>              
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.amount_po }}
+                </td>               
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.delivery_order }}
+                </td>  
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.do_date }}
+                </td>             
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.qty_do }}
+                </td>            
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.bill_no }}
+                </td>             
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.billing_date }}
+                </td>                  
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.amount_invoice }}
+                </td>                    
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.gross_profit }}
+                </td>                  
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.gp_percentage }}
+                </td>                   
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.faktur_pajak }}
+                </td>                  
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.faktur_date }}
+                </td>                 
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice }}
+                </td>                          
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.tanda_terima_invoice_date }}
+                </td>                                                                                                     
               </tr>              
             </tbody>
           </table>
@@ -252,8 +321,7 @@ export default defineComponent({
       { key: 'qty_po', label: 'Quantity PO' }, // quantity purchase order
       { key: 'price_po', label: 'Price PO' }, // price per unit purchase order
       { key: 'amount_po', label: 'Amount PO' }, // amount purchase order
-      { key: 'do_number', label: 'DO Number' }, // amount purchase order
-      { key: 'delivery_order', label: 'Delivery Order' }, // delivery order
+      { key: 'do_number', label: 'DO Number' }, // amount purchase order      
       { key: 'delivery_order_date', label: 'DO Date' }, // delivery order date
       { key: 'qty_do', label: 'Quantity DO' }, //quantity delivery order
       // { key: 'qty_do', label: 'DO Date' }, //delivery order date
@@ -266,14 +334,7 @@ export default defineComponent({
       { key: 'faktur_pajak', label: 'FAKTUR PAJAK' },
       { key: 'faktur_date', label: 'FAKTUR DATE' },
       { key: 'tanda_terima_invoice', label: 'TANDA TERIMA INVOICE' },
-      { key: 'tanda_terima_invoice_date', label: 'TANDA TERIMA INVOICE DATE' },
-      { key: 'resi', label: 'RESI' },
-      { key: 'diterima', label: 'DITERIMA' },
-      { key: 'received_date', label: 'RECEIVED DATE' },
-      { key: 'status_ar', label: 'STATUS AR' },
-      { key: 'total_ar', label: 'TOTAL AR' },
-      { key: 'aging_ar', label: 'AGING AR' },
-      { key: 'os_ar', label: 'OS AR' },
+      { key: 'tanda_terima_invoice_date', label: 'TANDA TERIMA INVOICE DATE' },      
     ]
 
     // Filter and sort state

@@ -2,18 +2,8 @@
   <admin-layout>
     <div class="grid grid-cols-6 gap-4 md:gap-6">
       <div class="col-span-12 space-y-6 xl:col-span-12">
-        <ecommerce-metrics />
-        <sales-target />
-      </div>
-      <div class="col-span-12 space-y-6 xl:col-span-12">
-        <monthly-target />
-      </div>
-      <div class="col-span-12 space-y-6 xl:col-span-12">
-        <monthly-quatation />
-      </div>
-      <div class="col-span-12 space-y-6 xl:col-span-12">
-        <monthly-invoice />
-      </div>
+        <ecommerce-metrics />        
+      </div>      
       <div class="col-span-12 space-y-6 xl:col-span-12">
         <four-in-one />
       </div>
