@@ -231,7 +231,7 @@ export default defineComponent({
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;        
-        data = data.filter(detail => detail.has_invoice == 0);
+        data = data.filter(detail => detail.has_do == 0);
         this.salesOrders = data;
       })
     },
@@ -276,10 +276,11 @@ export default defineComponent({
             if (!Array.isArray(data)) {
               data = data.data || [data]
             }
-
             for (let i = 0; i < data.length; i++) {
-              let detail = data[i];
-              var newObject = {
+              const detail = data[i];
+              if (detail.product_type === 'product') {
+              // For product type
+              const productObj = {
                 id_detail_so: detail.id_detail_so,
                 id_so: detail.id_so,
                 product_id: detail.product_id,
@@ -291,9 +292,41 @@ export default defineComponent({
                 quantity: detail.quantity,
                 quantity_left: detail.quantity - detail.quantity_left,
                 price: detail.price,
-              }
-              this.sales_order_details.push(newObject)              
+              };              
+              this.sales_order_details.push(productObj)
+            } else {              
+              const packageObj = {
+                  product_id: detail.package[0].package_id,
+                  product_code: detail.package[0].code_package || '',
+                  product_desc: detail.package[0].package_desc || '',
+                  product_brand: 'none Brand',
+                  product_sn: detail.package[0].package_sn || '',
+                  product_type: detail.product_type,
+                  quantity_left: detail.quantity_left,
+                  has_do : detail.has_do,                  
+                  price: detail.price,                  
+                };
+                this.sales_order_details.push(packageObj)             
             }
+              
+            }
+            // for (let i = 0; i < data.length; i++) {
+            //   let detail = data[i];
+            //   var newObject = {
+                // id_detail_so: detail.id_detail_so,
+                // id_so: detail.id_so,
+                // product_id: detail.product_id,
+                // product_desc: detail.product.product_desc,
+                // product_brand: detail.product.product_brand,                
+                // product_stock: detail.product.product_stock,
+                // product_sn: detail.product.product_sn,
+                // has_do : detail.has_do,
+                // quantity: detail.quantity,
+                // quantity_left: detail.quantity - detail.quantity_left,
+                // price: detail.price,
+            //   }
+            //   this.sales_order_details.push(newObject)              
+            // }
           }
         )
       }

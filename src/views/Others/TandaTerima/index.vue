@@ -94,13 +94,7 @@
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_tandater }}</div>
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so.code_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so.po_number }}
-                </td>
+                </td>                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
                 </td>
@@ -213,9 +207,7 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_so', label: 'Tandater Number' },      
-      { key: 'customer', label: 'So Number' },      
-      { key: 'customer', label: 'Po Number' },      
+      { key: 'code_so', label: 'Tandater Number' },              
       { key: 'sub_total', label: 'Customer' },
       { key: 'sub_total', label: 'Resi' },
       { key: 'issue_at', label: 'Issue Date' },

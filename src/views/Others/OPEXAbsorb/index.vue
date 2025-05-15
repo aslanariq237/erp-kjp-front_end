@@ -231,24 +231,11 @@ export default defineComponent({
       } finally {
         loading.value = false
       }
-    }
-
-    const getOpex = async(id) => {
-      try {
-        await axios.get(GetOpex + '/absorb/' + id).then((res) => {
-          console.log(res.data)
-        })
-      } catch (error) {
-        console.error('Error fetching product data:', error)
-      } finally {
-        loading.value = false      
-      }
-    }
+    }    
 
 
     const approve = async (opex) => {
-      isModalOpen.value = true;
-      console.log(opex.absorb_detail.product_id)
+      isModalOpen.value = true;      
     }
 
     onMounted(() => {
@@ -399,8 +386,7 @@ export default defineComponent({
       displayedPages,
       opexData,
 
-      // Methods
-      getOpex,
+      // Methods      
       formatCurrency,
       deleteOpex,
       exportData,

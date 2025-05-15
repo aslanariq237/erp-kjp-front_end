@@ -51,8 +51,14 @@
           </FormGroup>
           <!-- Id_Purchase order -->
           <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
-              :class="inputClass(rules.due_at)">
+            <select 
+              name="id_so" 
+              id="id_so" 
+              v-model="id_so" 
+              class="rounded w-full" 
+              @change="selectedSalesOrder"
+              :class="inputClass(rules.due_at)"                
+            >
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
                 {{ po.code_so }}
               </option>

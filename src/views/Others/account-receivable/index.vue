@@ -95,13 +95,13 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.salesorder.deposit) }}
+                  {{ formatCurrency(account.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.grand_total - account.salesorder.deposit) }}
+                  {{ formatCurrency(account.grand_total - account.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ account.issue_at }}</div>
@@ -146,7 +146,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Current Deposit</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
                   <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
-                    formatCurrency(selectedItem.salesorder.deposit) : 0 }}</span>
+                    formatCurrency(selectedItem.deposit) : 0 }}</span>
                 </div>
               </div>
 
@@ -177,7 +177,7 @@
                       placeholder="0.00" />
                     <button
                       class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"                      
-                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.salesorder.deposit">                     
+                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.deposit">                     
                      Lunas
                     </button>
                   </div>
@@ -191,7 +191,7 @@
                   <span class="text-lg font-bold text-blue-800">
                     Rp.
                     {{
-                      selectedItem ? formatCurrency(selectedItem.salesorder.deposit + additionalDeposit) : 0
+                      selectedItem ? formatCurrency(selectedItem.deposit + additionalDeposit) : 0
                     }}
                   </span>
                 </div>
@@ -459,8 +459,8 @@ export default defineComponent({
     async function saveDeposit() {
       if (selectedItem.value) {
         try {
-          const newTotalDeposit = selectedItem.value.salesorder.deposit + additionalDeposit.value
-          const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.salesorder.id_so, {
+          const newTotalDeposit = selectedItem.value.deposit + additionalDeposit.value
+          const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
             id_so : selectedItem.value.salesorder.id_so,
             payment_method : 'Transfer',
             deposit : newTotalDeposit,
@@ -509,7 +509,8 @@ export default defineComponent({
         Debt : account.grand_total - account.salesorder.deposit,
         'Issue Date' : account.issue_at,
         'Due Date' : account.due_at,
-        Aging : calculateDay(account.issue_at, account.due_at),                
+        Aging : calculateDay(account.issue_at, account.due_at),   
+        'Status AR' : account.salesorder.grand_total = account.grand_total ? "Paid" : "Partial",             
       }))
 
       // Create CSV content

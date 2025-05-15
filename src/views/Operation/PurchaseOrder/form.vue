@@ -245,15 +245,17 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
-                <button
-                  type="button"
-                  class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                  @click="
-                    purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
-                  "
-                >
-                  Delete
-                </button>
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  <button
+                    type="button"
+                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                    @click="
+                      purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
+                    "
+                  >
+                    Delete
+                  </button>
+                </td>                
               </tr>
             </tbody>
           </table>
@@ -266,7 +268,10 @@
                 <p>{{ formatCurrency(sub_total) }}</p>
               </div>
               <div class="sub_total flex justify-between mt-3">
-                <p>PPN</p>
+                <div class="ppn flex items-center space-x-2">                  
+                  <p>PPN                   
+                  </p>
+                </div>
                 <p>{{ formatCurrency(ppn) }}</p>
               </div>
               <div class="sub_total flex justify-between mt-3">
@@ -274,7 +279,7 @@
                 <p>{{ formatCurrency(grand_total) }}</p>
               </div>
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </Form>
@@ -317,7 +322,7 @@ export default defineComponent({
     const { user } = useAuthStore()
     return {
       id: null,
-      user: user,
+      user: user,      
       vendors: [],
       vendor_name: '',
       filteredvendors: [],
@@ -362,7 +367,7 @@ export default defineComponent({
     this.getProducts()
 
     const route = useRoute()
-    const id = route.params.id
+    const id = route.params.id    
 
     if (id) {
       this.getById(id)
@@ -389,7 +394,7 @@ export default defineComponent({
     },
 
     // Calculate PPN (11% of subtotal)
-    ppn() {
+    ppn() {      
       return this.sub_total * 0.11
     },
 
@@ -416,7 +421,7 @@ export default defineComponent({
         var data = res.data
         this.employees = data
       })
-    },
+    },    
 
     calculateDueDate(issueDate, termin) {
       if (issueDate && termin === 'N30') {
@@ -626,7 +631,7 @@ export default defineComponent({
               termin: this.termin,
               total_tax: this.total_tax,
               status_payment: this.status_payment,
-              deposit: this.deposit,
+              deposit: this.deposit,              
               issue_at: this.issue_at,
               due_at: this.due_at,
               purchase_order_details: this.purchase_order_details,
@@ -666,6 +671,7 @@ export default defineComponent({
               deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
+              ppncheck : this.ppnCheck,
               purchase_order_details: this.purchase_order_details,
             })
             .then(

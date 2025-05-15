@@ -121,6 +121,13 @@
                   >
                     Edit
                   </button>
+                  <button
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
+                    @click="editPPN(entry)"
+                    v-if="entry.grand_total != entry.deposit"
+                  >
+                    Edit PPN
+                  </button>
                   <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
                     Export
                   </button>
@@ -263,6 +270,15 @@ export default defineComponent({
       axios.post(InvoiceAdd + '/appr/' + id).then((res) => {
         console.log(res)
       })
+    }
+
+    const editPPN = (item) => {
+      axios.post(InvoiceAdd + '/edit_ppn/' + item.id_invoice,{
+        sub_total : item.sub_total,
+        ppn : item.ppn,
+      }).then((res) => {        
+        console.log(res)
+      }).catch((err) => console.error(err));
     }
 
     const viewData = (id) => {
@@ -528,6 +544,7 @@ export default defineComponent({
     return {
       viewData,
       editData,
+      editPPN,
       approved,
       // State
       loading,

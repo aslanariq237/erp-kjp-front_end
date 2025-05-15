@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">Finance Report</h1>
-          <p class="text-gray-500 text-sm mt-1">Finance Tools/ Laporan Keuangan</p>
+          <p class="text-gray-500 text-sm mt-1">Finance Tools/ Finance Report</p>
         </div>
         <div class="flex gap-3">
           <button

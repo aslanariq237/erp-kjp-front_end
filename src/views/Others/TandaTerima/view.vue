@@ -42,28 +42,13 @@
               <div class="" v-if="rules.resi == true">
                 <p class="text-red-500 text-sm">Resi Dibutuhkan</p>
               </div>
-            </FormGroup>
-            <!-- Id_Purchase order -->
-            <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
-              <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
-                :class="inputClass(rules.due_at)">
-                <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
-                  {{ po.code_so }}
-                </option>
-              </select>
-            </FormGroup>
-            <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
-              <input type="text" v-model="customer_id" hidden>
-              <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
-                placeholder="Po Number" />
-            </FormGroup>
+            </FormGroup>            
             <!-- DO Type -->
             <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="DO Type is required">
               <input type="text" v-model="customer_id" hidden>
               <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
                 placeholder="Customer Name" />
             </FormGroup>
-  
             <!-- Alamat -->
             <FormGroup label="Address" :required="false" errorMessage="Sub Total is required">
               <input type="text" id="alamat" name="alamat" v-model="customer_address" :class="inputClass(rules.alamat)"

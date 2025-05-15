@@ -397,15 +397,15 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccPayable)        
-        accounts.value = res.data
+        const res = await axios.get(AccPayable)                
+        accounts.value = res.data;        
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
     onMounted(() => {
-      getArcheive()
+      getArcheive()      
     })
 
     const calculateDay = (issue_at, due_at) => {
@@ -583,7 +583,7 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((account) => ({
+      const data = accounts.value.map((account) => ({
         'Code Po' : account.code_po,
         Customer : account.vendor.vendor_name,
         Terbayar : account.deposit,
@@ -592,7 +592,12 @@ export default defineComponent({
         'Issue Date' : account.issue_at,
         'Due Date' : account.due_at,
         Aging : calculateDay(account.issue_at, account.due_at),
+        "Status AP" : account.grand_total = account.deposit ? "Paid":"Partial",
+        "payment Date" : account.grand_total = account.deposit ? account.payment.issue_at : "None Payment"
       }))
+      // account.forEach(item => {
+          
+      //   });        
 
       // Create CSV content
       const headers = Object.keys(data[0])
