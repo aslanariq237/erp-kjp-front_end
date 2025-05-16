@@ -50,7 +50,13 @@
             </div>
           </FormGroup>
           <!-- Id_Purchase order -->
-          <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
+          <FormGroup 
+            label="Sales Order" 
+            :required="true" 
+            :error="rules.no" 
+            errorMessage="Purchase Order is required"
+            v-if="!id"
+          >
             <select 
               name="id_so" 
               id="id_so" 
@@ -64,7 +70,13 @@
               </option>
             </select>
           </FormGroup>
-          <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
+          <FormGroup 
+            label="Po Number" 
+            :required="true" 
+            :error="rules.customer" 
+            errorMessage="DO Type is required"
+            v-if="!id"
+          >
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
               placeholder="Po Number" />
@@ -107,6 +119,7 @@
                 <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">So Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Nominal</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
@@ -114,6 +127,7 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.nominal) }}</td>
               </tr>
             </tbody>
           </table>
@@ -273,6 +287,7 @@ export default defineComponent({
                 id_so: data[i].salesorder.id_so,
                 code_so: data[i].salesorder.code_so,
                 po_number: data[i].salesorder.po_number,
+                nominal : data[i].grand_total,
               }
               this.tandaterima_details.push(object);
             }
@@ -319,13 +334,14 @@ export default defineComponent({
     getDetailSo(id) {
       axios.get(DetailTandater + '/' + id).then(
         (res) => {
-          var data = res.data;
+          var data = res.data;          
           for (let i = 0; i < data.length; i++) {
             var object = {
               code_invoice: data[i].invoice.code_invoice,
               id_invoice: data[i].id_invoice,
               code_so: data[i].so.code_so,
               po_number: data[i].so.po_number,
+              nominal : data[i].invoice.grand_total,
             }
             this.tandaterima_details.push(object);
           }
