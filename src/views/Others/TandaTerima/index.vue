@@ -116,10 +116,10 @@
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
                     @click="editData(entry.id_tandater)"                   
                   >Edit</button>
-                  <!-- <button 
+                  <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
-                  >Export</button>                                       -->
+                    @click="exportToPdf(entry)"
+                  >Export</button>                                      
                 </td>
               </tr>
             </tbody>
@@ -196,6 +196,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { DetailTandater, SalesOrders, Tandater } from '@/core/utils/url_api'
 import router from '@/router'
+import { exportTTPDF } from '@/core/helpers/exportToPdf'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -268,18 +269,6 @@ export default defineComponent({
         })
       }
 
-      if (startDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
-      }
-
-      if (endDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
-
       return result
     })
 
@@ -338,6 +327,10 @@ export default defineComponent({
       return rangeWithDots
     })
 
+    const exportToPdf = (item) => {
+      exportTTPDF(item);
+    }
+
     // Utility functions
     const exportData = () => {
       const data = dataexcel.value.map((entry) => ({
@@ -395,6 +388,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      exportToPdf,
       formatCurrency,
     }
   },

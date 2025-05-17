@@ -26,12 +26,12 @@
                     <p class="text-3xl font-semibold mt-5">QUOTATION</p>
                 </div>
                 <div class="flex justify-between align-center text-xl gap-20 my-5">
-                    <div class="left w-[50%]">
+                    <div class="left w-[40%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[40%]">
+                    <div class="right w-[60%]">
                         <div class="flex">
                             <p class="w-60">Quotation No </p>
                             <p>: {{ item.code_quatation }}</p>
@@ -54,6 +54,7 @@
                     <table class="min-w-full divide-y mt-4 divide-gray-100 shadow-sm border-gray-200 border">
                         <thead class="border">
                             <tr class="text-center">
+                                <th class="text-xl px-3 py-2 font-semibold">No</th>
                                 <th class="text-xl px-3 py-2 font-semibold">Part Number</th>
                                 <th class="text-xl px-3 py-2 font-semibold">Description</th>
                                 <th class="text-xl px-3 py-2 font-semibold">Qty</th>
@@ -66,6 +67,7 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
                             <tr class="text-center border-b-2" v-for="(pro, index) in item.detail_quo" :key="index">
+                                <td class="text-xl px-3 py-2">{{ index+1 }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_sn }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_desc }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.quantity }}</td>

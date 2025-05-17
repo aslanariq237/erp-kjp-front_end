@@ -26,12 +26,12 @@
                     <p class="text-4xl font-semibold">INVOICE</p>
                 </div>
                 <div class="flex justify-between text-xl mt-5">
-                    <div class="left w-[50%]">
+                    <div class="left w-[40%]">
                         <p class="font-semibold">Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[50%]">
+                    <div class="right w-[60%]">
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.salesorder.po_number }}</p>
@@ -58,6 +58,7 @@
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
                         <thead class="bg-gray-300">
                             <tr class="text-center text-xl ">
+                                <th class="px-3 py-2 text-xl font-semibold border-b">No</th>
                                 <th class="px-3 py-2 text-xl font-semibold border-b">Part Number</th>
                                 <th class="px-3 py-2 text-xl font-semibold border-b">Description</th>
                                 <th class="px-3 py-2 text-xl font-semibold border-b">Qty</th>
@@ -70,6 +71,7 @@
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
                             <tr class="text-center border-b-2 text-xl" v-for="(pro, index) in item.detail_inv" :key="index">
+                                <td class="text-xl px-3 py-2">{{ index+1 }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_sn }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_desc }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.quantity }}</td>
@@ -134,7 +136,7 @@
                                     <div class="flex justify-between">
                                         <span>IDR. </span>
                                         <span>
-                                            {{ numberWithCommas(item.sub_total * 0.11) }},00
+                                            {{ numberWithCommas(item.ppn) }},00
                                         </span>
                                     </div>
                                 </td>
@@ -148,7 +150,7 @@
                                 <td class="text-xl px-3 py-2 border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <span>IDR. </span>
-                                        <span>{{ numberWithCommas(item.sub_total * 0.11 + item.sub_total) }},00</span>
+                                        <span>{{ numberWithCommas(item.grand_total) }},00</span>
                                     </div>
                                 </td>
                             </tr>
@@ -163,14 +165,14 @@
                         </div>
                         <div v-else>
                             <p class="text-xl">Warm Regards</p>
-                            <div v-if="item.customer.customer_name = 'Petronesia Benimel'">
-                                <div class="text-xl mt-44">
-                                    <p>Hery Susanto</p>
+                            <div v-if="item.customer.customer_name != 'Petronesia Benimel'">
+                                <div class="text-xl mt-44">                                    
+                                    <p>VINCENTIUS ADITYA HARNAWAN</p>
                                 </div>
                             </div>
                             <div v-else>
                                 <div class="text-xl mt-44">
-                                    <p>VINCENTIUS ADITYA HARNAWAN</p>
+                                    <p>HERY SUSANTO</p>                                    
                                 </div>
                             </div>
                         </div>

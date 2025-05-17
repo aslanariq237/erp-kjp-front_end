@@ -23,7 +23,7 @@
         <div class="body">
             <div class="mt-3">
                 <div class="title text-center">
-                    <p class="text-4xl font-semibold mt-5">DELIVERY ORDER</p>
+                    <p class="text-4xl font-semibold mt-5">Tanda Terima</p>
                 </div>
                 <div class="flex justify-between items-center text-xl mt-5 gap-20">
                     <div class="left w-[50%]">
@@ -31,14 +31,10 @@
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[40%]">                        
+                    <div class="right w-[40%]">                                                
                         <div class="flex">
-                            <p class="w-64">Purchase Order No </p>
-                            <p>: {{ item.salesorder.po_number }}</p>
-                        </div>
-                        <div class="flex">
-                            <p class="w-64">Delivery Order No </p>
-                            <p>: {{ item.code_do}}</p>
+                            <p class="w-64">Tanda Terima No </p>
+                            <p>: {{ item.code_tandater}}</p>
                         </div>                        
                         <div class="flex">
                             <p class="w-64">Delivery Date </p>
@@ -51,45 +47,41 @@
                         <thead class="border">
                             <tr class="text-center">                                
                                 <th class="text-xl px-3 py-2 font-semibold">No</th>
-                                <th class="text-xl px-3 py-2 font-semibold">Part Number</th>
-                                <th class="text-xl px-3 py-2 font-semibold">Description</th>
-                                <th class="text-xl px-3 py-2 font-semibold">Qty</th>
-                                <th class="text-xl px-3 py-2 font-semibold">UOM</th>
-                                <th class="text-xl px-3 py-2 font-semibold">
-                                    Point
-                                </th>
-                                <th class="text-xl px-3 py-2 font-semibold">Address</th>                                
+                                <th class="text-xl px-3 py-2 font-semibold">No Invoice</th>
+                                <th class="text-xl px-3 py-2 font-semibold">No SO</th>
+                                <th class="text-xl px-3 py-2 font-semibold">Price</th>                                
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2" v-for="(pro, index) in item.detail_do" :key="index">
+                            <tr class="text-center border-b-2" v-for="(pro, index) in item.detailtandater" :key="index">
                                 <td class="text-xl px-3 py-2">{{index+1 }}</td>
-                                <td class="text-xl px-3 py-2">{{pro.product.product_sn }}</td>
-                                <td class="text-xl px-3 py-2">{{pro.product.product_desc }}</td>
-                                <td class="text-xl px-3 py-2">{{ pro.quantity }}</td>
-                                <td class="text-xl px-3 py-2">{{ pro.product.product_uom }}</td>
-                                <td class="text-xl px-3 py-2">{{ item.point.point }}</td>
-                                <td class="text-xl px-3 py-2">{{ item.point.alamat }}</td>                                
+                                <td class="text-xl px-3 py-2">{{pro.so.code_so }}</td>
+                                <td class="text-xl px-3 py-2">{{pro.invoice.code_invoice }}</td>
+                                <td class="text-xl px-3 py-2">{{formatCurrency(pro.invoice.grand_total) }}</td>
+                            </tr>   
+                            <tr class="text-center border-b-2">
+                                <td class="px-3 py-2 whitespace-nowrap border-0"></td>
+                                <td class="px-3 py-2 whitespace-nowrap border-0"></td>
+                                <td class="px-3 py-2 whitespace-nowrap border-0"></td>
+                                <td class="text-xl px-3 py-2">{{formatCurrency(totalGrandTotal) }}</td>
                             </tr>                            
                         </tbody>
                     </table>
                 </div>
                 <div class="flex justify-between mt-20">
-                    <div>
+                    <div>                        
+                        <div class="text-xl mt-28">                            
+                        </div>
+                    </div>
+                    <div>                                                 
+                        <div class="text-xl mt-28">                            
+                        </div>
+                    </div>
+                    <div>                         
                         <p class="mb-2 text-xl">Prepared By</p>   
                         <img :src="getImagePaths('tt-imam.png')" width="320">             
                         <div class="text-xl mt-2">
                             <p>IMAM FAJRI</p>
-                        </div>
-                    </div>
-                    <div>                         
-                        <p class="mb-2 text-xl">Pengirim</p>                           
-                        <div class="text-xl mt-28">                            
-                        </div>
-                    </div>
-                    <div>                         
-                        <p class="mb-2 text-xl">Penerima</p>                           
-                        <div class="text-xl mt-28">                            
                         </div>
                     </div>                    
                 </div>
@@ -106,6 +98,14 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+    },
+    computed: {
+        totalGrandTotal() {
+            if (!this.item.detailtandater) return 0;
+            return this.item.detailtandater.reduce((sum, pro) => {
+                return sum + (pro.invoice?.grand_total || 0);
+            }, 0);
+        }
     },
     methods: {
         getImagePaths(filename) {

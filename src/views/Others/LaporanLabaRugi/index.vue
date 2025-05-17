@@ -115,19 +115,19 @@
                   {{ entry.po_number }}
                 </td>                                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_code }}
+                  {{ entry.customer_code }}
                 </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_name }}
+                  {{ entry.customer_name }}
                 </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.pn }}
+                  {{ entry.product_sn }}
                 </td>        
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.desc }}
+                  {{ entry.product_desc }}
                 </td>          
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_so }}
+                  {{ entry.quantity_so }}
                 </td>            
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.price_so }}
@@ -136,16 +136,16 @@
                   {{ entry.amount_so }}
                 </td>               
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.product_brand }}
+                  {{ entry.brand }}
                 </td>                   
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sales_order }}
+                  {{ entry.code_so }}
                 </td>                 
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.so_date }}
                 </td>             
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_po }}
+                  {{ entry.quantity_po }}
                 </td>             
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.price_po }}
@@ -378,11 +378,7 @@ export default defineComponent({
             reportManagement.po_number.toLowerCase().includes(query) ||
             reportManagement.cust_name.toLowerCase().includes(query),
         )
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      }      
 
       return result
     })

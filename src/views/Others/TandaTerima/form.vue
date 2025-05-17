@@ -36,6 +36,14 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- tandaterima code -->
+           <FormGroup 
+            label="Tanda Terima Code"  
+            v-if="id"                     
+          >
+            <input type="text" autocomplete="off" id="due_at" name="due_at" placeholder="Code Tanda Terima" v-model="code_tandater"
+              :class="inputClass(rules.due_at)" />
+          </FormGroup>
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
@@ -113,7 +121,7 @@
           </button>
         </div>
         <div>
-          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border mt-3">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
@@ -183,6 +191,7 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       po_number: '',
+      code_tandater : '',
       resi: '',
       customer_name: '',
       customer_npwp: 0,
@@ -351,7 +360,7 @@ export default defineComponent({
     async getById(id) {
       await axios.get(Tandater + '/' + id).then(
         (res) => {
-          var data = res.data;
+          var data = res.data;          
           this.issue_at = data[0].issue_at;
           this.resi = data[0].resi;
           this.id_so = data[0].id_so;
@@ -359,7 +368,7 @@ export default defineComponent({
           this.customer_id = data[0].customer_id;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
-
+          this.code_tandater = data[0].code_tandater;
           var id = data[0].id_tandater;
           if (id) {
             this.getDetailSo(id);

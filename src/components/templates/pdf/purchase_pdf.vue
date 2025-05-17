@@ -27,12 +27,12 @@
                     <p class="text-4xl font-semibold mt-5" v-else>PURCHASE ORDER</p>
                 </div>
                 <div class="flex justify-between text-xl mt-5">
-                    <div class="left ml-10 w-[50%]">
+                    <div class="left ml-10 w-[40%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.vendor.vendor_name }}</p>
                         <p>{{ item.vendor.vendor_address }}</p>
                     </div>
-                    <div class="right w-[40%]">
+                    <div class="right w-[60%]">
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.code_po }}</p>
@@ -55,6 +55,7 @@
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
                         <thead class="border">
                             <tr class="text-center text-2x;">
+                                <th class=" px-3 py-2 font-semibold">No</th>
                                 <th class=" px-3 py-2 font-semibold">Part Number</th>
                                 <th class=" px-3 py-2 font-semibold">Description</th>
                                 <th class=" px-3 py-2 font-semibold">Qty</th>
@@ -66,7 +67,8 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2 text-xl" v-for="(pro, index) in item.detail_po" :key="index">
+                            <tr class="text-center border-b-2 text-xl" v-for="(pro, index) in item.detail_po" :key="index">                                
+                                <td class="text-xl px-3 py-2">{{ index+1}}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_sn }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.product.product_desc }}</td>
                                 <td class="text-xl px-3 py-2">{{ pro.quantity }}</td>

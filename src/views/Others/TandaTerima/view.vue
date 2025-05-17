@@ -132,6 +132,7 @@
         employee: [],
         tandaterima_details: [],      
         code_invoice: '',
+        code_tandaterima: '',
         id_so: null,
         id_invoice: null,
         customer_id: null,
@@ -298,9 +299,10 @@
         )
       },
       async getById(id) {
-        await axios.get(Invoice + '/' + id).then(
+        await axios.get(Invoice + '/' + id).then(          
           (res) => {
             var data = res.data;
+            console.log(data);
             this.issue_at = data[0].issue_at;
             this.due_at = data[0].due_at;
             this.po_number = data[0].salesorder.po_number;
@@ -308,8 +310,8 @@
             this.customer_id = data[0].customer_id;
             this.code_invoice = data[0].code_invoice;
             this.customer_name = data[0].customer.customer_name;
-            this.customer_address = data[0].customer.customer_address;
-  
+            this.code_tandaterima = data[0].code_tandater;
+            this.customer_address = data[0].customer.customer_address;            
             var id = data[0].id_invoice;
             if (id) {
               this.getDetailSo(id);

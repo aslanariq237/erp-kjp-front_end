@@ -398,14 +398,14 @@ export default defineComponent({
     const getArcheive = async () => {
       try {
         const res = await axios.get(AccPayable)                
-        accounts.value = res.data;        
+        accounts.value = res.data;                
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
     onMounted(() => {
-      getArcheive()      
+      getArcheive()            
     })
 
     const calculateDay = (issue_at, due_at) => {
@@ -424,27 +424,15 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (account) =>
-            account.name.toLowerCase().includes(query) || account.accountNumber.includes(query),
-        )
+        result = result.filter((entry) => {
+          const vendor = entry.vendor.vendor_name.toLowerCase()
+          const code_po = entry.code_po
+          return vendor.includes(query) ||
+            code_po.includes(query)
+        })
       }
       result = result.filter((account) => account.grand_total - account.deposit > 0)
-
-      if (minBalance.value) {
-        result = result.filter((account) => account.balance >= minBalance.value)
-      }
-
-      if (maxBalance.value) {
-        result = result.filter((account) => account.balance <= maxBalance.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'balance') {
-          return a.balance - b.balance
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      
 
       return result
     })
@@ -593,7 +581,7 @@ export default defineComponent({
         'Due Date' : account.due_at,
         Aging : calculateDay(account.issue_at, account.due_at),
         "Status AP" : account.grand_total = account.deposit ? "Paid":"Partial",
-        "payment Date" : account.grand_total = account.deposit ? account.payment.issue_at : "None Payment"
+        "payment Date" : account.grand_total != account.deposit ? "None Payment" : account.payment.issue_at
       }))
       // account.forEach(item => {
           
