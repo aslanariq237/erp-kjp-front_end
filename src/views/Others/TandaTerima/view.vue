@@ -9,21 +9,15 @@
         <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex justify-between items-center p-6 border-b">
             <div class="breadcrumb">
-              <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Create New Tanda Terima</h1>
+              <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">View Tanda Terima</h1>
               <p class="text-gray-500 text-sm mt-1">Sales / Tanda Terima / Form</p>
             </div>
             <div class="flex items-center gap-3">
-              <RouterLink to="/invoice"
+              <RouterLink to="/tanda-terima"
                 class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
                 <i class="fas fa-times"></i>
                 Cancel
-              </RouterLink>
-              <button type="submit"
-                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
-                <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
-                <i v-else class="fas fa-check"></i>
-                {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-              </button>
+              </RouterLink>             
             </div>
           </div>
         </div>
@@ -56,34 +50,25 @@
             </FormGroup>
             <FormGroup>
             </FormGroup>
-          </div>
-          <div class="flex items-end gap-5">
-            <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
-              errorMessage="Purchase Order is required">
-              <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
-                <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
-                  {{ delo.code_invoice }}
-                </option>
-              </select>
-            </FormGroup>
-            <button class="bg-blue-400 rounded-lg px-3 py-2" type="button" @click="addDoDetail">
-              Tambah
-            </button>
-          </div>
+          </div>          
           <div class=" mt-8">
             <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
               <thead>
                 <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+                  <th class="px-3 py-2 font-semibold text-left border-b">No</th>
                   <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
                   <th class="px-3 py-2 font-semibold text-left border-b">So Number</th>
                   <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>                
+                  <th class="px-3 py-2 font-semibold text-left border-b">Nominal</th>                
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
-                <tr v-for="products in tandaterima_details" :key="products.product_id">
+                <tr v-for="(products, index) in tandaterima_details" :key="index">
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ index+1 }}</td>                
                   <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>                
                   <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>                
                   <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>                
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.nominal) }}</td>                
                 </tr>
               </tbody>
             </table>          
@@ -108,9 +93,11 @@
     DetailDo,
     DetailInvoice,
     DetailSo,
+    DetailTandater,
     Invoice,
     InvoiceAdd,
     SalesOrders,
+    Tandater,
     TandaterAdd
   } from '@/core/utils/url_api'
   import router from '@/router'
@@ -277,21 +264,16 @@
         return count
       },
       getDetailSo(id) {
-        axios.get(DetailInvoice + '/' + id).then(
+        axios.get(DetailTandater + '/' + id).then(
           (res) => {
             var data = res.data;
             for (let i = 0; i < data.length; i++) {
               var object = {
-                id_do: data[i].id_do,
-                id_detail_invoice: data[i].id_detail_invoice,
-                code_do: data[i].do.code_do,
-                product_id: data[i].product_id,
-                product_desc: data[i].product.product_desc,
-                product_pn: data[i].product.product_sn,
-                product_brand: data[i].product.product_brand,
-                quantity: data[i].quantity,
-                price: data[i].price,
-                amount: data[i].price * data[i].quantity,
+                id_tandater : data[i].id_tandater,
+                code_invoice : data[i].invoice.code_invoice,
+                code_so : data[i].so.code_so,
+                po_number : data[i].so.po_number,
+                nominal : data[i].invoice.grand_total,                
               }
               this.tandaterima_details.push(object);
             }
@@ -299,103 +281,21 @@
         )
       },
       async getById(id) {
-        await axios.get(Invoice + '/' + id).then(          
+        await axios.get(Tandater + '/' + id).then(          
           (res) => {
             var data = res.data;
-            console.log(data);
+            this.customer_name = data[0].customer.customer_name;            
+            this.customer_address = data[0].customer.customer_address;
             this.issue_at = data[0].issue_at;
-            this.due_at = data[0].due_at;
-            this.po_number = data[0].salesorder.po_number;
-            this.id_so = data[0].id_so;
-            this.customer_id = data[0].customer_id;
-            this.code_invoice = data[0].code_invoice;
-            this.customer_name = data[0].customer.customer_name;
-            this.code_tandaterima = data[0].code_tandater;
-            this.customer_address = data[0].customer.customer_address;            
-            var id = data[0].id_invoice;
+            this.resi = data[0].resi;
+            var id = data[0].id_tandater;
+
             if (id) {
               this.getDetailSo(id);
             }
           }
         )
-      },
-  
-      async onSubmit() {
-        const result = await this.validation();      
-        if (result == 0) {
-          if (this.id == null) {
-            await axios.post(TandaterAdd, {
-              id_so: this.id_so,
-              customer_id: this.customer_id,            
-              issue_at: this.issue_at,
-              due_at: this.due_at,   
-              resi : this.resi,         
-              id_do: this.id_do,
-              tandaterima_details: this.tandaterima_details,
-            }, {
-              headers: { "Content-Type": "application/json" }
-            }).then((response) => {
-              console.log(response)
-              Swal.fire({
-                icon: "success",
-                title: 'Success',
-                text: "Data has been Saved"
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  await router.push("/tanda-terima");
-                }
-              })
-            }, (error) => {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text:
-                  (error.response &&
-                    error.response &&
-                    error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              });
-            },
-            )
-          }
-          else {
-            await axios.put(TandaterAdd + '/' + this.id, {
-              id_so: this.id_so,
-              customer_id: this.customer_id,
-              employee_id: 1,
-              issue_at: this.issue_at,            
-              due_at: this.due_at,                      
-              tandaterima_details: this.tandaterima_details,
-            }, {
-              headers: { "Content-Type": "application/json" }
-            }).then((response) => {
-              console.log(response)
-              Swal.fire({
-                icon: "success",
-                title: 'Success',
-                text: "Data has been Saved"
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  await router.push("/invoice");
-                }
-              })
-            }, (error) => {
-              Swal.fire({
-                icon: "error",
-                title: "Error",
-                text:
-                  (error.response &&
-                    error.response &&
-                    error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              });
-            },
-            )
-          }
-        }
-      },
+      },      
   
       inputClass(error) {
         return [

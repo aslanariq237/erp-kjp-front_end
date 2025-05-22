@@ -49,6 +49,7 @@ export const LaporUang = urlLocalhost + 'laporan_keuangan'
 export const Login = urlLocalhost + 'login'
 //O
 export const GetOpex = urlLocalhost + 'opex'
+export const GetAbsorb = urlLocalhost + 'opex/absorb'
 export const AddOpex = urlLocalhost + 'opex_code'
 //P
 export const Product = urlLocalhost + 'products'
@@ -63,6 +64,11 @@ export const PurchaseOrder = urlLocalhost + 'purchase_orders'
 export const PurchaseOrderMonthly = urlLocalhost + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'
 export const PurchaseOrderDelete = urlLocalhost + 'purchase_orders_delete'
+
+export const PoJasaKirim = urlLocalhost + 'po-jasakirim'
+export const PoJasaKirimDetail = urlLocalhost + 'po-jasakirim/detail'
+export const PoJasaKirimCode = urlLocalhost + 'po-jasakirim/store'
+
 //Q
 export const Quatations = urlLocalhost + 'quatations'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'

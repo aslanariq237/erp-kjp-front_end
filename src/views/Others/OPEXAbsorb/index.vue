@@ -109,8 +109,12 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <button class="text-green-600 hover:text-green-900" @click="approve(opex)">
+                    <button
+                     class="text-green-600 hover:text-green-900" @click="approve(opex)">
                       Approve
+                    </button>
+                    <button class="text-blue-600 hover:text-green-900" @click="editData(opex.opex_id)">
+                      Edit
                     </button>
                   </div>
                 </td>
@@ -336,6 +340,10 @@ export default defineComponent({
       }
     }
 
+    const editData = async (id) => {
+      router.push('opex-absorb/edit/' + id)
+    }
+
     const exportData = () => {
       const data = filteredData.value.map((opex) => ({
         Name: opex.opex_name,
@@ -390,6 +398,7 @@ export default defineComponent({
       formatCurrency,
       deleteOpex,
       exportData,
+      editData,
       approve
     }
   },

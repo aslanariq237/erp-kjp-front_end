@@ -31,7 +31,7 @@
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[60%]">
+                    <div class="right">
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.salesorder.po_number }}</p>

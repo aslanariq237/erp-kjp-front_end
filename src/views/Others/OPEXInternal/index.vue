@@ -381,11 +381,11 @@ export default defineComponent({
     }
 
     const viewDetails = (opex) => {
-      router.push(`/opex/${opex.opex_id}`)
+      router.push(`/#`)
     }
 
     const editOpex = (opex) => {
-      router.push(`/opex/edit/${opex.opex_id}`)
+      router.push('/opex-internal/edit/' + opex.opex_id)
     }
 
     const confirmDelete = (opex) => {

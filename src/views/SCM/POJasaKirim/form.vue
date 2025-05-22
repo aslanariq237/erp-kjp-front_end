@@ -10,20 +10,21 @@
       />
 
       <!-- Header Card -->
-      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800">
+      <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
-          <div class="breadcrumb">
-            <h1 v-if="id" class="text-2xl font-bold text-gray-800 dark:text-white/90">
-              Edit New Quotation
+          <div v-if="id" class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Edit Purchase Order</h1>
+            <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order / Form</p>
+          </div>
+          <div v-else class="breadcrumb">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">
+              Create New Purchase Order
             </h1>
-            <h1 v-else class="text-2xl font-bold text-gray-800 dark:text-white/90">
-              Create New Quotation
-            </h1>
-            <p class="text-gray-500 text-sm mt-1">Others / Quotation / Form</p>
+            <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
             <RouterLink
-              to="/quotation"
+              to="/purchase-order"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
             >
               <i class="fas fa-times"></i>
@@ -36,7 +37,7 @@
             >
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
-              {{ isSubmitting ? 'Updating...' : 'Update' }}
+              {{ isSubmitting ? 'Updating...' : 'Update ' }}
             </button>
             <button
               v-else
@@ -52,16 +53,10 @@
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
-          <FormGroup
-            label="Issue Date"
-            :required="true"
-            :error="rules.issue_at"
-            errorMessage="Issue Date is required"
-          >
-            <!-- <p> {{ issue_at }}</p> -->
+          <FormGroup label="Issue Date" :required="true">
             <input
               type="date"
               id="issue_at"
@@ -75,13 +70,15 @@
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup
-            label="Term of Payment"
-            :required="true"
-            :error="rules.po_type"
-            errorMessage="PO Type is required"
-          >
-            <select id="po_type" name="po_type" v-model="termin" :class="inputClass(rules.due_at)">
+          <FormGroup label="Termin" :required="true">
+            <select
+              id="po_type"
+              name="po_type"
+              :class="inputClass(rules.deposit)"
+              v-model="termin"
+              class="rounded w-full"
+            >
+              <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
               <option value="N14">N14</option>
@@ -92,12 +89,12 @@
               <option value="N90">N90</option>
             </select>
             <div class="" v-if="rules.termin == true">
-              <p class="text-sm text-red-500">Termin Dibutuhkan</p>
+              <p class="text-red-500 text-sm">Termin Dibutuhkan</p>
             </div>
           </FormGroup>
 
           <!-- Due Date -->
-          <FormGroup label="Due Date" :required="true" :error="rules.due_at">
+          <FormGroup label="Due Date" :required="true">
             <input
               type="date"
               id="due_at"
@@ -106,49 +103,58 @@
               :class="inputClass(rules.due_at)"
             />
             <div class="" v-if="rules.due_at == true">
-              <p class="text-sm text-red-500">Due Date Dibutuhkan</p>
+              <p class="text-red-500 text-sm">Due Date Dibutuhkan</p>
             </div>
           </FormGroup>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
-          <FormGroup
-            label="Customer"
-            class="relative"
-            :required="true"
-            :error="rules.customer_id"
-            errorMessage="Customer is Required"
-          >
+          <FormGroup label="Vendor" class="relative" :required="true">
             <input
               type="text"
-              name="customer_name"
-              id="customer_name"
-              v-model="customer_name"
+              name="vendor_name"
+              id="vendor_name"
+              v-model="vendor_name"
+              @input="filtervendors"
               autocomplete="off"
-              @input="filterCustomers"
-              :class="inputClass(rules.due_at)"
-              placeholder="Type customer name"
+              class="rounded w-full"
+              :class="inputClass(rules.deposit)"
+              placeholder="Type Vendor Name"
             />
             <ul
-              v-if="filteredCustomers.length"
+              v-if="filteredvendors.length"
               class="border rounded w-full mt-2 bg-white absolute z-40"
             >
               <li
-                v-for="customer in filteredCustomers"
-                :key="customer.customer_id"
-                @click="selectCustomer(customer)"
+                v-for="vendor in filteredvendors"
+                :key="vendor.vendor_id"
+                @click="selectvendor(vendor)"
                 class="p-2 cursor-pointer hover:bg-gray-200"
               >
-                {{ customer.customer_code }} - {{ customer.customer_name }}
+                {{ vendor.vendor_name }}
               </li>
             </ul>
-            <div class="" v-if="rules.customer_name == true">
-              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
+            <div class="" v-if="rules.vendor_id == true">
+              <p class="text-red-500 text-sm">Vendor Dibutuhkan</p>
             </div>
           </FormGroup>
-          <!-- Code PO -->
+
+          <!-- Total Service -->
+          <FormGroup label="Deposit" :required="true">
+            <input
+              type="number"
+              id="deposit"
+              name="deposit"
+              v-model="deposit"
+              :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit"
+            />
+          </FormGroup>
+
+          <!-- Deposit -->
+          <FormGroup> </FormGroup>
         </div>
-        <div class="flex justify-content-between gap-4 items-end mt-8">
+        <div class="flex justify-content-between gap-4 items-end">
           <FormGroup
             class="w-full relative"
             label="product"
@@ -163,7 +169,8 @@
               v-model="product_name"
               autocomplete="off"
               @input="filterProducts"
-              class="rounded w-full dark:bg-gray-800"
+              class="rounded w-full"
+              :class="inputClass(rules.deposit)"
               placeholder="Type product name"
             />
             <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
@@ -211,19 +218,11 @@
               placeholder="Enter Quantity"
             />
           </FormGroup>
-          <div v-if="id">
+
+          <div>
             <button
               type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-              @click="addPoDetails"
-            >
-              tambah
-            </button>
-          </div>
-          <div v-else>
-            <button
-              type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+              class="border-gray-300 border-2 px-3 h-12 rounded-lg"
               @click="addPoDetails"
             >
               tambah
@@ -231,77 +230,56 @@
           </div>
         </div>
         <div class="mt-5">
-          <table
-            class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90"
-          >
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
-              <tr class="text-center">
-                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Price</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Amount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800">
-              <tr v-for="poDetail in inquiry_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
+            <tbody class="bg-white divide-y divide-gray-100">
+              <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <input
-                    type="text"
-                    v-model="poDetail.discount"
-                    class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400"
-                    @change="updateAmount(poDetail)"
-                  />
-                </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <button
                     type="button"
                     class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="inquiry_details.splice(inquiry_details.indexOf(poDetail), 1)"
+                    @click="
+                      purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
+                    "
                   >
                     Delete
                   </button>
-                </td>
+                </td>                
               </tr>
             </tbody>
-            <div class="" v-if="rules.inquiry_details == true">
-              <p class="text-sm text-red-500">Barang Dibutuhkan</p>
-            </div>
           </table>
           <div class="flex justify-between mt-5">
             <div class="w-full"></div>
             <div class="w-full"></div>
             <div class="w-full">
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
+              <div class="sub_total flex justify-between mt-3">
                 <p>Sub Total</p>
                 <p>{{ formatCurrency(sub_total) }}</p>
               </div>
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
-                <div class="flex items-center">
-                  <input 
-                    type="checkbox"                      
-                    v-model="checkppn"
-                    class="mr-2"
-                  >
-                  <p>PPN</p>
+              <div class="sub_total flex justify-between mt-3">
+                <div class="ppn flex items-center space-x-2">                  
+                  <p>PPN                   
+                  </p>
                 </div>
                 <p>{{ formatCurrency(ppn) }}</p>
               </div>
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
+              <div class="sub_total flex justify-between mt-3">
                 <p>Grand Total</p>
                 <p>{{ formatCurrency(grand_total) }}</p>
               </div>
-              <input type="text" v-model="code_quatation" hidden />
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </Form>
@@ -318,16 +296,16 @@ import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
 import { computed } from 'vue'
 import {
-  Customer,
-  DetailQuatation,
+  DetailPo,
   Employee,
   Product,
-  Quatations,
-  QuatationsAdd,
+  PurchaseOrder,
+  PurchaseOrderAdd,
+  Vendor,
 } from '@/core/utils/url_api'
 import router from '@/router'
-import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStores'
+import { useRoute } from 'vue-router'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -344,23 +322,27 @@ export default defineComponent({
     const { user } = useAuthStore()
     return {
       id: null,
-      user: user,
-      customers: [],
-      checkppn : true,
-      customer_name: '',
-      filteredCustomers: [],
+      user: user,      
+      vendors: [],
+      vendor_name: '',
+      filteredvendors: [],
+      employee_name: '',
+      filteredEmployees: [],
       product_name: '',
       filteredProducts: [],
+      employees: [],
       products: [],
       product_id: [],
       quantity: [],
-      customer_id: null,
+      vendor_id: null,
       employee_id: null,
       price: 0,
-      code_quatation: null,
       termin: '',
+      po_type: '',
+      status_payment: "Hasn't Payed",
       total_tax: 0,
-      discount: 0,
+      total_service: 0,
+      deposit: 0,
       issue_at: '',
       due_at: '',
       isSubmitting: false,
@@ -370,29 +352,30 @@ export default defineComponent({
         message: '',
       },
       rules: {
-        customer_name: false,
-        inquiry_details: false,
+        vendor_id: false,
         issue_at: false,
+        termin: false,
         due_at: false,
+        purchase_order_details: false,
       },
-      inquiry_details: [],
+      purchase_order_details: [],
     }
   },
   async mounted() {
-    const route = useRoute()
-    const id = route.params.id
     this.employee_id = this.user.employee_id
-
-    this.getCustomer()
+    this.getvendor()
     this.getProducts()
+
+    const route = useRoute()
+    const id = route.params.id    
+
     if (id) {
       this.getById(id)
       this.id = id
-    } else {
-      this.issue_at = new Date().toLocaleDateString('en-CA')
     }
-  },
 
+    this.issue_at = new Date().toLocaleDateString('en-CA')
+  },
   watch: {
     issue_at(newIssueDate) {
       this.calculateDueDate(newIssueDate, this.termin)
@@ -405,96 +388,40 @@ export default defineComponent({
   computed: {
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
-      return this.inquiry_details.reduce((total, item) => {
-        return total + item.amount || 0
+      return this.purchase_order_details.reduce((total, item) => {
+        return total + item.quantity * item.price
       }, 0)
     },
-    ppn(){
-      return this.checkppn ? this.sub_total * 0.11 : 0;    
+
+    // Calculate PPN (11% of subtotal)
+    ppn() {      
+      return this.sub_total * 0.11
     },
-    grand_total(){
-      return this.sub_total + this.ppn;
-    }
+
+    // Calculate grand total (subtotal + PPN)
+    grand_total() {
+      return this.sub_total + this.ppn
+    },
   },
-
   methods: {
-    getCustomer() {
-      axios.get(Customer).then((res) => {
+    getvendor() {
+      axios.get(Vendor).then((res) => {
         var data = res.data
-        this.customers = data        
+        this.vendors = data
       })
-    },    
-
-    updateAmount(poDetail) {
-      const discountPercentage = parseFloat(poDetail.discount) || 0
-      const discountedPrice = poDetail.price * (1 - discountPercentage / 100)
-      poDetail.amount = discountedPrice * poDetail.quantity
     },
-
     getProducts() {
       axios.get(Product).then((res) => {
         var data = res.data
         this.products = data
       })
     },
-
-    filterProducts() {
-      const searchTerm = this.product_name.toLowerCase()
-      this.filteredProducts = this.products.filter((product) => {
-        const desc = product.product_desc.toLowerCase()
-        const sn = product.product_sn.toLowerCase()
-        return desc.includes(searchTerm) || sn.includes(searchTerm)
+    getEmployee() {
+      axios.get(Employee).then((res) => {
+        var data = res.data
+        this.employees = data
       })
-    },
-    selectProduct(product) {
-      this.product_id = product.product_id
-      this.product_name = `${product.product_sn} - ${product.product_desc}`
-      this.filteredProducts = []
-    },
-    filterCustomers() {
-      const searchTerm = this.customer_name.toLowerCase()
-      this.filteredCustomers = this.customers.filter((customer) => {
-        const name = customer.customer_name.toLowerCase()
-        const code = customer.customer_code.toLowerCase()
-        return name.includes(searchTerm) || code.includes(searchTerm)
-      })
-    },
-    selectCustomer(customer) {
-      this.customer_id = customer.customer_id
-      this.customer_name = `${customer.customer_code} - ${customer.customer_name}`
-      this.filteredCustomers = []
-    },
-
-    addPoDetails() {
-      if (this.product_id == '' || this.product_id == null) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Pilih Barang',
-        })
-      } else {
-        axios.get(Product + '/' + this.product_id).then((res) => {
-          var data = res.data
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            quantity: this.quantity,
-            price: this.price,
-            discount: this.discount,
-            amount: this.price * this.quantity,
-          }
-          this.inquiry_details.push(object)
-        })
-      }
-    },
-
-    formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'IDR',
-      }).format(value)
-    },
+    },    
 
     calculateDueDate(issueDate, termin) {
       if (issueDate && termin === 'N30') {
@@ -513,10 +440,6 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 35) // Add 30 days
         this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'N45') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 45) // Add 30 days
-        this.due_at = this.formatDate(date)
       } else if (issueDate && termin === 'N14') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 14) // Add 30 days
@@ -525,7 +448,11 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'CBD') {
+      }else if (issueDate && termin === 'N45') {
+        const date = new Date(issueDate) // Convert issue_at to a Date object
+        date.setDate(date.getDate() + 45) // Add 45 days
+        this.due_at = this.formatDate(date)
+      }else if (issueDate && termin === 'CBD') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 30) // Add 30 days
         this.due_at = this.formatDate(date)
@@ -546,6 +473,60 @@ export default defineComponent({
       return `${year}-${month}-${day}`
     },
 
+    filterProducts() {
+      const searchTerm = this.product_name.toLowerCase()
+      this.filteredProducts = this.products.filter((product) => {
+        const desc = product.product_desc.toLowerCase()
+        const sn = product.product_sn.toLowerCase()
+        return desc.includes(searchTerm) || sn.includes(searchTerm)
+      })
+    },
+    selectProduct(product) {
+      this.product_id = product.product_id
+      this.product_name = `${product.product_sn} - ${product.product_desc}`
+      this.filteredProducts = []
+    },
+    filtervendors() {
+      const searchTerm = this.vendor_name.toLowerCase()
+      this.filteredvendors = this.vendors.filter((vendor) => {
+        const name = vendor.vendor_name.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    },
+    selectvendor(vendor) {
+      this.vendor_id = vendor.vendor_id
+      this.vendor_name = vendor.vendor_name
+      this.filteredvendors = []
+    },
+    addPoDetails() {
+      if (this.product_id == '' || this.product_id == null) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Tambahkan Barang',
+        })
+      } else {
+        axios.get(Product + '/' + this.product_id).then((res) => {
+          var data = res.data
+          var object = {
+            product_id: data.product_id,
+            product_desc: data.product_desc,
+            quantity: this.quantity,
+            price: this.price,
+            amount: this.price * this.quantity,
+          }
+          this.purchase_order_details.push(object)
+          ;(this.product_id = null), (this.quantity = 0), (this.price = 0)
+        })
+      }
+    },
+
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'IDR',
+      }).format(value)
+    },
+
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -562,13 +543,6 @@ export default defineComponent({
     async validation() {
       var count = 0
 
-      if (this.customer_id == '' || this.customer_id == null) {
-        this.rules.customer_name = true
-        count++
-      } else {
-        this.rules.customer_name = false
-      }
-
       if (this.issue_at == '' || this.issue_at == null) {
         this.rules.issue_at = true
         count++
@@ -576,14 +550,28 @@ export default defineComponent({
         this.rules.issue_at = false
       }
 
+      if (this.termin == '' || this.termin == null) {
+        this.rules.termin = true
+        count++
+      } else {
+        this.rules.termin = false
+      }
+
       if (this.due_at == '' || this.due_at == null) {
         this.rules.due_at = true
         count++
       } else {
-        this.rules.due_at == false
+        this.rules.due_at = false
       }
 
-      if (this.inquiry_details.length == 0) {
+      if (this.vendor_id == '' || this.vendor_id == null) {
+        this.rules.vendor_id = true
+        count++
+      } else {
+        this.rules.vendor_id = false
+      }
+
+      if (this.purchase_order_details.length == 0) {
         Swal.fire({
           text: 'Tambahkan 1 atau lebih barang!',
           icon: 'error',
@@ -599,71 +587,65 @@ export default defineComponent({
 
       return count
     },
-    getDetailQuotation(id) {
-      axios.get(DetailQuatation + '/' + id).then((res) => {
+
+    getDetailSo(id) {
+      axios.get(DetailPo + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {
-            id_detail_quatation: data[i].id_detail_quatation,
             product_id: data[i].product_id,
-            product_code: data[i].product.product_code,
-            product_pn: data[i].product.product_sn,            
-            discount: data[i].discount,
             product_desc: data[i].product.product_desc,
             quantity: data[i].quantity,
             price: data[i].price,
-            amount: data[i].amount,
+            discount: data[i].discount,
+            amount: data[i].price * data[i].quantity,
           }
-          this.inquiry_details.push(object)
+          this.purchase_order_details.push(object)
         }
       })
     },
+
     async getById(id) {
-      await axios.get(Quatations + '/' + id).then((res) => {
+      await axios.get(PurchaseOrder + '/' + id).then((res) => {
         var data = res.data
-        this.issue_at = data[0].issue_at
-        this.due_at = data[0].due_at
-        this.customer_name = data[0].customer.customer_name
-        this.customer_id = data[0].customer_id
-        this.termin = data[0].termin
-        this.code_quatation = data[0].code_quatation
-        var id = data[0].id_quatation
-        if (id) {
-          this.getDetailQuotation(id)
+        this.issue_at = data.issue_at
+        this.due_at = data.due_at
+        this.termin = data.termin
+        this.vendor_id = data.vendor_id
+        this.vendor_name = data.vendor.vendor_name
+        this.deposit = data.deposit
+        if (data.id_po) {
+          this.getDetailSo(data.id_po)
         }
       })
     },
-    async onSubmit(e = null) {
-      e?.preventDefault?.()
 
-      const result = await this.validation()      
-
+    async onSubmit() {
+      const result = await this.validation()
       if (result == 0) {
-        if (this.id == null) {
+        if (this.id) {
           await axios
-            .post(QuatationsAdd, {
-              customer_id: this.customer_id,
-              employee_id: 1,
+            .put(PurchaseOrderAdd + '/' + this.id, {
+              vendor_id: this.vendor_id,
+              employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
+              status_payment: this.status_payment,
+              deposit: this.deposit,              
               issue_at: this.issue_at,
-              checkppn : this.checkppn,
               due_at: this.due_at,
-              sub_total: this.sub_total,
-              ppn : this.ppn,
-              grand_total : this.grand_total,
-              inquiry_details: this.inquiry_details,
+              purchase_order_details: this.purchase_order_details,
             })
             .then(
-              async (response) => {
+              (response) => {
                 console.log(response)
-                await Swal.fire({
+                Swal.fire({
                   icon: 'success',
                   title: 'Success',
                   text: 'Data has been Saved',
                 }).then(async (result) => {
                   if (result.isConfirmed) {
-                    await router.push('/quotation')
+                    await router.push('/purchase-order')
                   }
                 })
               },
@@ -672,36 +654,36 @@ export default defineComponent({
                   icon: 'error',
                   title: 'Error',
                   text:
-                    (error.response && error.response.message) || error.message || error.toString(),
+                    (error.response && error.response && error.response.message) ||
+                    error.message ||
+                    error.toString(),
                 })
               },
             )
         } else {
           await axios
-            .put(QuatationsAdd + '/' + this.id, {
-              customer_id: this.customer_id,
+            .post(PurchaseOrderAdd, {
+              vendor_id: this.vendor_id,
               employee_id: this.employee_id,
               termin: this.termin,
-              checkppn : this.checkppn, 
-              code_quatation: this.code_quatation,
               total_tax: this.total_tax,
+              status_payment: this.status_payment,
+              deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
-              sub_total: this.sub_total,
-              inquiry_details: this.inquiry_details,
+              ppncheck : this.ppnCheck,
+              purchase_order_details: this.purchase_order_details,
             })
             .then(
-              async (response) => {
-                console.log('Data Inquiry: ', this.inquiry_details)
-                console.log('Data Quotation ID : ', response.data.id_quatation)
+              (response) => {
                 console.log(response)
-                await Swal.fire({
+                Swal.fire({
                   icon: 'success',
                   title: 'Success',
-                  text: 'Data has been Updated',
+                  text: 'Data has been Saved',
                 }).then(async (result) => {
                   if (result.isConfirmed) {
-                    await router.push('/quotation')
+                    await router.push('/purchase-order')
                   }
                 })
               },
@@ -710,23 +692,19 @@ export default defineComponent({
                   icon: 'error',
                   title: 'Error',
                   text:
-                    (error.response && error.response.message) || error.message || error.toString(),
+                    (error.response && error.response && error.response.message) ||
+                    error.message ||
+                    error.toString(),
                 })
               },
             )
         }
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Please fill in all required fields',
-        })
       }
     },
 
     inputClass(error) {
       return [
-        'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-400',
+        'w-full dark:bg-gray-800 dark:text-gray-400 rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
         error
           ? 'border-red-300 focus:ring-red-500 bg-red-50'
           : 'border-gray-300 focus:ring-blue-500',

@@ -31,7 +31,7 @@
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[40%]">                                                
+                    <div class="right">                                                
                         <div class="flex">
                             <p class="w-64">Tanda Terima No </p>
                             <p>: {{ item.code_tandater}}</p>
@@ -71,6 +71,11 @@
                 <div class="flex justify-between mt-20">
                     <div>                        
                         <div class="text-xl mt-28">                            
+                            <p>Received in Good Condition By</p>
+                            <div class="flex justify-between">
+                                <p>Date: </p>
+                                <p>Time : </p>
+                            </div>
                         </div>
                     </div>
                     <div>                                                 

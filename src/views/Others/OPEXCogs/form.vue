@@ -9,7 +9,7 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Opex COGS</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ id ? "Edit Opex COGS" : "Create New Opex COGS" }}</h1>
             <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex Cogs / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -98,11 +98,11 @@
 import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex } from '@/core/utils/url_api'
+import { AddOpex, GetOpex } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 import { Customer } from '@/core/utils/url_api'
@@ -118,6 +118,7 @@ export default defineComponent({
 
   data() {
     return {
+      id : null,
       opex_name: '',
       opex_price: 0,
       opex_type: 'cogs',
@@ -143,6 +144,14 @@ export default defineComponent({
   async mounted() {
     this.getCustomer();
     this.issue_at = new Date().toLocaleDateString('en-ca');
+    const route = useRoute();
+    const id = route.params.id;
+    
+    if (id) {
+      this.getById(id);
+      this.id = id;
+    }
+    
   },
 
   methods: {
@@ -195,6 +204,16 @@ export default defineComponent({
       }
 
       return count
+    },
+    async getById(id) {
+      await axios.get(GetOpex + '/' + id).then((res) => {
+        var data = res.data;        
+        this.opex_name = data.opex_name;
+        this.opex_price = data.opex_price;
+        this.issue_at = data.issue_at;
+        this.customer_id = data.customer_id;
+        this.customer_name = data.customer.customer_name;
+      })
     },
 
     async onSubmit() {

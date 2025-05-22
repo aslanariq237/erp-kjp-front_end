@@ -231,6 +231,7 @@ const menuGroups = [
           { name: 'Stock', path: '/stock', pro: false },          
           { name: 'Report', path: '/report/scm', pro: false },
           { name: 'ADRS', path: '/adrs', pro: false},
+          { name: 'Jasa Kirim PO', path: '/po-jasa-kirim', pro: false},
         ],
       },
       {

@@ -25,13 +25,13 @@
                 <div class="title text-center">
                     <p class="text-3xl font-semibold mt-5">QUOTATION</p>
                 </div>
-                <div class="flex justify-between align-center text-xl gap-20 my-5">
+                <div class="flex justify-between align-center text-xl my-5">
                     <div class="left w-[40%]">
                         <p>Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
                         <p>{{ item.customer.customer_address }}</p>
                     </div>
-                    <div class="right w-[60%]">
+                    <div class="right">
                         <div class="flex">
                             <p class="w-60">Quotation No </p>
                             <p>: {{ item.code_quatation }}</p>
@@ -105,6 +105,38 @@
                                             <span>IDR. </span>
                                             <span>
                                                 {{ numberWithCommas(item.sub_total) }},00
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">Quatation
+                                        PPN</td>
+                                    <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>
+                                                {{ numberWithCommas(item.ppn) }},00
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="px-3 py-2 whitespace-nowrap"></td>
+                                    <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">Quatation
+                                        Grand Total</td>
+                                    <td class="text-xl px-3 py-2 whitespace-nowrap border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>
+                                                {{ numberWithCommas(item.grand_total) }},00
                                             </span>
                                         </div>
                                     </td>

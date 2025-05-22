@@ -32,7 +32,7 @@
                         <p>{{ item.vendor.vendor_name }}</p>
                         <p>{{ item.vendor.vendor_address }}</p>
                     </div>
-                    <div class="right w-[60%]">
+                    <div class="right">
                         <div class="flex">
                             <p class="w-64">Purchase Order No </p>
                             <p>: {{ item.code_po }}</p>

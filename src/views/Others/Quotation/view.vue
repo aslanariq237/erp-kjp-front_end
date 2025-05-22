@@ -91,6 +91,10 @@
                                 <p>Sub Total</p>
                                 <p>{{ formatCurrency(sub_total) }}</p>
                             </div>
+                            <div class="sub_total flex justify-between mt-3">
+                                <p>Sub Total</p>
+                                <p>{{ formatCurrency(sub_total) }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -129,7 +133,9 @@ export default defineComponent({
             issue_at: '',
             due_at: '',
             code_quatation : '',    
-            sub_total : 0,        
+            sub_total : 0,    
+            ppn : 0,
+            grand_total : 0,    
             quatation_details : [],
             isSubmitting: false,
             notification: {
@@ -171,6 +177,7 @@ export default defineComponent({
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
                     this.code_quatation = data.code_quatation;
+                    this.ppn = data.ppn;
                 }
             )            
         },

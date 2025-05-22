@@ -187,7 +187,7 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
-                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">No</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
@@ -196,14 +196,13 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
-              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
-                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
+              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id">
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.number }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_sn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.quantity * poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
                     @click="sales_order_details.splice(sales_order_details.indexOf(poDetail), 1)">
@@ -233,11 +232,11 @@
 import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex, Customer, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
+import { AddOpex, Customer, GetAbsorb, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 
@@ -252,6 +251,7 @@ export default defineComponent({
 
   data() {
     return {
+      id : null,
       opex_name: '',
       opex_price: 0,
       opex_type: 'absorb',
@@ -288,10 +288,14 @@ export default defineComponent({
     this.getCustomer();
     this.getProducts();
     this.getPackage();    
-    if (this.$route.params.id) {
-      this.id = this.$route.params.id
-      await this.getById(this.id)
+    const route = useRoute();
+    const id = route.params.id;
+
+    if (id) {
+      this.getById(id);
+      this.id = id;
     }
+    console.log(this.sales_order_details)
 
     this.issue_at = new Date().toLocaleDateString('en-ca');
   },
@@ -507,6 +511,36 @@ export default defineComponent({
         console.log('Data', data)
         if (data.id_po) {
           this.getDetailSo(data.id_po)
+        }
+      })
+    },
+    getDetailSo(id) {
+      axios.get(GetAbsorb + '/' + id).then((res) => {
+        const data = res.data;
+        for (let i = 0; i < data.length; i++) {
+          const object = {
+            number : i+1,
+            product_sn : data[i].product.product_sn,
+            product_desc : data[i].product.product_desc,
+            quantity : data[i].quantity,
+            price : data[i].price,            
+          }     
+          this.sales_order_details.push(object);     
+        }                
+      });
+    },
+
+    async getById(id) {
+      await axios.get(GetOpex + '/' + id).then((res) => {
+        var data = res.data;        
+        this.opex_name = data.opex_name;
+        this.opex_price = data.opex_price;
+        this.issue_at = data.issue_at;
+        this.customer_id = data.customer_id;
+        this.customer_name = data.customer.customer_name;
+
+        if (id) {
+          this.getDetailSo(id);
         }
       })
     },
