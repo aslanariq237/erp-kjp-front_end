@@ -49,17 +49,20 @@
                                 <th class="text-xl px-3 py-2 font-semibold">No</th>
                                 <th class="text-xl px-3 py-2 font-semibold">No Invoice</th>
                                 <th class="text-xl px-3 py-2 font-semibold">No SO</th>
+                                <th class="text-xl px-3 py-2 font-semibold">No PO</th>
                                 <th class="text-xl px-3 py-2 font-semibold">Price</th>                                
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
                             <tr class="text-center border-b-2" v-for="(pro, index) in item.detailtandater" :key="index">
                                 <td class="text-xl px-3 py-2">{{index+1 }}</td>
-                                <td class="text-xl px-3 py-2">{{pro.so.code_so }}</td>
                                 <td class="text-xl px-3 py-2">{{pro.invoice.code_invoice }}</td>
+                                <td class="text-xl px-3 py-2">{{pro.so.code_so }}</td>                                
+                                <td class="text-xl px-3 py-2">{{pro.so.po_number }}</td>                                
                                 <td class="text-xl px-3 py-2">{{formatCurrency(pro.invoice.grand_total) }}</td>
                             </tr>   
                             <tr class="text-center border-b-2">
+                                <td class="px-3 py-2 whitespace-nowrap border-0"></td>
                                 <td class="px-3 py-2 whitespace-nowrap border-0"></td>
                                 <td class="px-3 py-2 whitespace-nowrap border-0"></td>
                                 <td class="px-3 py-2 whitespace-nowrap border-0"></td>
@@ -68,9 +71,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="flex justify-between mt-20">
+                <div class="flex justify-between content-start items-start">
                     <div>                        
-                        <div class="text-xl mt-28">                            
+                        <div class="text-xl">                            
                             <p>Received in Good Condition By</p>
                             <div class="flex justify-between">
                                 <p>Date: </p>
@@ -79,7 +82,7 @@
                         </div>
                     </div>
                     <div>                                                 
-                        <div class="text-xl mt-28">                            
+                        <div class="text-xl">                            
                         </div>
                     </div>
                     <div>                         

@@ -619,14 +619,14 @@ const router = createRouter({
         },
         {
           path: 'view/:id',
-          component: () => import('../views/Operation/PurchaseOrder/view.vue'),
+          component: () => import('../views/SCM/POJasaKirim/view.vue'),
           meta: {
             title: 'Purchase Order-View',
           },
         },
         {
           path: 'edit/:id',
-          component: () => import('../views/Operation/PurchaseOrder/form.vue'),
+          component: () => import('../views/SCM/POJasaKirim/form.vue'),
           meta: {
             title: 'Purchase Order-Form',
           },

@@ -165,7 +165,7 @@
                         </div>
                         <div v-else>
                             <p class="text-xl">Warm Regards</p>
-                            <div v-if="item.customer.customer_name != 'Petronesia Benimel'">
+                            <div v-if="item.customer.customer_name != 'PT. Petronesia Benimel'">
                                 <div class="text-xl mt-44">                                    
                                     <p>VINCENTIUS ADITYA HARNAWAN</p>
                                 </div>

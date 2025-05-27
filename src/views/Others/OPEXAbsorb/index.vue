@@ -164,14 +164,22 @@
       <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
           <h3 class="text-lg font-bold mb-4">Approve OPEX</h3>
-          <p class="mb-6">
+          <table>
+            <tr v-for="(details, index) in detail" :key="index">
+              <td>{{ details.quantity }}</td>
+            </tr>
+          </table>
+          <!-- <p class="mb-6">
             Are you sure you want to approve this OPEX? This action cannot be undone.
-          </p>
+          </p> -->
           <div class="flex justify-end gap-3">
             <button @click="isModalOpen = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
               Cancel
             </button>
-            <button @click="approveOpex" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button 
+              @click="approveOpex" 
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"              
+            >
               Approve
             </button>
           </div>
@@ -186,7 +194,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { GetOpex, Product } from '@/core/utils/url_api'
+import { GetAbsorb, GetOpex, Product } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'OpexPage',
@@ -214,12 +222,12 @@ export default defineComponent({
     ]
 
     // Filter and sort state
-    const searchQuery = ref('')
-    const sortBy = ref('opex_name')
-    const minPrice = ref('')
-    const maxPrice = ref('')
-    const currentPage = ref(1)
-    const itemsPerPage = ref(10)
+    const searchQuery = ref('');
+    const sortBy = ref('opex_name');
+    const minPrice = ref('');
+    const maxPrice = ref('');
+    const currentPage = ref(1);
+    const itemsPerPage = ref(10);
 
     // Data state
     const opexData = ref([])
@@ -237,9 +245,31 @@ export default defineComponent({
       }
     }    
 
+    const detail = ref('');
+
 
     const approve = async (opex) => {
-      isModalOpen.value = true;      
+      isModalOpen.value = true;  
+      await axios.get(GetAbsorb + '/' +opex.opex_id)
+          .then((res) => {
+            detail.value = res.data;          
+          })
+    }
+
+    const approveOpex = async () => {
+      console.log('coba');
+      for (let i = 0; i < detail.value.length; i++) {        
+        if (detail.value[i].product.product_stock <= 0) {                    
+
+        }
+      }
+      // try {
+      //   for (let i = 0; i < detail.length; i++) {          
+          
+      //   }
+      // } catch (error) {
+      //   console.error('Error Aproving :', error)
+      // }
     }
 
     onMounted(() => {
@@ -399,7 +429,8 @@ export default defineComponent({
       deleteOpex,
       exportData,
       editData,
-      approve
+      approve,
+      approveOpex,
     }
   },
 })

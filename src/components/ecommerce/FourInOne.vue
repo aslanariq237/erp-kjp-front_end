@@ -118,7 +118,7 @@ const getSales = async () => {
 const setSalesTarget = () => {
   // Generate random target values between 2-3 million IDR
   const generateTarget = () => {
-    return Math.floor(200000000)
+    return Math.floor(1000000000)
   }
 
   // Create an array of target values for each month
@@ -159,24 +159,6 @@ const getQuotation = async () => {
     console.error('Error fetching quotation data:', err)
   }
 }
-
-// Function to fetch sales target data
-// const getSalesTarget = async () => {
-//   try {
-//     const res = await axios.get(SalesTarget + '/monthly')
-//     const data = res.data
-//     const monthData = Array(12).fill(0)
-
-//     data.forEach((item) => {
-//       const monthIndex = item.month - 1
-//       monthData[monthIndex] = item.target_value
-//     })
-
-//     series.value[3].data = monthData
-//   } catch (err) {
-//     console.error('Error fetching sales target data:', err)
-//   }
-// }
 
 // Fetch all data when component mounts)
 onMounted(async () => {

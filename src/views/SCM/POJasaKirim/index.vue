@@ -13,7 +13,7 @@
             <span>Export</span>
           </button>
           <button>
-            <RouterLink to="/purchase-order/form"
+            <RouterLink to="/po-jasa-kirim/form"
               class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
               Add New Purchase Order Jasa Kirim
             </RouterLink>
@@ -70,10 +70,10 @@
               <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
-              <tr v-for="(entry, index) in paginatedData" :key="entry.id_po"
+              <tr v-for="(entry, index) in paginatedData" :key="index"
                 class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
+                  <div class="text-sm font-medium text-gray-900">{{ entry.code_jasakirim }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">
@@ -97,7 +97,7 @@
                 </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">                  
                   <div v-if="entry.approved == 1">
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_jasakirim)">
                       View
                     </button>
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
@@ -108,10 +108,10 @@
                     </button>
                   </div>
                   <div v-else>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_jasakirim)">
                       View
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_jasakirim)">
                       Edit
                     </button>                    
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
@@ -241,11 +241,11 @@ export default defineComponent({
     })
 
     const viewData = (id) => {
-      router.push('/purchase-order/view/' + id)
+      router.push('/po-jasa-kirim/view/' + id)
     }
 
     const editData = (id) => {
-      router.push('purchase-order/edit/' + id)
+      router.push('po-jasa-kirim/edit/' + id)
     }
     const deleteData = async (id) => {
       const result = await Swal.fire({

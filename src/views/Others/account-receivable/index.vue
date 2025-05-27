@@ -349,22 +349,7 @@ export default defineComponent({
                 code_invoice.includes(query)              
         })
       }
-      result = result.filter((account) => account.grand_total - account.salesorder.deposit > 0)
-
-      if (minBalance.value) {
-        result = result.filter((account) => account.balance >= minBalance.value)
-      }
-
-      if (maxBalance.value) {
-        result = result.filter((account) => account.balance <= maxBalance.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'balance') {
-          return a.balance - b.balance
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      result = result.filter((account) => account.grand_total - account.deposit > 0)      
 
       return result
     })

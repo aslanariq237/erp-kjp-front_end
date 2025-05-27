@@ -13,35 +13,17 @@
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div>
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ id? "Edit Purchase Order Jasa Kirim" : "Create New Purchase Order Jasa Kirim" }}</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ id? "View Purchase Order Jasa Kirim" : "" }}</h1>
             <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order Jasa Kirim / Form</p>
           </div>          
           <div class="flex items-center gap-3">
             <RouterLink
-              to="/purchase-order"
+              to="/po-jasa-kirim"
               class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
             >
               <i class="fas fa-times"></i>
               Cancel
-            </RouterLink>
-            <button
-              v-if="id"
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
-              <i v-else class="fas fa-check"></i>
-              {{ isSubmitting ? 'Updating...' : 'Update ' }}
-            </button>
-            <button
-              v-else
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
-              <i v-else class="fas fa-check"></i>
-              {{ isSubmitting ? 'Submitting...' : 'Submit' }}
-            </button>
+            </RouterLink>            
           </div>
         </div>
       </div>
@@ -64,27 +46,16 @@
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup label="Termin" :required="true">
-            <select
-              id="po_type"
-              name="po_type"
+          <FormGroup label="Code Jasa Kirim" :required="true">
+            <input
+              type="text"
+              id="deposit"
+              disabled
+              name="deposit"
+              v-model="code_jakir"
               :class="inputClass(rules.deposit)"
-              v-model="termin"
-              class="rounded w-full"
-            >
-              <option value="">-- termin --</option>
-              <option value="CBD">CBD(Cash Before Delivery)</option>
-              <option value="CAD">CAD(Cash After Delivery)</option>
-              <option value="N14">N14</option>
-              <option value="N30">N30</option>
-              <option value="N45">N45</option>
-              <option value="N60">N60</option>
-              <option value="N75">N75</option>
-              <option value="N90">N90</option>
-            </select>
-            <div class="" v-if="rules.termin == true">
-              <p class="text-red-500 text-sm">Termin Dibutuhkan</p>
-            </div>
+              placeholder="Enter Code Jasa Kirim"
+            />
           </FormGroup>
 
           <!-- Due Date -->
@@ -112,6 +83,7 @@
               @input="filtervendors"
               autocomplete="off"
               class="rounded w-full"
+              disabled
               :class="inputClass(rules.deposit)"
               placeholder="Type Vendor Name"
             />
@@ -138,6 +110,7 @@
             <input
               type="number"
               id="deposit"
+              disabled
               name="deposit"
               v-model="deposit"
               :class="inputClass(rules.deposit)"
@@ -148,7 +121,7 @@
           <!-- Deposit -->
           <FormGroup> </FormGroup>
         </div>
-        <div class="flex justify-content-between gap-4 items-end">
+        <div class="flex justify-content-between gap-4 items-end" v-if="!id">
           <FormGroup
             class="w-full relative"
             label="product"
@@ -238,17 +211,7 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button
-                    type="button"
-                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="
-                      purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
-                    ">
-                    Delete
-                  </button>
-                </td>                
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>                               
               </tr>
             </tbody>
           </table>
@@ -333,7 +296,7 @@ export default defineComponent({
       vendor_id: null,
       employee_id: null,
       price: 0,
-      termin: '',
+      code_jakir : '',
       po_type: '',
       status_payment: "Hasn't Payed",
       total_tax: 0,
@@ -359,8 +322,6 @@ export default defineComponent({
   },
   async mounted() {
     this.employee_id = this.user.employee_id
-    this.getvendor()
-    this.getProducts()
 
     const route = useRoute()
     const id = route.params.id    
@@ -371,15 +332,7 @@ export default defineComponent({
     }
 
     this.issue_at = new Date().toLocaleDateString('en-CA')
-  },
-  watch: {
-    issue_at(newIssueDate) {
-      this.calculateDueDate(newIssueDate, this.termin)
-    },
-    termin(newTermin) {
-      this.calculateDueDate(this.issue_at, newTermin)
-    },
-  },
+  },  
 
   computed: {
     // Calculate subtotal based on all items in sales_order_details
@@ -399,122 +352,14 @@ export default defineComponent({
       return this.sub_total + this.ppn
     },
   },
-  methods: {
-    getvendor() {
-      axios.get(Vendor).then((res) => {
-        var data = res.data
-        this.vendors = data
-      })
-    },
-    getProducts() {
-      axios.get(Product).then((res) => {
-        var data = res.data
-        this.products = data
-      })
-    },
-    getEmployee() {
-      axios.get(Employee).then((res) => {
-        var data = res.data
-        this.employees = data
-      })
-    },    
-
-    calculateDueDate(issueDate, termin) {
-      if (issueDate && termin === 'N30') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 30) // Add 30 days
-        this.due_at = this.formatDate(date) // Set due_at to the new date
-      } else if (issueDate && termin === 'N90') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 90) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'N75') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 75) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'N35') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 35) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'N14') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 14) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'N60') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 60) // Add 30 days
-        this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'N45') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 45) // Add 45 days
-        this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'CBD') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 30) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else if (issueDate && termin === 'CAD') {
-        const date = new Date(issueDate) // Convert issue_at to a Date object
-        date.setDate(date.getDate() + 30) // Add 30 days
-        this.due_at = this.formatDate(date)
-      } else {
-        this.due_at = '' // Reset due_at if termin is not type3
-      }
-    },
-
+  methods: {    
     // Helper method to format date as YYYY-MM-DD
     formatDate(date) {
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
-    },
-
-    filterProducts() {
-      const searchTerm = this.product_name.toLowerCase()
-      this.filteredProducts = this.products.filter((product) => {
-        const desc = product.product_desc.toLowerCase()
-        const sn = product.product_sn.toLowerCase()
-        return desc.includes(searchTerm) || sn.includes(searchTerm)
-      })
-    },
-    selectProduct(product) {
-      this.product_id = product.product_id
-      this.product_name = `${product.product_sn} - ${product.product_desc}`
-      this.filteredProducts = []
-    },
-    filtervendors() {
-      const searchTerm = this.vendor_name.toLowerCase()
-      this.filteredvendors = this.vendors.filter((vendor) => {
-        const name = vendor.vendor_name.toLowerCase()
-        return name.includes(searchTerm)
-      })
-    },
-    selectvendor(vendor) {
-      this.vendor_id = vendor.vendor_id
-      this.vendor_name = vendor.vendor_name
-      this.filteredvendors = []
-    },
-    addPoDetails() {
-      if (this.product_id == '' || this.product_id == null) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Tambahkan Barang',
-        })
-      } else {
-        axios.get(Product + '/' + this.product_id).then((res) => {
-          var data = res.data
-          var object = {
-            product_id: data.product_id,
-            product_desc: data.product_desc,
-            quantity: this.quantity,
-            price: this.price,
-            amount: this.price * this.quantity,
-          }
-          this.purchase_order_details.push(object)
-          ;(this.product_id = null), (this.quantity = 0), (this.price = 0)
-        })
-      }
-    },
+    },      
 
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {
@@ -534,55 +379,7 @@ export default defineComponent({
       setTimeout(() => {
         this.notification.show = false
       }, 3000)
-    },
-
-    async validation() {
-      var count = 0
-
-      if (this.issue_at == '' || this.issue_at == null) {
-        this.rules.issue_at = true
-        count++
-      } else {
-        this.rules.issue_at = false
-      }
-
-      if (this.termin == '' || this.termin == null) {
-        this.rules.termin = true
-        count++
-      } else {
-        this.rules.termin = false
-      }
-
-      if (this.due_at == '' || this.due_at == null) {
-        this.rules.due_at = true
-        count++
-      } else {
-        this.rules.due_at = false
-      }
-
-      if (this.vendor_id == '' || this.vendor_id == null) {
-        this.rules.vendor_id = true
-        count++
-      } else {
-        this.rules.vendor_id = false
-      }
-
-      if (this.purchase_order_details.length == 0) {
-        Swal.fire({
-          text: 'Tambahkan 1 atau lebih barang!',
-          icon: 'error',
-          buttonsStyling: true,
-          confirmButtonText: 'Try Again!',
-          heightAuto: false,
-          customClass: {
-            confirmButton: 'btn fw-semibold btn-light-danger',
-          },
-        })
-        count++
-      }
-
-      return count
-    },
+    },    
 
     getDetailSo(id) {
       axios.get(PoJasaKirimDetail + '/' + id).then((res) => {
@@ -605,103 +402,15 @@ export default defineComponent({
       await axios.get(PoJasaKirim + '/' + id).then((res) => {
         var data = res.data
         this.issue_at = data[0].issue_at
-        this.due_at = data[0].due_at,
+        this.due_at = data[0].due_at
         this.code_jakir = data[0].code_jasakirim,
-        this.termin = data[0].termin,        
         this.vendor_name = data[0].vendor.vendor_name        
         this.deposit = data[0].deposit
         if (data[0].id_jasakirim) {
             this.getDetailSo(data[0].id_jasakirim);
         }
       });
-    }, 
-
-    async onSubmit() {
-      const result = await this.validation()
-      if (result == 0) {
-        if (this.id) {
-          await axios
-            .put(PoJasaKirimCode + '/' + this.id, {
-              vendor_id: this.vendor_id,
-              employee_id: this.employee_id,
-              termin: this.termin,
-              total_tax: this.total_tax,
-              status_payment: this.status_payment,
-              deposit: this.deposit,              
-              issue_at: this.issue_at,
-              ppn : this.ppn,
-              grand_total : this.grand_total,
-              due_at: this.due_at,
-              purchase_order_details: this.purchase_order_details,
-            })
-            .then(
-              (response) => {
-                console.log(response)
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Success',
-                  text: 'Data has been Saved',
-                }).then(async (result) => {
-                  if (result.isConfirmed) {
-                    await router.push('/purchase-order')
-                  }
-                })
-              },
-              (error) => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response && error.response.message) ||
-                    error.message ||
-                    error.toString(),
-                })
-              },
-            )
-        } else {
-          await axios
-            .post(PoJasaKirimCode, {
-              vendor_id: this.vendor_id,
-              employee_id: this.employee_id,
-              termin: this.termin,
-              total_tax: this.total_tax,
-              status_payment: this.status_payment,
-              deposit: this.deposit,
-              issue_at: this.issue_at,
-              due_at: this.due_at,
-              ppn : this.ppn,
-              grand_total: this.grand_total,
-              sub_total : this.sub_total,
-              ppncheck : this.ppnCheck,
-              purchase_order_details: this.purchase_order_details,
-            })
-            .then(
-              (response) => {
-                console.log(response)
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Success',
-                  text: 'Data has been Saved',
-                }).then(async (result) => {
-                  if (result.isConfirmed) {
-                    await router.push('/po-jasa-kirim')
-                  }
-                })
-              },
-              (error) => {
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response && error.response.message) ||
-                    error.message ||
-                    error.toString(),
-                })
-              },
-            )
-        }
-      }
-    },
+    },    
 
     inputClass(error) {
       return [
