@@ -75,7 +75,7 @@
           <FormGroup>
           </FormGroup>
         </div>
-        <div v-if="id">          
+        <div v-if="id">
         </div>
         <div class="flex items-end gap-5 mb-8" v-else>
           <FormGroup label="Delivery Order" :required="true" :error="rules.no" class="w-full"
@@ -86,10 +86,7 @@
               </option>
             </select>
           </FormGroup>
-          <button 
-            class="bg-blue-400 rounded-lg px-3 py-2" 
-            type="button" 
-            @click="addDoDetail">
+          <button class="bg-blue-400 rounded-lg px-3 py-2" type="button" @click="addDoDetail">
             Tambah
           </button>
         </div>
@@ -97,7 +94,7 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
-                <th class="px-3 py-2 font-semibold text-left border-b">Code_DO</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Do Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Desc</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">brand</th>
@@ -179,8 +176,8 @@ export default defineComponent({
   },
 
   data() {
-    const {user} = useAuthStore();
-    return {            
+    const { user } = useAuthStore();
+    return {
       id: null,
       user: user,
       salesOrders: [],
@@ -204,7 +201,7 @@ export default defineComponent({
       isSubmitting: false,
       rules: {
         id_so: false,
-        delivery_order_details : false,
+        delivery_order_details: false,
       },
       notification: {
         show: false,
@@ -220,7 +217,7 @@ export default defineComponent({
     const route = useRoute();
     const id = route.params.id;
     this.employee_id = this.user.employee_id;
-    
+
     this.getSalesOrder();
     if (id) {
       this.getById(id);
@@ -236,10 +233,10 @@ export default defineComponent({
         return total + (item.amount) || 0
       }, 0);
     },
-    ppn(){
+    ppn() {
       return this.sub_total * 0.11;
     },
-    grand_total(){
+    grand_total() {
       return this.sub_total + this.ppn;
     }
   },
@@ -251,11 +248,11 @@ export default defineComponent({
       axios.get(SalesOrders).then((res) => {
         var data = res.data;
         data = data.filter((detail) => detail.has_invoice == 0);
-        this.salesOrders = data;        
+        this.salesOrders = data;
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {        
+      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
         this.customer_id = data.customer.customer_id;
         this.customer_name = data.customer.customer_name;
@@ -290,31 +287,35 @@ export default defineComponent({
     addDoDetail() {
       if (this.id_do == '' || this.id_do == null) {
         Swal.fire({
-          icon : 'warning',
-          text : 'Pilih Delivery Order'
+          icon: 'warning',
+          text: 'Pilih Delivery Order'
         });
-      }else{
+      } else {
         axios.get(DetailDo + '/' + this.id_do).then(
-        (res) => {
-          var data = res.data;
-          for (let i = 0; i < data.length; i++) {
-            var object = {
-              id_detail_do: data[i].id_detail_do,
-              id_do: data[i].id_do,
-              code_do: data[i].code_do,
-              product_id: data[i].product_id,
-              product_desc: data[i].product.product_desc,
-              product_pn: data[i].product.product_sn,
-              product_brand: data[i].product.product_brand,
-              quantity: data[i].quantity,
-              price: data[i].price,
-              amount: data[i].price * data[i].quantity,
+          (res) => {
+            var data = res.data;
+            for (let i = 0; i < data.length; i++) {
+              var object = {
+                id_so: this.id_so,
+                id_detail_so: data[i].id_detail_so,
+                id_detail_po: data[i].id_detail_po,
+                id_detail_do: data[i].id_detail_do,
+                id_do: data[i].id_do,
+                code_do: data[i].do.code_do,
+                product_id: data[i].product_id,
+                product_desc: data[i].product.product_desc,
+                product_pn: data[i].product.product_sn,
+                product_brand: data[i].product.product_brand,
+                quantity: data[i].quantity,
+                price: data[i].price,
+                amount: data[i].price * data[i].quantity,
+              }
+              this.delivery_order_details.push(object);
             }
-            this.delivery_order_details.push(object);
           }
-        }
-      )
+        )
       }
+      console.log(this.delivery_order_details);
     },
     showNotification(type, message) {
       this.notification = {
@@ -376,19 +377,19 @@ export default defineComponent({
       )
     },
 
-    async validation(){
+    async validation() {
       var count = 0;
       if (this.id_so == '' || this.id_so == null) {
         this.rules.id_so = true;
         count++
-      }else{
+      } else {
         this.rules.id_so = false;
       }
 
       if (this.delivery_order_details.length == 0) {
         Swal.fire({
           text: "Tambahkan 1 atau lebih barang!",
-          icon : 'error',
+          icon: 'error',
           buttonsStyling: true,
           confirmButtonText: 'Try Again!',
           heightAuto: false,
@@ -403,15 +404,18 @@ export default defineComponent({
 
     async onSubmit() {
       var total = this.sub_total;
-      const result = await this.validation();                   
+      const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
           await axios.post(InvoiceAdd, {
             id_so: this.id_so,
             customer_id: this.customer_id,
             employee_id: this.employee_id,
+            sub_total: this.sub_total,
+            ppn: this.ppn,
+            grand_total: this.grand_total,
             issue_at: this.issue_at,
-            due_at: this.due_at,            
+            due_at: this.due_at,
             id_do: this.id_do,
             delivery_order_details: this.delivery_order_details,
           }, {
@@ -446,10 +450,10 @@ export default defineComponent({
             id_so: this.id_so,
             customer_id: this.customer_id,
             employee_id: 1,
-            issue_at: this.issue_at,            
+            issue_at: this.issue_at,
             due_at: this.due_at,
             id_do: this.id_do,
-            sub_total : total,
+            sub_total: total,
             code_invoice: this.code_invoice,
             delivery_order_details: this.delivery_order_details,
           }, {

@@ -63,7 +63,7 @@
 
       <!-- Enhanced Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="md:overflow-x-auto relative">
           <table class="min-w-full divide-y divide-gray-200 dark:bg-gray-800 dark:text-gray-400">
             <thead class="bg-gray-50">
               <tr>

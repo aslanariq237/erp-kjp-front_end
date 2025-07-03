@@ -145,7 +145,7 @@
                   {{ entry.so_date }}
                 </td>             
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.quantity_po }}
+                  {{ entry.quantity_po}}
                 </td>             
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.price_po }}
@@ -163,10 +163,10 @@
                   {{ entry.qty_do }}
                 </td>            
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.bill_no }}
+                  {{ entry.code_invoice }}
                 </td>             
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.billing_date }}
+                  {{ entry.invoice_date }}
                 </td>                  
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.amount_invoice }}
@@ -175,7 +175,7 @@
                   {{ entry.gross_profit }}
                 </td>                  
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.gp_percentage }}
+                  {{ entry.percen }}
                 </td>                   
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.faktur_pajak }}

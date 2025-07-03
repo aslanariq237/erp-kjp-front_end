@@ -92,15 +92,15 @@
               >
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.code_invoice }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.salesorder.po_number }}
-                </td>
+                </td>                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(entry.sub_total) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatCurrency(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
@@ -213,6 +213,7 @@ import router from '@/router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { exportInvPDF } from '@/core/helpers/exportToPdf'
+import Swal from 'sweetalert2'
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -225,10 +226,10 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_invoice', label: 'Invoice Number' },
-      { key: 'code_po', label: 'Po Number' },
+      { key: 'code_invoice', label: 'Invoice Number' },      
       { key: 'Customer', label: 'Customer Name' },
       { key: 'sub_total', label: 'Sub Total' },
+      { key: 'sub_total', label: 'PPN' },
       { key: 'issue_at', label: 'Issue Date' },
       { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
@@ -250,10 +251,10 @@ export default defineComponent({
       const response = await axios.get(Invoice)
       invoice.value = response.data
 
-      if (invoice.value.length > 0) {
-        const invoiceId = invoice.value[0].id_transaksi // Assuming 'id_transaksi' is the ID to use
-        getById(invoiceId)
-      }
+      // if (invoice.value.length > 0) {
+      //   const invoiceId = invoice.value[0].id_transaksi // Assuming 'id_transaksi' is the ID to use
+      //   getById(invoiceId)
+      // }
     }
 
     const getDetailInv = async() => {
@@ -277,7 +278,15 @@ export default defineComponent({
         sub_total : item.sub_total,
         ppn : item.ppn,
       }).then((res) => {        
-        console.log(res)
+        Swal.fire({
+          icon : 'success',
+          title : 'Success',
+          text : 'Berhasil Mengubah PPN',          
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.reload();
+          }
+        })
       }).catch((err) => console.error(err));
     }
 
@@ -304,10 +313,9 @@ export default defineComponent({
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
-          const code_inv = entry.code_invoice.toLowerCase()
-          const po_number = entry.salesorder.po_number.toLowerCase()
+          const code_inv = entry.code_invoice.toLowerCase()          
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_inv.includes(query) || po_number.includes(query) || customer.includes(query)
+          return code_inv.includes(query) || customer.includes(query)
         })
       }
 

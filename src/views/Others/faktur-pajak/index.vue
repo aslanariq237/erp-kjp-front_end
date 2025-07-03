@@ -415,10 +415,12 @@ export default defineComponent({
 
     const exportData = () => {
       const data = filteredData.value.map((account) => ({
-        'ID Invoice': account.id_invoice,
-        'Customer ID': account.customer_id,
-        'Kode Faktur Pajak': account.code_faktur_pajak,
-      }))
+        'Number Invoice'  : account.invoice.code_invoice,
+        'Customer Name'   : account.customer.customer_name,
+        'Po Number'       : account.so.po_number,
+        'So Number'       : account.so.code_so,
+        'Kode Faktur'     : `\t${account.code_faktur_pajak}`
+      }));
 
       // Create CSV content
       const headers = Object.keys(data[0])

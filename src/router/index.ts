@@ -348,38 +348,30 @@ const router = createRouter({
           meta: {
             title: 'Laporan Keuangan',
           },
-        },
-        {
-          path: 'form',
-          name: 'Laporan Keuangan-Form',
-          component: () => import('../views/Others/LaporanKeuangan/form.vue'),
-          meta: {
-            title: 'Laporan Keuangan-Form',
-          },
-        },
+        },        
       ],
     },
-    {
-      path: '/laporan-laba-rugi',
-      children: [
-        {
-          path: '',
-          name: 'Laporan Laba Rugi', // Profit and Loss Report
-          component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
-          meta: {
-            title: 'Laporan Laba Rugi',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Laporan Laba Rugi-Form',
-          component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
-          meta: {
-            title: 'Laporan Laba Rugi-Form',
-          },
-        },
-      ],
-    },
+    // {
+    //   path: '/laporan-laba-rugi',
+    //   children: [
+    //     {
+    //       path: '',
+    //       name: 'Laporan Laba Rugi', // Profit and Loss Report
+    //       component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
+    //       meta: {
+    //         title: 'Laporan Laba Rugi',
+    //       },
+    //     },
+    //     {
+    //       path: 'form',
+    //       name: 'Laporan Laba Rugi-Form',
+    //       component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
+    //       meta: {
+    //         title: 'Laporan Laba Rugi-Form',
+    //       },
+    //     },
+    //   ],
+    // },
     {
       path: '/opex',
       children: [

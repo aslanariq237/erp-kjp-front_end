@@ -32,7 +32,7 @@
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">         
           <!-- Id_Purchase order -->
-          <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
+          <FormGroup label="Sales Order" :required="true" :error="rules.id_so" errorMessage="Purchase Order is required">
             <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
               :class="inputClass(rules.due_at)">
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
@@ -42,19 +42,18 @@
           </FormGroup>
           <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
+            <input type="text" id="do_type" autocomplete="off" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
               placeholder="Po Number" />
           </FormGroup>
           <!-- DO Type -->
-          <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="DO Type is required">
-            <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
+          <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="Customer Name is required">            
+            <input type="text" id="do_type" name="do_type" autocomplete="off" v-model="customer_name" :class="inputClass(rules.do_type)"
               placeholder="Customer Name" />
           </FormGroup>
 
           <!-- Alamat -->
-          <FormGroup label="No Faktur Pajak" :required="false" errorMessage="Sub Total is required">
-            <input type="text" id="alamat" name="alamat" v-model="faktur_pajak" :class="inputClass(rules.alamat)"
+          <FormGroup label="No Faktur Pajak" :required="true" :error="rules.code_faktur_pajak" errorMessage="Code Faktur Pajak is required">
+            <input type="text" id="alamat" name="alamat" autocomplete="off" v-model="code_faktur_pajak" :class="inputClass(rules.alamat)"
               placeholder="Enter Faktur pajak" />
           </FormGroup>
           <FormGroup>
@@ -62,13 +61,8 @@
         </div>
         <div class="flex items-end gap-5">
           <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
-            errorMessage="Purchase Order is required">
-            <select v-if="id" name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">              
-              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
-                {{ delo.code_invoice }}
-              </option>
-            </select>
-            <select v-else name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
+            errorMessage="Purchase Order is required">            
+            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
               <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
                 {{ delo.code_invoice }}
               </option>
@@ -119,7 +113,7 @@ export default defineComponent({
       id_invoice: null,
       customer_id: null,      
       po_number: '',
-      faktur_pajak : '',      
+      code_faktur_pajak : '',      
       customer_name: '',
       customer_npwp: 0,
       customer_address: '',
@@ -135,7 +129,9 @@ export default defineComponent({
         message: '',
       },
       rules: {
-
+        code_faktur_pajak : false,
+        id_so : false,
+        deliveryOrders : false,
       },
     }
   },
@@ -162,27 +158,31 @@ export default defineComponent({
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
-        var data = res.data;
-        this.customer_id = data.customer.customer_id;
-        this.customer_name = data.customer.customer_name;
-        this.customer_npwp = data.customer.customer_npwp;
-        this.customer_address = data.customer.customer_address;
-        this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;
-        this.po_number = data.po_number;
-        this.due_at = data.due_at;
-
-        if (data.id_so) {
-          this.getDeliveryOrder(data.id_so)
-        }
-      })
+      var selected = this.salesOrders.find(function(item){
+        return item.id_so == this.id_so
+      }.bind(this));
+      if (selected) {
+        this.customer_id = selected.customer.customer_id;
+        this.customer_name = selected.customer.customer_name;
+        this.customer_npwp = selected.customer.customer_npwp;
+        this.customer_address = selected.customer.customer_address;
+        this.employee_id = selected.employee.employee_id;
+        this.employee_name = selected.employee.employee_name;
+        this.po_number = selected.po_number;
+        this.due_at = selected.due_at;
+        this.getDeliveryOrder(this.id_so);
+      }      
     },
 
     getDeliveryOrder(id) {
-      axios.get(Invoice + '/code/' + id).then((res) => {
+      axios.get(Invoice + '/faktur').then((res) => {
         var data = res.data        
-        this.deliveryOrders = data;
+        data = data.filter(item =>
+          Array.isArray(
+            item.detail_inv) &&
+            item.detail_inv.some(
+              detail => detail.id_so == id) && item.has_faktur == 0);
+        this.deliveryOrders = data;                
       })
     },
 
@@ -220,20 +220,44 @@ export default defineComponent({
         }
       )
     },
+    async validation() {
+      var count = 0
+      if (this.id_so == '' || this.id_so == null) {
+        this.rules.id_so = true
+        count++
+      } else {
+        this.rules.id_so = false
+      }
+
+      if (this.code_faktur_pajak == '' || this.code_faktur_pajak == null) {
+        this.rules.code_faktur_pajak = true
+        count++
+      } else {
+        this.rules.code_faktur_pajak = false
+      }  
+      
+      if (this.deliveryOrders == '' || this.deliveryOrders == null) {
+        this.rules.deliveryOrders = true
+        count++
+      } else {
+        this.rules.deliveryOrders = false
+      }
+
+      return count
+    },
 
     async onSubmit() {
-      const result = 2;      
-      if (result != 0) {
+      const result = await this.validation();      
+      if (result == 0) {
         if (this.id == null) {
           await axios.post(AddFakturPajak, {
             id_so: this.id_so,
             id_invoice: this.id_invoice,
             customer_id: this.customer_id,                               
-            code_faktur_pajak : this.faktur_pajak,
+            code_faktur_pajak : this.code_faktur_pajak,
           }, {
             headers: { "Content-Type": "application/json" }
-          }).then((response) => {
-            console.log(response)
+          }).then((response) => {            
             Swal.fire({
               icon: "success",
               title: 'Success',

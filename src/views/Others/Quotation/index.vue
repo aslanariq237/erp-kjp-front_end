@@ -222,6 +222,8 @@ export default defineComponent({
     const tableHeaders = [
       { key: 'code_quatation', label: 'Quotation Number' },
       { key: 'customer', label: 'Customer Name' },
+      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'sub_total', label: 'PPN' },
       { key: 'sub_total', label: 'Amount' },
       { key: 'issue_at', label: 'Date' },
       { key: 'action', label: 'Action' },
@@ -386,7 +388,15 @@ export default defineComponent({
       axios.post(QuatationsAdd + '/edit-ppn/' + item.id_quatation,{
         sub_total : item.sub_total,
         ppn : item.ppn,
-      }).then((res) => {        
+      }).then((res) => { 
+        Swal.fire({
+          icon: 'success',
+          title : 'Berhasil Edit PPN'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.reload();
+          }
+        })
       }).catch((err) => console.error(err));
     }
 

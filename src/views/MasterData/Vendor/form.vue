@@ -21,7 +21,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
             <FormGroup label="vendor Name" :required="true" :error="rules.issue_at"
               errorMessage="Issue Date is required">
-              <input type="text" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
+              <input type="text" autocomplete="off" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
                 :class="inputClass(rules.issue_at)" />
             </FormGroup>
 

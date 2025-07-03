@@ -2,42 +2,31 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification
-        v-if="notification.show"
-        :type="notification.type"
-        :message="notification.message"
-        @close="notification.show = false"
-      />
+      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+        @close="notification.show = false" />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="flex justify-between items-center p-6 border-b">
           <div>
-            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ id? "Edit Purchase Order Jasa Kirim" : "Create New Purchase Order Jasa Kirim" }}</h1>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">{{ id ? "Edit Purchase Order Jasa Kirim" :
+              "Create New Purchase Order Jasa Kirim" }}</h1>
             <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order Jasa Kirim / Form</p>
-          </div>          
+          </div>
           <div class="flex items-center gap-3">
-            <RouterLink
-              to="/purchase-order"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
-            >
+            <RouterLink to="/po-jasa-kirim"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button
-              v-if="id"
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-if="id" type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Updating...' : 'Update ' }}
             </button>
-            <button
-              v-else
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-else type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -51,13 +40,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true">
-            <input
-              type="date"
-              id="issue_at"
-              name="issue_at"
-              v-model="issue_at"
-              :class="inputClass(rules.issue_at)"
-            />
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
             <div class="" v-if="rules.issue_at == true">
               <p class="text-red-500 text-sm">Issue Date Dibutuhkan</p>
             </div>
@@ -65,13 +48,8 @@
 
           <!-- Termin -->
           <FormGroup label="Termin" :required="true">
-            <select
-              id="po_type"
-              name="po_type"
-              :class="inputClass(rules.deposit)"
-              v-model="termin"
-              class="rounded w-full"
-            >
+            <select id="po_type" name="po_type" :class="inputClass(rules.deposit)" v-model="termin"
+              class="rounded w-full">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -89,13 +67,7 @@
 
           <!-- Due Date -->
           <FormGroup label="Due Date" :required="true">
-            <input
-              type="date"
-              id="due_at"
-              name="due_at"
-              v-model="due_at"
-              :class="inputClass(rules.due_at)"
-            />
+            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
             <div class="" v-if="rules.due_at == true">
               <p class="text-red-500 text-sm">Due Date Dibutuhkan</p>
             </div>
@@ -104,27 +76,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
           <FormGroup label="Vendor" class="relative" :required="true">
-            <input
-              type="text"
-              name="vendor_name"
-              id="vendor_name"
-              v-model="vendor_name"
-              @input="filtervendors"
-              autocomplete="off"
-              class="rounded w-full"
-              :class="inputClass(rules.deposit)"
-              placeholder="Type Vendor Name"
-            />
-            <ul
-              v-if="filteredvendors.length"
-              class="border rounded w-full mt-2 bg-white absolute z-40"
-            >
-              <li
-                v-for="vendor in filteredvendors"
-                :key="vendor.vendor_id"
-                @click="selectvendor(vendor)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+            <input type="text" name="vendor_name" id="vendor_name" v-model="vendor_name" @input="filtervendors"
+              autocomplete="off" class="rounded w-full" :class="inputClass(rules.deposit)"
+              placeholder="Type Vendor Name" />
+            <ul v-if="filteredvendors.length" class="border rounded w-full mt-2 bg-white absolute z-40">
+              <li v-for="vendor in filteredvendors" :key="vendor.vendor_id" @click="selectvendor(vendor)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ vendor.vendor_name }}
               </li>
             </ul>
@@ -135,90 +92,34 @@
 
           <!-- Total Service -->
           <FormGroup label="Deposit" :required="true">
-            <input
-              type="number"
-              id="deposit"
-              name="deposit"
-              v-model="deposit"
-              :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit"
-            />
+            <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit" />
           </FormGroup>
 
           <!-- Deposit -->
           <FormGroup> </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end">
-          <FormGroup
-            class="w-full relative"
-            label="product"
-            :required="true"
-            :error="rules.product_id"
-            errorMessage="product_id is required"
-          >
-            <input
-              type="text"
-              name="product_name"
-              id="product_name"
-              v-model="product_name"
-              autocomplete="off"
-              @input="filterProducts"
-              class="rounded w-full"
-              :class="inputClass(rules.deposit)"
-              placeholder="Type product name"
-            />
-            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
-              <li
-                v-for="product in filteredProducts"
-                :key="product.product_id"
-                @click="selectProduct(product)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
-                {{ product.product_sn }} - {{ product.product_desc }}
-              </li>
-            </ul>
+          <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
+            errorMessage="product_id is required">
+            <input type="text" id="quantity" name="quantity" v-model="product_name" :class="inputClass(rules.quantity)"
+              placeholder="Enter Product" />
           </FormGroup>
 
           <!-- Grand Total -->
-          <FormGroup
-            class="w-full"
-            label="Quantity"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Quantity is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="quantity"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+            errorMessage="Quantity is required">
+            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
-          <FormGroup
-            class="w-full"
-            label="Price"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Price is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="price"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+            errorMessage="Price is required">
+            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
 
           <div>
-            <button
-              type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-              @click="addPoDetails"
-            >
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
               tambah
             </button>
           </div>
@@ -240,15 +141,12 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <button
-                    type="button"
-                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="
-                      purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
+                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400" @click="
+                    purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
                     ">
                     Delete
                   </button>
-                </td>                
+                </td>
               </tr>
             </tbody>
           </table>
@@ -261,9 +159,12 @@
                 <p>{{ formatCurrency(sub_total) }}</p>
               </div>
               <div class="sub_total flex justify-between mt-3">
-                <div class="ppn flex items-center space-x-2">                  
-                  <p>PPN                   
-                  </p>
+                <div class="flex justify-items items-center">
+                  <input type="checkbox" name="checkPPN" id="checkPPN" v-model="checkPPN">
+                  <div class="ppn flex items-center space-x-2">
+                    <p>PPN
+                    </p>
+                  </div>
                 </div>
                 <p>{{ formatCurrency(ppn) }}</p>
               </div>
@@ -272,7 +173,7 @@
                 <p>{{ formatCurrency(grand_total) }}</p>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </Form>
@@ -318,17 +219,15 @@ export default defineComponent({
     const { user } = useAuthStore()
     return {
       id: null,
-      user: user,      
+      user: user,
       vendors: [],
       vendor_name: '',
       filteredvendors: [],
       employee_name: '',
       filteredEmployees: [],
       product_name: '',
-      filteredProducts: [],
+      checkPPN: true,
       employees: [],
-      products: [],
-      product_id: [],
       quantity: [],
       vendor_id: null,
       employee_id: null,
@@ -360,11 +259,9 @@ export default defineComponent({
   async mounted() {
     this.employee_id = this.user.employee_id
     this.getvendor()
-    this.getProducts()
 
     const route = useRoute()
-    const id = route.params.id    
-
+    const id = route.params.id
     if (id) {
       this.getById(id)
       this.id = id
@@ -390,8 +287,12 @@ export default defineComponent({
     },
 
     // Calculate PPN (11% of subtotal)
-    ppn() {      
-      return this.sub_total * 0.11
+    ppn() {
+      if (this.checkPPN == false) {
+        return 0;
+      } else {
+        return this.sub_total * 0.011
+      }
     },
 
     // Calculate grand total (subtotal + PPN)
@@ -406,18 +307,12 @@ export default defineComponent({
         this.vendors = data
       })
     },
-    getProducts() {
-      axios.get(Product).then((res) => {
-        var data = res.data
-        this.products = data
-      })
-    },
     getEmployee() {
       axios.get(Employee).then((res) => {
         var data = res.data
         this.employees = data
       })
-    },    
+    },
 
     calculateDueDate(issueDate, termin) {
       if (issueDate && termin === 'N30') {
@@ -444,11 +339,11 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'N45') {
+      } else if (issueDate && termin === 'N45') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 45) // Add 45 days
         this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'CBD') {
+      } else if (issueDate && termin === 'CBD') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 30) // Add 30 days
         this.due_at = this.formatDate(date)
@@ -468,20 +363,6 @@ export default defineComponent({
       const day = String(date.getDate()).padStart(2, '0')
       return `${year}-${month}-${day}`
     },
-
-    filterProducts() {
-      const searchTerm = this.product_name.toLowerCase()
-      this.filteredProducts = this.products.filter((product) => {
-        const desc = product.product_desc.toLowerCase()
-        const sn = product.product_sn.toLowerCase()
-        return desc.includes(searchTerm) || sn.includes(searchTerm)
-      })
-    },
-    selectProduct(product) {
-      this.product_id = product.product_id
-      this.product_name = `${product.product_sn} - ${product.product_desc}`
-      this.filteredProducts = []
-    },
     filtervendors() {
       const searchTerm = this.vendor_name.toLowerCase()
       this.filteredvendors = this.vendors.filter((vendor) => {
@@ -495,25 +376,13 @@ export default defineComponent({
       this.filteredvendors = []
     },
     addPoDetails() {
-      if (this.product_id == '' || this.product_id == null) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Tambahkan Barang',
-        })
-      } else {
-        axios.get(Product + '/' + this.product_id).then((res) => {
-          var data = res.data
-          var object = {
-            product_id: data.product_id,
-            product_desc: data.product_desc,
-            quantity: this.quantity,
-            price: this.price,
-            amount: this.price * this.quantity,
-          }
-          this.purchase_order_details.push(object)
-          ;(this.product_id = null), (this.quantity = 0), (this.price = 0)
-        })
+      var object = {
+        product_desc: this.product_name,
+        quantity: this.quantity,
+        price: this.price,
+        amount: this.quantity * this.price,
       }
+      this.purchase_order_details.push(object);
     },
 
     formatCurrency(value) {
@@ -590,7 +459,7 @@ export default defineComponent({
         for (let i = 0; i < data.length; i++) {
           var object = {
             product_id: data[i].product_id,
-            product_desc: data[i].product.product_desc,
+            product_desc: data[i].product_name,
             quantity: data[i].quantity,
             price: data[i].price,
             discount: data[i].discount,
@@ -604,17 +473,19 @@ export default defineComponent({
     async getById(id) {
       await axios.get(PoJasaKirim + '/' + id).then((res) => {
         var data = res.data
-        this.issue_at = data[0].issue_at
-        this.due_at = data[0].due_at,
-        this.code_jakir = data[0].code_jasakirim,
-        this.termin = data[0].termin,        
-        this.vendor_name = data[0].vendor.vendor_name        
-        this.deposit = data[0].deposit
+        this.termin = data[0].termin;
+        this.issue_at = data[0].issue_at;
+        this.vendor_id = data[0].vendor_id;
+        this.employee_id = data[0].employee_id; 
+        this.code_jakir = data[0].code_jasakirim,        
+        this.vendor_name = data[0].vendor.vendor_name;
+        this.due_at = data[0].due_at;
+        this.deposit = data[0].deposit;        
         if (data[0].id_jasakirim) {
-            this.getDetailSo(data[0].id_jasakirim);
+          this.getDetailSo(data[0].id_jasakirim);
         }
       });
-    }, 
+    },
 
     async onSubmit() {
       const result = await this.validation()
@@ -625,25 +496,26 @@ export default defineComponent({
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,
               termin: this.termin,
-              total_tax: this.total_tax,
-              status_payment: this.status_payment,
-              deposit: this.deposit,              
-              issue_at: this.issue_at,
+              sub_total : this.sub_total,
               ppn : this.ppn,
-              grand_total : this.grand_total,
+              grand_total : this.grand_total,              
+              status_payment: this.status_payment,
+              deposit: this.deposit,
+              issue_at: this.issue_at,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               due_at: this.due_at,
               purchase_order_details: this.purchase_order_details,
             })
             .then(
               (response) => {
-                console.log(response)
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',
                   text: 'Data has been Saved',
                 }).then(async (result) => {
                   if (result.isConfirmed) {
-                    await router.push('/purchase-order')
+                    await router.push('/po-jasa-kirim')
                   }
                 })
               },
@@ -663,16 +535,14 @@ export default defineComponent({
             .post(PoJasaKirimCode, {
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,
-              termin: this.termin,
-              total_tax: this.total_tax,
-              status_payment: this.status_payment,
+              termin: this.termin,                            
               deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
-              ppn : this.ppn,
+              ppn: this.ppn,              
               grand_total: this.grand_total,
-              sub_total : this.sub_total,
-              ppncheck : this.ppnCheck,
+              sub_total: this.sub_total,
+              ppncheck: this.ppnCheck,
               purchase_order_details: this.purchase_order_details,
             })
             .then(

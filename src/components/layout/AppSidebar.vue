@@ -206,8 +206,7 @@ const menuGroups = [
         icon: GridIcon,
         name: 'Dashboard',
         subItems: [
-          { name: 'User Dashboard', path: '/', pro: false },
-          { name: 'Admin Dashboard', path: '/admin-dashboard', pro: false },
+          { name: 'User Dashboard', path: '/', pro: false },        
         ],
       },
       {
@@ -254,7 +253,7 @@ const menuGroups = [
           { name: 'Account Receivable', path: '/account-receivable', pro: false },
           { name: 'Account Payable', path: '/account-payable', pro: false },
           { name: 'Finance Report', path: '/laporan-keuangan', pro: false },
-          { name: 'Laporan Keuangan', path: '/laporan-laba-rugi', pro: false },
+          // { name: 'Laporan Keuangan', path: '/laporan-laba-rugi', pro: false },
           { name: 'OPEX Internal', path: '/opex-internal', pro: false },
           { name: 'Opex External', path: '/opex-external', pro: false },
           { name: 'Opex Cogs', path: '/opex-cogs', pro: false},

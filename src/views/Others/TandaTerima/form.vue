@@ -107,12 +107,26 @@
         <div v-if="id">
         </div>
         <div class="flex items-end gap-5 mb-8" v-else>
-          <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
-            errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full"
-              :class="inputClass(rules.due_at)">
-              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
-                {{ delo.code_invoice }}
+          <FormGroup 
+            label="Invoice" 
+            :required="true" 
+            :error="rules.no" 
+            class="w-full"
+            errorMessage="Purchase Order is required"
+          >
+            <select 
+              name="id_so" 
+              id="id_so" 
+              v-model="id_invoice" 
+              class="rounded w-full"
+              :class="inputClass(rules.due_at)"
+            >
+              <option 
+                v-for="delo in deliveryOrders" 
+                :key="delo.id_invoice" 
+                :value="delo.id_invoice"
+              >
+                  {{ delo.code_invoice }}
               </option>
             </select>
           </FormGroup>
@@ -168,6 +182,7 @@ import {
   TandaterAdd
 } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -179,8 +194,10 @@ export default defineComponent({
   },
 
   data() {
+    const {user} = useAuthStore();
     return {
       id: null,
+      user : user,
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
@@ -191,6 +208,7 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       po_number: '',
+      code_so : '',
       code_tandater : '',
       resi: '',
       customer_name: '',
@@ -218,7 +236,8 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.total = this.sub_total;
+    this.employee_id = this.user.employee_id;
+    
     this.getSalesOrder();
     if (id) {
       this.getById(id);
@@ -248,25 +267,24 @@ export default defineComponent({
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
-        var data = res.data;
-        this.customer_id = data.customer.customer_id;
-        this.customer_name = data.customer.customer_name;
-        this.customer_npwp = data.customer.customer_npwp;
-        this.customer_address = data.customer.customer_address;
-        this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;
-        this.po_number = data.po_number;
-        this.due_at = data.due_at;
+      var selected = this.salesOrders.find(function (item) {
+        return item.id_so == this.id_so
+      }.bind(this))      
 
-        if (data.id_so) {
-          this.getDeliveryOrder(data.id_so)
-        }
-      })
+      if (selected) {
+        this.due_at = selected.due_at;                  
+        this.po_number = selected.po_number,
+        this.customer_id = selected.customer_id,
+        this.customer_name = selected.customer.customer_name;
+        this.customer_address = selected.customer.customer_address;        
+        this.code_so = selected.code_so;
+
+        this.getDeliveryOrder();
+      }
     },
 
-    getDeliveryOrder(id) {
-      axios.get(Invoice + '/code/' + id).then((res) => {
+    getDeliveryOrder() {
+      axios.get(Invoice).then((res) => {
         var data = res.data
         this.deliveryOrders = data;
       })
@@ -285,7 +303,7 @@ export default defineComponent({
           icon: 'warning',
           text: "Pilih Invoice"
         });
-      } else {
+      } else {        
         axios.get(Invoice + '/' + this.id_invoice).then(
           (res) => {
             var data = res.data;
@@ -293,9 +311,9 @@ export default defineComponent({
               var object = {
                 code_invoice: data[i].code_invoice,
                 id_invoice: data[i].id_invoice,
-                id_so: data[i].salesorder.id_so,
-                code_so: data[i].salesorder.code_so,
-                po_number: data[i].salesorder.po_number,
+                id_so: this.id_so,
+                code_so: this.code_so,
+                po_number: this.po_number,
                 nominal : data[i].grand_total,
               }
               this.tandaterima_details.push(object);
@@ -381,13 +399,12 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
-          await axios.post(TandaterAdd, {
-            id_so: this.id_so,
+          await axios.post(TandaterAdd, {            
             customer_id: this.customer_id,
-            issue_at: this.issue_at,
-            due_at: this.due_at,
+            employee_id : this.employee_id,            
             resi: this.resi,
-            id_do: this.id_do,
+            issue_at: this.issue_at,
+            due_at: this.due_at,            
             tandaterima_details: this.tandaterima_details,
           }, {
             headers: { "Content-Type": "application/json" }

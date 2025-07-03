@@ -452,7 +452,7 @@ export default defineComponent({
             this.quantity = 0
             this.price = 0
           })
-        }
+        }        
       }
     },
 
@@ -693,8 +693,7 @@ export default defineComponent({
 
     async onSubmit(e = null) {
       e?.preventDefault?.()
-      const result = await this.validation()
-      console.log(result)
+      const result = await this.validation()      
       if (result == 0) {
         if (this.id) {
           const formattedDetails = this.sales_order_details.map((item) => {
@@ -725,8 +724,7 @@ export default defineComponent({
               sales_order_details: formattedDetails,
             })
             .then(
-              (response) => {
-                console.log(response)
+              (response) => {                
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -748,24 +746,23 @@ export default defineComponent({
                 })
               },
             )
-        } else {
-          console.log(this.sales_order_details)
+        } else {          
           await axios
             .post(SalesOrderAdd, {
               customer_id: this.customer_id,
               employee_id: this.employee_id,
-              termin: this.termin,
               po_number: this.po_number,
-              total_tax: this.total_tax,
+              termin: this.termin,  
+              sub_total : this.sub_total,
               deposit: this.deposit,
+              ppn : this.ppn,
+              grand_total : this.grand_total,
               issue_at: this.issue_at,
-              due_at: this.due_at,
-              has_invoice: 0,
+              due_at: this.due_at,              
               sales_order_details: this.sales_order_details,
             })
             .then(
-              (response) => {
-                console.log(response)
+              (response) => {                
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',

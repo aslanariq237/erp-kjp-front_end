@@ -385,9 +385,8 @@ export default defineComponent({
       axios.get(PoJasaKirimDetail + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
-          var object = {
-            product_id: data[i].product_id,
-            product_desc: data[i].product.product_desc,
+          var object = {            
+            product_desc: data[i].product_name,
             quantity: data[i].quantity,
             price: data[i].price,
             discount: data[i].discount,

@@ -247,14 +247,7 @@ export default defineComponent({
             vendor.vendor_email.toLowerCase().includes(query) ||
             vendor.vendor_phone.includes(query),
         )
-      }
-
-      // Sort
-      result.sort((a, b) => {
-        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
-        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
-        return fieldA.localeCompare(fieldB)
-      })
+      }      
 
       return result
     })

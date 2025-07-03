@@ -205,8 +205,7 @@ export default defineComponent({
             opex_price: this.opex_price,
             opex_type: this.opex_type,
             issue_at: this.issue_at,
-          }).then((response) => {
-            console.log(response)
+          }).then((response) => {            
             Swal.fire({
               icon: "success",
               title: 'Success',

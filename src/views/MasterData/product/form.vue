@@ -34,33 +34,33 @@
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
                     <FormGroup label="Image Product" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="file" id="issue_at" name="issue_at"
+                        <input type="file" autocomplete="off" id="issue_at" name="issue_at"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>  
                     
                     <FormGroup label="Product Desc" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="text" id="issue_at" name="issue_at" v-model="product_desc"
+                        <input type="text" autocomplete="off" id="issue_at" name="issue_at" v-model="product_desc"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup> 
                     <FormGroup label="Product SN" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="text" id="issue_at" name="issue_at" v-model="product_sn"
+                        <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_sn"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>  
                     <FormGroup label="Product Brand" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="text" id="issue_at" name="issue_at" v-model="product_brand"
+                        <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_brand"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>  
                     <FormGroup label="Product UoM" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="text" id="issue_at" name="issue_at" v-model="product_uom"
+                        <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_uom"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>  
                     <FormGroup label="Product Category" :required="true" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input type="text" id="issue_at" name="issue_at" v-model="product_category_id"
+                        <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_category_id"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>                                                                            
                 </div>

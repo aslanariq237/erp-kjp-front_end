@@ -109,8 +109,9 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <button
-                     class="text-green-600 hover:text-green-900" @click="approve(opex)">
+                    <button 
+                      v-if="opex.approved == 0"
+                      class="text-green-600 hover:text-green-900" @click="approve(opex.opex_id)">
                       Approve
                     </button>
                     <button class="text-blue-600 hover:text-green-900" @click="editData(opex.opex_id)">
@@ -161,13 +162,34 @@
           </div>
         </div>
       </div>
-      <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
           <h3 class="text-lg font-bold mb-4">Approve OPEX</h3>
-          <table>
-            <tr v-for="(details, index) in detail" :key="index">
-              <td>{{ details.quantity }}</td>
-            </tr>
+          <table class="w-full mb-4 min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="text-left">
+                <th>Product</th>
+                <th>SN</th>
+                <th>Qty</th>                
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr 
+                v-for="(data, index) in detail" :key="index"
+                class="hover:bg-gray-50 transition-colors duration-150 text-sm"
+                :class="data.product_stock == 0 ? 'bg-red-100 hover:bg-red-200' : 'bg-gray-50'"
+              >
+                <td
+                  class="text-sm text-gray-500"              
+                >{{ data.product_desc }}</td>
+                <td
+                  class="text-sm text-gray-500"
+                >{{ data.product_sn }}</td>
+                <td
+                  class="text-sm text-gray-500"
+                >{{ data.quantity }}</td>                
+              </tr>
+            </tbody>
           </table>
           <!-- <p class="mb-6">
             Are you sure you want to approve this OPEX? This action cannot be undone.
@@ -177,9 +199,7 @@
               Cancel
             </button>
             <button 
-              @click="approveOpex" 
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"              
-            >
+              @click="approveOpex(opex)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               Approve
             </button>
           </div>
@@ -194,7 +214,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { GetAbsorb, GetOpex, Product } from '@/core/utils/url_api'
+import { AddOpexApprove, GetAbsorb, GetOpex, Product } from '@/core/utils/url_api'
 
 export default defineComponent({
   name: 'OpexPage',
@@ -243,33 +263,51 @@ export default defineComponent({
       } finally {
         loading.value = false
       }
-    }    
+    }
 
-    const detail = ref('');
+    const detail = ref([]);
+    const opex_id = ref(0);
 
 
-    const approve = async (opex) => {
-      isModalOpen.value = true;  
-      await axios.get(GetAbsorb + '/' +opex.opex_id)
-          .then((res) => {
-            detail.value = res.data;          
-          })
+    const approve = async (id) => {
+      isModalOpen.value = true;
+      opex_id.value = id;
+      axios.get(GetAbsorb + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          for (let i = 0; i < data.length; i++) {
+            var object = {
+              opex_id: data[i].opex_id,
+              product_id : data[i].product_id,
+              product_desc: data[i].product.product_desc,
+              product_sn: data[i].product.product_sn,
+              product_stock : data[i].product.product_stock,
+              quantity: data[i].quantity,              
+              price: data[i].price,
+            };
+            detail.value.push(object);            
+          }
+        }
+      )
     }
 
     const approveOpex = async () => {
-      console.log('coba');
-      for (let i = 0; i < detail.value.length; i++) {        
-        if (detail.value[i].product.product_stock <= 0) {                    
+      const hasZeroStock = detail.value.some(item => item.product_stock === 0);
 
-        }
+      if (hasZeroStock) {
+        alert('Terdapat Produk Dengan Stock 0')
+        return;
       }
-      // try {
-      //   for (let i = 0; i < detail.length; i++) {          
-          
-      //   }
-      // } catch (error) {
-      //   console.error('Error Aproving :', error)
-      // }
+      
+      await axios.post(AddOpexApprove + '/' + opex_id.value, {        
+        detail : detail.value,
+      }).then(
+        (res) => {
+          console.log(res);
+        }
+      )
+
+      alert('Approve Berhasil');
     }
 
     onMounted(() => {
@@ -422,6 +460,7 @@ export default defineComponent({
       startIndex,
       endIndex,
       displayedPages,
+      detail,
       opexData,
 
       // Methods      

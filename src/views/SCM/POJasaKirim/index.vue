@@ -120,10 +120,10 @@
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)" v-if="entry.deposit != entry.grand_total">
                       Edit PPN
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="approve(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="approve(entry.id_jasakirim)">
                       Approve
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="deleteData(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="deleteData(entry.id_jasakirim)">
                       Delete
                     </button>
                   </div>
@@ -180,9 +180,9 @@
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { DetailPo, PoJasaKirim, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
+import { DetailPo, PoJasaKirim, PoJasaKirimDetail, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
-import { exportPoPDF } from '@/core/helpers/exportToPdf'
+import { exportJasaKirimPDF, exportPoPDF } from '@/core/helpers/exportToPdf'
 import Swal from 'sweetalert2'
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -228,7 +228,7 @@ export default defineComponent({
 
     const detailPo = async () => {
       try {
-        await axios.get(DetailPo).then((res) => {
+        await axios.get(PoJasaKirimDetail).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -246,7 +246,8 @@ export default defineComponent({
 
     const editData = (id) => {
       router.push('po-jasa-kirim/edit/' + id)
-    }
+    }    
+
     const deleteData = async (id) => {
       const result = await Swal.fire({
         title: 'Are you sure?',
@@ -260,7 +261,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(PurchaseOrderDelete + '/' + id)
+          await axios.delete(PoJasaKirim + '/delete/' + id)
           await getPurchaseOrder()
           Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
         } catch (error) {
@@ -331,12 +332,13 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = dataexcel.value.map((entry) => ({
-        'Po Number': entry.purchaseorders.code_po,
-        'Vendor Name': entry.purchaseorders.vendor.vendor_name,
-        'Product Decs': entry.product.product_desc,
-        'product SN': entry.product.product_sn,
-        'Issue Date': entry.purchaseorders.issue_at,
-        'Due Date': entry.purchaseorders.due_at,
+        'Po Number': entry.jasakirim.code_jasakirim,
+        'Vendor Name': entry.jasakirim.vendor.vendor_name,
+        'Sub Total': entry.jasakirim.sub_total,
+        'PPN': entry.jasakirim.ppn,
+        'Grand Total': entry.jasakirim.grand_total,
+        'Issue Date': entry.jasakirim.issue_at,
+        'Due Date': entry.jasakirim.due_at,
       }));
 
       // Create CSV content
@@ -358,19 +360,35 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
     const exportToPDF = (item) => {
-      exportPoPDF(item)
+      exportJasaKirimPDF(item);
     }
+
     const approve = (id) => {
-      axios.post(PurchaseOrder + '/approve/' + id).then((res) => {
-        console.log(res)
+      axios.post(PoJasaKirim + '/approve/' + id).then((res) => {
+        Swal.fire({
+          icon : 'success',
+          title : 'Sukses Approve'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.reload();
+          }
+        })
       })
     }
 
     const editPPN = (item) => {
-      axios.post(PurchaseOrder + '/edit_ppn/' + item.id_po,{
+      axios.post(PoJasaKirim + '/edit_ppn/' + item.id_jasakirim,{
         sub_total : item.sub_total,
         ppn : item.ppn,
-      }).then((res) => {        
+      }).then((res) => {  
+        Swal.fire({
+          icon : 'success',
+          title : 'Sukses Edit PPN',          
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.reload();
+          }
+        })
       }).catch((err) => console.error(err));
     }
 

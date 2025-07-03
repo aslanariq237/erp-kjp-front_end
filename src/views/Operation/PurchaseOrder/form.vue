@@ -269,6 +269,7 @@
               </div>
               <div class="sub_total flex justify-between mt-3">
                 <div class="ppn flex items-center space-x-2">                  
+                  <input type="checkbox" v-model="checkppn" class="mr-2">
                   <p>PPN                   
                   </p>
                 </div>
@@ -344,6 +345,7 @@ export default defineComponent({
       total_service: 0,
       deposit: 0,
       issue_at: '',
+      checkppn: true,
       due_at: '',
       isSubmitting: false,
       notification: {
@@ -395,7 +397,7 @@ export default defineComponent({
 
     // Calculate PPN (11% of subtotal)
     ppn() {      
-      return this.sub_total * 0.11
+      return this.checkppn ? this.sub_total * 0.11 : 0;
     },
 
     // Calculate grand total (subtotal + PPN)
@@ -630,10 +632,14 @@ export default defineComponent({
               employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
+              sub_total : this.sub_total,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               status_payment: this.status_payment,
-              deposit: this.deposit,              
+              deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
+              ppncheck : this.ppnCheck,
               purchase_order_details: this.purchase_order_details,
             })
             .then(
@@ -667,6 +673,9 @@ export default defineComponent({
               employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
+              sub_total : this.sub_total,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               status_payment: this.status_payment,
               deposit: this.deposit,
               issue_at: this.issue_at,

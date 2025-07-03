@@ -107,7 +107,8 @@
                     class="w-20 rounded-lg border-gray-200 text-center"
                     @change="changeQuantity(products)" 
                     :disabled="products.has_do === 1"
-                    :max="products.product_stock">
+                    min="0"
+                    :max="products.product_stock < products.quantity ? products.product_stock : products.quantity">
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
@@ -115,7 +116,7 @@
                     type="checkbox"                     
                     name="check_barang" 
                     id="check_barang" 
-                    v-model="products.id_so"                    
+                    v-model="products.checked"                    
                     :disabled="products.product_stock == 0 || products.has_do === 1" 
                     @change="AddDeliverOrderDetails(products)
                   ">
@@ -216,6 +217,9 @@ export default defineComponent({
         return total + item.quantity * item.price;
       }, 0);
     },
+    ppn() {
+      return this.sub_total * 0.11;
+    },
   },
 
   methods: {
@@ -227,6 +231,9 @@ export default defineComponent({
         this.errorMessage = '';
       }
       product.amount = product.price * product.quantity;
+
+      product.checked = false
+      this.delivery_order_details.splice(this.delivery_order_details.indexOf(product));
     },
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
@@ -257,7 +264,8 @@ export default defineComponent({
             }
           }
         }
-      })
+      });
+      this.delivery_order_details = [];
     },
 
     formatCurrency(value) {
@@ -330,27 +338,55 @@ export default defineComponent({
           }
         )
       }
+      this.delivery_order_details.forEach(data => {
+        data.checked = false;
+      });
+      this.delivery_order_details = [];
     },
-    async AddDeliverOrderDetails(products) {      
-      if (products.quantity_left > products.product_stock) 
-      {
+    async AddDeliverOrderDetails(products) {
+      if (products.checked) {
+        if (products.quantity_left > products.product_stock) {
         this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
-        products.quantity_left = products.product_stock;        
+        products.quantity_left = products.product_stock;
       }
-      else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) 
-      {
+      else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) {
         products.quantity_left = products.quantity
-      }      
+      }
 
-        var objectInclude = {
-          id_detail_so : products.id_detail_so,
-          product_id: products.product_id,
-          quantity: products.quantity,
-          quantity_left: products.quantity_left,
-          price: products.price
-        }
-        this.delivery_order_details.push(objectInclude);               
+      var objectInclude = {
+        id_detail_so: products.id_detail_so,
+        product_id: products.product_id,
+        quantity: products.quantity,
+        quantity_left: products.quantity_left,
+        price: products.price,
+        checked: false,
+      }
+      this.delivery_order_details.push(objectInclude);
+      }else{
+        this.delivery_order_details.splice(this.delivery_order_details.indexOf(products));
+      }      
     },
+    // async AddDeliverOrderDetails(products) {      
+    //   if (products.quantity_left > products.product_stock) 
+    //   {
+    //     this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
+    //     products.quantity_left = products.product_stock;        
+    //   }
+    //   else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) 
+    //   {
+    //     products.quantity_left = products.quantity
+    //   }      
+
+    //     var objectInclude = {
+    //       id_detail_so : products.id_detail_so,
+    //       product_id: products.product_id,
+    //       quantity: products.quantity,
+    //       quantity_left: products.quantity_left,
+    //       price: products.price,
+    //       checked : false,
+    //     }
+    //     this.delivery_order_details.push(objectInclude);               
+    // },
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -402,9 +438,11 @@ export default defineComponent({
       if (result == 0) {
         await axios.post(AddDeliveryOrder, {
           customer_id: this.customer_id,
-          id_customer_point: this.id_customer_point,
           employee_id: this.employee_id,
           id_so: this.id_so,
+          id_customer_point: this.id_customer_point,                    
+          sub_total : this.sub_total,
+          ppn : this.ppn,
           issue_at: this.issue_at,
           due_at: this.due_at,
           delivery_order_details: this.delivery_order_details,

@@ -249,12 +249,14 @@ export default defineComponent({
       // Search
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (customer) =>
-            customer.customer_name.toLowerCase().includes(query) ||
-            customer.customer_email.toLowerCase().includes(query) ||
-            customer.customer_phone.includes(query),
-        )
+        result = result.filter((customer) => {
+          const customer_name = customer.customer_name.toLowerCase()
+          const customer_email = customer.customer_email.toLowerCase()
+          const customer_code = customer.customer_code.toLowerCase()
+          return customer_name.includes(query) ||
+                 customer_email.includes(query) ||
+                 customer_code.includes(query)
+        })      
       }
 
       // Sort

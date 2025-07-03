@@ -105,9 +105,6 @@
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
                     @click="viewData(entry.id_tandater)"                   
@@ -212,7 +209,6 @@ export default defineComponent({
       { key: 'sub_total', label: 'Customer' },
       { key: 'sub_total', label: 'Resi' },
       { key: 'issue_at', label: 'Issue Date' },
-      { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
     ]
 
@@ -258,13 +254,9 @@ export default defineComponent({
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
-          const code_tandater = entry.code_tandater.toLowerCase()
-          const code_so = entry.so.code_so.toLowerCase()          
-          const po_number = entry.so.po_number.toLowerCase()
+          const code_tandater = entry.code_tandater.toLowerCase()          
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_tandater.includes(query)||
-                po_number.includes(query) ||
-                code_so.includes(query) ||
+          return code_tandater.includes(query)||                                
                 customer.includes(query)
         })
       }

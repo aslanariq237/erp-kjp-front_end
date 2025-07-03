@@ -2,12 +2,8 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification
-        v-if="notification.show"
-        :type="notification.type"
-        :message="notification.message"
-        @close="notification.show = false"
-      />
+      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+        @close="notification.show = false" />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800">
@@ -22,27 +18,19 @@
             <p class="text-gray-500 text-sm mt-1">Others / Quotation / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink
-              to="/quotation"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
-            >
+            <RouterLink to="/quotation"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button
-              v-if="id"
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-if="id" type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Updating...' : 'Update' }}
             </button>
-            <button
-              v-else
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-else type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -55,32 +43,16 @@
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
-          <FormGroup
-            label="Issue Date"
-            :required="true"
-            :error="rules.issue_at"
-            errorMessage="Issue Date is required"
-          >
+          <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <!-- <p> {{ issue_at }}</p> -->
-            <input
-              type="date"
-              id="issue_at"
-              name="issue_at"
-              v-model="issue_at"
-              :class="inputClass(rules.issue_at)"
-            />
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
             <div class="" v-if="rules.issue_at == true">
               <p class="text-red-500 text-sm">Issue Date Dibutuhkan</p>
             </div>
           </FormGroup>
 
           <!-- Termin -->
-          <FormGroup
-            label="Term of Payment"
-            :required="true"
-            :error="rules.po_type"
-            errorMessage="PO Type is required"
-          >
+          <FormGroup label="Term of Payment" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
             <select id="po_type" name="po_type" v-model="termin" :class="inputClass(rules.due_at)">
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -98,13 +70,7 @@
 
           <!-- Due Date -->
           <FormGroup label="Due Date" :required="true" :error="rules.due_at">
-            <input
-              type="date"
-              id="due_at"
-              name="due_at"
-              v-model="due_at"
-              :class="inputClass(rules.due_at)"
-            />
+            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
             <div class="" v-if="rules.due_at == true">
               <p class="text-sm text-red-500">Due Date Dibutuhkan</p>
             </div>
@@ -112,33 +78,13 @@
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
-          <FormGroup
-            label="Customer"
-            class="relative"
-            :required="true"
-            :error="rules.customer_id"
-            errorMessage="Customer is Required"
-          >
-            <input
-              type="text"
-              name="customer_name"
-              id="customer_name"
-              v-model="customer_name"
-              autocomplete="off"
-              @input="filterCustomers"
-              :class="inputClass(rules.due_at)"
-              placeholder="Type customer name"
-            />
-            <ul
-              v-if="filteredCustomers.length"
-              class="border rounded w-full mt-2 bg-white absolute z-40"
-            >
-              <li
-                v-for="customer in filteredCustomers"
-                :key="customer.customer_id"
-                @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
+            errorMessage="Customer is Required">
+            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" autocomplete="off"
+              @input="filterCustomers" :class="inputClass(rules.due_at)" placeholder="Type customer name" />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white absolute z-40">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ customer.customer_code }} - {{ customer.customer_name }}
               </li>
             </ul>
@@ -148,92 +94,87 @@
           </FormGroup>
           <!-- Code PO -->
         </div>
-        <div class="flex justify-content-between gap-4 items-end mt-8">
-          <FormGroup
-            class="w-full relative"
-            label="product"
-            :required="true"
-            :error="rules.product_id"
-            errorMessage="product_id is required"
+        <FormGroup 
+          label="Note" 
+          class="relative w-full mt-4 border-gray-500" 
+          :required="true" 
+          :error="rules.customer_id"
+        >
+          <textarea 
+            name="note" 
+            id="note" 
+            cols="30" 
+            class="rounded-md w-full border-gray-500" 
+            v-model="description"
           >
-            <input
-              type="text"
-              name="product_name"
-              id="product_name"
-              v-model="product_name"
-              autocomplete="off"
-              @input="filterProducts"
-              class="rounded w-full dark:bg-gray-800"
-              placeholder="Type product name"
-            />
-            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
-              <li
-                v-for="product in filteredProducts"
-                :key="product.product_id"
-                @click="selectProduct(product)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
+          </textarea>
+        </FormGroup>
+        <div class="flex justify-content-between gap-4 items-end mt-4">
+          <FormGroup
+              class="w-full md:w-2/5 relative"
+              label="Product"
+              :required="true"
+              :error="rules.product_id"
+              errorMessage="Pilih produk"
+            >
+              <input 
+                type="text" 
+                name="customer_name" 
+                id="customer_name" 
+                v-model="product_name" 
+                autocomplete="off"
+                @input="filterProducts" 
+                class="rounded-md"                
+                placeholder="Type customer name" 
+              />
+              <ul
+                v-if="filteredProducts.length && product_name"
+                class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600"
               >
-                {{ product.product_sn }} - {{ product.product_desc }}
-              </li>
-            </ul>
-          </FormGroup>
+                <li
+                  v-for="product in filteredProducts"
+                  :key="product.product_id"
+                  @click="selectProduct(product)"
+                  class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200"
+                >
+                  {{ product.product_sn }} - {{ product.product_desc }}
+                </li>
+                <li
+                  v-if="filteredProducts.length === 0 && product_name"
+                  class="p-3 text-gray-500 italic"
+                >
+                  Tidak ada produk yang cocok.
+                </li>
+              </ul>
+            </FormGroup>
 
           <!-- Grand Total -->
-          <FormGroup
-            class="w-full"
-            label="Quantity"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Quantity is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="quantity"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+            errorMessage="Quantity is required">
+            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
-          <FormGroup
-            class="w-full"
-            label="Price"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Price is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="price"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+            errorMessage="Price is required">
+            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
           <div v-if="id">
-            <button
-              type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-              @click="addPoDetails"
-            >
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+              @click="addPoDetails">
               tambah
             </button>
           </div>
           <div v-else>
-            <button
-              type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-              @click="addPoDetails"
-            >
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+              @click="addPoDetails">
               tambah
             </button>
           </div>
         </div>
-        <div class="mt-5">
+        <div class="mt-5 relative overflow-x-auto">
           <table
-            class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90"
-          >
+            class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90">
             <thead>
               <tr class="text-center">
                 <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
@@ -253,20 +194,13 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input
-                    type="text"
-                    v-model="poDetail.discount"
-                    class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400"
-                    @change="updateAmount(poDetail)"
-                  />
+                  <input type="text" v-model="poDetail.discount"
+                    class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400" @change="updateAmount(poDetail)" />
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <button
-                    type="button"
-                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="inquiry_details.splice(inquiry_details.indexOf(poDetail), 1)"
-                  >
+                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                    @click="inquiry_details.splice(inquiry_details.indexOf(poDetail), 1)">
                     Delete
                   </button>
                 </td>
@@ -275,9 +209,11 @@
             <div class="" v-if="rules.inquiry_details == true">
               <p class="text-sm text-red-500">Barang Dibutuhkan</p>
             </div>
-          </table>
-          <div class="flex justify-between mt-5">
-            <div class="w-full"></div>
+          </table>          
+        </div>
+        <div class="flex justify-between mt-5">
+            <div class="">
+            </div>
             <div class="w-full"></div>
             <div class="w-full">
               <div class="sub_total flex justify-between mt-3 text-gray-500">
@@ -286,11 +222,7 @@
               </div>
               <div class="sub_total flex justify-between mt-3 text-gray-500">
                 <div class="flex items-center">
-                  <input 
-                    type="checkbox"                      
-                    v-model="checkppn"
-                    class="mr-2"
-                  >
+                  <input type="checkbox" v-model="checkppn" class="mr-2">
                   <p>PPN</p>
                 </div>
                 <p>{{ formatCurrency(ppn) }}</p>
@@ -302,7 +234,6 @@
               <input type="text" v-model="code_quatation" hidden />
             </div>
           </div>
-        </div>
       </div>
     </Form>
   </AdminLayout>
@@ -346,12 +277,13 @@ export default defineComponent({
       id: null,
       user: user,
       customers: [],
-      checkppn : true,
+      checkppn: true,
       customer_name: '',
       filteredCustomers: [],
       product_name: '',
       filteredProducts: [],
       products: [],
+      description: '',
       product_id: [],
       quantity: [],
       customer_id: null,
@@ -406,13 +338,13 @@ export default defineComponent({
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
       return this.inquiry_details.reduce((total, item) => {
-        return total + item.amount || 0
+        return total + item.price * item.quantity || 0
       }, 0)
     },
-    ppn(){
-      return this.checkppn ? this.sub_total * 0.11 : 0;    
+    ppn() {
+      return this.checkppn ? this.sub_total * 0.11 : 0;
     },
-    grand_total(){
+    grand_total() {
       return this.sub_total + this.ppn;
     }
   },
@@ -421,9 +353,9 @@ export default defineComponent({
     getCustomer() {
       axios.get(Customer).then((res) => {
         var data = res.data
-        this.customers = data        
+        this.customers = data
       })
-    },    
+    },
 
     updateAmount(poDetail) {
       const discountPercentage = parseFloat(poDetail.discount) || 0
@@ -607,7 +539,7 @@ export default defineComponent({
             id_detail_quatation: data[i].id_detail_quatation,
             product_id: data[i].product_id,
             product_code: data[i].product.product_code,
-            product_pn: data[i].product.product_sn,            
+            product_pn: data[i].product.product_sn,
             discount: data[i].discount,
             product_desc: data[i].product.product_desc,
             quantity: data[i].quantity,
@@ -626,7 +558,8 @@ export default defineComponent({
         this.customer_name = data[0].customer.customer_name
         this.customer_id = data[0].customer_id
         this.termin = data[0].termin
-        this.code_quatation = data[0].code_quatation
+        this.description = data[0].description,
+          this.code_quatation = data[0].code_quatation
         var id = data[0].id_quatation
         if (id) {
           this.getDetailQuotation(id)
@@ -636,7 +569,7 @@ export default defineComponent({
     async onSubmit(e = null) {
       e?.preventDefault?.()
 
-      const result = await this.validation()      
+      const result = await this.validation()
 
       if (result == 0) {
         if (this.id == null) {
@@ -647,16 +580,15 @@ export default defineComponent({
               termin: this.termin,
               total_tax: this.total_tax,
               issue_at: this.issue_at,
-              checkppn : this.checkppn,
+              checkppn: this.checkppn,
               due_at: this.due_at,
               sub_total: this.sub_total,
-              ppn : this.ppn,
-              grand_total : this.grand_total,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               inquiry_details: this.inquiry_details,
             })
             .then(
-              async (response) => {
-                console.log(response)
+              async (response) => {                
                 await Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -682,19 +614,17 @@ export default defineComponent({
               customer_id: this.customer_id,
               employee_id: this.employee_id,
               termin: this.termin,
-              checkppn : this.checkppn, 
+              checkppn: this.checkppn,
               code_quatation: this.code_quatation,
               total_tax: this.total_tax,
               issue_at: this.issue_at,
+              description: this.description,
               due_at: this.due_at,
               sub_total: this.sub_total,
               inquiry_details: this.inquiry_details,
             })
             .then(
-              async (response) => {
-                console.log('Data Inquiry: ', this.inquiry_details)
-                console.log('Data Quotation ID : ', response.data.id_quatation)
-                console.log(response)
+              async (response) => {                                
                 await Swal.fire({
                   icon: 'success',
                   title: 'Success',
