@@ -231,7 +231,7 @@ export default defineComponent({
     getSalesOrder() {
       axios.get(SalesOrders).then((res) => {
         var data = res.data;        
-        data = data.filter(detail => detail.has_invoice == 0);
+        data = data.filter(detail => detail.has_do == 0);
         this.salesOrders = data;
       })
     },
