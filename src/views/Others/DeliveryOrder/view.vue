@@ -69,9 +69,9 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
                             <tr v-for="poDetail in sales_orders_details" :key="poDetail.product_id">
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_code }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_sn }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product.product_desc }}</td>                                
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product?.product_code }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product?.product_sn }}</td>
+                                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product?.product_desc }}</td>                                
                                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                                
                             </tr>
                         </tbody>
@@ -91,6 +91,7 @@ import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
 import { DetailSo, DeliveryOrder, DetailDo } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -144,7 +145,7 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(DeliveryOrder + '/' + id).then(
+            ApiServices.get(DeliveryOrder + '/' + id).then(
                 (res) => {
                     var data = res.data;                             
                     this.issue_at = data.issue_at;
@@ -157,9 +158,9 @@ export default defineComponent({
             )            
         },
         getDetail(id){
-            axios.get(DetailDo + '/' + id).then(
+            ApiServices.get(DetailDo + '/' + id).then(
                 (res) => {
-                    var data = res.data;
+                    var data = res.data;                    
                     this.sales_orders_details = data;
                 }
             )

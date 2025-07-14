@@ -152,7 +152,7 @@
           </div>
           <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
-              <p class="text-sm text-gray-700">
+              <p class="text-sm text-gray-200">
                 Showing
                 <span class="font-medium">{{ startIndex + 1 }}</span>
                 to
@@ -207,6 +207,7 @@ import { RouterLink } from 'vue-router'
 import { Product } from '@/core/utils/url_api';
 import axios from 'axios';
 import router from '@/router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
   name: 'ProductPage',
@@ -220,7 +221,7 @@ export default defineComponent({
 
     const getProduct = async () => {
       try{
-        const res = await axios.get(Product)
+        const res = await ApiServices.get(Product)
         products.value = res.data        
       }catch(error){
         console.error('Error Fetching : ', error)

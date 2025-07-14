@@ -7,10 +7,8 @@
           <h1 class="text-2xl font-bold text-gray-800">Document Management</h1>
           <p class="text-gray-500 text-sm mt-1">Master Data / Document</p>
         </div>
-        <RouterLink
-          to="/document/form"
-          class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm"
-        >
+        <RouterLink to="/document/form"
+          class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm">
           Add New Document
         </RouterLink>
       </div>
@@ -20,19 +18,13 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="form-group">
             <label class="text-sm text-gray-600 mb-1 block">Search</label>
-            <input
-              type="text"
-              v-model="searchQuery"
-              placeholder="Search products..."
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <input type="text" v-model="searchQuery" placeholder="Search products..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div class="form-group">
             <label class="text-sm text-gray-600 mb-1 block">Sort By</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="sortBy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="name">Name</option>
               <option value="price">Price</option>
               <option value="id">ID</option>
@@ -40,10 +32,8 @@
           </div>
           <div class="form-group">
             <label class="text-sm text-gray-600 mb-1 block">Items per page</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="itemsPerPage"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="20">20</option>
@@ -58,34 +48,22 @@
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 No
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Document Name
               </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Document File
-              </th> 
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-              >
+              </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
-              </th>                                        
+              </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="(product, index) in paginatedData"
-              :key="product.id"
-              class="hover:bg-gray-50"
-            >
+            <tr v-for="(product, index) in paginatedData" :key="product.id" class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ product.document_id }}
               </td>
@@ -94,36 +72,25 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ product.document_file }}</div>
-              </td> 
+              </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <button 
-                  class="px-3 py-1 rounded-lg shadow-md border"
-                  @click="downloadPdf(product.document_file)"
-                >
+                <button class="px-3 py-1 rounded-lg shadow-md border" @click="downloadPdf(product.document_file)">
                   Download
                 </button>
-              </td>                                                      
+              </td>
             </tr>
           </tbody>
         </table>
 
         <!-- Pagination -->
-        <div
-          class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
-        >
+        <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
           <div class="flex-1 flex justify-between sm:hidden">
-            <button
-              @click="currentPage--"
-              :disabled="currentPage === 1"
-              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
+            <button @click="currentPage--" :disabled="currentPage === 1"
+              class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
               Previous
             </button>
-            <button
-              @click="currentPage++"
-              :disabled="currentPage >= totalPages"
-              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
+            <button @click="currentPage++" :disabled="currentPage >= totalPages"
+              class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
               Next
             </button>
           </div>
@@ -141,31 +108,20 @@
             </div>
             <div>
               <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                <button
-                  @click="currentPage--"
-                  :disabled="currentPage === 1"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
+                <button @click="currentPage--" :disabled="currentPage === 1"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                   Previous
                 </button>
-                <button
-                  v-for="page in totalPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  :class="[
-                    currentPage === page
-                      ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
-                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                  ]"
-                >
+                <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[
+                  currentPage === page
+                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                ]">
                   {{ page }}
                 </button>
-                <button
-                  @click="currentPage++"
-                  :disabled="currentPage >= totalPages"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                >
+                <button @click="currentPage++" :disabled="currentPage >= totalPages"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
                   Next
                 </button>
               </nav>
@@ -181,24 +137,25 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
-import { file, fileDoc, Product } from '@/core/utils/url_api';
-import axios from 'axios';
+import { DocumentFile, file } from '@/core/utils/url_api';
+import ApiServices from '@/core/services/ApiServices';
+import Swal from 'sweetalert2';
 
 export default defineComponent({
   name: 'ProductPage',
   components: {
     AdminLayout,
-  },  
+  },
 
   setup() {
     const products = ref([]);
     // Data   
 
     const getProduct = async () => {
-      try{
-        const res = await axios.get(file)
-        products.value = res.data        
-      }catch(error){
+      try {
+        const res = await ApiServices.get(file)
+        products.value = res.data
+      } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
@@ -211,7 +168,7 @@ export default defineComponent({
     const searchQuery = ref('')
     const sortBy = ref('name')
     const currentPage = ref(1)
-    const itemsPerPage = ref(10)    
+    const itemsPerPage = ref(10)
 
     const filteredData = computed(() => {
       let result = [...products.value]
@@ -225,14 +182,6 @@ export default defineComponent({
             product.category.toLowerCase().includes(query),
         )
       }
-
-      // Sort
-      // result.sort((a, b) => {
-      //   if (sortBy.value === 'id') {
-      //     return a.id - b.id
-      //   }
-      //   return a[sortBy.value].localeCompare(b[sortBy.value])
-      // })
 
       return result
     })
@@ -248,9 +197,30 @@ export default defineComponent({
 
     const paginatedData = computed(() => filteredData.value.slice(startIndex.value, endIndex.value))
 
-    const downloadPdf = async(filename) => {      
-      window.open(`http://127.0.0.1:8000/api/documents/${filename}`, '_blank');
-      // await axios.get(fileDoc + '/' + filename)
+    const downloadPdf = async (filename) => {
+      Swal.fire({
+        title: 'Apakah anda ingin Mendownload',
+      }).then(
+        (res) => {
+          if (res.isConfirmed) {
+            try {
+              const response = ApiServices.get(DocumentFile + '/' + filename, {
+                responseType: 'blob',
+              });
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', filename); // Nama file saat di-download
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              window.URL.revokeObjectURL(url);
+            } catch (error) {
+              console.log(error);
+            }
+          }
+        }
+      )
     }
 
     return {

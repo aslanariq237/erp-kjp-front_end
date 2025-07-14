@@ -23,7 +23,7 @@
             </div>
 
             <!-- Form Card -->
-            <div class="bg-white rounded-lg shadow-md p-6">                
+            <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
                     <!-- Termin -->
                     <FormGroup label="Code Invoice" :required="true" :error="rules.po_type"
@@ -41,7 +41,7 @@
                         errorMessage="Issue Date is required">
                         <input type="date" id="due_at" name="due_at" v-model="issue_at" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>                    
+                    </FormGroup>
 
                     <!-- Due Date -->
                     <FormGroup label="Due Date" :required="true" :error="rules.due_at"
@@ -54,9 +54,9 @@
                         errorMessage="Customer is Required">
                         <input type="text" id="due_at" name="due_at" v-model="customer_name" disabled
                             :class="inputClass(rules.due_at)" />
-                    </FormGroup>                                        
+                    </FormGroup>
                 </div>
-                <div class=" mt-5">
+                <div class=" mt-5 relative overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
                         <thead>
                             <tr class="text-left">
@@ -81,22 +81,23 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="flex justify-between mt-5">
-                        <div class="w-full"></div>
-                        <div class="w-full"></div>
-                        <div class="w-full">
-                            <div class="sub_total flex justify-between mt-3">
-                                <p>Sub Total</p>
-                                <p>{{ formatCurrency(sub_total) }}</p>
-                            </div>
-                            <div class="sub_total flex justify-between mt-3">
-                                <p>PPN</p>
-                                <p>{{ formatCurrency(ppn) }}</p>
-                            </div>
-                            <div class="sub_total flex justify-between mt-3">
-                                <p>Grand Total</p>
-                                <p>{{ formatCurrency(grand_total) }}</p>
-                            </div>
+                </div>
+                <div class="flex justify-between mt-5">
+                    <div class="w-full"></div>
+                    <div class="w-full"></div>
+                    <div class="w-full"></div>
+                    <div class="w-full">
+                        <div class="sub_total flex justify-between mt-3">
+                            <p>Sub Total</p>
+                            <p>{{ formatCurrency(sub_total) }}</p>
+                        </div>
+                        <div class="sub_total flex justify-between mt-3">
+                            <p>PPN</p>
+                            <p>{{ formatCurrency(ppn) }}</p>
+                        </div>
+                        <div class="sub_total flex justify-between mt-3">
+                            <p>Grand Total</p>
+                            <p>{{ formatCurrency(grand_total) }}</p>
                         </div>
                     </div>
                 </div>
@@ -114,6 +115,7 @@ import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
 import { SalesOrders, DetailSo, DeliveryOrder, DetailDo, DetailInvoice, Invoice } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -130,15 +132,15 @@ export default defineComponent({
         return {
             code_invoice: '',
             customer_name: '',
-            employee_name: '',                                
+            employee_name: '',
             termin: "",
-            po_type: "",    
-            issue_at: '',            
-            due_at: '',    
-            sub_total : 0,        
-            ppn : 0,
+            po_type: "",
+            issue_at: '',
+            due_at: '',
+            sub_total: 0,
+            ppn: 0,
             grand_total: 0,
-            sales_orders_details : [],
+            sales_orders_details: [],
             isSubmitting: false,
             notification: {
                 show: false,
@@ -169,29 +171,29 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(Invoice + '/' + id).then(
+            ApiServices.get(Invoice + '/' + id).then(
                 (res) => {
-                    var data = res.data[0];                       
+                    var data = res.data[0];
                     this.issue_at = data.issue_at;
                     this.due_at = data.due_at;
                     this.termin = data.termin;
-                    this.customer_name = data.customer.customer_name;                                                                                                             
+                    this.customer_name = data.customer.customer_name;
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
                     this.code_invoice = data.code_invoice;
                     this.ppn = data.sub_total * 0.11;
                     this.grand_total = data.sub_total + this.ppn;
                 }
-            )            
+            )
         },
-        getDetail(id){
-            axios.get(DetailInvoice + '/' + id).then(
+        getDetail(id) {
+            ApiServices.get(DetailInvoice + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.sales_orders_details = data;
                 }
             )
-        },        
+        },
         formatCurrency(value) {
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',

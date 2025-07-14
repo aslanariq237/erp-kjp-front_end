@@ -61,9 +61,8 @@
             </FormGroup>
             <FormGroup>
             </FormGroup>
-          </div>
-          <div class="" v-if="id"></div>
-          <div class="my-5" v-else >
+          </div>          
+          <div class="my-2" >
             <div class="flex justify-content-between gap-4 items-end">
             <!-- Grand Total -->
             <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
@@ -87,13 +86,24 @@
                   <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Code</th>
                   <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Point</th>
                   <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Alamat</th>
+                  <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Action</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-100">
                 <tr v-for="poDetail in customer_details" :key="poDetail.product_id">
                   <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.no }}</td>
-                  <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.point }}</td>
-                  <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.alamat }}</td>
+                  <td class="px-3 py-2 whitespace-no-wrap">
+                    <input type="text" v-model="poDetail.point" class="rounded-md w-full">
+                  </td>
+                  <td class="px-3 py-2 whitespace-no-wrap">
+                    <input type="text" v-model="poDetail.alamat" class="rounded-md w-full">
+                  </td>
+                  <td class="px-3 py-2 whitespace-no-wrap">
+                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                    @click="customer_details.splice(customer_details.indexOf(poDetail), 1)">
+                    Delete
+                  </button>
+                </td>
                 </tr>
               </tbody>
             </table>
@@ -108,12 +118,12 @@
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import router from '@/router'
-import axios from 'axios'
 import Swal from "sweetalert2"
 import { AddCustomer, Customer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import FormGroup from '@/components/FormGroup.vue'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'assets-forms',
@@ -226,24 +236,17 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      if (this.id) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Tidak Dapat Menambahkan Point'
-        })
-      } else {
-        var object = {
+      var object = {
           no: this.code + 1,
           point: this.point,
           alamat: this.alamat
         };
         this.customer_details.push(object)
         this.code++;
-      }
     },
 
     getPoint(id) {
-      axios.get(Customer + '/point/' + id).then(
+      ApiServices.get(Customer + '/point/' + id).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
@@ -261,7 +264,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(Customer + '/' + id).then(
+      await ApiServices.get(Customer + '/' + id).then(
         (res) => {
           var data = res.data;          
           this.customer_name = data.customer_name;
@@ -273,17 +276,7 @@ export default defineComponent({
           this.customer_contact = data.customer_contact;
           if (data.customer_id) {
             this.getPoint(data.customer_id);
-          }                    
-          // this.customer_name = data[0].customer_name;
-          // this.customer_phone = data[0].customer_phone;
-          // this.customer_email = data[0].customer_email;
-          // this.customer_address = data[0].customer_address;
-          // this.customer_npwp = data[0].customer_npwp;
-          // this.customer_singkatan = data[0].customer_singkatan;
-          // this.customer_contact = data[0].customer_contact;
-          // if (data[0].customer_id) {
-          //   this.getPoint(data[0].customer_id)
-          // }
+          }                              
         }
       )
     },
@@ -291,7 +284,7 @@ export default defineComponent({
       const result = 2
       if (result != 0) {
         if (this.id) {
-          await axios.put(
+          await ApiServices.put(
             AddCustomer + '/' + this.id, {
             customer_name: this.customer_name,
             customer_phone: parseInt(this.customer_phone) || 0,
@@ -333,7 +326,7 @@ export default defineComponent({
             },
           )
         } else {
-          await axios.post(
+          await ApiServices.post(
             AddCustomer, {
             customer_name: this.customer_name,
             customer_phone: parseInt(this.customer_phone) || 0,

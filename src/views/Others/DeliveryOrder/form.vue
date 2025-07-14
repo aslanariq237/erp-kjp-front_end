@@ -42,7 +42,8 @@
           </FormGroup>
           <!-- Id_Purchase order -->
           <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder" :class="inputClass(rules.do_type)">
+            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
+              :class="inputClass(rules.do_type)">
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so">
                 {{ po.code_so }}
               </option>
@@ -61,8 +62,8 @@
 
           <!-- Status Payment -->
           <FormGroup label="Delivery Option" :required="false" errorMessage="Status Payment is required">
-            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full" :class="inputClass(rules.do_type)"
-              @change="selectedSalesOrder">
+            <select name="id_so" id="id_so" v-model="id_customer_point" class="rounded w-full"
+              :class="inputClass(rules.do_type)" @change="selectedSalesOrder">
               <option v-for="po in points" :key="po.id_customer_point" :value="po.id_customer_point">
                 {{ po.point }}
               </option>
@@ -84,41 +85,28 @@
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold border-b">PN</th>
-                <th class="px-3 py-2 font-semibold border-b">Product Desc</th>
-                <th class="px-3 py-2 font-semibold border-b">brand</th>
+                <th class="px-3 py-2 font-semibold border-b">Product Desc</th>                
                 <th class="px-3 py-2 font-semibold border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold border-b">Product Price</th>
                 <th class="px-3 py-2 font-semibold border-b">Checklist</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
-              <tr 
-                v-for="products in sales_order_details" 
-                :key="products.product_id"
-                class="text-center dark:bg-gray-800 dark:text-gray-400"
-              >
+              <tr v-for="products in sales_order_details" :key="products.product_id"
+                class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_sn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_brand }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>                
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <input 
-                    type="text" 
-                    v-model="products.quantity_left" 
-                    class="w-20 rounded-lg border-gray-200 text-center"
-                    @change="changeQuantity(products)" 
-                    :disabled="products.has_do === 1"
-                    :max="products.product_stock">
+                  <input type="text" v-model="products.quantity_left"
+                    class="w-20 rounded-lg border-gray-200 text-center" @change="changeQuantity(products)"
+                    :disabled="products.has_do === 1" min="0"
+                    :max="products.product_stock < products.quantity ? products.product_stock : products.quantity">
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
-                  <input 
-                    type="checkbox"                     
-                    name="check_barang" 
-                    id="check_barang" 
-                    v-model="products.id_so"                    
-                    :disabled="products.product_stock == 0 || products.has_do === 1" 
-                    @change="AddDeliverOrderDetails(products)
-                  ">
+                  <input type="checkbox" name="check_barang" id="check_barang" v-model="products.checked"
+                    :disabled="products.product_stock == 0 || products.has_do === 1" @change="AddDeliverOrderDetails(products)
+                      ">
                 </td>
               </tr>
             </tbody>
@@ -157,6 +145,7 @@ import {
 } from '@/core/utils/url_api'
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -168,7 +157,7 @@ export default defineComponent({
   },
 
   data() {
-    const {user} = useAuthStore();
+    const { user } = useAuthStore();
     return {
       user: user,
       salesOrders: [],
@@ -188,10 +177,10 @@ export default defineComponent({
       due_at: '',
       isSubmitting: false,
       errorMessage: '',
-      rules : {
-        id_so : false,
-        id_customer_point : false,
-        delivery_order_details : false,
+      rules: {
+        id_so: false,
+        id_customer_point: false,
+        delivery_order_details: false,
       },
       notification: {
         show: false,
@@ -204,7 +193,7 @@ export default defineComponent({
     }
   },
   async mounted() {
-    this.employee_id = this.user.employee_id;    
+    this.employee_id = this.user.employee_id;
     this.getSalesOrder();
     this.issue_at = new Date().toLocaleDateString('en-CA');
   },
@@ -216,6 +205,9 @@ export default defineComponent({
         return total + item.quantity * item.price;
       }, 0);
     },
+    ppn() {
+      return this.sub_total * 0.11;
+    },
   },
 
   methods: {
@@ -223,32 +215,35 @@ export default defineComponent({
       if (product.quantity_left > product.product_stock) {
         this.errorMessage = `Stok produk ${product.product_desc} tidak mencukupi!`;
         product.quantity_left = product.product_stock;
-      }else{
+      } else {
         this.errorMessage = '';
       }
       product.amount = product.price * product.quantity;
+
+      product.checked = false
+      this.delivery_order_details.splice(this.delivery_order_details.indexOf(product));
     },
     getSalesOrder() {
-      axios.get(SalesOrders).then((res) => {
-        var data = res.data;        
+      ApiServices.get(SalesOrders).then((res) => {
+        var data = res.data;
         data = data.filter(detail => detail.has_do == 0);
         this.salesOrders = data;
       })
     },
     getDeliveryOption(id) {
-      axios.get(Customer + '/point/' + id).then((res) => {
+      ApiServices.get(Customer + '/point/' + id).then((res) => {
         var data = res.data;
         this.points = data;
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
+      ApiServices.get(SalesOrders + '/' + this.id_so).then((res) => {
         var data = res.data;
         this.customer_id = data.customer.customer_id;
         this.customer_name = data.customer.customer_name;
         this.customer_npwp = data.customer.customer_npwp;
         this.customer_address = data.customer.customer_address;
-        this.due_at = data.due_at;        
+        this.due_at = data.due_at;
         if (data.customer.customer_id) {
           this.getDeliveryOption(data.customer.customer_id)
           if (this.id_customer_point) {
@@ -257,7 +252,8 @@ export default defineComponent({
             }
           }
         }
-      })
+      });
+      this.delivery_order_details = [];
     },
 
     formatCurrency(value) {
@@ -269,55 +265,58 @@ export default defineComponent({
 
     SelectDataPo(id) {
       this.sales_order_details.splice(0);
-      if (id != null) {
-        axios.get(DetailSo + '/' + id).then(
-          (res) => {
-            var data = res.data;
-            if (!Array.isArray(data)) {
-              data = data.data || [data]
-            }
-
-            for (let i = 0; i < data.length; i++) {
-              let detail = data[i];
-              var newObject = {
-                id_detail_so: detail.id_detail_so,
-                id_so: detail.id_so,
-                product_id: detail.product_id,
-                product_desc: detail.product.product_desc,
-                product_brand: detail.product.product_brand,                
-                product_stock: detail.product.product_stock,
-                product_sn: detail.product.product_sn,
-                has_do : detail.has_do,
-                quantity: detail.quantity,
-                quantity_left: detail.quantity - detail.quantity_left,
-                price: detail.price,
-              }
-              this.sales_order_details.push(newObject)              
-            }
+      ApiServices.get(DetailSo + '/' + id).then(
+        (res) => {
+          var data = res.data;
+          for (let i = 0; i < data.length; i++) {
+            const detail = data[i];
+            const productObj = {
+              id_detail_so: detail.id_detail_so,
+              id_so: detail.id_so,
+              product_id: detail.product_id,
+              product_desc: detail.product.product_desc,              
+              product_stock: detail.product.product_stock,
+              product_sn: detail.product.product_sn,
+              is_package : detail.product.is_package,
+              has_do: detail.has_do,              
+              quantity: detail.quantity,
+              quantity_left: detail.quantity - detail.quantity_left,
+              price: detail.price,
+            };
+            this.sales_order_details.push(productObj)
           }
-        )
-      }
+        }
+      )
+      this.delivery_order_details.forEach(data => {
+        data.checked = false;
+      });
+      this.delivery_order_details = [];
     },
-    async AddDeliverOrderDetails(products) {      
-      if (products.quantity_left > products.product_stock) 
-      {
-        this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
-        products.quantity_left = products.product_stock;        
-      }
-      else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) 
-      {
-        products.quantity_left = products.quantity
-      }      
+    async AddDeliverOrderDetails(products) {
+      if (products.checked) {
+        if (products.quantity_left > products.product_stock) {
+          this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
+          products.quantity_left = products.product_stock;
+        }
+        else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) {
+          products.quantity_left = products.quantity
+        }
 
         var objectInclude = {
-          id_detail_so : products.id_detail_so,
+          id_detail_so: products.id_detail_so,
           product_id: products.product_id,
           quantity: products.quantity,
           quantity_left: products.quantity_left,
-          price: products.price
+          is_package : products.is_package,
+          price: products.price,
+          checked: false,
         }
-        this.delivery_order_details.push(objectInclude);               
+        this.delivery_order_details.push(objectInclude);
+      } else {
+        this.delivery_order_details.splice(this.delivery_order_details.indexOf(products));
+      }
     },
+        
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -336,21 +335,21 @@ export default defineComponent({
       if (this.id_so == '' || this.id_so == null) {
         this.rules.id_so = true;
         count++;
-      }        else{
+      } else {
         this.rules.id_so = false;
-      }   
+      }
 
       if (this.id_customer_point == '' || this.id_customer_point == null) {
         this.rules.id_customer_point = true;
-        count++;        
-      }else{
+        count++;
+      } else {
         this.rules.id_customer_point = false;
       }
 
       if (this.delivery_order_details.length == 0) {
         Swal.fire({
           text: "Tambahkan 1 atau lebih barang!",
-          icon : 'error',
+          icon: 'error',
           buttonsStyling: true,
           confirmButtonText: 'Try Again!',
           heightAuto: false,
@@ -365,13 +364,15 @@ export default defineComponent({
     },
 
     async onSubmit() {
-      const result = await this.validation()                  
+      const result = await this.validation()
       if (result == 0) {
-        await axios.post(AddDeliveryOrder, {
+        await ApiServices.post(AddDeliveryOrder, {
           customer_id: this.customer_id,
-          id_customer_point: this.id_customer_point,
           employee_id: this.employee_id,
           id_so: this.id_so,
+          id_customer_point: this.id_customer_point,
+          sub_total: this.sub_total,
+          ppn: this.ppn,
           issue_at: this.issue_at,
           due_at: this.due_at,
           delivery_order_details: this.delivery_order_details,
@@ -383,8 +384,8 @@ export default defineComponent({
             title: 'Success',
             text: "Data has been Saved"
           }).then(async (result) => {
-            if (result.isConfirmed) {              
-              await router.push("/delivery-order");              
+            if (result.isConfirmed) {
+              await router.push("/delivery-order");
             }
           })
         }, (error) => {

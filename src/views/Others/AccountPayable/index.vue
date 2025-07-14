@@ -107,9 +107,21 @@
               </tr>
               <tr
                 v-for="(account, index) in paginatedData"
-                :key="account.id"
+                :key="index"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
+                <td                   
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                >                                    
+                  <div 
+                    class="text-slate-600 px-2 rounded-xl bg-gray-400" 
+                    :class="{
+                      'bg-green-400': account.status_payment === 'success',
+                      'bg-yellow-400': account.status_payment === 'partial'
+                    }">
+                      {{ account.status_payment }}
+                  </div>                  
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.code_po }}
                 </td>
@@ -219,7 +231,7 @@
                   <span class="text-lg font-bold text-blue-800">
                     Rp.
                     {{
-                      selectedItem ? formatCurrency(selectedItem.deposit + additionalDeposit) : 0
+                      selectedItem ? formatCurrency(Number(selectedItem.deposit||0) + Number(additionalDeposit||0)) : 0
                     }}
                   </span>
                 </div>
@@ -349,9 +361,9 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import axios from 'axios'
 import { AccPayable, AccPayableDeposit } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -372,6 +384,7 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
+      { key: 'status', label: 'Status' },
       { key: 'no', label: 'Code Po' },
       { key: 'name', label: 'Name' },
       { key: 'Terbayar', label: 'Terbayar' },
@@ -388,24 +401,26 @@ export default defineComponent({
     const sortBy = ref('name')
     const minBalance = ref('')
     const maxBalance = ref('')
-    const currentPage = ref(1)
+    const currentPage = ref(1)    
     const itemsPerPage = ref(10)
-    const issue_today = new Date().toLocaleDateString('en-CA');
+    const issue_today = new Date().toLocaleDateString('en-CA');    
 
     // Sample data - replace with API call
-    const accounts = ref([])
+    const accounts = ref([]);
+    const deposit = ref(false);
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccPayable)        
-        accounts.value = res.data
+        const res = await ApiServices.get(AccPayable)
+        var data = res.data; 
+        accounts.value = data;       
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     }
 
     onMounted(() => {
-      getArcheive()
+      getArcheive();      
     })
 
     const calculateDay = (issue_at, due_at) => {
@@ -424,27 +439,15 @@ export default defineComponent({
 
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
-        result = result.filter(
-          (account) =>
-            account.name.toLowerCase().includes(query) || account.accountNumber.includes(query),
-        )
+        result = result.filter((entry) => {
+          const vendor = entry.vendor.vendor_name.toLowerCase()
+          const code_po = entry.code_po
+          return vendor.includes(query) ||
+            code_po.includes(query)
+        })
       }
       result = result.filter((account) => account.grand_total - account.deposit > 0)
-
-      if (minBalance.value) {
-        result = result.filter((account) => account.balance >= minBalance.value)
-      }
-
-      if (maxBalance.value) {
-        result = result.filter((account) => account.balance <= maxBalance.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'balance') {
-          return a.balance - b.balance
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      
 
       return result
     })
@@ -512,8 +515,7 @@ export default defineComponent({
       router.push(`/account-payable/edit/${account.id_po}`)
     }
 
-    function openModal(item) {
-      console.log('Opening modal with item:', item)
+    function openModal(item) {      
       selectedItem.value = item
       editedDeposit.value = item.deposit
       additionalDeposit.value = 0
@@ -528,9 +530,17 @@ export default defineComponent({
     async function saveDeposit() {
       if (selectedItem.value) {
         try {
-          const response = await axios.put(AccPayableDeposit + '/' + selectedItem.value.id_po, {
-            deposit: selectedItem.value.deposit + additionalDeposit.value,
+          const deposit = Number(selectedItem.value.deposit || 0) + Number(additionalDeposit.value || 0);
+          var status_payment = 'unpaid';
+          if (selectedItem.value.deposit = deposit) {
+            status_payment = 'full';
+          }else{
+            status_payment = 'partial';
+          }
+          const response = await ApiServices.put(AccPayableDeposit + '/' + selectedItem.value.id_po, {
+            deposit: deposit,
             id_po: selectedItem.value.id_po,
+            status_payment : status_payment,
             payment_method : 'Transfer',
             issue_at: issue_today,
           });
@@ -541,7 +551,11 @@ export default defineComponent({
             Swal.fire({
               icon: "success",
               title: 'Success',
-              text: "Has Been Updated"
+              text: "Has Been Paid"
+            }).then((res) => {
+              if (res.isConfirmed) {
+                window.location.reload();
+              }
             })
           }
         } catch (error) {
@@ -583,7 +597,7 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((account) => ({
+      const data = accounts.value.map((account) => ({
         'Code Po' : account.code_po,
         Customer : account.vendor.vendor_name,
         Terbayar : account.deposit,
@@ -592,7 +606,12 @@ export default defineComponent({
         'Issue Date' : account.issue_at,
         'Due Date' : account.due_at,
         Aging : calculateDay(account.issue_at, account.due_at),
+        "Status AP" : account.grand_total = account.deposit ? "Paid":"Partial",
+        "payment Date" : account.grand_total != account.deposit ? "None Payment" : account.payment.issue_at
       }))
+      // account.forEach(item => {
+          
+      //   });        
 
       // Create CSV content
       const headers = Object.keys(data[0])

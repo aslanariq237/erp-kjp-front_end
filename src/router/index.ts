@@ -25,15 +25,7 @@ const router = createRouter({
           meta: {
             title: 'Account Payable',
           },
-        },
-        {
-          path: 'form',
-          name: 'Account Payable-Form',
-          component: () => import('../views/Others/AccountPayable/form.vue'),
-          meta: {
-            title: 'Account Payable-Form',
-          },
-        },
+        },        
       ],
     },
     {
@@ -46,15 +38,7 @@ const router = createRouter({
           meta: {
             title: 'Account Recieveable',
           },
-        },
-        {
-          path: 'form',
-          name: 'Account Receivable-Form',
-          component: () => import('../views/Others/account-receivable/form.vue'),
-          meta: {
-            title: 'Account Recieveable-Form',
-          },
-        },
+        },        
       ],
     },
     {
@@ -85,15 +69,7 @@ const router = createRouter({
           },
         },
       ],
-    },
-    {
-      path: '/admin-dashboard',
-      name: 'Admin Dashboard',
-      component: () => import('../views/Others/adminDashboard/index.vue'),
-      meta: {
-        title: 'Admin Dashboard',
-      },
-    },
+    },    
     {
       path: '/asset',
       children: [
@@ -282,28 +258,7 @@ const router = createRouter({
           },
         },
       ],
-    },
-    {
-      path: '/inquiry',
-      children: [
-        {
-          path: '',
-          name: 'Inquiry',
-          component: () => import('../views/Operation/Inquiry/index.vue'),
-          meta: {
-            title: 'Inquiry',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Inquiry-Form',
-          component: () => import('../views/Operation/Inquiry/form.vue'),
-          meta: {
-            title: 'Inquiry-Form',
-          },
-        },
-      ],
-    },
+    },    
     {
       path: '/invoice',
       children: [
@@ -348,67 +303,30 @@ const router = createRouter({
           meta: {
             title: 'Laporan Keuangan',
           },
-        },
-        {
-          path: 'form',
-          name: 'Laporan Keuangan-Form',
-          component: () => import('../views/Others/LaporanKeuangan/form.vue'),
-          meta: {
-            title: 'Laporan Keuangan-Form',
-          },
-        },
+        },        
       ],
     },
-    {
-      path: '/laporan-laba-rugi',
-      children: [
-        {
-          path: '',
-          name: 'Laporan Laba Rugi', // Profit and Loss Report
-          component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
-          meta: {
-            title: 'Laporan Laba Rugi',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Laporan Laba Rugi-Form',
-          component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
-          meta: {
-            title: 'Laporan Laba Rugi-Form',
-          },
-        },
-      ],
-    },
-    {
-      path: '/opex',
-      children: [
-        {
-          path: '',
-          name: 'Opex',
-          component: () => import('../views/Others/OPEX/index.vue'),
-          meta: {
-            title: 'Opex',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Opex-Form',
-          component: () => import('../views/Others/OPEX/form.vue'),
-          meta: {
-            title: 'Opex-Form',
-          },
-        },
-        {
-          path: 'edit/:id',
-          name: 'Opex-Edit',
-          component: () => import('../views/Others/OPEX/form.vue'),
-          meta: {
-            title: 'Opex-Form',
-          },
-        },
-      ],
-    },
+    // {
+    //   path: '/laporan-laba-rugi',
+    //   children: [
+    //     {
+    //       path: '',
+    //       name: 'Laporan Laba Rugi', // Profit and Loss Report
+    //       component: () => import('../views/Others/LaporanLabaRugi/index.vue'),
+    //       meta: {
+    //         title: 'Laporan Laba Rugi',
+    //       },
+    //     },
+    //     {
+    //       path: 'form',
+    //       name: 'Laporan Laba Rugi-Form',
+    //       component: () => import('../views/Others/LaporanLabaRugi/form.vue'),
+    //       meta: {
+    //         title: 'Laporan Laba Rugi-Form',
+    //       },
+    //     },
+    //   ],
+    // },    
     {
       path: '/opex-cogs',
       children: [
@@ -428,22 +346,34 @@ const router = createRouter({
             title: 'Opex Form',
           },
         },
+        {
+          path: 'edit/:id',          
+          component: () => import('../views/Others/OPEXCogs/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
       ],
     },
     {
       path: '/opex-external',
       children: [
         {
-          path: '',
-          name: 'Opex External',
+          path: '',          
           component: () => import('../views/Others/OPEXExternal/index.vue'),
           meta: {
             title: 'Opex External',
           },
         },
         {
-          path: 'form',
-          name: 'Opex-external Form',
+          path: 'form',          
+          component: () => import('../views/Others/OPEXExternal/form.vue'),
+          meta: {
+            title: 'Opex Form',
+          },
+        },
+        {
+          path: 'edit/:id',          
           component: () => import('../views/Others/OPEXExternal/form.vue'),
           meta: {
             title: 'Opex Form',
@@ -464,6 +394,10 @@ const router = createRouter({
         {
           path : 'form',
           component: () => import('../views/Others/OPEXInternal/form.vue')
+        },
+        {
+          path : 'edit/:id',
+          component: () => import('../views/Others/OPEXInternal/form.vue')
         }
       ],
     },
@@ -471,15 +405,14 @@ const router = createRouter({
       path: '/opex-absorb',
       children: [
         {
-          path: '',
-          name: 'Opex Absorb',
+          path: '',          
           component: () => import('../views/Others/OPEXAbsorb/index.vue'),
           meta: {
             title: 'Opex Absorb',
           },
         },
         {
-          path: '/opex-absorb/form',
+          path: 'form',
           name: 'Opex Form',
           component: () => import('../views/Others/OPEXAbsorb/form.vue'),
           meta: {
@@ -487,8 +420,7 @@ const router = createRouter({
           },
         },
         {
-          path: '/opex-absorb/edit/:id',
-          name: 'Opex-Absorb-Edit',
+          path: 'edit/:id',          
           component: () => import('../views/Others/OPEXAbsorb/form.vue'),
           meta: {
             title: 'Opex-Absorb-Form-Edit',
@@ -506,15 +438,7 @@ const router = createRouter({
           meta: {
             title: 'Opex Report',
           },
-        },
-        {
-          path: '/report/opex/form',
-          name: 'Opex Form Report',
-          component: () => import('../views/Others/OPEXReport/form.vue'),
-          meta: {
-            title: 'Opex Form Report',
-          },
-        },
+        },       
         {
           path: '/report/opex/edit/:id',
           name: 'Opex-report-Edit',
@@ -580,6 +504,39 @@ const router = createRouter({
         {
           path: 'edit/:id',
           component: () => import('../views/Operation/PurchaseOrder/form.vue'),
+          meta: {
+            title: 'Purchase Order-Form',
+          },
+        },
+      ],
+    },
+    {
+      path: '/po-jasa-kirim',
+      children: [
+        {
+          path: '',          
+          component: () => import('../views/SCM/POJasaKirim/index.vue'),
+          meta: {
+            title: 'Purchase Order',
+          },
+        },
+        {
+          path: 'form',          
+          component: () => import('../views/SCM/POJasaKirim/form.vue'),
+          meta: {
+            title: 'Purchase Order-Form',
+          },
+        },
+        {
+          path: 'view/:id',
+          component: () => import('../views/SCM/POJasaKirim/view.vue'),
+          meta: {
+            title: 'Purchase Order-View',
+          },
+        },
+        {
+          path: 'edit/:id',
+          component: () => import('../views/SCM/POJasaKirim/form.vue'),
           meta: {
             title: 'Purchase Order-Form',
           },
@@ -722,7 +679,7 @@ const router = createRouter({
         },
         {
           path: 'view/:id',
-          component: () => import('../views/Others/TandaTerima/form.vue'),
+          component: () => import('../views/Others/TandaTerima/view.vue'),
           meta: {
             title: 'Tanda Terima View',
           },

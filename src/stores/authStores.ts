@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import Swal from 'sweetalert2'
 import JwtServices from '@/core/services/JwtServices'
+import ApiServices from '@/core/services/ApiServices'
 
 interface User {
   id: number
@@ -37,7 +38,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async login(email: string, password: string) {
-      return axios
+      return ApiServices
         .post(Login, {
           email: email,
           password: password,

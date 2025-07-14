@@ -114,20 +114,31 @@
             </div>
             <div>
               <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                <button @click="currentPage--" :disabled="currentPage === 1"
-                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <button
+                  @click="currentPage--"
+                  :disabled="currentPage === 1"
+                  class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                >
                   Previous
                 </button>
-                <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[
-                  currentPage === page
-                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                ]">
+                <button
+                  v-for="page in displayedPages"
+                  :key="page"
+                  @click="currentPage = page"
+                  :class="[
+                    currentPage === page
+                      ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
+                    'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  ]"
+                >
                   {{ page }}
                 </button>
-                <button @click="currentPage++" :disabled="currentPage >= totalPages"
-                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                <button
+                  @click="currentPage++"
+                  :disabled="currentPage >= totalPages"
+                  class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                >
                   Next
                 </button>
               </nav>
@@ -189,6 +200,10 @@ export default defineComponent({
         }
         )
       }
+      result.sort((a, b) => {
+        return b.product_stock - a.product_stock
+      })
+      
       return result
     })
 
@@ -208,6 +223,37 @@ export default defineComponent({
       console.log('Edit product:', product)
       // Implement edit logic
     }
+
+    const displayedPages = computed(() => {
+      const delta = 2
+      const range = []
+      const rangeWithDots = []
+      let l
+
+      for (let i = 1; i <= totalPages.value; i++) {
+        if (
+          i === 1 ||
+          i === totalPages.value ||
+          (i >= currentPage.value - delta && i <= currentPage.value + delta)
+        ) {
+          range.push(i)
+        }
+      }
+
+      range.forEach((i) => {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1)
+          } else if (i - l !== 1) {
+            rangeWithDots.push('...')
+          }
+        }
+        rangeWithDots.push(i)
+        l = i
+      })
+
+      return rangeWithDots
+    })
 
     const deleteProduct = (product) => {
       if (confirm('Are you sure you want to delete this product?')) {
@@ -253,6 +299,7 @@ export default defineComponent({
       paginatedData,
       totalPages,
       startIndex,
+      displayedPages,
       endIndex,
       editProduct,
       deleteProduct,

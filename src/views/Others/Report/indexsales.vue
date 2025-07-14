@@ -90,7 +90,8 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { DetailInvoice, Invoice } from '@/core/utils/url_api';
+import { DetailInvoice, GetSalesManagement, Invoice } from '@/core/utils/url_api';
+import ApiServices from '@/core/services/ApiServices';
 
 import axios from 'axios'
 
@@ -129,13 +130,9 @@ export default defineComponent({
     // Sample data - replace with API call
     const reportData = ref([])
 
-    const getInvoices = async() => {
-      const response = await axios.get(Invoice)
-      invoice.value = response.data;   
-    }
     const getDetailInv = async() => {
       try {
-        await axios.get(DetailInvoice).then((res) => {
+        await ApiServices.get(GetSalesManagement).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -143,8 +140,7 @@ export default defineComponent({
       }
     }
 
-    onMounted(() => {
-      getInvoices();
+    onMounted(() => {      
       getDetailInv();
     });
 
@@ -263,18 +259,25 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = dataexcel.value.map((entry) => ({
-        'Invoice Number': entry.invoice.code_invoice,
-        'SO Number': entry.invoice.salesorder.code_so,
-        'PO Number': entry.invoice.salesorder.po_number,
-        'DO Number' : entry.do.code_do,
-        'Customer' : entry.invoice.customer.customer_name,
-        'Product Desc' : entry.product.product_desc,
-        'Product SN' : entry.product.product_sn,
-        'Quantity' : entry.quantity,
-        'Price' : entry.price,
-        'Issue Date' : entry.invoice.issue_at,
-        'Due Date' : entry.invoice.due_at,
+      const data = dataexcel.value.map((item) => ({
+        'PO Number': item.po_number,
+        'Customer Code': item.customer_code,
+        'Customer': item.customer_name,
+        'Product SN': item.product_sn,
+        'Product Name': item.product_desc,
+        'Quantity SO': item.quantity_so,
+        'Price So': item.price_so,
+        'Amount So': item.amount_so,
+        'Brand': item.product_brand,
+        'So Number': item.code_so,        
+        'Do Number': item.code_do,
+        'Do Date': item.do_date,
+        'Quantity DO': item.quantity_do,
+        'Invoice Number': item.code_invoice,
+        'Invoice Date': item.invoice_date,
+        'Amount Invoice': item.amount_invoice,        
+        'Resi': item.resi,
+        'Tandater Date': item.tandater_date,
       })); 
 
       // Create CSV content

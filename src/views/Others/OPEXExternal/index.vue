@@ -313,21 +313,6 @@ export default defineComponent({
         )
       }
 
-      if (minPrice.value) {
-        result = result.filter((opex) => opex.opex_price >= minPrice.value)
-      }
-
-      if (maxPrice.value) {
-        result = result.filter((opex) => opex.opex_price <= maxPrice.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'opex_price') {
-          return a.opex_price - b.opex_price
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
-
       return result
     })
 
@@ -385,7 +370,7 @@ export default defineComponent({
     }
 
     const editOpex = (opex) => {
-      router.push(`/opex/edit/${opex.opex_id}`)
+      router.push(`/opex-external/edit/${opex.opex_id}`)
     }
 
     const confirmDelete = (opex) => {

@@ -132,17 +132,7 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ opex.opex_type }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div class="flex space-x-3">
-                    <button @click="viewDetails(opex)" class="text-blue-600 hover:text-blue-900">
-                      View
-                    </button>
-                    <button @click="editOpex(opex)" class="text-green-600 hover:text-green-900">
-                      Edit
-                    </button>
-                  </div>
-                </td>
+                </td>                
               </tr>
             </tbody>
           </table>
@@ -266,8 +256,7 @@ export default defineComponent({
       { key: 'opex_name', label: 'Opex Name' },
       { key: 'customer_name', label: 'Customer name' },
       { key: 'opex_price', label: 'Price' },
-      { key: 'opex_type', label: 'Type' },
-      { key: 'actions', label: 'Actions' },
+      { key: 'opex_type', label: 'Type' },      
     ]
 
     // Filter and sort state
@@ -421,8 +410,9 @@ export default defineComponent({
     const exportData = () => {
       const data = filteredData.value.map((opex) => ({
         Name: opex.opex_name,
+        Customer : opex.customer ? opex.customer.customer_name : "None Custoemr",
         Code: opex.opex_code,
-        Price: formatCurrency(opex.opex_price),
+        Price: opex.opex_price,
         Type: opex.opex_type,
       }))
 

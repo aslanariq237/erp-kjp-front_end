@@ -45,7 +45,8 @@
 
       <!-- Table Section -->
       <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table class="min-w-full divide-y divide-gray-200 table-fixed">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 table-fixed">
           <thead class="bg-gray-50">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -77,7 +78,7 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="(customer, index) in paginatedData" :key="customer.id_customer" class="hover:bg-gray-50">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.code }}
+                {{ customer.assets_code }}
               </td>              
               <td class="px-6 py-4 whitespace-nowrap text-sm text-black font-semibold">
                 {{ customer.assets_name }}
@@ -86,7 +87,7 @@
                 {{ customer.vendor.vendor_name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ formatCurrency(customer.price) }}
+                {{ formatCurrency(customer.assets_price) }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ customer.issue_at }}
@@ -95,7 +96,7 @@
                 {{ customer.assets_life }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ customer.assets_life }}
+                {{ customer.book_value || 0 }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex space-x-2">
@@ -107,6 +108,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
 
         <!-- Pagination -->
         <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
@@ -166,6 +168,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Asset } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'CustomerPage',
@@ -180,7 +183,7 @@ export default defineComponent({
     // Fetch customers from API
     const fetchCustomers = async () => {
       try {
-        const response = await axios.get(Asset)
+        const response = await ApiServices.get(Asset)
         customers.value = response.data
       } catch (error) {
         console.error('Error fetching customers:', error)

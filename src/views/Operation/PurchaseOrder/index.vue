@@ -8,17 +8,13 @@
           <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order</p>
         </div>
         <div class="flex gap-3">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
           </button>
           <button>
-            <RouterLink
-              to="/purchase-order/form"
-              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
-            >
+            <RouterLink to="/purchase-order/form"
+              class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
               Add New Purchase Order
             </RouterLink>
           </button>
@@ -31,12 +27,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search by code..."
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Search by code..."
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -46,16 +38,10 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
-              <input
-                type="date"
-                v-model="startDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="date"
-                v-model="endDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="date" v-model="startDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="date" v-model="endDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         </div>
@@ -67,12 +53,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr class="dark:bg-gray-800 dark:text-gray-400">
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -84,17 +67,11 @@
               <tr v-if="loading" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr
-                v-else-if="paginatedData.length === 0"
-                class="text-center dark:bg-gray-800 dark:text-gray-400"
-              >
+              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
-              <tr
-                v-for="(entry, index) in paginatedData"
-                :key="entry.id_po"
-                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
-              >
+              <tr v-for="(entry, index) in paginatedData" :key="entry.id_po"
+                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_po }}</div>
                 </td>
@@ -107,57 +84,48 @@
                   {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11) }}
+                  {{ formatCurrency(entry.ppn) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(entry.sub_total * 0.11 + entry.sub_total) }}
+                  {{ formatCurrency(entry.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div v-if="entry.approved = 1">
-                    <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_po)"
-                  >
-                    View
-                  </button>                  
-                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
-                    Export
-                  </button>                   
+                  {{ entry.due_at }}                  
+                </td>                
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">                  
+                  <div v-if="entry.approved == 1">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_po)">
+                      View
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
+                      Export
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)" v-if="entry.deposit != entry.grand_total">
+                      Edit PPN
+                    </button>
                   </div>
                   <div v-else>
-                    <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_po)"
-                  >
-                    View
-                  </button>
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="editData(entry.id_po)"
-                  >
-                    Edit
-                  </button>
-                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
-                    Export
-                  </button>
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="approved(entry.id_po)"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="deleteData(entry.id_po)"
-                  >
-                    Delete
-                  </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_po)">
+                      View
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_po)">
+                      Edit
+                    </button>                    
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
+                      Export
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)" v-if="entry.deposit != entry.grand_total">
+                      Edit PPN
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="approve(entry.id_po)">
+                      Approve
+                    </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="deleteData(entry.id_po)">
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -166,9 +134,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div
-          class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400"
-        >
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -180,47 +146,26 @@
               results
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 First
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Previous
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Next
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Last
               </button>
             </div>
@@ -234,7 +179,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios'
+import ApiServices from '@/core/services/ApiServices'
 import { DetailPo, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportPoPDF } from '@/core/helpers/exportToPdf'
@@ -274,16 +219,16 @@ export default defineComponent({
 
     const getPurchaseOrder = async () => {
       try {
-        const res = await axios.get(PurchaseOrder)
+        const res = await ApiServices.get(PurchaseOrder)
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
       }
     }
 
-    const detailPo = async() => {
+    const detailPo = async () => {
       try {
-        await axios.get(DetailPo).then((res) => {
+        await ApiServices.get(DetailPo).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -315,7 +260,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(PurchaseOrderDelete + '/' + id)
+          await ApiServices.delete(PurchaseOrderDelete + '/' + id)
           await getPurchaseOrder()
           Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
         } catch (error) {
@@ -338,20 +283,7 @@ export default defineComponent({
             vendor_name.includes(query)
           )
         })
-      }
-
-      if (startDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
-      }
-
-      if (endDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
-
+      }      
       return result
     })
 
@@ -399,13 +331,13 @@ export default defineComponent({
     // Utility functions
     const exportData = () => {
       const data = dataexcel.value.map((entry) => ({
-        'Po Number' : entry.purchaseorders.code_po,
-        'Vendor Name' : entry.purchaseorders.vendor.vendor_name,
-        'Product Decs' : entry.product.product_desc,
-        'product SN' : entry.product.product_sn,        
-        'Issue Date' : entry.purchaseorders.issue_at,
-        'Due Date' : entry.purchaseorders.due_at,
-      }));      
+        'Po Number': entry.purchaseorders.code_po,
+        'Vendor Name': entry.purchaseorders.vendor.vendor_name,
+        'Product Decs': entry.product.product_desc,
+        'product SN': entry.product.product_sn,
+        'Issue Date': entry.purchaseorders.issue_at,
+        'Due Date': entry.purchaseorders.due_at,
+      }));
 
       // Create CSV content
       const headers = Object.keys(data[0])
@@ -428,10 +360,18 @@ export default defineComponent({
     const exportToPDF = (item) => {
       exportPoPDF(item)
     }
-    const approved = (id) => {
-      axios.post(PurchaseOrder + '/approve/' + id).then((res) => {
+    const approve = (id) => {
+      ApiServices.post(PurchaseOrder + '/approve/' + id).then((res) => {
         console.log(res)
       })
+    }
+
+    const editPPN = (item) => {
+      ApiServices.post(PurchaseOrder + '/edit_ppn/' + item.id_po,{
+        sub_total : item.sub_total,
+        ppn : item.ppn,
+      }).then((res) => {        
+      }).catch((err) => console.error(err));
     }
 
     const formatCurrency = (value) => {
@@ -450,7 +390,8 @@ export default defineComponent({
     return {
       viewData,
       editData,
-      approved,
+      editPPN,
+      approve,
       deleteData,
       // State
       loading,

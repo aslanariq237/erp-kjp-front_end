@@ -114,6 +114,7 @@ import axios from 'axios'
 import { PackageADRS, PackageADRSCode, Product, ProductCode } from '@/core/utils/url_api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -208,7 +209,7 @@ export default defineComponent({
                     text: 'Pilih Barang',
                 })
             } else {
-                axios.get(Product + '/' + this.product_id).then((res) => {
+                ApiServices.get(Product + '/' + this.product_id).then((res) => {
                     var data = res.data
                     if (this.quantity > data.product_stock) {
                         Swal.fire({
@@ -265,7 +266,7 @@ export default defineComponent({
         },
 
         async getById(id) {
-            await axios.get(PackageADRS + '/' + id).then(
+            await ApiServices.get(PackageADRS + '/' + id).then(
                 (res) => {
                     var data = res.data[0];
                     this.package_desc = data.package_desc;
@@ -284,7 +285,7 @@ export default defineComponent({
             const result = 2
             if (result != 0) {
                 if (this.id == null) {
-                    await axios
+                    await ApiServices
                         .post(PackageADRSCode, {
                             package_desc: this.package_desc,
                             package_sn: this.package_sn,
@@ -314,7 +315,7 @@ export default defineComponent({
                             },
                         )
                 } else {
-                    await axios
+                    await ApiServices
                         .put(ProductCode + '/' + this.id, {
                             package_desc: this.package_desc,
                             package_sn: this.package_sn,

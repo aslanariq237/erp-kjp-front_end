@@ -9,7 +9,7 @@
       <div class="bg-white rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center p-6 border-b">
           <div class="breadcrumb">
-            <h1 class="text-2xl font-bold text-gray-800">Create New Opex COGS</h1>
+            <h1 class="text-2xl font-bold text-gray-800">{{ id ? "Edit Opex COGS" : "Create New Opex COGS" }}</h1>
             <p class="text-gray-500 text-sm mt-1">Finance Tools / Opex Cogs / Form</p>
           </div>
           <div class="flex items-center gap-3">
@@ -33,33 +33,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <FormGroup label="Issue Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
-            <input 
-              type="date" 
-              id="issue_at" 
-              name="issue_at" 
-              v-model="issue_at" min="0" 
-              :class="[
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" min="0" :class="[
               'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
               rules.amount
                 ? 'border-red-300 focus:ring-red-500 bg-red-50'
                 : 'border-gray-300 focus:ring-blue-500',
-              ]" placeholder="Enter Issue Date" 
-            />            
-          </FormGroup>
-
-          <FormGroup label="Due Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
-            <input 
-              type="date" 
-              id="due_at" 
-              name="due_at" 
-              v-model="due_at" min="0" 
-              :class="[
-              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-              rules.amount
-                ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                : 'border-gray-300 focus:ring-blue-500',
-              ]" placeholder="Enter Due Date" 
-            />            
+            ]" placeholder="Enter Issue Date" />
           </FormGroup>
 
           <!-- Customer Name -->
@@ -88,11 +67,11 @@
               <p class="text-red-500 text-sm">Opex Price Dibutuhkan</p>
             </div>
           </FormGroup>
-          
+
           <FormGroup v-if="opex_type == 'cogs'" label="Customer" class="relative" :required="true"
             :error="rules.customer_id" errorMessage="Customer is Required">
-            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name" @input="filterCustomers"
-              class="rounded w-full" placeholder="Type customer name">
+            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name"
+              @input="filterCustomers" class="rounded w-full" placeholder="Type customer name">
             <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
               <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -113,11 +92,11 @@
 import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex } from '@/core/utils/url_api'
+import { AddOpex, GetOpex } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 import { Customer } from '@/core/utils/url_api'
@@ -133,6 +112,7 @@ export default defineComponent({
 
   data() {
     return {
+      id: null,
       opex_name: '',
       opex_price: 0,
       opex_type: 'cogs',
@@ -158,6 +138,14 @@ export default defineComponent({
   async mounted() {
     this.getCustomer();
     this.issue_at = new Date().toLocaleDateString('en-ca');
+    const route = useRoute();
+    const id = route.params.id;
+
+    if (id) {
+      this.getById(id);
+      this.id = id;
+    }
+
   },
 
   methods: {
@@ -211,18 +199,58 @@ export default defineComponent({
 
       return count
     },
+    async getById(id) {
+      await axios.get(GetOpex + '/' + id).then((res) => {
+        var data = res.data;
+        this.opex_name = data.opex_name;
+        this.opex_price = data.opex_price;
+        this.issue_at = data.issue_at;
+        this.customer_id = data.customer_id;
+        this.customer_name = data.customer.customer_name;
+      })
+    },
 
     async onSubmit() {
       const result = await this.validation();
       if (result == 0) {
-        await axios.post(AddOpex, {
+        if (!this.id) {
+          await axios.post(AddOpex, {
+            customer_id: this.customer_id,
+            opex_name: this.opex_name,
+            opex_price: this.opex_price,
+            opex_type: this.opex_type,
+            issue_at: this.issue_at,
+          }).then((response) => {
+            Swal.fire({
+              icon: "success",
+              title: 'Success',
+              text: "Data has been Saved"
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                await router.push("/opex-cogs");
+              }
+            })
+          }, (error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text:
+                (error.response &&
+                  error.response &&
+                  error.response.message) ||
+                error.message ||
+                error.toString(),
+            });
+          },
+          )
+        }else{
+          await axios.put(AddOpex + '/' + this.id, {
           customer_id: this.customer_id,
           opex_name: this.opex_name,
           opex_price: this.opex_price,
           opex_type: this.opex_type,
           issue_at : this.issue_at,
-        }).then((response) => {
-          console.log(response)
+        }).then((response) => {        
           Swal.fire({
             icon: "success",
             title: 'Success',
@@ -245,6 +273,7 @@ export default defineComponent({
           });
         },
         )
+        }
       }
     },
   },

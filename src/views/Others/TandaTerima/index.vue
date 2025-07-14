@@ -94,13 +94,7 @@
               >
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ entry.code_tandater }}</div>
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so.code_so }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.so.po_number }}
-                </td>
+                </td>                                
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
                 </td>
@@ -111,9 +105,6 @@
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
                     @click="viewData(entry.id_tandater)"                   
@@ -122,10 +113,10 @@
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg" 
                     @click="editData(entry.id_tandater)"                   
                   >Edit</button>
-                  <!-- <button 
+                  <button 
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
-                  >Export</button>                                       -->
+                    @click="exportToPdf(entry)"
+                  >Export</button>                                      
                 </td>
               </tr>
             </tbody>
@@ -202,6 +193,8 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { DetailTandater, SalesOrders, Tandater } from '@/core/utils/url_api'
 import router from '@/router'
+import { exportTTPDF } from '@/core/helpers/exportToPdf'
+import ApiServices from '@/core/services/ApiServices'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -213,13 +206,10 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_so', label: 'Tandater Number' },      
-      { key: 'customer', label: 'So Number' },      
-      { key: 'customer', label: 'Po Number' },      
+      { key: 'code_so', label: 'Tandater Number' },              
       { key: 'sub_total', label: 'Customer' },
       { key: 'sub_total', label: 'Resi' },
       { key: 'issue_at', label: 'Issue Date' },
-      { key: 'due_at', label: 'Due Date' },
       { key: 'action', label: 'Action' },
     ]
 
@@ -237,7 +227,7 @@ export default defineComponent({
 
     const GetSalesOrder = async () => {
       try {
-        const res = await axios.get(Tandater)        
+        const res = await ApiServices.get(Tandater)        
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -246,7 +236,7 @@ export default defineComponent({
 
     const getDetail = async() => {
       try {
-        const res = await axios.get(DetailTandater)
+        const res = await ApiServices.get(DetailTandater)
         dataexcel.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -265,28 +255,12 @@ export default defineComponent({
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
-          const code_tandater = entry.code_tandater.toLowerCase()
-          const code_so = entry.so.code_so.toLowerCase()          
-          const po_number = entry.so.po_number.toLowerCase()
+          const code_tandater = entry.code_tandater.toLowerCase()          
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_tandater.includes(query)||
-                po_number.includes(query) ||
-                code_so.includes(query) ||
+          return code_tandater.includes(query)||                                
                 customer.includes(query)
         })
       }
-
-      if (startDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) >= new Date(startDate.value))
-      }
-
-      if (endDate.value) {
-        result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
-      }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
 
       return result
     })
@@ -346,6 +320,10 @@ export default defineComponent({
       return rangeWithDots
     })
 
+    const exportToPdf = (item) => {
+      exportTTPDF(item);
+    }
+
     // Utility functions
     const exportData = () => {
       const data = dataexcel.value.map((entry) => ({
@@ -403,6 +381,7 @@ export default defineComponent({
 
       // Methods
       exportData,
+      exportToPdf,
       formatCurrency,
     }
   },

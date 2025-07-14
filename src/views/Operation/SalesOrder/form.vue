@@ -55,15 +55,33 @@
           </FormGroup>
           <!-- customer -->
           <FormGroup label="Customer" class="relative" :required="true">
-            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name"
-              @input="filterCustomers" class="rounded w-full" placeholder="Type customer name"
-              :class="inputClass(rules.issue_at)" />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
-              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+            <input 
+              type="text" 
+              autocomplete="off" 
+              name="customer_name" 
+              id="customer_name" 
+              v-model="customer_name"
+              @input="filterCustomers" 
+              class="rounded w-full" 
+              placeholder="Type customer name"
+              :class="inputClass(rules.issue_at)" 
+            />
+            <ul 
+              v-if="filteredCustomers.length && customer_name" 
+              class="border rounded w-full mt-2 absolute z-40 bg-white"
+            >
+              <li 
+                v-for="customer in filteredCustomers" 
+                :key="customer.customer_id" 
+                @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_name }}
+                  {{ customer.customer_name }}
               </li>
-              <li v-if="filteredCustomers.length === 0">not found</li>
+              <li 
+                v-if="filteredCustomers.length === 0"
+              >
+                not found
+              </li>
             </ul>
             <div class="" v-if="rules.customer_id == true">
               <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
@@ -102,18 +120,18 @@
           </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end mt-5">
-          <FormGroup class="w-full relative" label="product" :required="true">
-            <input type="text" autocomplete="off" name="product_name" id="product_name" v-model="product_name"
-              @input="filterProducts" class="rounded w-full" placeholder="Type product name"
-              :class="inputClass(rules.due_at)" />
-            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
+          <FormGroup class="w-full md:w-2/5 relative" label="Product" :required="true" :error="rules.product_id"
+            errorMessage="Pilih produk">
+            <input type="text" name="customer_name" id="customer_name" v-model="product_name" autocomplete="off"
+              @input="filterProducts" class="rounded-md" placeholder="Type customer name" />
+            <ul v-if="filteredProducts.length && product_name"
+              class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
               <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
-                class="p-2 cursor-pointer hover:bg-gray-200">
-                {{
-                  product.type === 'product'
-                    ? `${product.product_sn} - ${product.product_desc}`
-                    : `${product.package_sn} - ${product.package_desc}`
-                }}
+                class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200">
+                {{ product.product_sn }} - {{ product.product_desc }}
+              </li>
+              <li v-if="filteredProducts.length === 0 && product_name" class="p-3 text-gray-500 italic">
+                Tidak ada produk yang cocok.
               </li>
             </ul>
           </FormGroup>
@@ -140,7 +158,7 @@
             </button>
           </div>
         </div>
-        <div class="mt-5">
+        <div class="mt-5 relative overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
@@ -152,6 +170,7 @@
                 <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Action</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
@@ -159,18 +178,18 @@
                 'bg-red-200': poDetail.product_type === 'product' && poDetail.quantity > poDetail.product_stock,
                 'bg-blue-50': poDetail.product_type === 'package'
               }">
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">
                   {{ poDetail.product_code }}
                   <span v-if="poDetail.is_package" class="text-xs text-blue-600">(Package)</span>
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_pn }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">
                   {{ poDetail.product_desc }}
                   <div v-if="poDetail.is_package" class="text-xs text-gray-500">
                     Contains multiple items
                   </div>
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">
                   <span class="px-2 py-1 text-xs rounded-full" :class="{
                     'bg-green-100 text-green-800': poDetail.product_type === 'product',
                     'bg-blue-100 text-blue-800': poDetail.product_type === 'package'
@@ -178,14 +197,14 @@
                     {{ poDetail.product_type }}
                   </span>
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.quantity }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">
                   <input type="number" v-model="poDetail.discount" class="w-20 rounded-lg"
                     @change="updateAmount(poDetail)" min="0" max="100" /> %
                 </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(poDetail.amount) }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">
                   <button type="button"
                     class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400 hover:bg-red-100"
                     @click="sales_order_details.splice(index, 1)">
@@ -195,14 +214,14 @@
               </tr>
             </tbody>
           </table>
-          <div class="flex justify-between mt-5">
-            <div class="w-full"></div>
-            <div class="w-full"></div>
-            <div class="w-full">
-              <div class="sub_total flex justify-between mt-3">
-                <p>Sub Total</p>
-                <p>{{ formatCurrency(sub_total) }}</p>
-              </div>
+        </div>
+        <div class="flex justify-between mt-5">
+          <div class="w-full"></div>
+          <div class="w-full"></div>
+          <div class="w-full">
+            <div class="sub_total flex justify-between mt-3">
+              <p>Sub Total</p>
+              <p>{{ formatCurrency(sub_total) }}</p>
             </div>
           </div>
         </div>
@@ -230,6 +249,7 @@ import {
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
 import { useRoute } from 'vue-router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -294,7 +314,6 @@ export default defineComponent({
     this.employee_id = this.user.employee_id
     this.getCustomer();
     this.getProducts();
-    this.getPackage();
 
     const route = useRoute()
     const id = route.params.id
@@ -317,7 +336,7 @@ export default defineComponent({
     // Calculate subtotal based on all items in sales_order_details
     sub_total() {
       return this.sales_order_details.reduce((total, item) => {
-        return total + item.amount || 0
+        return total + item.quantity * item.price || 0
       }, 0)
     },
 
@@ -338,24 +357,17 @@ export default defineComponent({
     },
 
     getCustomer() {
-      axios.get(Customer).then((res) => {
+      ApiServices.get(Customer).then((res) => {
         var data = res.data
         this.customers = data
       })
     },
     getProducts() {
-      axios.get(Product).then((res) => {
+      ApiServices.get(Product).then((res) => {
         var data = res.data
         this.products = data
       })
     },
-    getPackage() {
-      axios.get(PackageADRS).then((res) => {
-        var data = res.data
-        this.packages = data
-      })
-    },
-
     formatCurrency(value) {
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -364,96 +376,46 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      if (this.product_id == null && this.packages_id == null) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Pilih Barang',
-        })
-      } else {
-        if (this.selectedType === 'product') {
-          axios.get(Product + '/' + this.product_id).then((res) => {
-            var data = res.data
-            if (this.quantity > data.product_stock) {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Warning',
-                text: `Stock ${data.product_desc} Less Than Quantity`,
-              })
-              var object = {
-                product_id: data.product_id,
-                product_code: data.product_code,
-                product_pn: data.product_sn,
-                product_desc: data.product_desc,
-                product_stock: data.product_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            } else {
-              var object = {
-                product_id: data.product_id,
-                product_code: data.product_code,
-                product_pn: data.product_sn,
-                product_desc: data.product_desc,
-                product_stock: data.product_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            }
-            this.product_id = null
-            this.quantity = 0
-            this.price = 0
+      ApiServices.get(Product + '/' + this.product_id).then((res) => {
+        var data = res.data[0]
+        if (this.quantity > data.product_stock) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Warning',
+            text: `Stock ${data.product_desc} Less Than Quantity`,
           })
+          var object = {
+            product_id: data.product_id,
+            product_code: data.product_code,
+            product_pn: data.product_sn,
+            product_desc: data.product_desc,
+            product_stock: data.product_stock,
+            product_type: this.selectedType,
+            quantity: this.quantity,
+            price: this.price,
+            discount: this.discount,
+            amount: this.price * this.quantity,
+          }
+          this.sales_order_details.push(object)
         } else {
-          axios.get(PackageADRS + '/' + this.packages_id).then((res) => {
-            var data = res.data[0]
-            if (this.quantity > data.package_stock) {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Warning',
-                text: `Stock ${data.package_desc} Less Than Quantity`,
-              })
-              var object = {
-                package_id: data.package_id,
-                product_code: data.code_package,
-                product_pn: data.package_sn,
-                product_desc: data.package_desc,
-                product_stock: data.package_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            } else {
-              var object = {
-                package_id: data.package_id,
-                product_code: data.code_package,
-                product_pn: data.package_sn,
-                product_desc: data.package_desc,
-                product_stock: data.package_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            }
-            this.product_id = null
-            this.quantity = 0
-            this.price = 0
-          })
+          var object = {
+            product_id: data.product_id,
+            product_code: data.product_code,
+            product_pn: data.product_sn,
+            product_desc: data.product_desc,
+            product_stock: data.product_stock,
+            product_type: this.selectedType,
+            quantity: this.quantity,
+            price: this.price,
+            discount: this.discount,
+            amount: this.price * this.quantity,
+          }
+          this.sales_order_details.push(object)
         }
-      }
+        this.product_id = null
+        this.quantity = 0
+        this.price = 0
+      })    
     },
 
     calculateDueDate(issueDate, termin) {
@@ -521,35 +483,20 @@ export default defineComponent({
 
     filterProducts() {
       const searchTerm = this.product_name.toLowerCase()
-
-      const filteredProduct = this.products.filter((product) => {
+      this.filteredProducts = this.products.filter((product) => {
         const desc = product.product_desc.toLowerCase()
         const sn = product.product_sn.toLowerCase()
         return desc.includes(searchTerm) || sn.includes(searchTerm)
-      });
-
-      const filteredPack = this.packages.filter((pack) => {
-        const desc = pack.package_desc.toLowerCase();
-        const sn = pack.package_sn.toLowerCase();
-
-        return desc.includes(searchTerm) || sn.includes(searchTerm);
       })
-
-      this.filteredProducts = [
-        ...filteredProduct.map(p => ({ ...p, type: 'product' })), // Add a type property to distinguish
-        ...filteredPack.map(p => ({ ...p, type: 'package' })) // Add a type property to distinguish
-      ]
     },
-
     selectProduct(product) {
-      if (product.type === 'product') {
-        this.product_id = product.product_id
-        this.product_name = `${product.product_sn} - ${product.product_desc}`
+      this.product_id = product.product_id
+      this.product_name = `${product.product_sn} - ${product.product_desc}`
+      if (product.is_package == 1) {
+        this.selectedType = 'package'
       } else {
-        this.packages_id = product.package_id,
-          this.product_name = `${product.package_sn} - ${product.package_desc}`
+        this.selectedType = 'product';
       }
-      this.selectedType = product.type;
       this.filteredProducts = []
     },
 
@@ -620,58 +567,32 @@ export default defineComponent({
     },
 
     getDetailSo(id) {
-      axios.get(DetailSo + '/' + id).then((res) => {
+      ApiServices.get(DetailSo + '/' + id).then((res) => {
         const data = res.data;
-        this.sales_order_details = []; // Clear existing data
+        this.sales_order_details = [];
 
-        // Process each item sequentially using Promise.all
-        const promises = data.map(item => {
-          return new Promise((resolve) => {
-            if (item.product_type === 'product') {
-              // For product type
-              const productObj = {
-                product_id: item.product_id,
-                product_code: item.product?.product_code || '',
-                product_desc: item.product?.product_desc || '',
-                product_pn: item.product?.product_sn || '',
-                product_brand: item.product?.product_brand || '',
-                product_type: item.product_type,
-                quantity: item.quantity,
-                quantity_left: item.quantity_left,
-                price: item.price,
-                discount: item.discount,
-                amount: item.amount,
-                has_do: item.has_do
-              };
-              resolve(productObj);
-            } else {              
-              const packageObj = {
-                  product_id: item.package[0].package_id,
-                  product_code: item.package[0].code_package || '',
-                  product_desc: item.package[0].package_desc || '',
-                  product_pn: item.package[0].package_sn || '',
-                  product_type: item.product_type,
-                  quantity: item.quantity,
-                  quantity_left: item.quantity_left,
-                  price: item.price,
-                  discount: item.discount,
-                  amount: item.amount,
-                  has_do: item.has_do
-                };
-                resolve(packageObj);              
-            }
-          });
-        });
-
-        // Wait for all promises to complete
-        Promise.all(promises).then(results => {
-          this.sales_order_details = results.filter(item => item !== null);
-        });
+        for (let i = 0; i < data.length; i++) {
+          const productObj = {
+            product_id: data[i].product_id,
+            product_code: data[i].product?.product_code || '',
+            product_desc: data[i].product?.product_desc || '',
+            product_pn: data[i].product?.product_sn || '',
+            product_brand: data[i].product?.product_brand || '',
+            product_type: data[i].product_type,
+            quantity: data[i].quantity,
+            quantity_left: data[i].quantity_left,
+            price: data[i].price,
+            discount: data[i].discount,
+            amount: data[i].amount,
+            has_do: data[i].has_do
+          };
+          this.sales_order_details.push(productObj);
+        }
       });
     },
 
     async getById(id) {
-      await axios.get(SalesOrders + '/' + id).then((res) => {
+      await ApiServices.get(SalesOrders + '/' + id).then((res) => {
         var data = res.data
         this.issue_at = data.issue_at
         this.due_at = data.due_at
@@ -694,39 +615,24 @@ export default defineComponent({
     async onSubmit(e = null) {
       e?.preventDefault?.()
       const result = await this.validation()
-      console.log(result)
       if (result == 0) {
-        if (this.id) {
-          const formattedDetails = this.sales_order_details.map((item) => {
-            return {
-              id_detail_so: item.id_detail_so, // Tambahkan jika ada untuk update
-              product_id: item.product_id,
-              package_id: item.package_id,
-              product_type: item.product_type,
-              quantity: item.quantity,
-              quantity_left: item.quantity_left || 0,
-              has_do: item.has_do || 0,
-              price: item.price,
-              discount: item.discount || 0,
-              amount: item.amount,
-            }
-          })
-          await axios
+        if (this.id) {          
+          await ApiServices
             .put(SalesOrderAdd + '/' + this.id, {
               customer_id: this.customer_id,
               employee_id: this.employee_id,
-              termin: this.termin,
               po_number: this.po_number,
-              total_tax: this.total_tax,
-              deposit: this.deposit,
+              termin: this.termin,        
+              sub_total : this.sub_total,
+              deposit : this.deposit,
+              ppn : this.ppn,
+              grand_total : this.grand_total,              
               issue_at: this.issue_at,
-              due_at: this.due_at,
-              has_invoice: 0,
+              due_at: this.due_at,              
               sales_order_details: formattedDetails,
             })
             .then(
               (response) => {
-                console.log(response)
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -749,23 +655,22 @@ export default defineComponent({
               },
             )
         } else {
-          console.log(this.sales_order_details)
-          await axios
+          await ApiServices
             .post(SalesOrderAdd, {
               customer_id: this.customer_id,
               employee_id: this.employee_id,
-              termin: this.termin,
               po_number: this.po_number,
-              total_tax: this.total_tax,
+              termin: this.termin,
+              sub_total: this.sub_total,
               deposit: this.deposit,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               issue_at: this.issue_at,
               due_at: this.due_at,
-              has_invoice: 0,
               sales_order_details: this.sales_order_details,
             })
             .then(
               (response) => {
-                console.log(response)
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',

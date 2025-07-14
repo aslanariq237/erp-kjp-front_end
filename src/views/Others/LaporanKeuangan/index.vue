@@ -5,13 +5,11 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">Finance Report</h1>
-          <p class="text-gray-500 text-sm mt-1">Finance Tools/ Laporan Keuangan</p>
+          <p class="text-gray-500 text-sm mt-1">Finance Tools/ Finance Report</p>
         </div>
         <div class="flex gap-3">
-          <button
-            @click="exportToExcel"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportToExcel"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
           </button>
         </div>
@@ -23,12 +21,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Cari</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Cari berdasarkan nama atau akun..."
-                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Cari berdasarkan nama atau akun..."
+                class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -38,26 +32,16 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Rentang Saldo</label>
             <div class="flex gap-2">
-              <input
-                type="number"
-                v-model="minBalance"
-                placeholder="Min"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="number"
-                v-model="maxBalance"
-                placeholder="Max"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="number" v-model="minBalance" placeholder="Min"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="number" v-model="maxBalance" placeholder="Max"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Urutkan Berdasarkan</label>
-            <select
-              v-model="sortBy"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="sortBy"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="name">Nama</option>
               <option value="balance">Saldo</option>
               <option value="accountNumber">Nomor Akun</option>
@@ -66,10 +50,8 @@
           </div>
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Item per halaman</label>
-            <select
-              v-model="itemsPerPage"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+            <select v-model="itemsPerPage"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="20">20</option>
@@ -85,12 +67,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -105,91 +84,88 @@
               <tr v-else-if="paginatedData.length === 0" class="text-center">
                 <td colspan="42" class="px-6 py-4">Tidak ada data</td>
               </tr>
-              <tr
-                v-for="(entry, index) in paginatedData"
-                :key="entry.id_po"
-                class="hover:bg-gray-50 transition-colors duration-150"
-              >
-                <!-- Po Number -->                                                    
+              <tr v-for="(entry, index) in paginatedData" :key="entry.id_po"
+                class="hover:bg-gray-50 transition-colors duration-150">
+                <!-- Po Number -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.po_number }}
-                </td>                                                
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_code }}
-                </td>               
+                  {{ entry.customer_code }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.cust_name }}
-                </td>               
+                  {{ entry.customer_name }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.pn }}
-                </td>        
+                  {{ entry.product_sn }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.desc }}
-                </td>          
+                  {{ entry.product_desc }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_so }}
-                </td>            
+                  {{ entry.quantity_so }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.price_so }}
-                </td>              
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.amount_so }}
-                </td>               
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.product_brand }}
-                </td>                   
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.sales_order }}
-                </td>                 
+                  {{ entry.code_so }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.so_date }}
-                </td>             
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_po }}
-                </td>             
+                  {{ entry.quantity_po }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.price_po }}
-                </td>              
+                  {{ formatCurrency(entry.price_po) }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.amount_po }}
-                </td>               
+                  {{ formatCurrency(entry.amount_po) }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.delivery_order }}
-                </td>  
+                  {{ entry.code_do }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.do_date }}
-                </td>             
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.qty_do }}
-                </td>            
+                  {{ entry.quantity_do }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.bill_no }}
-                </td>             
+                  {{ entry.code_invoice }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.billing_date }}
-                </td>                  
+                  {{ entry.invoice_date }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.amount_invoice }}
-                </td>                    
+                  {{ formatCurrency(entry.amount_invoice) }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.gross_profit }}
-                </td>                  
+                  {{ formatCurrency(entry.gross_profit) }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.gp_percentage }}
-                </td>                   
+                  {{ entry.percen }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.faktur_pajak }}
-                </td>                  
+                  {{ entry.code_pajak }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.faktur_date }}
-                </td>                 
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice }}
-                </td>                          
+                  {{ entry.resi }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.tanda_terima_invoice_date }}
-                </td>                                                                                                     
-              </tr>              
+                  {{ entry.tandater_date }}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -207,47 +183,26 @@
               hasil
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Pertama
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Sebelumnya
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Berikutnya
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Terakhir
               </button>
             </div>
@@ -256,26 +211,17 @@
       </div>
 
       <!-- Delete Confirmation Modal -->
-      <div
-        v-if="showDeleteModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      >
+      <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
           <h3 class="text-lg font-bold mb-4">Konfirmasi Hapus</h3>
           <p class="mb-6">
             Apakah Anda yakin ingin menghapus akun ini? Tindakan ini tidak dapat dibatalkan.
           </p>
           <div class="flex justify-end gap-3">
-            <button
-              @click="showDeleteModal = false"
-              class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-            >
+            <button @click="showDeleteModal = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
               Batal
             </button>
-            <button
-              @click="deleteAccount"
-              class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-            >
+            <button @click="deleteAccount" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
               Hapus
             </button>
           </div>
@@ -334,7 +280,7 @@ export default defineComponent({
       { key: 'faktur_pajak', label: 'FAKTUR PAJAK' },
       { key: 'faktur_date', label: 'FAKTUR DATE' },
       { key: 'tanda_terima_invoice', label: 'TANDA TERIMA INVOICE' },
-      { key: 'tanda_terima_invoice_date', label: 'TANDA TERIMA INVOICE DATE' },      
+      { key: 'tanda_terima_invoice_date', label: 'TANDA TERIMA INVOICE DATE' },
     ]
 
     // Filter and sort state
@@ -353,8 +299,8 @@ export default defineComponent({
       loading.value = true
       try {
         // Simulate API call
-        const response = await axios.get(GetReportManagement)        
-        reportManagement.value = response.data                
+        const response = await axios.get(GetReportManagement)
+        reportManagement.value = response.data
       } catch (error) {
         console.error('Error fetching invoices:', error)
       } finally {
@@ -363,8 +309,8 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      GetReport()   
-      console.log(reportManagement)   
+      GetReport()
+      console.log(reportManagement)
     })
 
     // Computed properties for filtering and pagination
@@ -379,10 +325,6 @@ export default defineComponent({
             reportManagement.cust_name.toLowerCase().includes(query),
         )
       }
-
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
 
       return result
     })
@@ -429,46 +371,33 @@ export default defineComponent({
     })
 
     const exportToExcel = () => {
-      const data = filteredData.value.map((entry) => {
+      const data = filteredData.value.map((item) => {
         return {
-          'Po Number': entry.po_code,
-          'Customer Code': entry.cust_code,
-          'Customer Name': entry.cust_name,
-          PN: entry.pn,
-          'Product Desc': entry.desc,
-          'Quantity SO': entry.qty_so,
-          'Price SO': entry.price_so,
-          'Amount SO': entry.amount_so,
-          'SO Number': entry.sales_order,
-          'SO Date': entry.sales_order_date,
-          'Quantity PO': entry.qty_po,
-          'Price PO': entry.price_po,
-          'Amount PO': entry.amount_po,
-          Brand: entry.product_brand,
-          'DO Number': entry.delivery_order,
-          'DO Date': entry.do_date,
-          'Quantity DO': entry.qty_do,
-          'Outstanding Supply': entry.qty_so - entry.qty_po,
-          'Invoice Number': entry.bill_no,
-          'Invoice Date': entry.billing_date,
-          'Amount Invoice': entry.amount_invoice,
-          'Gross Profit': entry.gross_profit,
-          '% GP': entry.gp_percentage,
-          //last
-          'FAKTUR PAJAK': entry.faktur_pajak,
-          'FAKTUR DATE': entry.faktur_date,
-          'TANDA TERIMA INVOICE': entry.tanda_terima_invoice,
-          'TANDA TERIMA INVOICE DATE': entry.tanda_terima_invoice_date,
-          RESI: entry.resi,
-          DITERIMA: entry.diterima,
-          'RECEIVED DATE': entry.received_date,
-          'STATUS AR': entry.status_ar,
-          'TOTAL AR': entry.total_ar,
-          'AGING AR': entry.aging_ar,
-          PAYMENT1: entry.payment1,
-          'PAYMENT NUMBER': entry.payment_number,
-          'PAYMENT1 DATE': entry.payment1_date,
-          'OS AR': entry.os_ar,
+          'PO Number': item.po_number,
+          'Customer Code': item.customer_code,
+          'Customer': item.customer_name,
+          'Product SN': item.product_sn,
+          'Product Name': item.product_desc,
+          'Quantity SO': item.quantity_so,
+          'Price So': item.price_so,
+          'Amount So': item.amount_so,
+          'Brand': item.product_brand,
+          'So Number': item.code_so,
+          'Quantity PO': item.quantity_po,
+          'Price PO': item.price_po,
+          'Amount PO': item.amount_po,
+          'Do Number': item.code_do,
+          'Do Date': item.do_date,
+          'Quantity DO': item.quantity_do,
+          'Invoice Number': item.code_invoice,
+          'Invoice Date': item.invoice_date,
+          'Amount Invoice': item.amount_invoice,
+          'Gross Profit': item.gross_profit,
+          'GP%': item.percen,
+          'Faktur Pajak': item.code_pajak,
+          'Faktur Date': item.pajak_date,
+          'Resi': item.resi,
+          'Tandater Date': item.tandater_date,
         }
       })
 

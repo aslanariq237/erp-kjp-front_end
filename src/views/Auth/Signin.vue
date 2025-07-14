@@ -268,8 +268,8 @@
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStores'
 import { defineComponent } from 'vue'
-import router from '@/router'
-import Swal from 'sweetalert2'
+// import router from '@/router'
+// import Swal from 'sweetalert2'
 
 export default defineComponent({
   name: 'sign-in',

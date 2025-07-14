@@ -385,7 +385,7 @@ export default defineComponent({
     }
 
     const editOpex = (opex) => {
-      router.push(`/opex/edit/${opex.opex_id}`)
+      router.push(`/opex-cogs/edit/${opex.opex_id}`)
     }
 
     const confirmDelete = (opex) => {

@@ -28,6 +28,8 @@ export const DetailDo = urlLocalhost + 'detail_do'
 export const DetailQuatation = urlLocalhost + 'detail_quatation'
 export const DetailTandater = urlLocalhost + 'detail_tandater'
 
+export const DocumentFile = urlLocalhost + 'documents';
+
 //E
 export const Employee = urlLocalhost + 'employees'
 export const EmployeeCode = urlLocalhost + 'employees_code'
@@ -49,7 +51,9 @@ export const LaporUang = urlLocalhost + 'laporan_keuangan'
 export const Login = urlLocalhost + 'login'
 //O
 export const GetOpex = urlLocalhost + 'opex'
+export const GetAbsorb = urlLocalhost + 'opex/absorb'
 export const AddOpex = urlLocalhost + 'opex_code'
+export const AddOpexApprove = urlLocalhost + 'opex_code/approved'
 //P
 export const Product = urlLocalhost + 'products'
 export const ProductSearch = urlLocalhost + 'products/search'
@@ -63,10 +67,18 @@ export const PurchaseOrder = urlLocalhost + 'purchase_orders'
 export const PurchaseOrderMonthly = urlLocalhost + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'
 export const PurchaseOrderDelete = urlLocalhost + 'purchase_orders_delete'
+
+export const PoJasaKirim = urlLocalhost + 'po-jasakirim'
+export const PoJasaKirimDetail = urlLocalhost + 'po-jasakirim/detail'
+export const PoJasaKirimCode = urlLocalhost + 'po-jasakirim/store'
+
 //Q
 export const Quatations = urlLocalhost + 'quatations'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'
 export const QuatationsDelete = urlLocalhost + 'quatations_delete'
+
+//R
+export const ReportSales = urlLocalhost + 'sales_count'
 //S
 export const SalesOrders = urlLocalhost + 'sales_orders'
 export const SalesOrdersMonthly = urlLocalhost + 'sales_orders/monthly'
@@ -82,3 +94,4 @@ export const AddVendor = urlLocalhost + 'vendors_code'
 export const GetFakturPajak = urlLocalhost + 'faktur-pajak'
 export const AddFakturPajak = urlLocalhost + 'faktur-pajak-code'
 export const GetReportManagement = urlLocalhost + 'report_management'
+export const GetSalesManagement = urlLocalhost + 'sales_report'

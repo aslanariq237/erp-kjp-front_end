@@ -36,6 +36,14 @@
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- tandaterima code -->
+           <FormGroup 
+            label="Tanda Terima Code"  
+            v-if="id"                     
+          >
+            <input type="text" autocomplete="off" id="due_at" name="due_at" placeholder="Code Tanda Terima" v-model="code_tandater"
+              :class="inputClass(rules.due_at)" />
+          </FormGroup>
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
@@ -50,15 +58,33 @@
             </div>
           </FormGroup>
           <!-- Id_Purchase order -->
-          <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
-              :class="inputClass(rules.due_at)">
+          <FormGroup 
+            label="Sales Order" 
+            :required="true" 
+            :error="rules.no" 
+            errorMessage="Purchase Order is required"
+            v-if="!id"
+          >
+            <select 
+              name="id_so" 
+              id="id_so" 
+              v-model="id_so" 
+              class="rounded w-full" 
+              @change="selectedSalesOrder"
+              :class="inputClass(rules.due_at)"                
+            >
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
                 {{ po.code_so }}
               </option>
             </select>
           </FormGroup>
-          <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
+          <FormGroup 
+            label="Po Number" 
+            :required="true" 
+            :error="rules.customer" 
+            errorMessage="DO Type is required"
+            v-if="!id"
+          >
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
               placeholder="Po Number" />
@@ -81,12 +107,26 @@
         <div v-if="id">
         </div>
         <div class="flex items-end gap-5 mb-8" v-else>
-          <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
-            errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full"
-              :class="inputClass(rules.due_at)">
-              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
-                {{ delo.code_invoice }}
+          <FormGroup 
+            label="Invoice" 
+            :required="true" 
+            :error="rules.no" 
+            class="w-full"
+            errorMessage="Purchase Order is required"
+          >
+            <select 
+              name="id_so" 
+              id="id_so" 
+              v-model="id_invoice" 
+              class="rounded w-full"
+              :class="inputClass(rules.due_at)"
+            >
+              <option 
+                v-for="delo in deliveryOrders" 
+                :key="delo.id_invoice" 
+                :value="delo.id_invoice"
+              >
+                  {{ delo.code_invoice }}
               </option>
             </select>
           </FormGroup>
@@ -95,12 +135,13 @@
           </button>
         </div>
         <div>
-          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
+          <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border mt-3">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">So Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Nominal</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
@@ -108,6 +149,7 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.nominal) }}</td>
               </tr>
             </tbody>
           </table>
@@ -140,6 +182,8 @@ import {
   TandaterAdd
 } from '@/core/utils/url_api'
 import router from '@/router'
+import { useAuthStore } from '@/stores/authStores'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -151,8 +195,10 @@ export default defineComponent({
   },
 
   data() {
+    const {user} = useAuthStore();
     return {
       id: null,
+      user : user,
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
@@ -163,6 +209,8 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       po_number: '',
+      code_so : '',
+      code_tandater : '',
       resi: '',
       customer_name: '',
       customer_npwp: 0,
@@ -189,7 +237,8 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.total = this.sub_total;
+    this.employee_id = this.user.employee_id;
+    
     this.getSalesOrder();
     if (id) {
       this.getById(id);
@@ -212,32 +261,31 @@ export default defineComponent({
       products.amount = products.price * products.quantity;
     },
     getSalesOrder() {
-      axios.get(SalesOrders).then((res) => {
+      ApiServices.get(SalesOrders).then((res) => {
         var data = res.data;
         data = data.filter((res) => res.has_tandater != 1);
         this.salesOrders = data;
       })
     },
     selectedSalesOrder() {
-      axios.get(SalesOrders + '/' + this.id_so).then((res) => {
-        var data = res.data;
-        this.customer_id = data.customer.customer_id;
-        this.customer_name = data.customer.customer_name;
-        this.customer_npwp = data.customer.customer_npwp;
-        this.customer_address = data.customer.customer_address;
-        this.employee_id = data.employee.employee_id;
-        this.employee_name = data.employee.employee_name;
-        this.po_number = data.po_number;
-        this.due_at = data.due_at;
+      var selected = this.salesOrders.find(function (item) {
+        return item.id_so == this.id_so
+      }.bind(this))      
 
-        if (data.id_so) {
-          this.getDeliveryOrder(data.id_so)
-        }
-      })
+      if (selected) {
+        this.due_at = selected.due_at;                  
+        this.po_number = selected.po_number,
+        this.customer_id = selected.customer_id,
+        this.customer_name = selected.customer.customer_name;
+        this.customer_address = selected.customer.customer_address;        
+        this.code_so = selected.code_so;
+
+        this.getDeliveryOrder();
+      }
     },
 
-    getDeliveryOrder(id) {
-      axios.get(Invoice + '/code/' + id).then((res) => {
+    getDeliveryOrder() {
+      ApiServices.get(Invoice).then((res) => {
         var data = res.data
         this.deliveryOrders = data;
       })
@@ -256,17 +304,18 @@ export default defineComponent({
           icon: 'warning',
           text: "Pilih Invoice"
         });
-      } else {
-        axios.get(Invoice + '/' + this.id_invoice).then(
+      } else {        
+        ApiServices.get(Invoice + '/' + this.id_invoice).then(
           (res) => {
             var data = res.data;
             for (let i = 0; i < data.length; i++) {
               var object = {
                 code_invoice: data[i].code_invoice,
                 id_invoice: data[i].id_invoice,
-                id_so: data[i].salesorder.id_so,
-                code_so: data[i].salesorder.code_so,
-                po_number: data[i].salesorder.po_number,
+                id_so: this.id_so,
+                code_so: this.code_so,
+                po_number: this.po_number,
+                nominal : data[i].grand_total,
               }
               this.tandaterima_details.push(object);
             }
@@ -311,15 +360,16 @@ export default defineComponent({
       return count
     },
     getDetailSo(id) {
-      axios.get(DetailTandater + '/' + id).then(
+      ApiServices.get(DetailTandater + '/' + id).then(
         (res) => {
-          var data = res.data;
+          var data = res.data;          
           for (let i = 0; i < data.length; i++) {
             var object = {
               code_invoice: data[i].invoice.code_invoice,
               id_invoice: data[i].id_invoice,
               code_so: data[i].so.code_so,
               po_number: data[i].so.po_number,
+              nominal : data[i].invoice.grand_total,
             }
             this.tandaterima_details.push(object);
           }
@@ -327,17 +377,16 @@ export default defineComponent({
       )
     },
     async getById(id) {
-      await axios.get(Tandater + '/' + id).then(
+      await ApiServices.get(Tandater + '/' + id).then(
         (res) => {
-          var data = res.data;
+          var data = res.data;          
           this.issue_at = data[0].issue_at;
           this.resi = data[0].resi;
-          this.id_so = data[0].id_so;
-          this.po_number = data[0].so.po_number;
+          this.id_so = data[0].id_so;          
           this.customer_id = data[0].customer_id;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
-
+          this.code_tandater = data[0].code_tandater;
           var id = data[0].id_tandater;
           if (id) {
             this.getDetailSo(id);
@@ -350,13 +399,12 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
-          await axios.post(TandaterAdd, {
-            id_so: this.id_so,
+          await ApiServices.post(TandaterAdd, {            
             customer_id: this.customer_id,
-            issue_at: this.issue_at,
-            due_at: this.due_at,
+            employee_id : this.employee_id,            
             resi: this.resi,
-            id_do: this.id_do,
+            issue_at: this.issue_at,
+            due_at: this.due_at,            
             tandaterima_details: this.tandaterima_details,
           }, {
             headers: { "Content-Type": "application/json" }
@@ -386,7 +434,7 @@ export default defineComponent({
           )
         }
         else {
-          await axios.put(TandaterAdd + '/' + this.id, {
+          await ApiServices.put(TandaterAdd + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
             issue_at : this.issue_at,

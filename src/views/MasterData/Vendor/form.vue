@@ -21,7 +21,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
             <FormGroup label="vendor Name" :required="true" :error="rules.issue_at"
               errorMessage="Issue Date is required">
-              <input type="text" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
+              <input type="text" autocomplete="off" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
                 :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
@@ -68,12 +68,12 @@
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import router from '@/router'
-import axios from 'axios'
 import Swal from 'sweetalert2'
 import { AddVendor, Vendor } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import FormGroup from '@/components/FormGroup.vue'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'assets-forms',
@@ -160,7 +160,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(Vendor + '/' + id).then(
+      await ApiServices.get(Vendor + '/' + id).then(
         (res) => {
           var data = res.data;
           this.vendor_name = data.vendor_name;
@@ -177,7 +177,7 @@ export default defineComponent({
       const result = 2;
       if (result != 0) {
         if (this.id) {
-          await axios.put(AddVendor + '/' + this.id, {
+          await ApiServices.put(AddVendor + '/' + this.id, {
           vendor_name: this.vendor_name,
           vendor_phone: parseInt(this.vendor_phone) || 0,
           vendor_email: this.vendor_email,
@@ -208,7 +208,7 @@ export default defineComponent({
           }
         )
         }else{
-          await axios.post(AddVendor, {
+          await ApiServices.post(AddVendor, {
           vendor_name: this.vendor_name,
           vendor_phone: parseInt(this.vendor_phone) || 0,
           vendor_email: this.vendor_email,

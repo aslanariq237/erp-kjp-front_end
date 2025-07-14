@@ -204,6 +204,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Vendor } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'VendorPage',
@@ -218,7 +219,7 @@ export default defineComponent({
     // Fetch vendors from API
     const fetchVendors = async () => {
       try {
-        const response = await axios.get(Vendor)
+        const response = await ApiServices.get(Vendor)
         vendors.value = response.data
       } catch (error) {
         console.error('Error fetching vendors:', error)
@@ -247,14 +248,7 @@ export default defineComponent({
             vendor.vendor_email.toLowerCase().includes(query) ||
             vendor.vendor_phone.includes(query),
         )
-      }
-
-      // Sort
-      result.sort((a, b) => {
-        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
-        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
-        return fieldA.localeCompare(fieldB)
-      })
+      }      
 
       return result
     })

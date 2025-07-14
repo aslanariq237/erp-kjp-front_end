@@ -86,6 +86,20 @@
               </tr>
               <tr v-for="(account, index) in paginatedData" :key="account.id"
                 class="hover:bg-gray-50 transition-colors duration-150">
+                <td                   
+                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+
+                >
+                  <div class="bg-yellow-400 text-slate-600 px-2 rounded-xl" v-if="account.status_payment == 'partial'">
+                    {{ account.status_payment }}
+                  </div>
+                  <div class="bg-green-400 text-slate-600 px-2 rounded-xl" v-else-if="account.status_payment == 'success'">
+                    {{ account.status_payment }}
+                  </div>
+                  <div class="bg-slate-500 text-slate-200 px-2 rounded-xl" v-else>
+                    {{ account.status_payment }}
+                  </div>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.code_invoice }}
                 </td>
@@ -95,13 +109,13 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.salesorder.deposit) }}
+                  {{ formatCurrency(account.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ formatCurrency(account.grand_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatCurrency(account.grand_total - account.salesorder.deposit) }}
+                  {{ formatCurrency(account.grand_total - account.deposit) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ account.issue_at }}</div>
@@ -146,7 +160,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Current Deposit</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
                   <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
-                    formatCurrency(selectedItem.salesorder.deposit) : 0 }}</span>
+                    formatCurrency(selectedItem.deposit) : 0 }}</span>
                 </div>
               </div>
 
@@ -177,7 +191,7 @@
                       placeholder="0.00" />
                     <button
                       class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"                      
-                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.salesorder.deposit">                     
+                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.deposit">                     
                      Lunas
                     </button>
                   </div>
@@ -191,7 +205,7 @@
                   <span class="text-lg font-bold text-blue-800">
                     Rp.
                     {{
-                      selectedItem ? formatCurrency(selectedItem.salesorder.deposit + additionalDeposit) : 0
+                      selectedItem ? formatCurrency(Number(selectedItem.deposit || 0) + Number(additionalDeposit || 0)) : 0
                     }}
                   </span>
                 </div>
@@ -284,6 +298,8 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 import { AccReceive, AccUpdateDeposit } from '@/core/utils/url_api'
+import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -300,6 +316,7 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
+      { key: 'status', label: 'Status' },
       { key: 'no', label: 'Code Invoice' },
       { key: 'name', label: 'Name' },
       { key: 'Terbayar', label: 'Terbayar' },
@@ -325,7 +342,7 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccReceive)        
+        const res = await ApiServices.get(AccReceive)        
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -349,22 +366,7 @@ export default defineComponent({
                 code_invoice.includes(query)              
         })
       }
-      result = result.filter((account) => account.grand_total - account.salesorder.deposit > 0)
-
-      if (minBalance.value) {
-        result = result.filter((account) => account.balance >= minBalance.value)
-      }
-
-      if (maxBalance.value) {
-        result = result.filter((account) => account.balance <= maxBalance.value)
-      }
-
-      result.sort((a, b) => {
-        if (sortBy.value === 'balance') {
-          return a.balance - b.balance
-        }
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      result = result.filter((account) => account.grand_total - account.deposit > 0)      
 
       return result
     })
@@ -455,23 +457,39 @@ export default defineComponent({
       isModalOpen.value = false
       selectedItem.value = null
     }
+    
 
     async function saveDeposit() {
       if (selectedItem.value) {
-        try {
-          const newTotalDeposit = selectedItem.value.salesorder.deposit + additionalDeposit.value
-          const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.salesorder.id_so, {
-            id_so : selectedItem.value.salesorder.id_so,
+        try {      
+          const deposit = Number(selectedItem.value.deposit || 0) + Number(additionalDeposit.value || 0);
+
+          var status_payment = 'unpaid';
+          if (selectedItem.value.deposit = deposit) {
+            status_payment = 'full';
+          }else{
+            status_payment = 'partial';
+          }
+
+          const response = await ApiServices.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
+            id_invoice : selectedItem.value.id_invoice,
             payment_method : 'Transfer',
-            deposit : newTotalDeposit,
+            status_payment: status_payment,
+            deposit : deposit,
             issue_at : issue_today,
             due_at : issue_today
           });
 
-          if (response.status === 200) {
-            selectedItem.value.deposit = newTotalDeposit
+          if (response.status === 200) {            
             closeModal()
-            console.log('Deposit updated successfully.')
+            Swal.fire({
+              icon: 'success',
+              title : 'Has Been Paid'
+            }).then((res) => {
+              if (res.isConfirmed) {
+                window.location.reload();
+              }
+            })
           }
         } catch (error) {
           console.error('Failed to update deposit:', error)
@@ -501,15 +519,18 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = filteredData.value.map((account) => ({
-        'Code Po' : account.code_invoice,
-        Customer : account.customer.customer_name,
-        Deposit : account.salesorder.deposit,
-        Amount : account.grand_total,
-        Debt : account.grand_total - account.salesorder.deposit,
-        'Issue Date' : account.issue_at,
-        'Due Date' : account.due_at,
-        Aging : calculateDay(account.issue_at, account.due_at),                
+      const data = accounts.value.map((account) => ({
+        'Code Po'       : account.code_invoice,
+        Customer        : account.customer.customer_name,
+        Deposit         : account.deposit,
+        Amount          : account.grand_total,
+        Debt            : account.grand_total - account.deposit,
+        'Issue Date'    : account.issue_at,
+        'Due Date'      : account.due_at,
+        Aging           : calculateDay(account.issue_at, account.due_at),   
+        'Status AR'     : account.grand_total = account.deposit ? "Paid" : "Partial",             
+        'Payment Method': account.paymentsales.payment_method ? account.paymentsales.payment_method : "",
+        'Payment Date'  : account.paymentsales.issue_at ? account.paymentsales.issue_at : ""
       }))
 
       // Create CSV content

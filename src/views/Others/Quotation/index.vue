@@ -89,6 +89,12 @@
                   {{ formatCurrency(entry.sub_total) }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                  {{ formatCurrency(entry.ppn) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                  {{ formatCurrency(entry.grand_total) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -109,6 +115,12 @@
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
                   >
                     Delete
+                  </button>
+                  <button
+                    @click="editPPN(entry)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Edit PPN
                   </button>
                   <button @click="exportToPDF(entry)" class="shadow-lg px-3 py-2 rounded-lg border">
                     Export To PDF
@@ -190,12 +202,13 @@ import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import QuotationPdfTemplate from '@/components/templates/pdf/quotation_pdf.vue'
-import { DetailQuatation, Quatations, QuatationsDelete } from '@/core/utils/url_api'
+import { DetailQuatation, Quatations, QuatationsAdd, QuatationsDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import Swal from 'sweetalert2'
 import { exportQuoPDF } from '@/core/helpers/exportToPdf'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'QuotationPage',
@@ -210,6 +223,8 @@ export default defineComponent({
     const tableHeaders = [
       { key: 'code_quatation', label: 'Quotation Number' },
       { key: 'customer', label: 'Customer Name' },
+      { key: 'sub_total', label: 'Sub Total' },
+      { key: 'sub_total', label: 'PPN' },
       { key: 'sub_total', label: 'Amount' },
       { key: 'issue_at', label: 'Date' },
       { key: 'action', label: 'Action' },
@@ -226,7 +241,7 @@ export default defineComponent({
     const dataexcel = ref([]);
 
     const Quatation = async () => {
-      await axios.get(Quatations).then((res) => {
+      ApiServices.get(Quatations).then((res) => {
         var data = res.data
         entries.value = data
       })
@@ -234,7 +249,7 @@ export default defineComponent({
 
     const detailQuo = async () => {
       try {
-        await axios.get(DetailQuatation).then((res) => {
+        ApiServices.get(DetailQuatation).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -370,6 +385,22 @@ export default defineComponent({
       window.URL.revokeObjectURL(url)
     }
 
+    const editPPN = (item) => {
+      axios.post(QuatationsAdd + '/edit-ppn/' + item.id_quatation,{
+        sub_total : item.sub_total,
+        ppn : item.ppn,
+      }).then((res) => { 
+        Swal.fire({
+          icon: 'success',
+          title : 'Berhasil Edit PPN'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            window.location.reload();
+          }
+        })
+      }).catch((err) => console.error(err));
+    }
+
     const exportToPDF = (item) => {
       exportQuoPDF(item)
     }
@@ -377,6 +408,7 @@ export default defineComponent({
     return {
       viewData,
       editData,
+      editPPN,
       deleteData,
 
       // State

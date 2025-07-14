@@ -2,12 +2,8 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification
-        v-if="notification.show"
-        :type="notification.type"
-        :message="notification.message"
-        @close="notification.show = false"
-      />
+      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+        @close="notification.show = false" />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6">
@@ -21,17 +17,13 @@
             <p class="text-gray-500 text-sm mt-1">Finance / Opex / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink
-              to="/opex-absorb"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
-            >
+            <RouterLink to="/opex-absorb"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -45,137 +37,48 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <FormGroup label="Issue Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
-            <input 
-              type="date" 
-              id="issue_at" 
-              name="issue_at" 
-              v-model="issue_at" min="0" 
-              :class="[
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" min="0" :class="[
               'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
               rules.amount
                 ? 'border-red-300 focus:ring-red-500 bg-red-50'
                 : 'border-gray-300 focus:ring-blue-500',
-              ]" placeholder="Enter Issue Date" 
-            />            
+            ]" placeholder="Enter Issue Date" />
           </FormGroup>
-
-          <FormGroup label="Due Date" :required="true" :error="rules.customerName" errorMessage="Opex is required">
-            <input 
-              type="date" 
-              id="due_at" 
-              name="due_at" 
-              v-model="due_at" min="0" 
-              :class="[
-              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-              rules.amount
-                ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                : 'border-gray-300 focus:ring-blue-500',
-              ]" placeholder="Enter Due Date" 
-            />            
-          </FormGroup>
-
           <!-- Opex Name -->
-          <FormGroup
-            label="Opex Name"
-            :required="true"
-            :error="rules.opex_name"
-            errorMessage="Opex Name is required"
-          >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              v-model="opex_name"
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.opex_name
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-              placeholder="Enter Opex Name"
-            />
+          <FormGroup label="Opex Name" :required="true" :error="rules.opex_name" errorMessage="Opex Name is required">
+            <input type="text" id="name" name="name" v-model="opex_name" :class="[
+              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+              rules.opex_name
+                ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                : 'border-gray-300 focus:ring-blue-500',
+            ]" placeholder="Enter Opex Name" />
             <div v-if="rules.opex_name">
               <p class="text-red-500 text-sm">Opex Name is required</p>
             </div>
           </FormGroup>
 
           <!-- Price -->
-          <FormGroup
-            label="Price"
-            :required="true"
-            :error="rules.opex_price"
-            errorMessage="Price is required and must be greater than 0"
-          >
-            <input
-              type="number"
-              id="amount"
-              name="amount"
-              v-model="opex_price"
-              min="0"
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.opex_price
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-              placeholder="Enter Price"
-            />
+          <FormGroup label="Price" :required="true" :error="rules.opex_price"
+            errorMessage="Price is required and must be greater than 0">
+            <input type="number" id="amount" name="amount" v-model="opex_price" min="0" :class="[
+              'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
+              rules.opex_price
+                ? 'border-red-300 focus:ring-red-500 bg-red-50'
+                : 'border-gray-300 focus:ring-blue-500',
+            ]" placeholder="Enter Price" />
             <div v-if="rules.opex_price">
               <p class="text-red-500 text-sm">Price is required</p>
             </div>
           </FormGroup>
 
-          <!-- Opex Type -->
-          <FormGroup
-            label="Opex Type"
-            :required="true"
-            :error="rules.opex_type"
-            errorMessage="Opex Type is required"
-          >
-            <select
-              name="opex_type"
-              id="opex_type"
-              v-model="opex_type"
-              :class="[
-                'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
-                rules.opex_type
-                  ? 'border-red-300 focus:ring-red-500 bg-red-50'
-                  : 'border-gray-300 focus:ring-blue-500',
-              ]"
-            >
-              <option value="absorb">Absorb</option>
-            </select>
-          </FormGroup>
-
           <!-- Customer -->
-          <FormGroup
-            v-if="opex_type !== 'internal'"
-            label="Customer"
-            class="relative"
-            :required="true"
-            :error="rules.customer_id"
-            errorMessage="Customer is required"
-          >
-            <input
-              type="text"
-              autocomplete="off"
-              name="customer_name"
-              id="customer_name"
-              v-model="customer_name"
-              @input="filterCustomers"
-              class="rounded w-full"
-              placeholder="Type customer name"
-            />
-            <ul
-              v-if="filteredCustomers.length"
-              class="border rounded w-full mt-2 absolute z-40 bg-white"
-            >
-              <li
-                v-for="customer in filteredCustomers"
-                :key="customer.customer_id"
-                @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+          <FormGroup v-if="opex_type !== 'internal'" label="Customer" class="relative" :required="true"
+            :error="rules.customer_id" errorMessage="Customer is required">
+            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name"
+              @input="filterCustomers" class="rounded w-full" placeholder="Type customer name" />
+            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 absolute z-40 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ customer.customer_name }}
               </li>
               <li v-if="filteredCustomers.length === 0">Not found</li>
@@ -225,23 +128,22 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
-                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">No</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>                
+                <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
-              <tr v-for="poDetail in sales_order_details" :key="poDetail.product_id"
-                :class="{ 'bg-red-200': poDetail.quantity > poDetail.product_stock }">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
+              <tr v-for="(poDetail, index) in sales_order_details" :key="index">
+                <td class="px-3 py-2 whitespace-no-wrap">{{ index + 1 }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>                
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.quantity * poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
                     @click="sales_order_details.splice(sales_order_details.indexOf(poDetail), 1)">
@@ -271,11 +173,11 @@
 import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form } from 'vee-validate'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import axios from 'axios'
-import { AddOpex, Customer, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
+import { AddOpex, Customer, GetAbsorb, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 
@@ -290,6 +192,7 @@ export default defineComponent({
 
   data() {
     return {
+      id: null,
       opex_name: '',
       opex_price: 0,
       opex_type: 'absorb',
@@ -325,11 +228,15 @@ export default defineComponent({
   async mounted() {
     this.getCustomer();
     this.getProducts();
-    this.getPackage();    
-    if (this.$route.params.id) {
-      this.id = this.$route.params.id
-      await this.getById(this.id)
+    this.getPackage();
+    const route = useRoute();
+    const id = route.params.id;
+
+    if (id) {
+      this.getById(id);
+      this.id = id;
     }
+    console.log(this.sales_order_details)
 
     this.issue_at = new Date().toLocaleDateString('en-ca');
   },
@@ -369,7 +276,7 @@ export default defineComponent({
     },
     getProducts() {
       axios.get(Product).then((res) => {
-        var data = res.data        
+        var data = res.data
         this.products = data;
       })
     },
@@ -548,18 +455,54 @@ export default defineComponent({
         }
       })
     },
+    getDetailSo(id) {
+      axios.get(GetAbsorb + '/' + id).then((res) => {
+        const data = res.data;
+        for (let i = 0; i < data.length; i++) {
+          const object = {          
+            product_id: data[i].product_id,
+            product_code: data[i].product.product_code,
+            product_pn: data[i].product.product_sn,
+            product_desc: data[i].product.product_desc,
+            product_stock: data[i].product.product_stock,
+            product_type: data[i].selectedType,
+            quantity: data[i].quantity,
+            price: data[i].price,
+            discount: data[i].discount,
+            amount: data[i].price * data[i].quantity,
+          }
+          this.sales_order_details.push(object);
+        }
+      });
+    },
+
+    async getById(id) {
+      await axios.get(GetOpex + '/' + id).then((res) => {
+        var data = res.data;
+        this.opex_name = data.opex_name;
+        this.opex_price = data.opex_price;
+        this.issue_at = data.issue_at;
+        this.customer_id = data.customer_id;
+        this.customer_name = data.customer.customer_name;
+
+        if (id) {
+          this.getDetailSo(id);
+        }
+      })
+    },
     async onSubmit() {
       const result = await this.validation()
       if (result === 0) {
         this.isSubmitting = true
-        axios
+        if (!this.id) {
+          axios
           .post(AddOpex + '/' + 'absorb', {
             customer_id: this.customer_id,
-            opex_name : this.opex_name,
+            opex_name: this.opex_name,
             opex_price: this.opex_price,
-            opex_type : this.opex_type,
-            sales_order_details: this.sales_order_details,            
-            issue_at : this.issue_at,
+            opex_type: this.opex_type,
+            sales_order_details: this.sales_order_details,
+            issue_at: this.issue_at,
           })
           .then(() => {
             Swal.fire({
@@ -578,6 +521,34 @@ export default defineComponent({
           .finally(() => {
             this.isSubmitting = false
           })
+        }else{
+          axios
+          .put(AddOpex + '/' + 'absorb/' + this.id, {
+            customer_id: this.customer_id,
+            opex_name: this.opex_name,
+            opex_price: this.opex_price,
+            opex_type: this.opex_type,
+            sales_order_details: this.sales_order_details,
+            issue_at: this.issue_at,
+          })
+          .then(() => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Data has been saved',
+            }).then(() => router.push('/opex-absorb'))
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: error.response?.data?.message || error.message,
+            })
+          })
+          .finally(() => {
+            this.isSubmitting = false
+          })
+        }
       }
     },
     inputClass(error) {
