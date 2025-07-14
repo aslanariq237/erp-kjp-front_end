@@ -214,6 +214,7 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { exportInvPDF } from '@/core/helpers/exportToPdf'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'InvoicePage',
@@ -248,7 +249,7 @@ export default defineComponent({
     const dataexcel = ref([]);
 
     const getInvoices = async () => {
-      const response = await axios.get(Invoice)
+      const response = await ApiServices.get(Invoice)
       invoice.value = response.data
 
       // if (invoice.value.length > 0) {
@@ -259,7 +260,7 @@ export default defineComponent({
 
     const getDetailInv = async() => {
       try {
-        await axios.get(DetailInvoice).then((res) => {
+        await ApiServices.get(DetailInvoice).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -268,13 +269,13 @@ export default defineComponent({
     }
 
     const approved = (id) => {
-      axios.post(InvoiceAdd + '/appr/' + id).then((res) => {
+      ApiServices.post(InvoiceAdd + '/appr/' + id).then((res) => {
         console.log(res)
       })
     }
 
     const editPPN = (item) => {
-      axios.post(InvoiceAdd + '/edit_ppn/' + item.id_invoice,{
+      ApiServices.post(InvoiceAdd + '/edit_ppn/' + item.id_invoice,{
         sub_total : item.sub_total,
         ppn : item.ppn,
       }).then((res) => {        
@@ -297,10 +298,10 @@ export default defineComponent({
       router.push('/invoice/edit/' + id)
     }
 
-    const getById = async () => {
-      const res = await axios.get(SalesOrders)
-      purchaseorders.value = res.data
-    }
+    // const getById = async () => {
+    //   const res = await ApiServices.get(SalesOrders)
+    //   purchaseorders.value = res.data
+    // }
 
     onMounted(() => {
       getInvoices()

@@ -85,22 +85,12 @@
   import { RouterLink, useRoute } from 'vue-router'
   import Notification from '@/components/Notification.vue'
   import FormGroup from '@/components/FormGroup.vue'
-  import Swal from 'sweetalert2'
-  import axios from 'axios'
-  import { computed } from 'vue'
   import {
-    DeliverSales,
-    DetailDo,
-    DetailInvoice,
-    DetailSo,
     DetailTandater,
-    Invoice,
-    InvoiceAdd,
-    SalesOrders,
     Tandater,
-    TandaterAdd
   } from '@/core/utils/url_api'
   import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
   
   export default defineComponent({
     name: 'DeliveryOrderForm',
@@ -151,8 +141,7 @@
     async mounted() {
       const route = useRoute();
       const id = route.params.id;
-      this.total = this.sub_total;
-      this.getSalesOrder();
+      this.total = this.sub_total;      
       if (id) {
         this.getById(id);
         this.id = id;
@@ -172,37 +161,6 @@
       changeQuantity(products) {
         products.amount = products.price * products.quantity;
       },
-      getSalesOrder() {
-        axios.get(SalesOrders).then((res) => {
-          var data = res.data;
-          data = data.filter((res) => res.has_tandater != 1);
-          this.salesOrders = data;
-        })
-      },
-      selectedSalesOrder() {
-        axios.get(SalesOrders + '/' + this.id_so).then((res) => {
-          var data = res.data;
-          this.customer_id = data.customer.customer_id;
-          this.customer_name = data.customer.customer_name;
-          this.customer_npwp = data.customer.customer_npwp;
-          this.customer_address = data.customer.customer_address;
-          this.employee_id = data.employee.employee_id;
-          this.employee_name = data.employee.employee_name;
-          this.po_number = data.po_number;
-          this.due_at = data.due_at;
-  
-          if (data.id_so) {
-            this.getDeliveryOrder(data.id_so)
-          }
-        })
-      },
-  
-      getDeliveryOrder(id) {
-        axios.get(Invoice + '/code/' + id).then((res) => {
-          var data = res.data        
-          this.deliveryOrders = data;
-        })
-      },
   
       formatCurrency(value) {
         return new Intl.NumberFormat('en-US', {
@@ -210,23 +168,7 @@
           currency: 'IDR',
         }).format(value)
       },
-  
-      addDoDetail() {
-        axios.get(Invoice + '/' + this.id_invoice).then(
-          (res) => {
-            var data = res.data;
-            for (let i = 0; i < data.length; i++) {
-              var object = {
-                code_invoice: data[i].code_invoice, 
-                id_invoice : data[i].id_invoice,             
-                code_so: data[i].salesorder.code_so,              
-                po_number: data[i].salesorder.po_number,              
-              }
-              this.tandaterima_details.push(object);
-            }
-          }
-        )
-      },
+
       showNotification(type, message) {
         this.notification = {
           show: true,
@@ -240,31 +182,8 @@
         }, 3000)
       },
   
-      async validation() {
-        var count = 0;
-        if (this.resi == '' || this.resi == null) {
-          this.rules.resi = true;
-          count++;        
-        }else{
-          this.rules.resi = false;
-        }
-        if (this.tandaterima_details.length == 0) {
-          Swal.fire({
-            text: "Tambahkan 1 atau lebih barang!",
-            icon : 'error',
-            buttonsStyling: true,
-            confirmButtonText: 'Try Again!',
-            heightAuto: false,
-            customClass: {
-              confirmButton: "btn fw-semibold btn-light-danger",
-            },
-          });
-          count++;
-        }
-        return count
-      },
       getDetailSo(id) {
-        axios.get(DetailTandater + '/' + id).then(
+        ApiServices.get(DetailTandater + '/' + id).then(
           (res) => {
             var data = res.data;
             for (let i = 0; i < data.length; i++) {
@@ -281,7 +200,7 @@
         )
       },
       async getById(id) {
-        await axios.get(Tandater + '/' + id).then(          
+        await ApiServices.get(Tandater + '/' + id).then(          
           (res) => {
             var data = res.data;
             this.customer_name = data[0].customer.customer_name;            

@@ -188,12 +188,12 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800">
               <tr v-for="poDetail in inquiry_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_code }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_pn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_code }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_pn }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_desc }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.quantity }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(poDetail.price) }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">
                   <input type="text" v-model="poDetail.discount"
                     class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400" @change="updateAmount(poDetail)" />
                 </td>
@@ -259,6 +259,7 @@ import {
 import router from '@/router'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStores'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -351,7 +352,7 @@ export default defineComponent({
 
   methods: {
     getCustomer() {
-      axios.get(Customer).then((res) => {
+      ApiServices.get(Customer).then((res) => {
         var data = res.data
         this.customers = data
       })
@@ -364,7 +365,7 @@ export default defineComponent({
     },
 
     getProducts() {
-      axios.get(Product).then((res) => {
+      ApiServices.get(Product).then((res) => {
         var data = res.data
         this.products = data
       })
@@ -404,8 +405,8 @@ export default defineComponent({
           text: 'Pilih Barang',
         })
       } else {
-        axios.get(Product + '/' + this.product_id).then((res) => {
-          var data = res.data
+        ApiServices.get(Product + '/' + this.product_id).then((res) => {
+          var data = res.data[0]
           var object = {
             product_id: data.product_id,
             product_code: data.product_code,
@@ -416,9 +417,9 @@ export default defineComponent({
             discount: this.discount,
             amount: this.price * this.quantity,
           }
-          this.inquiry_details.push(object)
-        })
-      }
+          this.inquiry_details.push(object)          
+        })        
+      }      
     },
 
     formatCurrency(value) {
@@ -532,7 +533,7 @@ export default defineComponent({
       return count
     },
     getDetailQuotation(id) {
-      axios.get(DetailQuatation + '/' + id).then((res) => {
+      ApiServices.get(DetailQuatation + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {
@@ -551,7 +552,7 @@ export default defineComponent({
       })
     },
     async getById(id) {
-      await axios.get(Quatations + '/' + id).then((res) => {
+      await ApiServices.get(Quatations + '/' + id).then((res) => {
         var data = res.data
         this.issue_at = data[0].issue_at
         this.due_at = data[0].due_at
@@ -573,7 +574,7 @@ export default defineComponent({
 
       if (result == 0) {
         if (this.id == null) {
-          await axios
+          await ApiServices
             .post(QuatationsAdd, {
               customer_id: this.customer_id,
               employee_id: 1,
@@ -609,7 +610,7 @@ export default defineComponent({
               },
             )
         } else {
-          await axios
+          await ApiServices
             .put(QuatationsAdd + '/' + this.id, {
               customer_id: this.customer_id,
               employee_id: this.employee_id,

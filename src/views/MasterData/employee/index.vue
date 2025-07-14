@@ -220,6 +220,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
 import { Employee } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'EmployeePage',
@@ -238,7 +239,7 @@ export default defineComponent({
 
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get(Employee)
+        const response = await ApiServices.get(Employee)
         employee.value = await response.data
       } catch (error) {
         console.error('Error fetching customers:', error)

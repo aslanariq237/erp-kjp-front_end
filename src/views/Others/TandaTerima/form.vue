@@ -183,6 +183,7 @@ import {
 } from '@/core/utils/url_api'
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -260,7 +261,7 @@ export default defineComponent({
       products.amount = products.price * products.quantity;
     },
     getSalesOrder() {
-      axios.get(SalesOrders).then((res) => {
+      ApiServices.get(SalesOrders).then((res) => {
         var data = res.data;
         data = data.filter((res) => res.has_tandater != 1);
         this.salesOrders = data;
@@ -284,7 +285,7 @@ export default defineComponent({
     },
 
     getDeliveryOrder() {
-      axios.get(Invoice).then((res) => {
+      ApiServices.get(Invoice).then((res) => {
         var data = res.data
         this.deliveryOrders = data;
       })
@@ -304,7 +305,7 @@ export default defineComponent({
           text: "Pilih Invoice"
         });
       } else {        
-        axios.get(Invoice + '/' + this.id_invoice).then(
+        ApiServices.get(Invoice + '/' + this.id_invoice).then(
           (res) => {
             var data = res.data;
             for (let i = 0; i < data.length; i++) {
@@ -359,7 +360,7 @@ export default defineComponent({
       return count
     },
     getDetailSo(id) {
-      axios.get(DetailTandater + '/' + id).then(
+      ApiServices.get(DetailTandater + '/' + id).then(
         (res) => {
           var data = res.data;          
           for (let i = 0; i < data.length; i++) {
@@ -376,13 +377,12 @@ export default defineComponent({
       )
     },
     async getById(id) {
-      await axios.get(Tandater + '/' + id).then(
+      await ApiServices.get(Tandater + '/' + id).then(
         (res) => {
           var data = res.data;          
           this.issue_at = data[0].issue_at;
           this.resi = data[0].resi;
-          this.id_so = data[0].id_so;
-          this.po_number = data[0].so.po_number;
+          this.id_so = data[0].id_so;          
           this.customer_id = data[0].customer_id;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
@@ -399,7 +399,7 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
-          await axios.post(TandaterAdd, {            
+          await ApiServices.post(TandaterAdd, {            
             customer_id: this.customer_id,
             employee_id : this.employee_id,            
             resi: this.resi,
@@ -434,7 +434,7 @@ export default defineComponent({
           )
         }
         else {
-          await axios.put(TandaterAdd + '/' + this.id, {
+          await ApiServices.put(TandaterAdd + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
             issue_at : this.issue_at,

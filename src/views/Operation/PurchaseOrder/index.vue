@@ -179,7 +179,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios'
+import ApiServices from '@/core/services/ApiServices'
 import { DetailPo, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportPoPDF } from '@/core/helpers/exportToPdf'
@@ -219,7 +219,7 @@ export default defineComponent({
 
     const getPurchaseOrder = async () => {
       try {
-        const res = await axios.get(PurchaseOrder)
+        const res = await ApiServices.get(PurchaseOrder)
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -228,7 +228,7 @@ export default defineComponent({
 
     const detailPo = async () => {
       try {
-        await axios.get(DetailPo).then((res) => {
+        await ApiServices.get(DetailPo).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -260,7 +260,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(PurchaseOrderDelete + '/' + id)
+          await ApiServices.delete(PurchaseOrderDelete + '/' + id)
           await getPurchaseOrder()
           Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
         } catch (error) {
@@ -361,13 +361,13 @@ export default defineComponent({
       exportPoPDF(item)
     }
     const approve = (id) => {
-      axios.post(PurchaseOrder + '/approve/' + id).then((res) => {
+      ApiServices.post(PurchaseOrder + '/approve/' + id).then((res) => {
         console.log(res)
       })
     }
 
     const editPPN = (item) => {
-      axios.post(PurchaseOrder + '/edit_ppn/' + item.id_po,{
+      ApiServices.post(PurchaseOrder + '/edit_ppn/' + item.id_po,{
         sub_total : item.sub_total,
         ppn : item.ppn,
       }).then((res) => {        

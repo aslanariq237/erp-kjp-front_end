@@ -146,6 +146,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios';
 import { DetailPo, PurchaseOrder } from '@/core/utils/url_api';
 import router from '@/router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
   name: 'PurchaseOrderPage',
@@ -181,7 +182,7 @@ export default defineComponent({
 
     const getPurchaseOrder = async () => {
       try {
-        const res = await axios.get(PurchaseOrder)
+        const res = await ApiServices.get(PurchaseOrder)
         entries.value = res.data;
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -190,7 +191,7 @@ export default defineComponent({
 
     const getDetailPO = async() => {
       try {
-        await axios.get(DetailPo).then((res) => {
+        await ApiServices.get(DetailPo).then((res) => {
           dataexcel.value = res.data;
         });
       } catch (error) {
@@ -228,9 +229,9 @@ export default defineComponent({
         result = result.filter((entry) => new Date(entry.issue_at) <= new Date(endDate.value))
       }
 
-      result.sort((a, b) => {
-        return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
-      })
+      // result.sort((a, b) => {
+      //   return String(a[sortBy.value]).localeCompare(String(b[sortBy.value]))
+      // })
 
       return result
     })

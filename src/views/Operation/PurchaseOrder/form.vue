@@ -122,7 +122,7 @@
               placeholder="Type Vendor Name"
             />
             <ul
-              v-if="filteredvendors.length"
+              v-if="filteredvendors.length && vendor_name"
               class="border rounded w-full mt-2 bg-white absolute z-40"
             >
               <li
@@ -173,7 +173,7 @@
               :class="inputClass(rules.deposit)"
               placeholder="Type product name"
             />
-            <ul v-if="filteredProducts.length" class="border rounded w-full mt-2 bg-white absolute">
+            <ul v-if="filteredProducts.length && product_name" class="border rounded w-full mt-2 bg-white absolute">
               <li
                 v-for="product in filteredProducts"
                 :key="product.product_id"
@@ -294,7 +294,6 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
-import axios from 'axios'
 import { computed } from 'vue'
 import {
   DetailPo,
@@ -307,6 +306,7 @@ import {
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
 import { useRoute } from 'vue-router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -340,7 +340,7 @@ export default defineComponent({
       price: 0,
       termin: '',
       po_type: '',
-      status_payment: "Hasn't Payed",
+      status_payment: "unpaid",
       total_tax: 0,
       total_service: 0,
       deposit: 0,
@@ -407,19 +407,19 @@ export default defineComponent({
   },
   methods: {
     getvendor() {
-      axios.get(Vendor).then((res) => {
+      ApiServices.get(Vendor).then((res) => {
         var data = res.data
         this.vendors = data
       })
     },
     getProducts() {
-      axios.get(Product).then((res) => {
+      ApiServices.get(Product).then((res) => {
         var data = res.data
         this.products = data
       })
     },
     getEmployee() {
-      axios.get(Employee).then((res) => {
+      ApiServices.get(Employee).then((res) => {
         var data = res.data
         this.employees = data
       })
@@ -507,8 +507,9 @@ export default defineComponent({
           text: 'Tambahkan Barang',
         })
       } else {
-        axios.get(Product + '/' + this.product_id).then((res) => {
+        ApiServices.get(Product + '/' + this.product_id).then((res) => {
           var data = res.data
+          data = data[0];
           var object = {
             product_id: data.product_id,
             product_desc: data.product_desc,
@@ -591,7 +592,7 @@ export default defineComponent({
     },
 
     getDetailSo(id) {
-      axios.get(DetailPo + '/' + id).then((res) => {
+      ApiServices.get(DetailPo + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {
@@ -608,7 +609,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(PurchaseOrder + '/' + id).then((res) => {
+      await ApiServices.get(PurchaseOrder + '/' + id).then((res) => {
         var data = res.data
         this.issue_at = data.issue_at
         this.due_at = data.due_at
@@ -626,7 +627,7 @@ export default defineComponent({
       const result = await this.validation()
       if (result == 0) {
         if (this.id) {
-          await axios
+          await ApiServices
             .put(PurchaseOrderAdd + '/' + this.id, {
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,
@@ -667,7 +668,7 @@ export default defineComponent({
               },
             )
         } else {
-          await axios
+          await ApiServices
             .post(PurchaseOrderAdd, {
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,

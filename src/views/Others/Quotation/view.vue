@@ -119,6 +119,7 @@ import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
 import { DetailQuatation, Quatations } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -175,7 +176,7 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(Quatations + '/' + id).then(
+            ApiServices.get(Quatations + '/' + id).then(
                 (res) => {
                     var data = res.data[0];
                     this.issue_at = data.issue_at;
@@ -191,7 +192,7 @@ export default defineComponent({
             )
         },
         getDetail(id) {
-            axios.get(DetailQuatation + '/' + id).then(
+            ApiServices.get(DetailQuatation + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.quatation_details = data;

@@ -299,6 +299,7 @@ import { RouterLink, useRouter } from 'vue-router'
 import axios from 'axios'
 import { AccReceive, AccUpdateDeposit } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -341,7 +342,7 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccReceive)        
+        const res = await ApiServices.get(AccReceive)        
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -470,7 +471,7 @@ export default defineComponent({
             status_payment = 'partial';
           }
 
-          const response = await axios.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
+          const response = await ApiServices.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
             id_invoice : selectedItem.value.id_invoice,
             payment_method : 'Transfer',
             status_payment: status_payment,

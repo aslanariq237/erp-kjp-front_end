@@ -107,19 +107,20 @@
               </tr>
               <tr
                 v-for="(account, index) in paginatedData"
-                :key="account.id"
+                :key="index"
                 class="hover:bg-gray-50 transition-colors duration-150"
               >
                 <td                   
                   class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-
-                >
-                  <div class="bg-yellow-400 text-slate-600 px-2 rounded-xl" v-if="account.status_payment == 'partial'">
-                    {{ account.status_payment }}
-                  </div>
-                  <div class="bg-green-400 text-slate-600 px-2 rounded-xl" v-else-if="account.status_payment == 'success'">
-                    {{ account.status_payment }}
-                  </div>
+                >                                    
+                  <div 
+                    class="text-slate-600 px-2 rounded-xl bg-gray-400" 
+                    :class="{
+                      'bg-green-400': account.status_payment === 'success',
+                      'bg-yellow-400': account.status_payment === 'partial'
+                    }">
+                      {{ account.status_payment }}
+                  </div>                  
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ account.code_po }}
@@ -360,9 +361,9 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import axios from 'axios'
 import { AccPayable, AccPayableDeposit } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'AccountReceivablePage',
@@ -410,7 +411,7 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await axios.get(AccPayable)
+        const res = await ApiServices.get(AccPayable)
         var data = res.data; 
         accounts.value = data;       
       } catch (error) {
@@ -536,7 +537,7 @@ export default defineComponent({
           }else{
             status_payment = 'partial';
           }
-          const response = await axios.put(AccPayableDeposit + '/' + selectedItem.value.id_po, {
+          const response = await ApiServices.put(AccPayableDeposit + '/' + selectedItem.value.id_po, {
             deposit: deposit,
             id_po: selectedItem.value.id_po,
             status_payment : status_payment,

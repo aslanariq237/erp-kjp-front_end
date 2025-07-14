@@ -93,6 +93,7 @@ import {
   TandaterAdd
 } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'DeliveryOrderForm',
@@ -152,7 +153,7 @@ export default defineComponent({
       products.amount = products.price * products.quantity;
     },
     getSalesOrder() {
-      axios.get(SalesOrders).then((res) => {
+      ApiServices.get(SalesOrders).then((res) => {
         var data = res.data;
         this.salesOrders = data;
       })
@@ -170,20 +171,19 @@ export default defineComponent({
         this.employee_name = selected.employee.employee_name;
         this.po_number = selected.po_number;
         this.due_at = selected.due_at;
-        this.getDeliveryOrder(this.id_so);
+        this.getDeliveryOrder(this.id_so);                
       }      
     },
 
     getDeliveryOrder(id) {
-      axios.get(Invoice + '/faktur').then((res) => {
+      ApiServices.get(Invoice + '/faktur').then((res) => {
         var data = res.data        
-        data = data.filter(item =>
-          Array.isArray(
-            item.detail_inv) &&
-            item.detail_inv.some(
-              detail => detail.id_so == id) && item.has_faktur == 0);
-        this.deliveryOrders = data;                
-      })
+        data = data.filter((filt) => 
+          filt.detail_inv.some(d => d.id_so == id) &&
+          filt.has_faktur == 0
+        )
+        this.deliveryOrders = data;                                
+      })      
     },
 
     showNotification(type, message) {
@@ -205,7 +205,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(GetFakturPajak + '/' + id).then(        
+      await ApiServices.get(GetFakturPajak + '/' + id).then(        
         (res) => {
           var data = res.data;
           console.log(data)
@@ -250,7 +250,7 @@ export default defineComponent({
       const result = await this.validation();      
       if (result == 0) {
         if (this.id == null) {
-          await axios.post(AddFakturPajak, {
+          await ApiServices.post(AddFakturPajak, {
             id_so: this.id_so,
             id_invoice: this.id_invoice,
             customer_id: this.customer_id,                               
@@ -282,7 +282,7 @@ export default defineComponent({
           )
         }
         else {
-          await axios.put(AddFakturPajak + '/' + this.id, {
+          await ApiServices.put(AddFakturPajak + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
             employee_id: 1,

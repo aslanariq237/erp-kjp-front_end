@@ -208,6 +208,7 @@ import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import Swal from 'sweetalert2'
 import { exportQuoPDF } from '@/core/helpers/exportToPdf'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'QuotationPage',
@@ -240,7 +241,7 @@ export default defineComponent({
     const dataexcel = ref([]);
 
     const Quatation = async () => {
-      await axios.get(Quatations).then((res) => {
+      ApiServices.get(Quatations).then((res) => {
         var data = res.data
         entries.value = data
       })
@@ -248,7 +249,7 @@ export default defineComponent({
 
     const detailQuo = async () => {
       try {
-        await axios.get(DetailQuatation).then((res) => {
+        ApiServices.get(DetailQuatation).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {

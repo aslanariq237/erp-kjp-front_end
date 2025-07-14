@@ -60,6 +60,7 @@ import axios from 'axios'
 import { PDFDocument } from 'pdf-lib'
 import { fileUpload, ProductCode } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -76,7 +77,7 @@ export default defineComponent({
             document_name: '',
             document_path: '',
             document_file: '',
-            compressedFile: null,            
+            selectedFile : null,            
             //others
             isSubmitting: false,
             notification: {
@@ -93,28 +94,8 @@ export default defineComponent({
     },
     methods: {
         async handleFileUpload(event) {
-            const file = event.target.files[0];
-            await this.compressdFile(file);
-        },
-        
-        async compressdFile(file)
-        {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFDocument.load(arrayBuffer)
-
-            pdfDoc.setTitle("");
-            pdfDoc.setAuthor("");
-            pdfDoc.setSubject("");
-            pdfDoc.getForm().flatten();
-            const compdfBytes = await pdfDoc.save();
-
-            this.compressedFile = new File([compdfBytes], `compressed_${file.name}`, { type: "application/pdf" });
-
-            console.log([
-                file.size,
-                this.compressedFile.size
-            ]);
-        },        
+            this.selectedFile = event.target.files[0];            
+        },                      
 
         showNotification(type, message) {
             this.notification = {
@@ -138,10 +119,10 @@ export default defineComponent({
         async onSubmit() {
             const result = await this.validation();            
             if (result != 0) {
-                const formData = new FormData();
-                formData.append('file', this.compressedFile);
-                formData.append('document_name', this.document_name)
-                await axios
+                const formData = new FormData(); 
+                formData.append('file', this.selectedFile);
+                formData.append('document_name', this.document_name);
+                await ApiServices
                     .post(fileUpload, formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',

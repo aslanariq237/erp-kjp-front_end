@@ -26,8 +26,8 @@ export default {
     MonthlyTarget,
     MonthlyQuatation,
     MonthlyInvoice,
-    SalesTarget,
-    FourInOne,
+    SalesTarget, 
+    FourInOne,   
   },
   name: 'Ecommerce',
 }

@@ -25,15 +25,7 @@ const router = createRouter({
           meta: {
             title: 'Account Payable',
           },
-        },
-        {
-          path: 'form',
-          name: 'Account Payable-Form',
-          component: () => import('../views/Others/AccountPayable/form.vue'),
-          meta: {
-            title: 'Account Payable-Form',
-          },
-        },
+        },        
       ],
     },
     {
@@ -46,15 +38,7 @@ const router = createRouter({
           meta: {
             title: 'Account Recieveable',
           },
-        },
-        {
-          path: 'form',
-          name: 'Account Receivable-Form',
-          component: () => import('../views/Others/account-receivable/form.vue'),
-          meta: {
-            title: 'Account Recieveable-Form',
-          },
-        },
+        },        
       ],
     },
     {
@@ -85,15 +69,7 @@ const router = createRouter({
           },
         },
       ],
-    },
-    {
-      path: '/admin-dashboard',
-      name: 'Admin Dashboard',
-      component: () => import('../views/Others/adminDashboard/index.vue'),
-      meta: {
-        title: 'Admin Dashboard',
-      },
-    },
+    },    
     {
       path: '/asset',
       children: [
@@ -282,28 +258,7 @@ const router = createRouter({
           },
         },
       ],
-    },
-    {
-      path: '/inquiry',
-      children: [
-        {
-          path: '',
-          name: 'Inquiry',
-          component: () => import('../views/Operation/Inquiry/index.vue'),
-          meta: {
-            title: 'Inquiry',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Inquiry-Form',
-          component: () => import('../views/Operation/Inquiry/form.vue'),
-          meta: {
-            title: 'Inquiry-Form',
-          },
-        },
-      ],
-    },
+    },    
     {
       path: '/invoice',
       children: [
@@ -371,36 +326,7 @@ const router = createRouter({
     //       },
     //     },
     //   ],
-    // },
-    {
-      path: '/opex',
-      children: [
-        {
-          path: '',
-          name: 'Opex',
-          component: () => import('../views/Others/OPEX/index.vue'),
-          meta: {
-            title: 'Opex',
-          },
-        },
-        {
-          path: 'form',
-          name: 'Opex-Form',
-          component: () => import('../views/Others/OPEX/form.vue'),
-          meta: {
-            title: 'Opex-Form',
-          },
-        },
-        {
-          path: 'edit/:id',
-          name: 'Opex-Edit',
-          component: () => import('../views/Others/OPEX/form.vue'),
-          meta: {
-            title: 'Opex-Form',
-          },
-        },
-      ],
-    },
+    // },    
     {
       path: '/opex-cogs',
       children: [
@@ -512,15 +438,7 @@ const router = createRouter({
           meta: {
             title: 'Opex Report',
           },
-        },
-        {
-          path: '/report/opex/form',
-          name: 'Opex Form Report',
-          component: () => import('../views/Others/OPEXReport/form.vue'),
-          meta: {
-            title: 'Opex Form Report',
-          },
-        },
+        },       
         {
           path: '/report/opex/edit/:id',
           name: 'Opex-report-Edit',

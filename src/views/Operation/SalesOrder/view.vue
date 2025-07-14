@@ -135,6 +135,7 @@ import FormGroup from '@/components/FormGroup.vue';
 import axios from 'axios';
 import { SalesOrders, DetailSo, PackageADRS } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -187,7 +188,7 @@ export default defineComponent({
     },
     methods: {
         getById(id) {
-            axios.get(SalesOrders + '/' + id).then(
+            ApiServices.get(SalesOrders + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.issue_at = data.issue_at;
@@ -201,36 +202,28 @@ export default defineComponent({
             )
         },
         getDetail(id) {
-            axios.get(DetailSo + '/' + id).then(
-                (res) => {
-                    var data = res.data;
-                    for (let i = 0; i < data.length; i++) {
-                        if (data[i].product_type == 'product') {
-                            this.sales_orders_details.push({
-                                product_code: data[i].product.product_code,
-                                product_pn: data[i].product.product_sn,
-                                product_desc: data[i].product.product_desc,
-                                product_type: data[i].product_type,
-                                quantity: data[i].quantity,
-                                price: data[i].price,
-                                discount: data[i].discount,
-                                amount: data[i].amount,
-                            });
-                        } else {
-                            this.sales_orders_details.push({
-                                product_code: data[i].package[i].code_package,
-                                product_pn: data[i].package[i].package_sn,
-                                product_desc: data[i].package[i].package_desc,
-                                product_type: data[i].product_type,
-                                quantity: data[i].quantity,
-                                price: data[i].price,
-                                discount: data[i].discount,
-                                amount: data[i].amount,
-                            })
-                        }
-                    }
+            ApiServices.get(DetailSo + '/' + id).then((res) => {
+                const data = res.data;
+                this.sales_order_details = [];
+
+                for (let i = 0; i < data.length; i++) {
+                    const productObj = {
+                        product_id: data[i].product_id,
+                        product_code: data[i].product?.product_code || '',
+                        product_desc: data[i].product?.product_desc || '',
+                        product_pn: data[i].product?.product_sn || '',
+                        product_brand: data[i].product?.product_brand || '',
+                        product_type: data[i].product_type,
+                        quantity: data[i].quantity,
+                        quantity_left: data[i].quantity_left,
+                        price: data[i].price,
+                        discount: data[i].discount,
+                        amount: data[i].amount,
+                        has_do: data[i].has_do
+                    };
+                    this.sales_order_details.push(productObj);
                 }
-            )
+            });
         },
         formatCurrency(value) {
             return new Intl.NumberFormat('en-US', {

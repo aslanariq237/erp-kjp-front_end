@@ -136,6 +136,7 @@ import {
 } from '@/core/utils/url_api'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -208,7 +209,7 @@ export default defineComponent({
   },
   methods: {        
     getById(id) {
-      axios.get(PurchaseOrder + '/' + id).then(
+      ApiServices.get(PurchaseOrder + '/' + id).then(
         (res) => {
           var data = res.data;
           this.issue_at = data.issue_at;
@@ -222,7 +223,7 @@ export default defineComponent({
       )
     },
     getDetail(id) {
-      axios.get(DetailPo + '/' + id).then(
+      ApiServices.get(DetailPo + '/' + id).then(
         (res) => {
           var data = res.data
           for (let i = 0; i < data.length; i++) {
@@ -276,7 +277,7 @@ export default defineComponent({
     async onSubmit() {
       const result = 2;                           
       if (result != 0) {
-        await axios
+        await ApiServices
           .post(PurchaseOrder + '/good-receive', {                                  
             id_po: this.id_po,
             purchase_order_details: this.purchase_order_details,

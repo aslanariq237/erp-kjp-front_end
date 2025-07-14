@@ -118,12 +118,12 @@
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import router from '@/router'
-import axios from 'axios'
 import Swal from "sweetalert2"
 import { AddCustomer, Customer } from '@/core/utils/url_api' // Pastikan ini sesuai path-nya
 import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import FormGroup from '@/components/FormGroup.vue'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'assets-forms',
@@ -246,7 +246,7 @@ export default defineComponent({
     },
 
     getPoint(id) {
-      axios.get(Customer + '/point/' + id).then(
+      ApiServices.get(Customer + '/point/' + id).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
@@ -264,7 +264,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(Customer + '/' + id).then(
+      await ApiServices.get(Customer + '/' + id).then(
         (res) => {
           var data = res.data;          
           this.customer_name = data.customer_name;
@@ -276,17 +276,7 @@ export default defineComponent({
           this.customer_contact = data.customer_contact;
           if (data.customer_id) {
             this.getPoint(data.customer_id);
-          }                    
-          // this.customer_name = data[0].customer_name;
-          // this.customer_phone = data[0].customer_phone;
-          // this.customer_email = data[0].customer_email;
-          // this.customer_address = data[0].customer_address;
-          // this.customer_npwp = data[0].customer_npwp;
-          // this.customer_singkatan = data[0].customer_singkatan;
-          // this.customer_contact = data[0].customer_contact;
-          // if (data[0].customer_id) {
-          //   this.getPoint(data[0].customer_id)
-          // }
+          }                              
         }
       )
     },
@@ -294,7 +284,7 @@ export default defineComponent({
       const result = 2
       if (result != 0) {
         if (this.id) {
-          await axios.put(
+          await ApiServices.put(
             AddCustomer + '/' + this.id, {
             customer_name: this.customer_name,
             customer_phone: parseInt(this.customer_phone) || 0,
@@ -336,7 +326,7 @@ export default defineComponent({
             },
           )
         } else {
-          await axios.post(
+          await ApiServices.post(
             AddCustomer, {
             customer_name: this.customer_name,
             customer_phone: parseInt(this.customer_phone) || 0,

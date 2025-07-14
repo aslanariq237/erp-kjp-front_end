@@ -107,7 +107,7 @@ import AdminLayout from '@/components/layout/AdminLayout.vue';
 import { Form, Field, ErrorMessage } from 'vee-validate';
 import Notification from '@/components/Notification.vue';
 import FormGroup from '@/components/FormGroup.vue';
-import axios from 'axios';
+import ApiServices from '@/core/services/ApiServices';
 import { SalesOrders, DetailSo, DetailPo, PurchaseOrder } from '@/core/utils/url_api';
 import { useRoute } from 'vue-router';
 
@@ -163,7 +163,7 @@ export default defineComponent({
     },
     methods: {        
         getById(id) {
-            axios.get(PurchaseOrder + '/' + id).then(
+            ApiServices.get(PurchaseOrder + '/' + id).then(
                 (res) => {
                     var data = res.data;                       
                     this.issue_at = data.issue_at;
@@ -178,7 +178,7 @@ export default defineComponent({
         },
 
         getDetail(id){
-            axios.get(DetailPo + '/' + id).then(
+            ApiServices.get(DetailPo + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.sales_orders_details = data;                    

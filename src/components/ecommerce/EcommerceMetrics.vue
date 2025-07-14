@@ -26,7 +26,7 @@
       <div class="flex items-end justify-between mt-5">
         <div>
           <span class="text-sm text-gray-500 dark:text-gray-400">Quatation</span>
-          <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ inquiry }}</h4>
+          <h4 class="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">{{ quotation }}</h4>
         </div>
 
         <span
@@ -161,17 +161,20 @@
   </div>
 </template>
 <script>
-import { Invoice, PurchaseOrder, Quatations, SalesOrders } from '@/core/utils/url_api';
+import ApiServices from '@/core/services/ApiServices';
+import { Invoice, PurchaseOrder, Quatations, ReportSales, SalesOrders } from '@/core/utils/url_api';
 import axios from 'axios';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
   data(){
     return {
-      inquiry : 0,
+      quotation : 0,      
+      quotation_total : 0,      
       salesorder: 0,
-      purchaseorder: 0,
+      salesorder_total: 0,      
       invoice: 0,
+      invoice_total: 0,
     }       
   },
   async mounted(){
@@ -179,22 +182,15 @@ export default defineComponent({
   },
   methods: {
     getInvoice(){
-      axios.get(Invoice).then((res) => {
-        var data = res.data;
-        this.invoice = data.length
-      })
-
-      axios.get(SalesOrders).then(
+      ApiServices.get(ReportSales).then(
         (res) => {
           var data = res.data;
-          this.salesorder = data.length
-        }
-      )
-      
-      axios.get(Quatations).then(
-        (res) => {
-          var data = res.data;
-          this.inquiry = data.length;
+          this.invoice = data.invoice.count;
+          this.invoice_total = data.invoice.total;
+          this.quotation = data.quotation.count;
+          this.quotation_total = data.quotation.total;
+          this.salesorder = data.salesorder.count;
+          this.salesorder_total = data.salesorder.total;
         }
       )
     },        

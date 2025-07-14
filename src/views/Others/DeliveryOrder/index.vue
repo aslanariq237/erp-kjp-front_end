@@ -199,6 +199,7 @@ import { createApp, h } from 'vue'
 import router from '@/router'
 import jsPDF from 'jspdf'
 import { exportDoPDF } from '@/core/helpers/exportToPdf'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'DeliveryOrderPage',
@@ -217,7 +218,7 @@ export default defineComponent({
     const fetchDeliveryOrders = async () => {
       loading.value = true
       try {
-        const response = await axios.get(DeliveryOrder)
+        const response = await ApiServices.get(DeliveryOrder)
         entries.value = response.data  
         var data = response.data;        
       } catch (error) {
@@ -229,7 +230,7 @@ export default defineComponent({
 
     const getDetailDO = async() => {
       try {
-        await axios.get(DetailDo).then((res) => {
+        await ApiServices.get(DetailDo).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -278,11 +279,11 @@ export default defineComponent({
       }
 
       // Sort
-      result.sort((a, b) => {
-        const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
-        const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
-        return fieldA.localeCompare(fieldB)
-      })
+      // result.sort((a, b) => {
+      //   const fieldA = a[sortBy.value]?.toString().toLowerCase() || ''
+      //   const fieldB = b[sortBy.value]?.toString().toLowerCase() || ''
+      //   return fieldA.localeCompare(fieldB)
+      // })
 
       return result
     })

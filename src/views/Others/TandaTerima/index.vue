@@ -194,6 +194,7 @@ import axios from 'axios'
 import { DetailTandater, SalesOrders, Tandater } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportTTPDF } from '@/core/helpers/exportToPdf'
+import ApiServices from '@/core/services/ApiServices'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -226,7 +227,7 @@ export default defineComponent({
 
     const GetSalesOrder = async () => {
       try {
-        const res = await axios.get(Tandater)        
+        const res = await ApiServices.get(Tandater)        
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -235,7 +236,7 @@ export default defineComponent({
 
     const getDetail = async() => {
       try {
-        const res = await axios.get(DetailTandater)
+        const res = await ApiServices.get(DetailTandater)
         dataexcel.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)

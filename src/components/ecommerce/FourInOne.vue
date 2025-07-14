@@ -53,6 +53,7 @@ import axios from 'axios'
 
 // URLs for API endpoints
 import { SalesOrdersMonthly, Quatations } from '@/core/utils/url_api'
+import ApiServices from '@/core/services/ApiServices'
 
 const menuItems = [
   { label: 'View Details', onClick: () => console.log('View Details clicked') },
@@ -83,7 +84,7 @@ const series = ref([
 // Function to fetch invoice data
 const getInvoice = async () => {
   try {
-    const res = await axios.get(SalesOrdersMonthly)
+    const res = await ApiServices.get(SalesOrdersMonthly)
     const data = res.data
     const monthData = Array(12).fill(0)
 
@@ -101,7 +102,7 @@ const getInvoice = async () => {
 // Function to fetch sales data
 const getSales = async () => {
   try {
-    const res = await axios.get(SalesOrdersMonthly)
+    const res = await ApiServices.get(SalesOrdersMonthly)
     const data = res.data
     const monthData = Array(12).fill(0)
 
@@ -129,23 +130,11 @@ const setSalesTarget = () => {
   // Set the target data to the series
   series.value[3].data = targetData
 }
-const fetchSalesData = async () => {
-  try {
-    // Use a different endpoint or parameter to distinguish from invoice data
-    const res = await axios.get(SalesOrdersMonthly + '?type=sales')
-    // ...processing code...
-  } catch (err) {
-    // Fallback: Generate example data that's different from invoices
-    const invoiceData = [...series.value[0].data]
-    const sampleSalesData = invoiceData.map((val) => Math.round(val * 1.15))
-    series.value[1].data = sampleSalesData
-  }
-}
 
 // Function to fetch quotation data
 const getQuotation = async () => {
   try {
-    const res = await axios.get(Quatations + '/monthly')
+    const res = await ApiServices.get(Quatations + '/monthly')
     const data = res.data
     const monthData = Array(12).fill(0)
 

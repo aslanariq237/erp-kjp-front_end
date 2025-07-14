@@ -28,6 +28,8 @@ export const DetailDo = urlLocalhost + 'detail_do'
 export const DetailQuatation = urlLocalhost + 'detail_quatation'
 export const DetailTandater = urlLocalhost + 'detail_tandater'
 
+export const DocumentFile = urlLocalhost + 'documents';
+
 //E
 export const Employee = urlLocalhost + 'employees'
 export const EmployeeCode = urlLocalhost + 'employees_code'
@@ -74,6 +76,9 @@ export const PoJasaKirimCode = urlLocalhost + 'po-jasakirim/store'
 export const Quatations = urlLocalhost + 'quatations'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'
 export const QuatationsDelete = urlLocalhost + 'quatations_delete'
+
+//R
+export const ReportSales = urlLocalhost + 'sales_count'
 //S
 export const SalesOrders = urlLocalhost + 'sales_orders'
 export const SalesOrdersMonthly = urlLocalhost + 'sales_orders/monthly'

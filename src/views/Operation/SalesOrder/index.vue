@@ -212,6 +212,7 @@ import axios from 'axios'
 import { SalesOrders, SalesOrderDelete, DetailSo } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -246,7 +247,7 @@ export default defineComponent({
 
     const GetSalesOrder = async () => {
       try {
-        const res = await axios.get(SalesOrders)
+        const res = await ApiServices.get(SalesOrders)
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -255,7 +256,7 @@ export default defineComponent({
 
     const GetDetailSo = async () => {
       try {
-        await axios.get(DetailSo).then((res) => {
+        await ApiServices.get(DetailSo).then((res) => {
           dataexcel.value = res.data;
         }).catch((error) => {
           console.error('Error Fetching : ', error)
@@ -307,7 +308,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(SalesOrderDelete + '/' + id)
+          await ApiServices.delete(SalesOrderDelete + '/' + id)
           await GetSalesOrder()
           Swal.fire('Deleted!', 'The Sales Order has been deleted.', 'success')
         } catch (error) {

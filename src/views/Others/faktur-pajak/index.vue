@@ -248,6 +248,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { GetFakturPajak } from '@/core/utils/url_api'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'FakturPajakPage',
@@ -287,7 +288,7 @@ export default defineComponent({
     const fetchData = async () => {
       loading.value = true
       try {
-        const response = await axios.get(GetFakturPajak)
+        const response = await ApiServices.get(GetFakturPajak)
         accounts.value = response.data
       } catch (error) {
         console.error('Error fetching data:', error)

@@ -141,10 +141,10 @@ import { Form, Field, ErrorMessage } from 'vee-validate'
 import Swal from 'sweetalert2'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
-import axios from 'axios'
 import { Employee, EmployeeCode } from '@/core/utils/url_api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
     name: 'PurchaseOrderForm',
@@ -302,7 +302,7 @@ export default defineComponent({
         },
 
         async getById(id) {
-            await axios.get(Employee + '/' + id).then(
+            await ApiServices.get(Employee + '/' + id).then(
                 (res) => {
                     var data = res.data;
                     this.employee_name = data.employee_name;
@@ -322,7 +322,7 @@ export default defineComponent({
             const result = 2
             if (result != 0) {
                 if (this.id) {
-                    await axios
+                    await ApiServices
                     .put(EmployeeCode + '/' + this.id, {
                         employee_name: this.employee_name,
                         employee_phone: this.employee_phone,
@@ -361,7 +361,7 @@ export default defineComponent({
                         },
                     )
                 }else{
-                    await axios
+                    await ApiServices
                     .post(EmployeeCode, {
                         employee_name: this.employee_name,
                         employee_phone: this.employee_phone,

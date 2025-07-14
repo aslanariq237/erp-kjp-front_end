@@ -91,6 +91,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { DetailInvoice, GetSalesManagement, Invoice } from '@/core/utils/url_api';
+import ApiServices from '@/core/services/ApiServices';
 
 import axios from 'axios'
 
@@ -131,7 +132,7 @@ export default defineComponent({
 
     const getDetailInv = async() => {
       try {
-        await axios.get(GetSalesManagement).then((res) => {
+        await ApiServices.get(GetSalesManagement).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
