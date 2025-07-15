@@ -14,6 +14,7 @@ export default defineConfig({
       allowedHeaders: ["Content-type", "Authorization"],
       preflightContinue: true,
     },    
+    allowedHosts : ['erpkjp.com']
   },
   plugins: [
     vue(),

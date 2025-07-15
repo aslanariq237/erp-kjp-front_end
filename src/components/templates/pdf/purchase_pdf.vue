@@ -104,7 +104,7 @@
                                         <div class="flex justify-between">
                                             <span>IDR. </span>
                                             <span>
-                                                {{ numberWithCommas(item.sub_total) }},00
+                                                {{ numberWithCommas(item.sub_total) }}
                                             </span>
                                         </div>
                                     </td>
@@ -119,7 +119,7 @@
                                     <td class="text-xs px-3 py-2 border-gray-200 border-2">
                                         <div class="flex justify-between">
                                             <span>IDR. </span>
-                                            <span>{{ numberWithCommas(item.ppn) }},00</span>
+                                            <span>{{ numberWithCommas(item.ppn) }}</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -133,7 +133,7 @@
                                     <td class="text-xs px-3 py-2 border-gray-200 border-2">
                                         <div class="flex justify-between">
                                             <p>IDR. </p>
-                                            {{ numberWithCommas(item.grand_total) }},00
+                                            {{ numberWithCommas(item.grand_total) }}
                                         </div>
                                     </td>
                                 </tr>
