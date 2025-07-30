@@ -125,6 +125,22 @@
                                     </div>
                                 </td>
                             </tr>
+                            <tr v-if="item.customer.customer_name == 'PT. Khayahan Jaya Persada'">
+                                <td class="px-3 py-2"></td>
+                                <td class="px-3 py-2"></td>
+                                <td class="px-3 py-2"></td>
+                                <td class="px-3 py-2"></td>
+                                <td class="text-xs px-3 py-2 border-gray-200 border-2">Invoice
+                                    DPP</td>
+                                <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                    <div class="flex justify-between">
+                                        <span>IDR. </span>
+                                        <span>
+                                            {{ numberWithCommas(Math.round(item.sub_total * 11/12)) }},00
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
                             <tr>
                                 <td class="px-3 py-2"></td>
                                 <td class="px-3 py-2"></td>

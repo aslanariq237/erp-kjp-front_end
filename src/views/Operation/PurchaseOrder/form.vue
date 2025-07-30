@@ -241,7 +241,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
               <tr v-for="poDetail in purchase_order_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }}</td>
+                <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.product_desc }} - {{ poDetail.product_sn }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ poDetail.quantity }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
@@ -509,10 +509,13 @@ export default defineComponent({
       } else {
         ApiServices.get(Product + '/' + this.product_id).then((res) => {
           var data = res.data
-          data = data[0];
+          if (Array.isArray(data)) {
+            data = data[0];
+          }
           var object = {
             product_id: data.product_id,
             product_desc: data.product_desc,
+            product_sn : data.product_sn,
             quantity: this.quantity,
             price: this.price,
             amount: this.price * this.quantity,
@@ -617,6 +620,7 @@ export default defineComponent({
         this.vendor_id = data.vendor_id
         this.vendor_name = data.vendor.vendor_name
         this.deposit = data.deposit
+        this.checkppn = data.checkppn
         if (data.id_po) {
           this.getDetailSo(data.id_po)
         }

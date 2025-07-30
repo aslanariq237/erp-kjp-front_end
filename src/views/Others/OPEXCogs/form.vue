@@ -100,6 +100,7 @@ import { AddOpex, GetOpex } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
 import { Customer } from '@/core/utils/url_api'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'AccountReceivableForm',
@@ -150,7 +151,7 @@ export default defineComponent({
 
   methods: {
     getCustomer() {
-      axios.get(Customer).then((res) => {
+      ApiServices.get(Customer).then((res) => {
         var data = res.data
         this.customers = data
       })
@@ -200,7 +201,7 @@ export default defineComponent({
       return count
     },
     async getById(id) {
-      await axios.get(GetOpex + '/' + id).then((res) => {
+      await ApiServices.get(GetOpex + '/' + id).then((res) => {
         var data = res.data;
         this.opex_name = data.opex_name;
         this.opex_price = data.opex_price;
@@ -214,7 +215,7 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (!this.id) {
-          await axios.post(AddOpex, {
+          await ApiServices.post(AddOpex, {
             customer_id: this.customer_id,
             opex_name: this.opex_name,
             opex_price: this.opex_price,
@@ -244,7 +245,7 @@ export default defineComponent({
           },
           )
         }else{
-          await axios.put(AddOpex + '/' + this.id, {
+          await ApiServices.put(AddOpex + '/' + this.id, {
           customer_id: this.customer_id,
           opex_name: this.opex_name,
           opex_price: this.opex_price,

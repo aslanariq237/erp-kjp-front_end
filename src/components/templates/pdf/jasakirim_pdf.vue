@@ -23,8 +23,8 @@
         <div class="body">
             <div class="mt-3">
                 <div class="title text-center">
-                    <p class="text-xl font-semibold mt-5" v-if="item.approved == 0">DRAFT PURCHASE ORDER JASA KIRIM</p>
-                    <p class="text-xl font-semibold mt-5" v-else>PURCHASE ORDER JASA KIRIM</p>
+                    <p class="text-md font-semibold mt-5" v-if="item.approved == 0">DRAFT PURCHASE ORDER JASA KIRIM</p>
+                    <p class="text-md font-semibold mt-5" v-else>PURCHASE ORDER JASA KIRIM</p>
                 </div>
                 <div class="flex justify-between text-xs mt-5">
                     <div class="left w-[50%]">
@@ -109,7 +109,7 @@
                                 <td class="text-xs px-3 py-2 border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <span>IDR. </span>
-                                        <span>{{ numberWithCommas(item.ppn) }},00</span>
+                                        <span>{{ numberWithCommas(item.ppn) }}</span>
                                     </div>
                                 </td>
                             </tr>
@@ -121,7 +121,7 @@
                                 <td class="text-xs px-3 py-2 border-gray-200 border-2">
                                     <div class="flex justify-between">
                                         <p>IDR. </p>
-                                        {{ numberWithCommas(item.grand_total) }},00
+                                        {{ numberWithCommas(item.grand_total) }}
                                     </div>
                                 </td>
                             </tr>
@@ -136,7 +136,7 @@
                 <div class="flex justify-between text-center">
                     <div>
                         <p class="mb-2 text-xs">Prepared By</p>
-                        <img :src="getImagePaths('tt-imam-without-stempel.png')" width="170">
+                        <img :src="getImagePaths('tt-imam-without-stempel.png')" width="90">
                         <div class="text-xs">
                             <p>IMAM FAJRI</p>
                         </div>
@@ -147,7 +147,7 @@
                         </div>
                         <div v-else>
                             <p class="text-xs">Approved By</p>
-                            <img :src="getImagePaths('tt-vinvent.png')" width="170">
+                            <img :src="getImagePaths('tt-vinvent.png')" width="210">
                             <div class="text-xs">
                                 <p>VINCENTIUS ADITYA HARNAWAN</p>
                             </div>

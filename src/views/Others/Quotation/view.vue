@@ -97,11 +97,7 @@
                             <div class="sub_total flex justify-between mt-3">
                                 <p>Sub Total</p>
                                 <p>{{ formatCurrency(sub_total) }}</p>
-                            </div>
-                            <div class="sub_total flex justify-between mt-3">
-                                <p>Sub Total</p>
-                                <p>{{ formatCurrency(sub_total) }}</p>
-                            </div>
+                            </div>                            
                         </div>
                     </div>
                 </div>

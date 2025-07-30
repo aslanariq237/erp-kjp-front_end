@@ -215,6 +215,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { AddOpexApprove, GetAbsorb, GetOpex, Product } from '@/core/utils/url_api'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'OpexPage',
@@ -256,7 +257,7 @@ export default defineComponent({
     const fetchOpexData = async () => {
       loading.value = true
       try {
-        const response = await axios.get(GetOpex)
+        const response = await ApiServices.get(GetOpex)
         opexData.value = response.data
       } catch (error) {
         console.error('Error fetching OPEX data:', error)
@@ -272,7 +273,7 @@ export default defineComponent({
     const approve = async (id) => {
       isModalOpen.value = true;
       opex_id.value = id;
-      axios.get(GetAbsorb + '/' + id).then(
+      ApiServices.get(GetAbsorb + '/' + id).then(
         (res) => {
           var data = res.data;
           for (let i = 0; i < data.length; i++) {
@@ -299,7 +300,7 @@ export default defineComponent({
         return;
       }
       
-      await axios.post(AddOpexApprove + '/' + opex_id.value, {        
+      await ApiServices.post(AddOpexApprove + '/' + opex_id.value, {        
         detail : detail.value,
       }).then(
         (res) => {

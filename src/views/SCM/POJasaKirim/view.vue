@@ -265,6 +265,7 @@ import {
 import router from '@/router'
 import { useAuthStore } from '@/stores/authStores'
 import { useRoute } from 'vue-router'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'PurchaseOrderForm',
@@ -382,7 +383,7 @@ export default defineComponent({
     },    
 
     getDetailSo(id) {
-      axios.get(PoJasaKirimDetail + '/' + id).then((res) => {
+      ApiServices.get(PoJasaKirimDetail + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {            
@@ -398,7 +399,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(PoJasaKirim + '/' + id).then((res) => {
+      await ApiServices.get(PoJasaKirim + '/' + id).then((res) => {
         var data = res.data
         this.issue_at = data[0].issue_at
         this.due_at = data[0].due_at

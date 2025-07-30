@@ -93,17 +93,21 @@
                   {{ entry.issue_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ entry.due_at }}                  
-                </td>                
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">                  
+                  {{ entry.due_at }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   <div v-if="entry.approved == 1">
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_po)">
                       View
                     </button>
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_po)">
+                      Edit
+                    </button>
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
                       Export
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)" v-if="entry.deposit != entry.grand_total">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)"
+                      v-if="entry.deposit != entry.grand_total">
                       Edit PPN
                     </button>
                   </div>
@@ -113,17 +117,18 @@
                     </button>
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_po)">
                       Edit
-                    </button>                    
+                    </button>
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
                       Export
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)" v-if="entry.deposit != entry.grand_total">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)"
+                      v-if="entry.deposit != entry.grand_total">
                       Edit PPN
                     </button>
                     <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="approve(entry.id_po)">
                       Approve
                     </button>
-                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="deleteData(entry.id_po)">
+                    <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="deleteData(entry)">
                       Delete
                     </button>
                   </div>
@@ -244,10 +249,10 @@ export default defineComponent({
       router.push('/purchase-order/view/' + id)
     }
 
-    const editData = (id) => {
-      router.push('purchase-order/edit/' + id)
+    const editData = (entry) => {
+      router.push('purchase-order/edit/' + entry)
     }
-    const deleteData = async (id) => {
+    const deleteData = async (entry) => {
       const result = await Swal.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -258,13 +263,20 @@ export default defineComponent({
         confirmButtonText: 'Yes, delete it!',
       })
 
-      if (result.isConfirmed) {
-        try {
-          await ApiServices.delete(PurchaseOrderDelete + '/' + id)
-          await getPurchaseOrder()
-          Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
-        } catch (error) {
-          Swal.fire('Error!', 'There was an error deleting the Purchase Order.', 'error')
+      if (entry.has_gr) {
+        Swal.fire({
+          icon: 'error',
+          text: 'GR has Created',
+        });
+      } else {
+        if (result.isConfirmed) {
+          try {
+            await ApiServices.delete(PurchaseOrderDelete + '/' + entry.id_po)
+            await getPurchaseOrder()
+            Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
+          } catch (error) {
+            Swal.fire('Error!', 'There was an error deleting the Purchase Order.', 'error')
+          }
         }
       }
     }
@@ -283,7 +295,7 @@ export default defineComponent({
             vendor_name.includes(query)
           )
         })
-      }      
+      }
       return result
     })
 
@@ -363,14 +375,31 @@ export default defineComponent({
     const approve = (id) => {
       ApiServices.post(PurchaseOrder + '/approve/' + id).then((res) => {
         console.log(res)
+      }).then((res) => {
+        if (res) {
+          Swal.fire({
+            icon: 'success',
+            text: "Berhasil Approve"
+          }).then(async(res) => {
+            await getPurchaseOrder();
+          })
+        }
       })
     }
 
     const editPPN = (item) => {
-      ApiServices.post(PurchaseOrder + '/edit_ppn/' + item.id_po,{
-        sub_total : item.sub_total,
-        ppn : item.ppn,
-      }).then((res) => {        
+      ApiServices.post(PurchaseOrder + '/edit_ppn/' + item.id_po, {
+        sub_total: item.sub_total,
+        ppn: item.ppn,
+      }).then((res) => {
+        Swal.fire({
+          icon: 'success',
+          text: "Berhasil Approve"
+        }).then(async(res) => {
+          if (res.isConfirmed) {
+            await getPurchaseOrder();
+          }
+        })
       }).catch((err) => console.error(err));
     }
 

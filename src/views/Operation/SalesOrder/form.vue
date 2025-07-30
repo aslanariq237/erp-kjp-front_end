@@ -123,7 +123,7 @@
           <FormGroup class="w-full md:w-2/5 relative" label="Product" :required="true" :error="rules.product_id"
             errorMessage="Pilih produk">
             <input type="text" name="customer_name" id="customer_name" v-model="product_name" autocomplete="off"
-              @input="filterProducts" class="rounded-md" placeholder="Type customer name" />
+              @input="filterProducts" class="rounded-md" placeholder="Type Product" />
             <ul v-if="filteredProducts.length && product_name"
               class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
               <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
@@ -377,7 +377,10 @@ export default defineComponent({
 
     addPoDetails() {
       ApiServices.get(Product + '/' + this.product_id).then((res) => {
-        var data = res.data[0]
+        var data = res.data
+        if (Array.isArray(data)) {
+          data = data[0];
+        }
         if (this.quantity > data.product_stock) {
           Swal.fire({
             icon: 'warning',
@@ -622,14 +625,14 @@ export default defineComponent({
               customer_id: this.customer_id,
               employee_id: this.employee_id,
               po_number: this.po_number,
-              termin: this.termin,        
-              sub_total : this.sub_total,
-              deposit : this.deposit,
-              ppn : this.ppn,
-              grand_total : this.grand_total,              
+              termin: this.termin,
+              sub_total: this.sub_total,
+              deposit: this.deposit,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
               issue_at: this.issue_at,
-              due_at: this.due_at,              
-              sales_order_details: formattedDetails,
+              due_at: this.due_at,
+              sales_order_details: this.sales_order_details,
             })
             .then(
               (response) => {

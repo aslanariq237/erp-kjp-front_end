@@ -46,8 +46,7 @@
         </div>
       </div>
       <!-- Enhanced Table Section -->
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+      <div class="relative overflow-x-scroll">
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
@@ -123,7 +122,7 @@
                     Edit PPN
                   </button>
                   <button @click="exportToPDF(entry)" class="shadow-lg px-3 py-2 rounded-lg border">
-                    Export To PDF
+                    Pdf
                   </button>
                 </td>
               </tr>
@@ -192,8 +191,7 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div>            
   </AdminLayout>
 </template>
 
@@ -221,8 +219,8 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_quatation', label: 'Quotation Number' },
-      { key: 'customer', label: 'Customer Name' },
+      { key: 'code_quatation', label: 'Quotation' },
+      { key: 'customer', label: 'Customer' },
       { key: 'sub_total', label: 'Sub Total' },
       { key: 'sub_total', label: 'PPN' },
       { key: 'sub_total', label: 'Amount' },
@@ -266,6 +264,8 @@ export default defineComponent({
     const filteredData = computed(() => {
       let result = [...entries.value]
 
+      result.sort((a, b) => new Date(b.issu_at) - new Date(a.issue_at));
+      
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
@@ -305,7 +305,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(QuatationsDelete + '/' + id)
+          await ApiServices.delete(QuatationsDelete + '/' + id)
           await Quatation()
           Swal.fire('Deleted!', 'The quotation has been deleted.', 'success')
         } catch (error) {
@@ -386,16 +386,16 @@ export default defineComponent({
     }
 
     const editPPN = (item) => {
-      axios.post(QuatationsAdd + '/edit-ppn/' + item.id_quatation,{
+      ApiServices.post(QuatationsAdd + '/edit-ppn/' + item.id_quatation,{
         sub_total : item.sub_total,
         ppn : item.ppn,
       }).then((res) => { 
         Swal.fire({
           icon: 'success',
           title : 'Berhasil Edit PPN'
-        }).then((res) => {
+        }).then(async(res) => {
           if (res.isConfirmed) {
-            window.location.reload();
+            await Quatation();
           }
         })
       }).catch((err) => console.error(err));

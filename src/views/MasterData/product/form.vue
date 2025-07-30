@@ -364,7 +364,9 @@ export default defineComponent({
             ApiServices.get(Product + '/' + id).then(
                 (res) => {
                     var data = res.data; 
-                    data = data[0];
+                    if (Array.isArray(data)) {
+                        data = data[0];
+                    }
                     this.product_desc = data.product_desc;
                     this.product_category_id = data.product_category_id;
                     this.product_brand = data.product_brand;

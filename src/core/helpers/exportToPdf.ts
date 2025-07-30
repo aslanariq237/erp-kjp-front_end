@@ -3,6 +3,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import purchase_pdf from "@/components/templates/pdf/purchase_pdf.vue";
 import { createApp, h } from "vue";
+import { nextTick } from "vue";
 import Do_pdf from "@/components/templates/pdf/do_pdf.vue";
 import Invoice_pdf from "@/components/templates/pdf/invoice_pdf.vue";
 import Quotation_pdf from "@/components/templates/pdf/quotation_pdf.vue";
@@ -146,7 +147,7 @@ export const exportInvPDF = async (item: Invoice) => {
   }
 };
 
-export const exportQuoPDF = (item: Quotation) => {
+export const exportQuoPDF = async (item: Quotation) => {
   const container = document.createElement('div');
   container.style.width = '794px';
   container.style.height = '1123px';
@@ -156,6 +157,9 @@ export const exportQuoPDF = (item: Quotation) => {
   });
 
   const instance = app.mount(container);
+
+  await nextTick();
+  await new Promise(resolve => setTimeout(resolve, 200));
 
   // Gunakan html2canvas untuk mengonversi elemen ke gambar
   html2canvas(instance.$el).then((canvas) => {
@@ -174,6 +178,7 @@ export const exportQuoPDF = (item: Quotation) => {
   app.unmount();
   document.body.removeChild(container);
 }
+
 export const exportTTPDF = (item: Tandaterima) => {
   const container = document.createElement('div')
   container.style.width = '794px';

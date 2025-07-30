@@ -85,9 +85,9 @@ import { Form } from 'vee-validate'
 import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
-import axios from 'axios'
 import { AddOpex, GetOpex } from '@/core/utils/url_api'
 import router from '@/router'
+import ApiServices from '@/core/services/ApiServices'
 import Swal from 'sweetalert2'
 import { Customer } from '@/core/utils/url_api'
 
@@ -125,8 +125,7 @@ export default defineComponent({
       },
     }
   },
-  async mounted() {
-    this.getCustomer();
+  async mounted() {    
     const route = useRoute();
     const id = route.params.id;
     if (id) {
@@ -137,26 +136,7 @@ export default defineComponent({
     this.issue_at = new Date().toLocaleDateString('en-ca')
   },
 
-  methods: {
-    getCustomer() {
-      axios.get(Customer).then((res) => {
-        var data = res.data
-        this.customers = data
-      })
-    },
-
-    filterCustomers() {
-      const searchTerm = this.customer_name.toLowerCase()
-      this.filteredCustomers = this.customers.filter((customer) => {
-        const name = customer.customer_name.toLowerCase()
-        return name.includes(searchTerm)
-      })
-    },
-    selectCustomer(customer) {
-      this.customer_id = customer.customer_id
-      this.customer_name = customer.customer_name
-      this.filteredCustomers = []
-    },
+  methods: {        
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -190,7 +170,7 @@ export default defineComponent({
       return count
     },
     async getById(id) {
-      await axios.get(GetOpex + '/' + id).then((res) => {
+      await ApiServices.get(GetOpex + '/' + id).then((res) => {
         var data = res.data;
         this.opex_name = data.opex_name;
         this.opex_price = data.opex_price;
@@ -202,7 +182,7 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (!this.id) {
-          await axios.post(AddOpex, {
+          await ApiServices.post(AddOpex, {
             customer_id: this.customer_id,
             opex_name: this.opex_name,
             opex_price: this.opex_price,
@@ -233,7 +213,7 @@ export default defineComponent({
           },
           )
         }else{
-          await axios.put(AddOpex + '/' + this.id, {
+          await ApiServices.put(AddOpex + '/' + this.id, {
           customer_id: this.customer_id,
           opex_name: this.opex_name,
           opex_price: this.opex_price,

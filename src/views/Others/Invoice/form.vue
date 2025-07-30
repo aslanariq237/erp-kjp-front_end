@@ -291,6 +291,7 @@ export default defineComponent({
         ApiServices.get(DetailDo + '/' + this.id_do).then(
           (res) => {
             var data = res.data;
+            console.log(data);
             for (let i = 0; i < data.length; i++) {
               var object = {
                 id_so: this.id_so,

@@ -245,6 +245,7 @@ import axios from 'axios'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { GetOpex } from '@/core/utils/url_api'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'OpexPage',
@@ -285,7 +286,7 @@ export default defineComponent({
     const fetchOpexData = async () => {
       loading.value = true
       try {
-        const response = await axios.get(GetOpex)
+        const response = await ApiServices.get(GetOpex)
         opexData.value = response.data
       } catch (error) {
         console.error('Error fetching OPEX data:', error)

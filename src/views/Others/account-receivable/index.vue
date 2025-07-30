@@ -42,10 +42,10 @@
             <label class="text-sm font-medium text-gray-600 mb-2 block">Sort By</label>
             <select v-model="sortBy"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="name">Name</option>
-              <option value="balance">Balance</option>
-              <option value="accountNumber">Account Number</option>
-              <option value="date">Date Created</option>
+              <option value="status">Status</option>
+              <option value="unpaid">Unpaid</option>
+              <option value="partial">Partial</option>
+              <option value="full">Full</option>
             </select>
           </div>
           <div class="form-group">
@@ -86,17 +86,15 @@
               </tr>
               <tr v-for="(account, index) in paginatedData" :key="account.id"
                 class="hover:bg-gray-50 transition-colors duration-150">
-                <td                   
-                  class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-
-                >
-                  <div class="bg-yellow-400 text-slate-600 px-2 rounded-xl" v-if="account.status_payment == 'partial'">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <div class="bg-yellow-400 text-slate-600 text-center px-2 rounded-xl" v-if="account.status_payment == 'partial'">
                     {{ account.status_payment }}
                   </div>
-                  <div class="bg-green-400 text-slate-600 px-2 rounded-xl" v-else-if="account.status_payment == 'success'">
+                  <div class="bg-green-400 text-slate-600 text-center px-2 rounded-xl"
+                    v-else-if="account.status_payment == 'full'">
                     {{ account.status_payment }}
                   </div>
-                  <div class="bg-slate-500 text-slate-200 px-2 rounded-xl" v-else>
+                  <div class="bg-slate-500 text-slate-200 text-center px-2 rounded-xl" v-else>
                     {{ account.status_payment }}
                   </div>
                 </td>
@@ -136,6 +134,10 @@
                     <button @click="openModal(account)" class="text-green-600 hover:text-green-900">
                       Posting
                     </button>
+                    <button v-if="account.status_payment != 'unpaid'" @click="resetPrice(account)"
+                      class="text-yellow-600 hover:text-yellow-900">
+                      Reset
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -169,11 +171,10 @@
                 <label for="deposit-amount" class="block text-sm font-medium text-gray-700 mb-2">
                   Issue At
                 </label>
-                <div class="relative">                  
+                <div class="relative">
                   <div class="flex space-x-3">
                     <input id="Issue At" type="date" v-model="issue_today"
-                      class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                      />                    
+                      class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" />
                   </div>
                 </div>
               </div>
@@ -190,9 +191,9 @@
                       class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="0.00" />
                     <button
-                      class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"                      
-                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.deposit">                     
-                     Lunas
+                      class="bg-blue-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                      @click="additionalDeposit = selectedItem.grand_total - selectedItem.deposit">
+                      Lunas
                     </button>
                   </div>
                 </div>
@@ -205,11 +206,12 @@
                   <span class="text-lg font-bold text-blue-800">
                     Rp.
                     {{
-                      selectedItem ? formatCurrency(Number(selectedItem.deposit || 0) + Number(additionalDeposit || 0)) : 0
+                      selectedItem ? formatCurrency(Number(selectedItem.deposit || 0) + Number(additionalDeposit || 0)) :
+                        0
                     }}
                   </span>
                 </div>
-              </div>              
+              </div>
 
               <div class="flex justify-end space-x-3">
                 <button
@@ -296,8 +298,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import axios from 'axios'
-import { AccReceive, AccUpdateDeposit } from '@/core/utils/url_api'
+import { AccReceive, AccUpdateDeposit, AccUpdateReset } from '@/core/utils/url_api'
 import Swal from 'sweetalert2'
 import ApiServices from '@/core/services/ApiServices'
 
@@ -330,7 +331,7 @@ export default defineComponent({
 
     // Filter and sort state
     const searchQuery = ref('')
-    const sortBy = ref('name')
+    const sortBy = ref('status')
     const minBalance = ref('')
     const maxBalance = ref('')
     const currentPage = ref(1)
@@ -342,7 +343,7 @@ export default defineComponent({
 
     const getArcheive = async () => {
       try {
-        const res = await ApiServices.get(AccReceive)        
+        const res = await ApiServices.get(AccReceive)
         accounts.value = res.data
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -363,10 +364,18 @@ export default defineComponent({
           const name = entry.customer.customer_name.toLowerCase();
           const code_invoice = entry.code_invoice.toLowerCase();
           return name.includes(query) ||
-                code_invoice.includes(query)              
+            code_invoice.includes(query)
         })
       }
-      result = result.filter((account) => account.grand_total - account.deposit > 0)      
+      if (sortBy.value === 'status') {
+        result = result.filter((account) => account.grand_total - account.deposit > 0)
+      } else if (sortBy.value === 'unpaid') {
+        result = result.filter(a => a.status_payment === 'unpaid')
+      } else if (sortBy.value === 'partial') {
+        result = result.filter(a => a.status_payment === 'partial')
+      } else if (sortBy.value === 'full') {
+        result = result.filter(a => a.status_payment === 'full')
+      } 
 
       return result
     })
@@ -457,34 +466,34 @@ export default defineComponent({
       isModalOpen.value = false
       selectedItem.value = null
     }
-    
+
 
     async function saveDeposit() {
       if (selectedItem.value) {
-        try {      
+        try {
           const deposit = Number(selectedItem.value.deposit || 0) + Number(additionalDeposit.value || 0);
 
           var status_payment = 'unpaid';
           if (selectedItem.value.deposit = deposit) {
             status_payment = 'full';
-          }else{
+          } else {
             status_payment = 'partial';
           }
 
           const response = await ApiServices.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
-            id_invoice : selectedItem.value.id_invoice,
-            payment_method : 'Transfer',
+            id_invoice: selectedItem.value.id_invoice,
+            payment_method: 'Transfer',
             status_payment: status_payment,
-            deposit : deposit,
-            issue_at : issue_today,
-            due_at : issue_today
+            deposit: deposit,
+            issue_at: issue_today,
+            due_at: issue_today
           });
 
-          if (response.status === 200) {            
+          if (response.status === 200) {
             closeModal()
             Swal.fire({
               icon: 'success',
-              title : 'Has Been Paid'
+              title: 'Has Been Paid'
             }).then((res) => {
               if (res.isConfirmed) {
                 window.location.reload();
@@ -496,6 +505,31 @@ export default defineComponent({
         }
       }
       closeModal()
+    }
+
+    async function resetPrice(item) {
+      if (item) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Apakah Anda ingin Mengulang Pembayaran ini?'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            var status_payment = 'unpaid';
+            var deposit = 0;
+
+            ApiServices.put(AccUpdateReset + '/' + item.id_invoice, {
+              deposit: deposit,
+              status_payment: status_payment,
+            }).then(
+              (res) => {
+                if (res.status === 200) {
+                  window.location.reload();
+                }
+              }
+            )
+          }
+        })
+      }
     }
 
     const confirmDelete = (account) => {
@@ -520,17 +554,17 @@ export default defineComponent({
 
     const exportData = () => {
       const data = accounts.value.map((account) => ({
-        'Code Po'       : account.code_invoice,
-        Customer        : account.customer.customer_name,
-        Deposit         : account.deposit,
-        Amount          : account.grand_total,
-        Debt            : account.grand_total - account.deposit,
-        'Issue Date'    : account.issue_at,
-        'Due Date'      : account.due_at,
-        Aging           : calculateDay(account.issue_at, account.due_at),   
-        'Status AR'     : account.grand_total = account.deposit ? "Paid" : "Partial",             
+        'Code Po': account.code_invoice,
+        Customer: account.customer.customer_name,
+        Deposit: account.deposit,
+        Amount: account.grand_total,
+        Debt: account.grand_total - account.deposit,
+        'Issue Date': account.issue_at,
+        'Due Date': account.due_at,
+        Aging: calculateDay(account.issue_at, account.due_at),
+        'Status AR': account.grand_total = account.deposit ? "Paid" : "Partial",
         'Payment Method': account.paymentsales.payment_method ? account.paymentsales.payment_method : "",
-        'Payment Date'  : account.paymentsales.issue_at ? account.paymentsales.issue_at : ""
+        'Payment Date': account.paymentsales.issue_at ? account.paymentsales.issue_at : ""
       }))
 
       // Create CSV content
@@ -585,6 +619,7 @@ export default defineComponent({
       closeModal,
       saveDeposit,
       calculateDay,
+      resetPrice,
       isModalOpen,
       selectedItem,
       editedDeposit,

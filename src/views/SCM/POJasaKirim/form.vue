@@ -185,9 +185,9 @@ import { defineComponent } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { Form, Field, ErrorMessage } from 'vee-validate'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
-import axios from 'axios'
 import { computed } from 'vue'
 import {
   DetailPo,
@@ -302,13 +302,13 @@ export default defineComponent({
   },
   methods: {
     getvendor() {
-      axios.get(Vendor).then((res) => {
+      ApiServices.get(Vendor).then((res) => {
         var data = res.data
         this.vendors = data
       })
     },
     getEmployee() {
-      axios.get(Employee).then((res) => {
+      ApiServices.get(Employee).then((res) => {
         var data = res.data
         this.employees = data
       })
@@ -454,7 +454,7 @@ export default defineComponent({
     },
 
     getDetailSo(id) {
-      axios.get(PoJasaKirimDetail + '/' + id).then((res) => {
+      ApiServices.get(PoJasaKirimDetail + '/' + id).then((res) => {
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {
@@ -471,7 +471,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(PoJasaKirim + '/' + id).then((res) => {
+      await ApiServices.get(PoJasaKirim + '/' + id).then((res) => {
         var data = res.data
         this.termin = data[0].termin;
         this.issue_at = data[0].issue_at;
@@ -491,7 +491,7 @@ export default defineComponent({
       const result = await this.validation()
       if (result == 0) {
         if (this.id) {
-          await axios
+          await ApiServices
             .put(PoJasaKirimCode + '/' + this.id, {
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,
@@ -531,7 +531,7 @@ export default defineComponent({
               },
             )
         } else {
-          await axios
+          await ApiServices
             .post(PoJasaKirimCode, {
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,

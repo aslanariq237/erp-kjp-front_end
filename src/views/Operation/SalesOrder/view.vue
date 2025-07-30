@@ -61,7 +61,7 @@
                             :class="inputClass(rules.due_at)" />
                     </FormGroup>
                 </div>
-                <div class=" mt-5">
+                <div class="mt-5 overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
                         <thead>
                             <tr class="text-left">
@@ -75,42 +75,22 @@
                                 <th class="px-3 py-2 font-semibold text-left bg-gray-100 border-b">Amount</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
-                            <tr v-for="poDetail in sales_orders_details" :key="poDetail.i" :class="{
-                                'bg-red-200': poDetail.product_type === 'product' && poDetail.quantity > poDetail.product_stock,
-                                'bg-blue-50': poDetail.product_type === 'package'
-                            }">
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">
-                                    {{ poDetail.product_code }}
-                                    <span v-if="poDetail.is_package" class="text-xs text-blue-600">(Package)</span>
-                                </td>
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ poDetail.product_pn }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">
-                                    {{ poDetail.product_desc }}
-                                    <div v-if="poDetail.is_package" class="text-xs text-gray-500">
-                                        Contains multiple items
-                                    </div>
-                                </td>
-                                <td class="px-3 py-2 whitespace-no-wrap">
-                                    <span class="px-2 py-1 text-xs rounded-full" :class="{
-                                        'bg-green-100 text-green-800': poDetail.product_type === 'product',
-                                        'bg-blue-100 text-blue-800': poDetail.product_type === 'package'
-                                    }">
-                                        {{ poDetail.product_type }}
-                                    </span>
-                                </td>
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ poDetail.quantity }}</td>
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">{{ formatCurrency(poDetail.price) }}
-                                </td>
-                                <td class="px-3 py-2 whitespace-no-wrap text-left">
-                                    <input type="number" v-model="poDetail.discount" class="w-20 rounded-lg"
-                                        @change="updateAmount(poDetail)" min="0" max="100" /> %
-                                </td>
-                                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                        <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
+                            <tr v-for="(detail, i) in sales_orders_details" :key="i"
+                            >
+                                <td class="px-3 py-2 whitespace-nowrap">{{ detail.product.product_code }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ detail.product.product_sn }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ detail.product.product_desc }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ detail.product_type }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ detail.quantity }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(detail.price) }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(detail.discount) }}</td>
+                                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(detail.amount) }}</td>
                             </tr>
                         </tbody>
-                    </table>
-                    <div class="flex justify-between mt-5">
+                    </table>                    
+                </div>
+                <div class="flex justify-between mt-5">
                         <div class="w-full"></div>
                         <div class="w-full"></div>
                         <div class="w-full">
@@ -120,7 +100,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
         </Form>
     </AdminLayout>
@@ -202,27 +181,29 @@ export default defineComponent({
             )
         },
         getDetail(id) {
-            ApiServices.get(DetailSo + '/' + id).then((res) => {
-                const data = res.data;
-                this.sales_order_details = [];
+            ApiServices.get(DetailSo + '/' + id).then(
+                (res) => {
+                    var data = res.data;                
+                    this.sales_orders_details = data;                    
+                // this.sales_order_details = [];  
 
-                for (let i = 0; i < data.length; i++) {
-                    const productObj = {
-                        product_id: data[i].product_id,
-                        product_code: data[i].product?.product_code || '',
-                        product_desc: data[i].product?.product_desc || '',
-                        product_pn: data[i].product?.product_sn || '',
-                        product_brand: data[i].product?.product_brand || '',
-                        product_type: data[i].product_type,
-                        quantity: data[i].quantity,
-                        quantity_left: data[i].quantity_left,
-                        price: data[i].price,
-                        discount: data[i].discount,
-                        amount: data[i].amount,
-                        has_do: data[i].has_do
-                    };
-                    this.sales_order_details.push(productObj);
-                }
+                // for (let i = 0; i < data.length; i++) {
+                //     const productObj = {
+                //         product_id: data[i].product_id,
+                //         product_code: data[i].product?.product_code || '',
+                //         product_desc: data[i].product?.product_desc || '',
+                //         product_pn: data[i].product?.product_sn || '',
+                //         product_brand: data[i].product?.product_brand || '',
+                //         product_type: data[i].product_type,
+                //         quantity: data[i].quantity,
+                //         quantity_left: data[i].quantity_left,
+                //         price: data[i].price,
+                //         discount: data[i].discount,
+                //         amount: data[i].amount,
+                //         has_do: data[i].has_do
+                //     };
+                //     this.sales_order_details.push(productObj);
+                // }
             });
         },
         formatCurrency(value) {

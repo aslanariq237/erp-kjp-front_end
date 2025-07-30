@@ -155,7 +155,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink } from 'vue-router'
 import { Product } from '@/core/utils/url_api';
-import axios from 'axios';
+import ApiServices from '@/core/services/ApiServices';
 
 export default defineComponent({
   name: 'ProductPage',
@@ -169,7 +169,7 @@ export default defineComponent({
 
     const getProduct = async () => {
       try {
-        const res = await axios.get(Product)
+        const res = await ApiServices.get(Product)
         products.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)

@@ -179,7 +179,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios'
+import ApiServices from '@/core/services/ApiServices'
 import { DetailPo, PoJasaKirim, PoJasaKirimDetail, PurchaseOrder, PurchaseOrderDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportJasaKirimPDF, exportPoPDF } from '@/core/helpers/exportToPdf'
@@ -219,7 +219,7 @@ export default defineComponent({
 
     const getPurchaseOrder = async () => {
       try {
-        const res = await axios.get(PoJasaKirim)
+        const res = await ApiServices.get(PoJasaKirim)
         entries.value = res.data
       } catch (error) {
         console.error('Error Fetching : ', error)
@@ -228,7 +228,7 @@ export default defineComponent({
 
     const detailPo = async () => {
       try {
-        await axios.get(PoJasaKirimDetail).then((res) => {
+        await ApiServices.get(PoJasaKirimDetail).then((res) => {
           dataexcel.value = res.data;
         })
       } catch (error) {
@@ -261,7 +261,7 @@ export default defineComponent({
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(PoJasaKirim + '/delete/' + id)
+          await ApiServices.delete(PoJasaKirim + '/delete/' + id)
           await getPurchaseOrder()
           Swal.fire('Deleted!', 'The Purchase Order has been deleted.', 'success')
         } catch (error) {
@@ -364,7 +364,7 @@ export default defineComponent({
     }
 
     const approve = (id) => {
-      axios.post(PoJasaKirim + '/approve/' + id).then((res) => {
+      ApiServices.post(PoJasaKirim + '/approve/' + id).then((res) => {
         Swal.fire({
           icon : 'success',
           title : 'Sukses Approve'
@@ -377,7 +377,7 @@ export default defineComponent({
     }
 
     const editPPN = (item) => {
-      axios.post(PoJasaKirim + '/edit_ppn/' + item.id_jasakirim,{
+      ApiServices.post(PoJasaKirim + '/edit_ppn/' + item.id_jasakirim,{
         sub_total : item.sub_total,
         ppn : item.ppn,
       }).then((res) => {  

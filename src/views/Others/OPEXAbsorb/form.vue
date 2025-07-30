@@ -180,6 +180,7 @@ import axios from 'axios'
 import { AddOpex, Customer, GetAbsorb, GetOpex, PackageADRS, Product } from '@/core/utils/url_api'
 import router from '@/router'
 import Swal from 'sweetalert2'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'OpexAbsorbForm',
@@ -259,7 +260,7 @@ export default defineComponent({
 
   methods: {
     getCustomer() {
-      axios.get(Customer).then((res) => {
+      ApiServices.get(Customer).then((res) => {
         this.customers = res.data
       })
     },
@@ -275,13 +276,13 @@ export default defineComponent({
       this.filteredCustomers = []
     },
     getProducts() {
-      axios.get(Product).then((res) => {
+      ApiServices.get(Product).then((res) => {
         var data = res.data
         this.products = data;
       })
     },
     getPackage() {
-      axios.get(PackageADRS).then((res) => {
+      ApiServices.get(PackageADRS).then((res) => {
         var data = res.data
         this.packages = data;
       })
@@ -302,8 +303,11 @@ export default defineComponent({
         })
       } else {
         if (this.selectedType === 'product') {
-          axios.get(Product + '/' + this.product_id).then((res) => {
+          ApiServices.get(Product + '/' + this.product_id).then((res) => {
             var data = res.data
+            if (Array.isArray(data)) {
+              data = data[0]
+            }
             if (this.quantity > data.product_stock) {
               Swal.fire({
                 icon: 'warning',
@@ -330,47 +334,6 @@ export default defineComponent({
                 product_pn: data.product_sn,
                 product_desc: data.product_desc,
                 product_stock: data.product_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            }
-            this.product_id = null
-            this.quantity = 0
-            this.price = 0
-          })
-        } else {
-          axios.get(PackageADRS + '/' + this.packages_id).then((res) => {
-            var data = res.data[0]
-            if (this.quantity > data.package_stock) {
-              Swal.fire({
-                icon: 'warning',
-                title: 'Warning',
-                text: `Stock ${data.package_desc} Less Than Quantity`,
-              })
-              var object = {
-                product_id: data.package_id,
-                product_code: data.code_package,
-                product_pn: data.package_sn,
-                product_desc: data.package_desc,
-                product_stock: data.package_stock,
-                product_type: this.selectedType,
-                quantity: this.quantity,
-                price: this.price,
-                discount: this.discount,
-                amount: this.price * this.quantity,
-              }
-              this.sales_order_details.push(object)
-            } else {
-              var object = {
-                product_id: data.package_id,
-                product_code: data.code_package,
-                product_pn: data.package_sn,
-                product_desc: data.package_desc,
-                product_stock: data.package_stock,
                 product_type: this.selectedType,
                 quantity: this.quantity,
                 price: this.price,
@@ -495,7 +458,7 @@ export default defineComponent({
       if (result === 0) {
         this.isSubmitting = true
         if (!this.id) {
-          axios
+          ApiServices
           .post(AddOpex + '/' + 'absorb', {
             customer_id: this.customer_id,
             opex_name: this.opex_name,
@@ -522,7 +485,7 @@ export default defineComponent({
             this.isSubmitting = false
           })
         }else{
-          axios
+          ApiServices
           .put(AddOpex + '/' + 'absorb/' + this.id, {
             customer_id: this.customer_id,
             opex_name: this.opex_name,

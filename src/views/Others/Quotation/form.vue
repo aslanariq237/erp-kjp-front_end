@@ -577,15 +577,14 @@ export default defineComponent({
           await ApiServices
             .post(QuatationsAdd, {
               customer_id: this.customer_id,
-              employee_id: 1,
+              employee_id: this.employee_id,
               termin: this.termin,
-              total_tax: this.total_tax,
-              issue_at: this.issue_at,
-              checkppn: this.checkppn,
-              due_at: this.due_at,
               sub_total: this.sub_total,
               ppn: this.ppn,
-              grand_total: this.grand_total,
+              grand_total: this.grand_total,                                          
+              description: this.description,
+              issue_at: this.issue_at,
+              due_at: this.due_at,              
               inquiry_details: this.inquiry_details,
             })
             .then(
@@ -615,13 +614,12 @@ export default defineComponent({
               customer_id: this.customer_id,
               employee_id: this.employee_id,
               termin: this.termin,
-              checkppn: this.checkppn,
-              code_quatation: this.code_quatation,
-              total_tax: this.total_tax,
-              issue_at: this.issue_at,
-              description: this.description,
-              due_at: this.due_at,
               sub_total: this.sub_total,
+              ppn: this.ppn,
+              grand_total: this.grand_total,
+              description: this.description,
+              issue_at: this.issue_at,              
+              due_at: this.due_at,              
               inquiry_details: this.inquiry_details,
             })
             .then(

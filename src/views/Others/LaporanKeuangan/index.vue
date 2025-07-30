@@ -236,7 +236,7 @@ import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { GetReportManagement } from '@/core/utils/url_api'
-import axios from 'axios'
+import ApiServices from '@/core/services/ApiServices'
 
 export default defineComponent({
   name: 'LaporanKeuanganPage',
@@ -299,7 +299,7 @@ export default defineComponent({
       loading.value = true
       try {
         // Simulate API call
-        const response = await axios.get(GetReportManagement)
+        const response = await ApiServices.get(GetReportManagement)
         reportManagement.value = response.data
       } catch (error) {
         console.error('Error fetching invoices:', error)
