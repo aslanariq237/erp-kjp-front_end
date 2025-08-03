@@ -37,16 +37,14 @@
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- tandaterima code -->
-           <FormGroup 
-            label="Tanda Terima Code"  
-            v-if="id"                     
-          >
-            <input type="text" autocomplete="off" id="due_at" name="due_at" placeholder="Code Tanda Terima" v-model="code_tandater"
-              :class="inputClass(rules.due_at)" />
+          <FormGroup label="Tanda Terima Code" v-if="id">
+            <input type="text" disabled autocomplete="off" id="due_at" name="due_at" placeholder="Code Tanda Terima"
+              v-model="code_tandater" :class="inputClass(rules.due_at)" />
           </FormGroup>
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
-            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
+            <input type="date" disabled id="issue_at" name="issue_at" v-model="issue_at"
+              :class="inputClass(rules.issue_at)" />
           </FormGroup>
 
           <!-- Due Date -->
@@ -58,33 +56,16 @@
             </div>
           </FormGroup>
           <!-- Id_Purchase order -->
-          <FormGroup 
-            label="Sales Order" 
-            :required="true" 
-            :error="rules.no" 
-            errorMessage="Purchase Order is required"
-            v-if="!id"
-          >
-            <select 
-              name="id_so" 
-              id="id_so" 
-              v-model="id_so" 
-              class="rounded w-full" 
-              @change="selectedSalesOrder"
-              :class="inputClass(rules.due_at)"                
-            >
+          <FormGroup label="Sales Order" :required="true" :error="rules.no" errorMessage="Purchase Order is required">
+            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
+              :class="inputClass(rules.due_at)">
               <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
                 {{ po.code_so }}
               </option>
             </select>
           </FormGroup>
-          <FormGroup 
-            label="Po Number" 
-            :required="true" 
-            :error="rules.customer" 
-            errorMessage="DO Type is required"
-            v-if="!id"
-          >
+          <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required"
+            v-if="!id">
             <input type="text" v-model="customer_id" hidden>
             <input type="text" id="do_type" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
               placeholder="Po Number" />
@@ -92,41 +73,27 @@
           <!-- DO Type -->
           <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="DO Type is required">
             <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" name="do_type" v-model="customer_name" :class="inputClass(rules.do_type)"
-              placeholder="Customer Name" />
+            <input type="text" disabled id="do_type" name="do_type" v-model="customer_name"
+              :class="inputClass(rules.do_type)" placeholder="Customer Name" />
           </FormGroup>
 
           <!-- Alamat -->
           <FormGroup label="Address" :required="false" errorMessage="Sub Total is required">
-            <input type="text" id="alamat" name="alamat" v-model="customer_address" :class="inputClass(rules.alamat)"
-              placeholder="Enter Address" />
+            <input type="text" disabled id="alamat" name="alamat" v-model="customer_address"
+              :class="inputClass(rules.alamat)" placeholder="Enter Address" />
           </FormGroup>
           <FormGroup>
           </FormGroup>
         </div>
-        <div v-if="id">
-        </div>
-        <div class="flex items-end gap-5 mb-8" v-else>
-          <FormGroup 
-            label="Invoice" 
-            :required="true" 
-            :error="rules.no" 
-            class="w-full"
-            errorMessage="Purchase Order is required"
-          >
-            <select 
-              name="id_so" 
-              id="id_so" 
-              v-model="id_invoice" 
-              class="rounded w-full"
-              :class="inputClass(rules.due_at)"
-            >
-              <option 
-                v-for="delo in deliveryOrders" 
-                :key="delo.id_invoice" 
-                :value="delo.id_invoice"
-              >
-                  {{ delo.code_invoice }}
+        <!-- <div v-if="id">
+        </div> -->
+        <div class="flex items-end gap-5 mb-8 mt-4">
+          <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
+            errorMessage="Purchase Order is required">
+            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full"
+              :class="inputClass(rules.due_at)">
+              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
+                {{ delo.code_invoice }}
               </option>
             </select>
           </FormGroup>
@@ -134,10 +101,11 @@
             Tambah
           </button>
         </div>
-        <div>
+        <div class="relative overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border mt-3">
             <thead>
-              <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
+              <tr class="text-center text-gray-800 dark:bg-gray-800 dark:text-gray-400">
+                <th class="px-3 py-2 font-semibold text-center border-b">#</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Invoice Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">So Number</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Po Number</th>
@@ -146,6 +114,13 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800 dark:text-gray-400">
               <tr v-for="products in tandaterima_details" :key="products.product_id">
+                <td class="px-3 py-2 whitespace-no-wrap">
+                  <button type="button"
+                    class="border-2 px-4 rounded-lg dark:text-gray-400 bg-red-300 hover:bg-red-400 text-gray-100"
+                    @click="tandaterima_details.splice(index, 1)">
+                    X
+                  </button>
+                </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_so }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.po_number }}</td>
@@ -195,10 +170,10 @@ export default defineComponent({
   },
 
   data() {
-    const {user} = useAuthStore();
+    const { user } = useAuthStore();
     return {
       id: null,
-      user : user,
+      user: user,
       salesOrders: [],
       deliveryOrders: [],
       employee: [],
@@ -209,8 +184,8 @@ export default defineComponent({
       customer_id: null,
       employee_id: null,
       po_number: '',
-      code_so : '',
-      code_tandater : '',
+      code_so: '',
+      code_tandater: '',
       resi: '',
       customer_name: '',
       customer_npwp: 0,
@@ -238,14 +213,14 @@ export default defineComponent({
     const route = useRoute();
     const id = route.params.id;
     this.employee_id = this.user.employee_id;
-    
+
     this.getSalesOrder();
     if (id) {
       this.getById(id);
       this.id = id;
-    }else{
-      this.issue_at = new Date().toLocaleDateString('en-CA');    
-    }      
+    } else {
+      this.issue_at = new Date().toLocaleDateString('en-CA');
+    }
     this.due_at = new Date().toLocaleDateString('en-CA');
   },
   computed: {
@@ -270,14 +245,14 @@ export default defineComponent({
     selectedSalesOrder() {
       var selected = this.salesOrders.find(function (item) {
         return item.id_so == this.id_so
-      }.bind(this))      
+      }.bind(this))
 
       if (selected) {
-        this.due_at = selected.due_at;                  
+        this.due_at = selected.due_at;
         this.po_number = selected.po_number,
-        this.customer_id = selected.customer_id,
-        this.customer_name = selected.customer.customer_name;
-        this.customer_address = selected.customer.customer_address;        
+          this.customer_id = selected.customer_id,
+          this.customer_name = selected.customer.customer_name;
+        this.customer_address = selected.customer.customer_address;
         this.code_so = selected.code_so;
 
         this.getDeliveryOrder();
@@ -304,7 +279,7 @@ export default defineComponent({
           icon: 'warning',
           text: "Pilih Invoice"
         });
-      } else {        
+      } else {
         ApiServices.get(Invoice + '/' + this.id_invoice).then(
           (res) => {
             var data = res.data;
@@ -315,7 +290,7 @@ export default defineComponent({
                 id_so: this.id_so,
                 code_so: this.code_so,
                 po_number: this.po_number,
-                nominal : data[i].grand_total,
+                nominal: data[i].grand_total,
               }
               this.tandaterima_details.push(object);
             }
@@ -362,14 +337,14 @@ export default defineComponent({
     getDetailSo(id) {
       ApiServices.get(DetailTandater + '/' + id).then(
         (res) => {
-          var data = res.data;          
+          var data = res.data;
           for (let i = 0; i < data.length; i++) {
             var object = {
               code_invoice: data[i].invoice.code_invoice,
               id_invoice: data[i].id_invoice,
               code_so: data[i].so.code_so,
               po_number: data[i].so.po_number,
-              nominal : data[i].invoice.grand_total,
+              nominal: data[i].invoice.grand_total,
             }
             this.tandaterima_details.push(object);
           }
@@ -379,10 +354,10 @@ export default defineComponent({
     async getById(id) {
       await ApiServices.get(Tandater + '/' + id).then(
         (res) => {
-          var data = res.data;          
+          var data = res.data;
           this.issue_at = data[0].issue_at;
           this.resi = data[0].resi;
-          this.id_so = data[0].id_so;          
+          this.id_so = data[0].id_so;
           this.customer_id = data[0].customer_id;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
@@ -399,12 +374,12 @@ export default defineComponent({
       const result = await this.validation();
       if (result == 0) {
         if (this.id == null) {
-          await ApiServices.post(TandaterAdd, {            
+          await ApiServices.post(TandaterAdd, {
             customer_id: this.customer_id,
-            employee_id : this.employee_id,            
+            employee_id: this.employee_id,
             resi: this.resi,
             issue_at: this.issue_at,
-            due_at: this.due_at,            
+            due_at: this.due_at,
             tandaterima_details: this.tandaterima_details,
           }, {
             headers: { "Content-Type": "application/json" }
@@ -419,27 +394,25 @@ export default defineComponent({
                 await router.push("/tanda-terima");
               }
             })
-          }, (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
-          )
+          }
+          ).catch((error) => {
+            if (error.response && error.response.data) {
+              Swal.fire({
+                icon: 'error',
+                text: error.response.data.error ? error.response.data.error : error.response.data.message
+              })
+            } else {
+              alert('Terjadi kesalahan pada server')
+            }
+          })
         }
         else {
           await ApiServices.put(TandaterAdd + '/' + this.id, {
             id_so: this.id_so,
             customer_id: this.customer_id,
-            issue_at : this.issue_at,
-            due_at : this.due_at,
-            resi : this.resi,
+            issue_at: this.issue_at,
+            due_at: this.due_at,
+            resi: this.resi,
             id_do: this.id_do,
             tandaterima_details: this.tandaterima_details,
           }, {
@@ -455,19 +428,17 @@ export default defineComponent({
                 await router.push("/tanda-terima");
               }
             })
-          }, (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
           },
-          )
+          ).catch((error) => {
+            if (error.response && error.response.data) {
+              Swal.fire({
+                icon: 'error',
+                text: error.response.data.error ? error.response.data.error : error.response.data.message
+              })
+            } else {
+              alert('Terjadi kesalahan pada server')
+            }
+          })
         }
       }
     },

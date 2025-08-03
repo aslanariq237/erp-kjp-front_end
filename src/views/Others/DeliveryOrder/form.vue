@@ -85,7 +85,7 @@
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold border-b">PN</th>
-                <th class="px-3 py-2 font-semibold border-b">Product Desc</th>                
+                <th class="px-3 py-2 font-semibold border-b">Product Desc</th>
                 <th class="px-3 py-2 font-semibold border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold border-b">Product Price</th>
                 <th class="px-3 py-2 font-semibold border-b">Checklist</th>
@@ -95,7 +95,7 @@
               <tr v-for="products in sales_order_details" :key="products.product_id"
                 class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_sn }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>                
+                <td class="px-3 py-2 whitespace-no-wrap">{{ products.product_desc }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <input type="text" v-model="products.quantity_left"
                     class="w-20 rounded-lg border-gray-200 text-center" @change="changeQuantity(products)"
@@ -274,11 +274,11 @@ export default defineComponent({
               id_detail_so: detail.id_detail_so,
               id_so: detail.id_so,
               product_id: detail.product_id,
-              product_desc: detail.product.product_desc,              
+              product_desc: detail.product.product_desc,
               product_stock: detail.product.product_stock,
               product_sn: detail.product.product_sn,
-              is_package : detail.product.is_package,
-              has_do: detail.has_do,              
+              is_package: detail.product.is_package,
+              has_do: detail.has_do,
               quantity: detail.quantity,
               quantity_left: detail.quantity - detail.quantity_left,
               price: detail.price,
@@ -307,7 +307,7 @@ export default defineComponent({
           product_id: products.product_id,
           quantity: products.quantity,
           quantity_left: products.quantity_left,
-          is_package : products.is_package,
+          is_package: products.is_package,
           price: products.price,
           checked: false,
         }
@@ -316,7 +316,7 @@ export default defineComponent({
         this.delivery_order_details.splice(this.delivery_order_details.indexOf(products));
       }
     },
-        
+
     showNotification(type, message) {
       this.notification = {
         show: true,
@@ -388,19 +388,17 @@ export default defineComponent({
               await router.push("/delivery-order");
             }
           })
-        }, (error) => {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text:
-              (error.response &&
-                error.response &&
-                error.response.message) ||
-              error.message ||
-              error.toString(),
-          });
         },
-        )
+        ).catch((error) => {
+          if (error.response && error.response.data) {
+            Swal.fire({
+              icon: 'error',
+              text: error.response.data.error ? error.response.data.error : error.response.data.message
+            })
+          } else {
+            alert('Terjadi kesalahan pada server')
+          }
+        })
       }
     },
 

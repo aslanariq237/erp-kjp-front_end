@@ -2,12 +2,8 @@
   <AdminLayout>
     <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification
-        v-if="notification.show"
-        :type="notification.type"
-        :message="notification.message"
-        @close="notification.show = false"
-      />
+      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
+        @close="notification.show = false" />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
@@ -23,27 +19,19 @@
             <p class="text-gray-500 text-sm mt-1">SCM / Purchase Order / Form</p>
           </div>
           <div class="flex items-center gap-3">
-            <RouterLink
-              to="/purchase-order"
-              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2"
-            >
+            <RouterLink to="/purchase-order"
+              class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center gap-2">
               <i class="fas fa-times"></i>
               Cancel
             </RouterLink>
-            <button
-              v-if="id"
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-if="id" type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Updating...' : 'Update ' }}
             </button>
-            <button
-              v-else
-              type="submit"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
+            <button v-else type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               <i v-if="isSubmitting" class="fas fa-spinner fa-spin"></i>
               <i v-else class="fas fa-check"></i>
               {{ isSubmitting ? 'Submitting...' : 'Submit' }}
@@ -57,13 +45,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true">
-            <input
-              type="date"
-              id="issue_at"
-              name="issue_at"
-              v-model="issue_at"
-              :class="inputClass(rules.issue_at)"
-            />
+            <input type="date" id="issue_at" name="issue_at" v-model="issue_at" :class="inputClass(rules.issue_at)" />
             <div class="" v-if="rules.issue_at == true">
               <p class="text-red-500 text-sm">Issue Date Dibutuhkan</p>
             </div>
@@ -71,13 +53,8 @@
 
           <!-- Termin -->
           <FormGroup label="Termin" :required="true">
-            <select
-              id="po_type"
-              name="po_type"
-              :class="inputClass(rules.deposit)"
-              v-model="termin"
-              class="rounded w-full"
-            >
+            <select id="po_type" name="po_type" :class="inputClass(rules.deposit)" v-model="termin"
+              class="rounded w-full">
               <option value="">-- termin --</option>
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
@@ -95,13 +72,7 @@
 
           <!-- Due Date -->
           <FormGroup label="Due Date" :required="true">
-            <input
-              type="date"
-              id="due_at"
-              name="due_at"
-              v-model="due_at"
-              :class="inputClass(rules.due_at)"
-            />
+            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
             <div class="" v-if="rules.due_at == true">
               <p class="text-red-500 text-sm">Due Date Dibutuhkan</p>
             </div>
@@ -110,27 +81,12 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
           <!-- No -->
           <FormGroup label="Vendor" class="relative" :required="true">
-            <input
-              type="text"
-              name="vendor_name"
-              id="vendor_name"
-              v-model="vendor_name"
-              @input="filtervendors"
-              autocomplete="off"
-              class="rounded w-full"
-              :class="inputClass(rules.deposit)"
-              placeholder="Type Vendor Name"
-            />
-            <ul
-              v-if="filteredvendors.length && vendor_name"
-              class="border rounded w-full mt-2 bg-white absolute z-40"
-            >
-              <li
-                v-for="vendor in filteredvendors"
-                :key="vendor.vendor_id"
-                @click="selectvendor(vendor)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+            <input type="text" name="vendor_name" id="vendor_name" v-model="vendor_name" @input="filtervendors"
+              autocomplete="off" class="rounded w-full" :class="inputClass(rules.deposit)"
+              placeholder="Type Vendor Name" />
+            <ul v-if="filteredvendors.length && vendor_name" class="border rounded w-full mt-2 bg-white absolute z-40">
+              <li v-for="vendor in filteredvendors" :key="vendor.vendor_id" @click="selectvendor(vendor)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ vendor.vendor_name }}
               </li>
             </ul>
@@ -140,91 +96,42 @@
           </FormGroup>
 
           <!-- Total Service -->
-          <FormGroup label="Deposit" :required="true">
-            <input
-              type="number"
-              id="deposit"
-              name="deposit"
-              v-model="deposit"
-              :class="inputClass(rules.deposit)"
-              placeholder="Enter Deposit"
-            />
+          <FormGroup label="Deposit">
+            <input type="number" id="deposit" name="deposit" v-model="deposit" :class="inputClass(rules.deposit)"
+              placeholder="Enter Deposit" />
           </FormGroup>
 
           <!-- Deposit -->
           <FormGroup> </FormGroup>
         </div>
         <div class="flex justify-content-between gap-4 items-end">
-          <FormGroup
-            class="w-full relative"
-            label="product"
-            :required="true"
-            :error="rules.product_id"
-            errorMessage="product_id is required"
-          >
-            <input
-              type="text"
-              name="product_name"
-              id="product_name"
-              v-model="product_name"
-              autocomplete="off"
-              @input="filterProducts"
-              class="rounded w-full"
-              :class="inputClass(rules.deposit)"
-              placeholder="Type product name"
-            />
+          <FormGroup class="w-full relative" label="product" :required="true" :error="rules.product_id"
+            errorMessage="product_id is required">
+            <input type="text" name="product_name" id="product_name" v-model="product_name" autocomplete="off"
+              @input="filterProducts" class="rounded w-full" :class="inputClass(rules.deposit)"
+              placeholder="Type product name" />
             <ul v-if="filteredProducts.length && product_name" class="border rounded w-full mt-2 bg-white absolute">
-              <li
-                v-for="product in filteredProducts"
-                :key="product.product_id"
-                @click="selectProduct(product)"
-                class="p-2 cursor-pointer hover:bg-gray-200"
-              >
+              <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
                 {{ product.product_sn }} - {{ product.product_desc }}
               </li>
             </ul>
           </FormGroup>
 
           <!-- Grand Total -->
-          <FormGroup
-            class="w-full"
-            label="Quantity"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Quantity is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="quantity"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+            errorMessage="Quantity is required">
+            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
-          <FormGroup
-            class="w-full"
-            label="Price"
-            :required="true"
-            :error="rules.quantity"
-            errorMessage="Price is required"
-          >
-            <input
-              type="number"
-              id="quantity"
-              name="quantity"
-              v-model="price"
-              :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity"
-            />
+          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+            errorMessage="Price is required">
+            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+              placeholder="Enter Quantity" />
           </FormGroup>
 
           <div>
-            <button
-              type="button"
-              class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-              @click="addPoDetails"
-            >
+            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg" @click="addPoDetails">
               tambah
             </button>
           </div>
@@ -233,7 +140,7 @@
           <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
             <thead>
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Name</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Amount</th>
@@ -246,16 +153,12 @@
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.price) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
                 <td class="px-3 py-2 whitespace-no-wrap">
-                  <button
-                    type="button"
-                    class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="
-                      purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
-                    "
-                  >
+                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400" @click="
+                    purchase_order_details.splice(purchase_order_details.indexOf(poDetail), 1)
+                    ">
                     Delete
                   </button>
-                </td>                
+                </td>
               </tr>
             </tbody>
           </table>
@@ -268,9 +171,9 @@
                 <p>{{ formatCurrency(sub_total) }}</p>
               </div>
               <div class="sub_total flex justify-between mt-3">
-                <div class="ppn flex items-center space-x-2">                  
+                <div class="ppn flex items-center space-x-2">
                   <input type="checkbox" v-model="checkppn" class="mr-2">
-                  <p>PPN                   
+                  <p>PPN
                   </p>
                 </div>
                 <p>{{ formatCurrency(ppn) }}</p>
@@ -280,7 +183,7 @@
                 <p>{{ formatCurrency(grand_total) }}</p>
               </div>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </Form>
@@ -323,7 +226,7 @@ export default defineComponent({
     const { user } = useAuthStore()
     return {
       id: null,
-      user: user,      
+      user: user,
       vendors: [],
       vendor_name: '',
       filteredvendors: [],
@@ -369,7 +272,7 @@ export default defineComponent({
     this.getProducts()
 
     const route = useRoute()
-    const id = route.params.id    
+    const id = route.params.id
 
     if (id) {
       this.getById(id)
@@ -396,7 +299,7 @@ export default defineComponent({
     },
 
     // Calculate PPN (11% of subtotal)
-    ppn() {      
+    ppn() {
       return this.checkppn ? this.sub_total * 0.11 : 0;
     },
 
@@ -423,7 +326,7 @@ export default defineComponent({
         var data = res.data
         this.employees = data
       })
-    },    
+    },
 
     calculateDueDate(issueDate, termin) {
       if (issueDate && termin === 'N30') {
@@ -450,11 +353,11 @@ export default defineComponent({
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 60) // Add 30 days
         this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'N45') {
+      } else if (issueDate && termin === 'N45') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 45) // Add 45 days
         this.due_at = this.formatDate(date)
-      }else if (issueDate && termin === 'CBD') {
+      } else if (issueDate && termin === 'CBD') {
         const date = new Date(issueDate) // Convert issue_at to a Date object
         date.setDate(date.getDate() + 30) // Add 30 days
         this.due_at = this.formatDate(date)
@@ -501,12 +404,35 @@ export default defineComponent({
       this.filteredvendors = []
     },
     addPoDetails() {
+      var valid = false;
+      var quantity = 1;
+      var price = 1;
+
       if (this.product_id == '' || this.product_id == null) {
         Swal.fire({
           icon: 'warning',
           text: 'Tambahkan Barang',
         })
+        valid = true;
       } else {
+        valid = false;
+      }
+
+      if (this.quantity != 0) {
+        quantity = this.quantity;
+        valid = true;        
+      }else{
+        valid = false;
+      }
+
+      if (this.price != 0) {
+        price = this.price;
+        valid = true;
+      }else{
+        valid = false;
+      }
+
+      if (valid) {
         ApiServices.get(Product + '/' + this.product_id).then((res) => {
           var data = res.data
           if (Array.isArray(data)) {
@@ -515,13 +441,13 @@ export default defineComponent({
           var object = {
             product_id: data.product_id,
             product_desc: data.product_desc,
-            product_sn : data.product_sn,
+            product_sn: data.product_sn,
             quantity: this.quantity,
             price: this.price,
             amount: this.price * this.quantity,
           }
           this.purchase_order_details.push(object)
-          ;(this.product_id = null), (this.quantity = 0), (this.price = 0)
+            ; (this.product_id = null), (this.quantity = 0), (this.price = 0)
         })
       }
     },
@@ -637,14 +563,14 @@ export default defineComponent({
               employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
-              sub_total : this.sub_total,
+              sub_total: this.sub_total,
               ppn: this.ppn,
               grand_total: this.grand_total,
               status_payment: this.status_payment,
               deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
-              ppncheck : this.ppnCheck,
+              ppncheck: this.ppnCheck,
               purchase_order_details: this.purchase_order_details,
             })
             .then(
@@ -678,19 +604,18 @@ export default defineComponent({
               employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
-              sub_total : this.sub_total,
+              sub_total: this.sub_total,
               ppn: this.ppn,
               grand_total: this.grand_total,
               status_payment: this.status_payment,
               deposit: this.deposit,
               issue_at: this.issue_at,
               due_at: this.due_at,
-              ppncheck : this.ppnCheck,
+              ppncheck: this.ppnCheck,
               purchase_order_details: this.purchase_order_details,
             })
             .then(
               (response) => {
-                console.log(response)
                 Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -701,17 +626,16 @@ export default defineComponent({
                   }
                 })
               },
-              (error) => {
+            ).catch((error) => {
+              if (error.response && error.response.data) {
                 Swal.fire({
                   icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response && error.response.message) ||
-                    error.message ||
-                    error.toString(),
+                  text: error.response.data.error ? error.response.data.error : error.response.data.message
                 })
-              },
-            )
+              } else {
+                alert('Terjadi kesalahan pada server')
+              }
+            })
         }
       }
     },

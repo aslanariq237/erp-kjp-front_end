@@ -17,32 +17,32 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 mt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-            <FormGroup label="Customer Name" :required="true" :error="rules.issue_at"
-              errorMessage="Issue Date is required">
+            <FormGroup label="Customer Name" :required="true" :error="rules.customer_name"
+              errorMessage="Nama Customer Dibutuhkan">
               <input type="text" id="customer_name" name="customer_name" autocomplete="off" v-model="customer_name"
                 @change="singkatan" :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup label="Customer Phone" :required="true" :error="rules.due_at"
-              errorMessage="Due Date is required">
+            <FormGroup label="Customer Phone" :required="true" :error="rules.customer_phone"
+              errorMessage="Nomor Customer Dibutuhkan">
               <input type="text" id="customer_phone" autocomplete="off" name="customer_phone" v-model="customer_phone"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
 
             <!-- No -->
-            <FormGroup label="Customer Email" :required="false" :error="rules.due_at"
-              errorMessage="Due Date is required">
+            <FormGroup label="Customer Email" :required="false" :error="rules.customer_email"
+              errorMessage="Email Customer Dibutuhkan">
               <input type="text" id="customer_email" autocomplete="off" name="customer_email" v-model="customer_email"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
             <!-- Code PO -->
 
             <!-- Total Service -->
-            <FormGroup label="Customer Address" :required="true" :error="rules.deposit"
-              errorMessage="Deposit is required">
+            <FormGroup label="Customer Address" :required="true" :error="rules.customer_address"
+              errorMessage="Alamat Customer Dibutuhkan">
               <input type="text" id="customer_address" autocomplete="off" name="customer_address"
                 v-model="customer_address" :class="inputClass(rules.deposit)" placeholder="Insert Customer Address" />
             </FormGroup>
@@ -61,23 +61,23 @@
             </FormGroup>
             <FormGroup>
             </FormGroup>
-          </div>          
-          <div class="my-2" >
-            <div class="flex justify-content-between gap-4 items-end">
-            <!-- Grand Total -->
-            <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
-              errorMessage="Quantity is required">
-              <input type="text" id="quantity" name="point" autocomplete="off" v-model="point"
-                :class="inputClass(rules.quantity)" placeholder="Enter Customer Point" />
-            </FormGroup>
-            <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
-              errorMessage="Price is required">
-              <input type="text" id="quantity" name="alamat" autocomplete="off" v-model="alamat"
-                :class="inputClass(rules.quantity)" placeholder="Enter Customer Address" />
-            </FormGroup>
-            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
-              @click="addPoDetails">tambah</button>
           </div>
+          <div class="my-2">
+            <div class="flex justify-content-between gap-4 items-end">
+              <!-- Grand Total -->
+              <FormGroup class="w-full" label="Point" :required="true" :error="rules.quantity"
+                errorMessage="Quantity is required">
+                <input type="text" id="quantity" name="point" autocomplete="off" v-model="point"
+                  :class="inputClass(rules.quantity)" placeholder="Enter Customer Point" />
+              </FormGroup>
+              <FormGroup class="w-full" label="Address" :required="true" :error="rules.quantity"
+                errorMessage="Price is required">
+                <input type="text" id="quantity" name="alamat" autocomplete="off" v-model="alamat"
+                  :class="inputClass(rules.quantity)" placeholder="Enter Customer Address" />
+              </FormGroup>
+              <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg"
+                @click="addPoDetails">tambah</button>
+            </div>
           </div>
           <div class="">
             <table class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border">
@@ -99,11 +99,11 @@
                     <input type="text" v-model="poDetail.alamat" class="rounded-md w-full">
                   </td>
                   <td class="px-3 py-2 whitespace-no-wrap">
-                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="customer_details.splice(customer_details.indexOf(poDetail), 1)">
-                    Delete
-                  </button>
-                </td>
+                    <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                      @click="customer_details.splice(customer_details.indexOf(poDetail), 1)">
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -178,7 +178,7 @@ export default defineComponent({
         this.rules.customer_name = false;
       }
 
-      if (this.customer_phone == null && this.customer_phone <= 16) {
+      if (this.customer_phone == 0 && this.customer_phone <= 16) {
         this.rules.customer_phone = true;
         count++;
       } else {
@@ -190,6 +190,13 @@ export default defineComponent({
         count++;
       } else {
         this.rules.customer_email = false;
+      }
+
+      if (this.customer_address == "" || this.customer_address == null) {
+        this.rules.customer_address = true;
+        count++
+      } else {
+        this.rules.customer_address = false;
       }
 
       if (this.customer_npwp == null && this.customer_npwp <= 16) {
@@ -236,13 +243,36 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      var object = {
+      var validation = false;
+      var point = null;
+      var alamat = null;
+
+      if (this.point != '') {
+        point = this.point;  
+        validation = true      
+      }else{
+        validation = false
+      }
+
+      if (this.alamat != '') {
+        alamat = this.alamat;  
+        validation = true      
+      }else{
+        validation = false
+      }
+
+      if (validation) {
+        var object = {
           no: this.code + 1,
           point: this.point,
           alamat: this.alamat
         };
         this.customer_details.push(object)
         this.code++;
+
+        this.point = '';
+        this.alamat = '';
+      }      
     },
 
     getPoint(id) {
@@ -266,7 +296,7 @@ export default defineComponent({
     async getById(id) {
       await ApiServices.get(Customer + '/' + id).then(
         (res) => {
-          var data = res.data;          
+          var data = res.data;
           this.customer_name = data.customer_name;
           this.customer_phone = data.customer_phone;
           this.customer_email = data.customer_email;
@@ -276,13 +306,13 @@ export default defineComponent({
           this.customer_contact = data.customer_contact;
           if (data.customer_id) {
             this.getPoint(data.customer_id);
-          }                              
+          }
         }
       )
     },
-    async onSubmit() {
-      const result = 2
-      if (result != 0) {
+    async onSubmit() {      
+      const result = await this.validation();
+      if (result == 0) {
         if (this.id) {
           await ApiServices.put(
             AddCustomer + '/' + this.id, {
@@ -292,7 +322,7 @@ export default defineComponent({
             customer_email: this.customer_email,
             customer_address: this.customer_address,
             customer_npwp: this.customer_npwp,
-            customer_contact: this.customer_contact,            
+            customer_contact: this.customer_contact,
             customer_details: this.customer_details,
           }
           ).then((response) => {
@@ -308,7 +338,7 @@ export default defineComponent({
                 } else {
                   mssg = "Success Create Purchase Order";
                 }
-                await router.push("/customer");                
+                await router.push("/customer");
               }
             })
           },
@@ -344,30 +374,20 @@ export default defineComponent({
               text: "Customer Data has been Saved"
             }).then(async (result) => {
               if (result.isConfirmed) {
-                var mssg = "";
-                if (this.id != null) {
-                  mssg = "Success Update Purchase Order";
-                } else {
-                  mssg = "Success Create Purchase Order";
-                }
                 await router.push("/customer");
-                this.alertStore.success(mssg);
               }
             })
-          },
-            (error) => {
+          }
+          ).catch((error) => {
+            if (error.response && error.response.data) {
               Swal.fire({
-                icon: "error",
-                title: "Error",
-                text:
-                  (error.response &&
-                    error.response &&
-                    error.response.message) ||
-                  error.message ||
-                  error.toString(),
-              });
-            },
-          )
+                icon: 'error',
+                text: error.response.data.error
+              })
+            } else {
+              alert('Terjadi kesalahan pada server')
+            }
+          })
         }
       }
     },

@@ -94,59 +94,27 @@
           </FormGroup>
           <!-- Code PO -->
         </div>
-        <FormGroup 
-          label="Note" 
-          class="relative w-full mt-4 border-gray-500" 
-          :required="true" 
-          :error="rules.customer_id"
-        >
-          <textarea 
-            name="note" 
-            id="note" 
-            cols="30" 
-            class="rounded-md w-full border-gray-500" 
-            v-model="description"
-          >
+        <FormGroup label="Note" class="relative w-full mt-4 border-gray-500" :required="true"
+          :error="rules.customer_id">
+          <textarea name="note" id="note" cols="30" class="rounded-md w-full border-gray-500" v-model="description">
           </textarea>
         </FormGroup>
         <div class="flex justify-content-between gap-4 items-end mt-4">
-          <FormGroup
-              class="w-full md:w-2/5 relative"
-              label="Product"
-              :required="true"
-              :error="rules.product_id"
-              errorMessage="Pilih produk"
-            >
-              <input 
-                type="text" 
-                name="customer_name" 
-                id="customer_name" 
-                v-model="product_name" 
-                autocomplete="off"
-                @input="filterProducts" 
-                class="rounded-md"                
-                placeholder="Type customer name" 
-              />
-              <ul
-                v-if="filteredProducts.length && product_name"
-                class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600"
-              >
-                <li
-                  v-for="product in filteredProducts"
-                  :key="product.product_id"
-                  @click="selectProduct(product)"
-                  class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200"
-                >
-                  {{ product.product_sn }} - {{ product.product_desc }}
-                </li>
-                <li
-                  v-if="filteredProducts.length === 0 && product_name"
-                  class="p-3 text-gray-500 italic"
-                >
-                  Tidak ada produk yang cocok.
-                </li>
-              </ul>
-            </FormGroup>
+          <FormGroup class="w-full md:w-2/5 relative" label="Product" :required="true" :error="rules.product_id"
+            errorMessage="Pilih produk">
+            <input type="text" name="customer_name" id="customer_name" v-model="product_name" autocomplete="off"
+              @input="filterProducts" class="rounded-md" placeholder="Type customer name" />
+            <ul v-if="filteredProducts.length && product_name"
+              class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
+              <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
+                class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200">
+                {{ product.product_sn }} - {{ product.product_desc }}
+              </li>
+              <li v-if="filteredProducts.length === 0 && product_name" class="p-3 text-gray-500 italic">
+                Tidak ada produk yang cocok.
+              </li>
+            </ul>
+          </FormGroup>
 
           <!-- Grand Total -->
           <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
@@ -209,31 +177,31 @@
             <div class="" v-if="rules.inquiry_details == true">
               <p class="text-sm text-red-500">Barang Dibutuhkan</p>
             </div>
-          </table>          
+          </table>
         </div>
         <div class="flex justify-between mt-5">
-            <div class="">
-            </div>
-            <div class="w-full"></div>
-            <div class="w-full">
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
-                <p>Sub Total</p>
-                <p>{{ formatCurrency(sub_total) }}</p>
-              </div>
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
-                <div class="flex items-center">
-                  <input type="checkbox" v-model="checkppn" class="mr-2">
-                  <p>PPN</p>
-                </div>
-                <p>{{ formatCurrency(ppn) }}</p>
-              </div>
-              <div class="sub_total flex justify-between mt-3 text-gray-500">
-                <p>Grand Total</p>
-                <p>{{ formatCurrency(grand_total) }}</p>
-              </div>
-              <input type="text" v-model="code_quatation" hidden />
-            </div>
+          <div class="">
           </div>
+          <div class="w-full"></div>
+          <div class="w-full">
+            <div class="sub_total flex justify-between mt-3 text-gray-500">
+              <p>Sub Total</p>
+              <p>{{ formatCurrency(sub_total) }}</p>
+            </div>
+            <div class="sub_total flex justify-between mt-3 text-gray-500">
+              <div class="flex items-center">
+                <input type="checkbox" v-model="checkppn" class="mr-2">
+                <p>PPN</p>
+              </div>
+              <p>{{ formatCurrency(ppn) }}</p>
+            </div>
+            <div class="sub_total flex justify-between mt-3 text-gray-500">
+              <p>Grand Total</p>
+              <p>{{ formatCurrency(grand_total) }}</p>
+            </div>
+            <input type="text" v-model="code_quatation" hidden />
+          </div>
+        </div>
       </div>
     </Form>
   </AdminLayout>
@@ -399,14 +367,41 @@ export default defineComponent({
     },
 
     addPoDetails() {
+      var validation = false;
+      var product_id = null;
+      var quantity  = 1;
+      var price = 1;
+
       if (this.product_id == '' || this.product_id == null) {
         Swal.fire({
           icon: 'warning',
           text: 'Pilih Barang',
         })
+        validation = false;
       } else {
+        validation = true;
+      }
+
+      if (this.quantity != 0) {
+        quantity = this.quantity
+        validation = true;
+      }else{
+        validation = false;
+      }
+
+      if (this.price != 0) {
+        price = this.price;
+        validation = true;
+      }else{
+        validation = false;
+      }
+
+      if (validation) {
         ApiServices.get(Product + '/' + this.product_id).then((res) => {
-          var data = res.data[0]
+          var data = res.data
+          if (Array.isArray(data)) {
+            data = data[0];
+          }
           var object = {
             product_id: data.product_id,
             product_code: data.product_code,
@@ -417,9 +412,9 @@ export default defineComponent({
             discount: this.discount,
             amount: this.price * this.quantity,
           }
-          this.inquiry_details.push(object)          
-        })        
-      }      
+          this.inquiry_details.push(object)
+        })
+      }
     },
 
     formatCurrency(value) {
@@ -581,14 +576,14 @@ export default defineComponent({
               termin: this.termin,
               sub_total: this.sub_total,
               ppn: this.ppn,
-              grand_total: this.grand_total,                                          
+              grand_total: this.grand_total,
               description: this.description,
               issue_at: this.issue_at,
-              due_at: this.due_at,              
+              due_at: this.due_at,
               inquiry_details: this.inquiry_details,
             })
             .then(
-              async (response) => {                
+              async (response) => {
                 await Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -598,16 +593,17 @@ export default defineComponent({
                     await router.push('/quotation')
                   }
                 })
-              },
-              (error) => {
+              }              
+            ).catch((error) => {
+              if (error.response && error.response.data) {
                 Swal.fire({
                   icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response.message) || error.message || error.toString(),
+                  text: error.response.data.error ? error.response.data.error : error.response.data.message
                 })
-              },
-            )
+              } else {
+                alert('Terjadi kesalahan pada server')
+              }
+            })
         } else {
           await ApiServices
             .put(QuatationsAdd + '/' + this.id, {
@@ -618,12 +614,12 @@ export default defineComponent({
               ppn: this.ppn,
               grand_total: this.grand_total,
               description: this.description,
-              issue_at: this.issue_at,              
-              due_at: this.due_at,              
+              issue_at: this.issue_at,
+              due_at: this.due_at,
               inquiry_details: this.inquiry_details,
             })
             .then(
-              async (response) => {                                
+              async (response) => {
                 await Swal.fire({
                   icon: 'success',
                   title: 'Success',
@@ -633,16 +629,17 @@ export default defineComponent({
                     await router.push('/quotation')
                   }
                 })
-              },
-              (error) => {
+              }              
+            ).catch((error) => {
+              if (error.response && error.response.data) {
                 Swal.fire({
                   icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response.message) || error.message || error.toString(),
+                  text: error.response.data.error
                 })
-              },
-            )
+              } else {
+                alert('Terjadi kesalahan pada server')
+              }
+            })
         }
       } else {
         Swal.fire({

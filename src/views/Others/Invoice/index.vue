@@ -283,9 +283,9 @@ export default defineComponent({
           icon : 'success',
           title : 'Success',
           text : 'Berhasil Mengubah PPN',          
-        }).then((res) => {
+        }).then(async(res) => {
           if (res.isConfirmed) {
-            window.location.reload();
+            await getInvoices();
           }
         })
       }).catch((err) => console.error(err));

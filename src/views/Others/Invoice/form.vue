@@ -428,19 +428,17 @@ export default defineComponent({
                 await router.push("/invoice");
               }
             })
-          }, (error) => {
-            Swal.fire({
-              icon: "error",
-              title: "Error",
-              text:
-                (error.response &&
-                  error.response &&
-                  error.response.message) ||
-                error.message ||
-                error.toString(),
-            });
-          },
-          )
+          }
+          ).catch((error) => {
+            if (error.response && error.response.data) {
+              Swal.fire({
+                icon: 'error',
+                text: error.response.data.error ? error.response.data.error : error.response.data.message
+              })
+            } else {
+              alert('Terjadi kesalahan pada server')
+            }
+          })
         }
         else {
           await ApiServices.put(InvoiceAdd + '/' + this.id, {

@@ -55,31 +55,16 @@
           </FormGroup>
           <!-- customer -->
           <FormGroup label="Customer" class="relative" :required="true">
-            <input 
-              type="text" 
-              autocomplete="off" 
-              name="customer_name" 
-              id="customer_name" 
-              v-model="customer_name"
-              @input="filterCustomers" 
-              class="rounded w-full" 
-              placeholder="Type customer name"
-              :class="inputClass(rules.issue_at)" 
-            />
-            <ul 
-              v-if="filteredCustomers.length && customer_name" 
-              class="border rounded w-full mt-2 absolute z-40 bg-white"
-            >
-              <li 
-                v-for="customer in filteredCustomers" 
-                :key="customer.customer_id" 
-                @click="selectCustomer(customer)"
+            <input type="text" autocomplete="off" name="customer_name" id="customer_name" v-model="customer_name"
+              @input="filterCustomers" class="rounded w-full" placeholder="Type customer name"
+              :class="inputClass(rules.issue_at)" />
+            <ul v-if="filteredCustomers.length && customer_name"
+              class="border rounded w-full mt-2 absolute z-40 bg-white">
+              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
-                  {{ customer.customer_name }}
+                {{ customer.customer_name }}
               </li>
-              <li 
-                v-if="filteredCustomers.length === 0"
-              >
+              <li v-if="filteredCustomers.length === 0">
                 not found
               </li>
             </ul>
@@ -164,8 +149,8 @@
               <tr class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Type</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Name</th>
+                <th class="px-3 py-2 font-semibold text-left border-b">Type</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Price</th>
                 <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
@@ -376,49 +361,79 @@ export default defineComponent({
     },
 
     addPoDetails() {
-      ApiServices.get(Product + '/' + this.product_id).then((res) => {
-        var data = res.data
-        if (Array.isArray(data)) {
-          data = data[0];
-        }
-        if (this.quantity > data.product_stock) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'Warning',
-            text: `Stock ${data.product_desc} Less Than Quantity`,
-          })
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            product_stock: data.product_stock,
-            product_type: this.selectedType,
-            quantity: this.quantity,
-            price: this.price,
-            discount: this.discount,
-            amount: this.price * this.quantity,
+      var valid = false;
+      var quantity = 1;
+      var price = 1;
+      if (this.product_id == null || this.product_id == '') {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Pilih Barang'
+        });
+        valid = false;
+      } else {
+        valid = true;
+      }
+
+      if (this.quantity != 0) {
+        quantity = this.quantity;
+        valid = true;
+      } else {
+        valid = false;
+      }
+
+      if (this.price != 0) {
+        price = this.price;
+        valid = true;
+      } else {
+        valid = false;
+      }
+
+      if (valid) {
+        ApiServices.get(Product + '/' + this.product_id).then((res) => {
+          var data = res.data
+          if (Array.isArray(data)) {
+            data = data[0];
           }
-          this.sales_order_details.push(object)
-        } else {
-          var object = {
-            product_id: data.product_id,
-            product_code: data.product_code,
-            product_pn: data.product_sn,
-            product_desc: data.product_desc,
-            product_stock: data.product_stock,
-            product_type: this.selectedType,
-            quantity: this.quantity,
-            price: this.price,
-            discount: this.discount,
-            amount: this.price * this.quantity,
+          if (this.quantity > data.product_stock) {
+            Swal.fire({
+              icon: 'warning',
+              title: 'Warning',
+              text: `Stock ${data.product_desc} Less Than Quantity`,
+            })
+            var object = {
+              product_id: data.product_id,
+              product_code: data.product_code,
+              product_pn: data.product_sn,
+              product_desc: data.product_desc,
+              product_stock: data.product_stock,
+              product_type: this.selectedType,
+              quantity: this.quantity,
+              price: this.price,
+              discount: this.discount,
+              amount: this.price * this.quantity,
+            }
+            this.sales_order_details.push(object)
+          } else {
+            var object = {
+              product_id: data.product_id,
+              product_code: data.product_code,
+              product_pn: data.product_sn,
+              product_desc: data.product_desc,
+              product_stock: data.product_stock,
+              product_type: this.selectedType,
+              quantity: this.quantity,
+              price: this.price,
+              discount: this.discount,
+              amount: this.price * this.quantity,
+            }
+            this.sales_order_details.push(object)
           }
-          this.sales_order_details.push(object)
-        }
-        this.product_id = null
-        this.quantity = 0
-        this.price = 0
-      })    
+          this.product_id = null
+          this.product_name = '';
+          this.quantity = 0
+          this.price = 0
+        })
+      }
     },
 
     calculateDueDate(issueDate, termin) {
@@ -619,7 +634,7 @@ export default defineComponent({
       e?.preventDefault?.()
       const result = await this.validation()
       if (result == 0) {
-        if (this.id) {          
+        if (this.id) {
           await ApiServices
             .put(SalesOrderAdd + '/' + this.id, {
               customer_id: this.customer_id,
@@ -683,18 +698,17 @@ export default defineComponent({
                     await router.push('/sales-order')
                   }
                 })
-              },
-              (error) => {
+              }
+            ).catch((error) => {
+              if (error.response && error.response.data) {
                 Swal.fire({
                   icon: 'error',
-                  title: 'Error',
-                  text:
-                    (error.response && error.response && error.response.message) ||
-                    error.message ||
-                    error.toString(),
+                  text: error.response.data.error
                 })
-              },
-            )
+              } else {
+                alert('Terjadi kesalahan pada server')
+              }
+            })
         }
       }
     },

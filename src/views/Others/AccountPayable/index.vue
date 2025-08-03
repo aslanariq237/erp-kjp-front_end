@@ -141,11 +141,11 @@
           <div v-if="isModalOpen"
             class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 transition-opacity duration-300">
             <div class="bg-white p-8 rounded-xl w-96 shadow-xl transform transition-all duration-300">
-              <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">Edit Payment</h2>
+              <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b pb-3">Pembayaran</h2>
 
               <!-- Total Amount Display -->
               <div class="mb-5">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Total Amount</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Total Pembayaran</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
                   <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
                     formatCurrency(selectedItem.grand_total) : 0 }}</span>
@@ -154,7 +154,7 @@
 
               <!-- Current Deposit Display -->
               <div class="mb-5">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Current Payment</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Terbayar</label>
                 <div class="p-3 bg-gray-100 rounded-lg border border-gray-200">
                   <span class="text-lg font-semibold text-gray-800">Rp. {{ selectedItem ?
                     formatCurrency(selectedItem.deposit) : 0 }}</span>
@@ -176,12 +176,14 @@
               <!-- New Additional Deposit Input -->
               <div class="mb-5">
                 <label for="deposit-amount" class="block text-sm font-medium text-gray-700 mb-2">
-                  Additional Payment Amount
+                  Total Dibayarkan
                 </label>
                 <div class="relative">
                   <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">Rp.</span>
                   <div class="flex space-x-3">
-                    <input id="deposit-amount" type="number" v-model.number="additionalDeposit"
+                    <input id="deposit-amount" 
+                      type="number" v-model.number="additionalDeposit"
+                      @change="changePrice(selectedItem)"
                       class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="0.00" />
                     <button
@@ -358,6 +360,13 @@ export default defineComponent({
     onMounted(() => {
       getArcheive();
     })
+
+    const changePrice = (item) => {
+      var total = item.grand_total - item.deposit;
+      if (additionalDeposit.value > total) {
+        additionalDeposit.value = total;
+      }    
+    }
 
     const calculateDay = (issue_at, due_at) => {
       const today = new Date();
@@ -651,6 +660,7 @@ export default defineComponent({
       saveDeposit,
       calculateDay,
       resetPrice,
+      changePrice,
       isModalOpen,
       selectedItem,
       editedDeposit,

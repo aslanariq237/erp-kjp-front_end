@@ -32,66 +32,33 @@
             <!-- Form Card -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <div class="grid grid-cols-2 md:grid-cols-2 gap-3">
-                    <FormGroup 
-                        label="Image Product" 
-                        :required="false" 
-                        :error="rules.issue_at"
+                    <FormGroup label="Image Product" :required="false" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
                         <input type="file" autocomplete="off" id="issue_at" name="issue_at"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>
 
-                    <FormGroup 
-                        label="Product Desc" 
-                        :required="true" 
-                        :error="rules.product_desc"
+                    <FormGroup label="Product Desc" :required="true" :error="rules.product_desc"
                         errorMessage="Product Desc is required">
-                        <input 
-                            type="text" 
-                            autocomplete="off" 
-                            id="product_desc" 
-                            name="product_desc" 
-                            v-model="product_desc"
-                            :class="inputClass(rules.issue_at)" />
+                        <input type="text" autocomplete="off" id="product_desc" name="product_desc"
+                            v-model="product_desc" :class="inputClass(rules.issue_at)" />
                     </FormGroup>
-                    <FormGroup 
-                        label="Product SN" 
-                        :required="true" 
-                        :error="rules.product_sn"
+                    <FormGroup label="Product SN" :required="true" :error="rules.product_sn"
                         errorMessage="Product Sn is required">
                         <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_sn"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>
-                    <FormGroup 
-                        label="Product Brand" 
-                        :required="false" 
-                        :error="rules.issue_at"
+                    <FormGroup label="Product Brand" :required="false" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
-                        <input 
-                            type="text" 
-                            id="product_brand" 
-                            autocomplete="off" 
-                            name="product_brand" 
-                            v-model="product_brand"
+                        <input type="text" id="product_brand" autocomplete="off" name="product_brand"
+                            v-model="product_brand" :class="inputClass(rules.issue_at)" />
+                    </FormGroup>
+                    <FormGroup label="Product UoM" :required="false" :error="rules.issue_at"
+                        errorMessage="Issue Date is required">
+                        <input type="text" id="issue_at" autocomplete="off" name="issue_at" v-model="product_uom"
                             :class="inputClass(rules.issue_at)" />
                     </FormGroup>
-                    <FormGroup 
-                        label="Product UoM" 
-                        :required="false" 
-                        :error="rules.issue_at"
-                        errorMessage="Issue Date is required">
-                        <input 
-                            type="text" 
-                            id="issue_at" 
-                            autocomplete="off" 
-                            name="issue_at" 
-                            v-model="product_uom"
-                            :class="inputClass(rules.issue_at)" />
-                    </FormGroup>
-                    <FormGroup 
-                        label="Product Category" 
-                        :required="false" 
-                        :error="rules.issue_at"
+                    <FormGroup label="Product Category" :required="false" :error="rules.issue_at"
                         errorMessage="Issue Date is required">
                         <input type="text" id="issue_at" autocomplete="off" name="issue_at"
                             v-model="product_category_id" :class="inputClass(rules.issue_at)" />
@@ -106,8 +73,7 @@
                     <span>is package</span>
                 </div>
                 <div v-if="is_package == true">
-                    <div                        
-                        class="flex space-x-5 items-end md:flex-row mt-4 justify-between">
+                    <div class="flex space-x-5 items-end md:flex-row mt-4 justify-between">
                         <FormGroup class="w-full relative" label="Product" :required="true" :error="rules.product_id"
                             errorMessage="Pilih produk">
                             <input type="text" name="product_name" id="product_name" v-model="product_name"
@@ -248,7 +214,7 @@ export default defineComponent({
             products: [],
             product_id: null,
             package_details: [],
-            detail_pacakges : [],
+            detail_pacakges: [],
             is_package: false,
             filteredProducts: [],
             //others
@@ -258,13 +224,13 @@ export default defineComponent({
                 type: 'success',
                 message: '',
             },
-            rules: {                
+            rules: {
                 product_desc: false,
                 product_sn: false,
                 product_brand: false,
                 product_uom: false,
                 product_category_id: false,
-                product_image: false,                
+                product_image: false,
             },
             sales_order_details: [],
         }
@@ -321,7 +287,7 @@ export default defineComponent({
                 if (this.package_details.length == 0) {
                     Swal.fire({
                         icon: 'warning',
-                        title : 'Tambahkan Barang'
+                        title: 'Tambahkan Barang'
                     });
                 }
             }
@@ -363,7 +329,7 @@ export default defineComponent({
         getById(id) {
             ApiServices.get(Product + '/' + id).then(
                 (res) => {
-                    var data = res.data; 
+                    var data = res.data;
                     if (Array.isArray(data)) {
                         data = data[0];
                     }
@@ -372,7 +338,7 @@ export default defineComponent({
                     this.product_brand = data.product_brand;
                     this.product_sn = data.product_sn;
                     this.product_code = data.product_code;
-                    this.product_uom = data.product_uom;                    
+                    this.product_uom = data.product_uom;
                     this.is_package = data.is_package;
                     this.detail_pacakges = data.detail_package || [];
                     if (data.is_package == 1) {
@@ -381,18 +347,18 @@ export default defineComponent({
                 }
             )
         },
-        getDetail(){
+        getDetail() {
             this.package_details = [];
             this.detail_pacakges.forEach((item) => {
                 if (item.product) {
                     this.package_details.push({
-                        product_id : item.product.product_id,
-                        product_desc : item.product.product_desc,
-                        product_sn : item.product.product_sn,
-                        product_brand : item.product.product_brand,
-                        product_uom : item.product.product_uom
+                        product_id: item.product.product_id,
+                        product_desc: item.product.product_desc,
+                        product_sn: item.product.product_sn,
+                        product_brand: item.product.product_brand,
+                        product_uom: item.product.product_uom
                     });
-                }            
+                }
             })
         },
         async onSubmit() {
@@ -407,8 +373,8 @@ export default defineComponent({
                             product_uom: this.product_uom,
                             product_category_id: this.product_category_id,
                             product_stock: this.product_stock,
-                            is_package : this.is_package,
-                            package_details :this.package_details
+                            is_package: this.is_package,
+                            package_details: this.package_details
                         })
                         .then(
                             (response) => {
@@ -421,18 +387,17 @@ export default defineComponent({
                                         router.push('/product')
                                     }
                                 })
-                            },
-                            (error) => {
+                            },                            
+                        ).catch((error) => {
+                            if (error.response && error.response.data) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text:
-                                        (error.response && error.response && error.response.message) ||
-                                        error.message ||
-                                        error.toString(),
+                                    text: error.response.data.error
                                 })
-                            },
-                        )
+                            } else {
+                                alert('Terjadi kesalahan pada server')
+                            }
+                        })
                 } else {
                     await ApiServices
                         .put(ProductCode + '/' + this.id, {
@@ -442,8 +407,8 @@ export default defineComponent({
                             product_uom: this.product_uom,
                             product_category_id: this.product_category_id,
                             product_stock: this.product_stock,
-                            is_package : this.is_package, 
-                            package_details :this.package_details
+                            is_package: this.is_package,
+                            package_details: this.package_details
                         })
                         .then(
                             (response) => {

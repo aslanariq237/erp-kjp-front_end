@@ -17,42 +17,63 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-lg shadow-md p-6 mt-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-            <FormGroup label="vendor Name" :required="true" :error="rules.issue_at"
-              errorMessage="Issue Date is required">
+            <FormGroup 
+              label="vendor Name" 
+              :required="true" 
+              :error="rules.vendor_name"
+              errorMessage="Nama Vendor Dibutuhkan">
               <input type="text" autocomplete="off" id="vendor_name" name="vendor_name" v-model="vendor_name" @input="singkatan"
                 :class="inputClass(rules.issue_at)" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup label="vendor Phone" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+            <FormGroup 
+              label="vendor Phone" 
+              :required="true" 
+              :error="rules.vendor_phone" 
+              errorMessage="Nomor Vendor Dibutuhkan">
               <input type="text" id="vendor_phone" name="vendor_phone" v-model="vendor_phone"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
 
             <!-- No -->
-            <FormGroup label="vendor Email" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+            <FormGroup 
+              label="vendor Email" 
+              :required="true" 
+              :error="rules.vendor_email" 
+              errorMessage="Email Vendor Dibutuhkan">
               <input type="text" id="vendor_email" name="vendor_email" v-model="vendor_email"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
             <!-- Code PO -->
 
             <!-- Total Service -->
-            <FormGroup label="vendor Address" :required="true" :error="rules.deposit"
-              errorMessage="Deposit is required">
+            <FormGroup 
+              label="vendor Address" 
+              :required="true" 
+              :error="rules.vendor_address"
+              errorMessage="Alamat Vendor Dibutuhkan">
               <input type="text" id="vendor_address" name="vendor_address" v-model="vendor_address"
                 :class="inputClass(rules.deposit)" placeholder="Insert vendor Address" />
             </FormGroup>
 
             <!-- Due Date -->
-            <FormGroup label="vendor NPWP" :required="true" :error="rules.due_at" errorMessage="Due Date is required">
+            <FormGroup 
+              label="vendor NPWP" 
+              :required="true" 
+              :error="rules.vendor_npwp" 
+              errorMessage="NPWP Vendor Dibutuhkan">
               <input type="number" id="vendor_npwp" name="vendor_npwp" v-model="vendor_npwp" @input="singkatan"
                 :class="inputClass(rules.due_at)" />
             </FormGroup>
 
-            <FormGroup label="Contact Person" :required="true" :error="rules.deposit"
-              errorMessage="Deposit is required">
+            <FormGroup 
+              label="Contact Person" 
+              :required="true" 
+              :error="rules.contact_person"
+              errorMessage="Contact Person Dibutuhkan">
               <input type="text" id="contact_person" name="contact_person" v-model="vendor_contact"
                 :class="inputClass(rules.deposit)" placeholder="Insert Contact Person" />
             </FormGroup>
@@ -103,7 +124,7 @@ export default defineComponent({
         vendor_phone: false,
         vendor_email: false,
         vendor_address: false,
-        npwp: false,
+        vendor_npwp: false,
         contact_person: false,
       },
     }
@@ -159,6 +180,53 @@ export default defineComponent({
       this.vendor_singkatan = this.createSingkatan(this.vendor_name)
     },
 
+    async validation() {
+      var count = 0;
+      if (this.vendor_name == "" || this.vendor_name == null) {
+        this.rules.vendor_name = true;
+        count++
+      } else {
+        this.rules.vendor_name = false;
+      }
+
+      if (this.vendor_phone == 0 && this.vendor_phone <= 16) {
+        this.rules.vendor_phone = true;
+        count++;
+      } else {
+        this.rules.vendor_phone = false;
+      }
+
+      if (this.vendor_email == "" || this.vendor_email == null) {
+        this.rules.vendor_email = true;
+        count++;
+      } else {
+        this.rules.vendor_email = false;
+      }
+
+      if (this.vendor_address == "" || this.vendor_address == null) {
+        this.rules.vendor_address = true;
+        count++
+      } else {
+        this.rules.vendor_address = false;
+      }
+
+      if (this.vendor_npwp == 0 && this.vendor_npwp <= 16) {
+        this.rules.vendor_npwp = true;
+        count++;
+      } else {
+        this.rules.vendor_npwp = false;
+      }
+
+      if (this.vendor_contact == "" || this.vendor_contact == null) {
+        this.rules.contact_person = true;
+        count++;
+      } else {
+        this.rules.contact_person = false;
+      }
+
+      return count;
+    },
+
     async getById(id) {
       await ApiServices.get(Vendor + '/' + id).then(
         (res) => {
@@ -174,8 +242,8 @@ export default defineComponent({
       )
     },
     async onSubmit() {
-      const result = 2;
-      if (result != 0) {
+      const result = await this.validation();
+      if (result == 0) {
         if (this.id) {
           await ApiServices.put(AddVendor + '/' + this.id, {
           vendor_name: this.vendor_name,
