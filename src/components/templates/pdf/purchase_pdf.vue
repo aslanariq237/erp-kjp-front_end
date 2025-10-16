@@ -1,6 +1,6 @@
 <template>
     <div class="quotation p-20">
-        <div class="header flex justify-between items-center">
+        <div v-if="showHeader" class="header flex justify-between items-center">
             <div class="logo">
                 <img :src="getImagePaths('KJP_Logo.png')" width="180" height="90">
             </div>
@@ -19,16 +19,16 @@
                 </div>
             </div>
         </div>
-        <div class="border-2 border-gray-400 mt-3"></div>
+        <div class="border-2 border-gray-400 mt-3" v-if="showHeader"></div>
         <div class="body">
             <div class="mt-3">
-                <div class="title text-center">
+                <div class="title text-center" v-if="showHeader">
                     <p class="text-xl font-semibold mt-5" v-if="item.approved == 0">DRAFT PURCHASE ORDER</p>
                     <p class="text-xl font-semibold mt-5" v-else>PURCHASE ORDER</p>
                 </div>
-                <div class="flex justify-between align-center text-xs my-5">
+                <div v-if="showHeader" class="flex justify-between align-center text-xs my-5">
                     <div class="left w-[40%]">
-                        <p>Kepata Yth.</p>
+                        <p>Kepada Yth.</p>
                         <p>{{ item.vendor.vendor_name }}</p>
                         <p>{{ item.vendor.vendor_address }}</p>
                     </div>
@@ -53,54 +53,46 @@
                 </div>
                 <div class="my-12">
                     <table class="min-w-full divide-y divide-gray-100 shadow-xs border-gray-200 border">
-                        <thead class="border">
+                        <thead class="border" v-if="pageNumber === 1 || partialMode">
                             <tr class="text-center text-2x;">
-                                <th class=" px-3 py-2 font-semibold">No</th>
-                                <th class=" px-3 py-2 font-semibold">Part Number</th>
-                                <th class=" px-3 py-2 font-semibold">Description</th>
-                                <th class=" px-3 py-2 font-semibold">Qty</th>
-                                <th class=" px-3 py-2 font-semibold">UOM</th>
-                                <th class=" px-3 py-2 font-semibold">
+                                <th class=" px-3 py-3 font-medium">No</th>
+                                <th class=" px-3 py-3 font-medium">Part Number</th>
+                                <th class=" px-3 py-3 font-medium">Description</th>
+                                <th class=" px-3 py-3 font-medium">Qty</th>
+                                <th class=" px-3 py-3 font-medium">UOM</th>
+                                <th class=" px-3 py-3 font-medium">
                                     Price
                                 </th>
-                                <th class=" px-3 py-2 font-semibold">Amount</th>
+                                <th class=" px-3 py-3 font-medium">Amount</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2 text-xs" v-for="(pro, index) in item.detail_po"
-                                :key="index">
-                                <td class="text-xs px-3 py-2">{{ index + 1 }}</td>
-                                <td class="text-xs px-3 py-2">{{ pro.product.product_sn }}</td>
-                                <td class="text-xs px-3 py-2">{{ pro.product.product_desc }}</td>
-                                <td class="text-xs px-3 py-2">{{ pro.quantity }}</td>
-                                <td class="text-xs px-3 py-2">{{ pro.product.product_uom }}</td>
-                                <td class="text-xs px-3 py-2">{{ numberWithCommas(pro.price) }}</td>
-                                <td class="text-xs px-3 py-2">{{ numberWithCommas(pro.price * pro.quantity) }}</td>
+                            <tr class="text-center border-b-2 text-xs"
+                                v-for="(pro, index) in (item.detail_po ? rowsToShow : item.detail_po)" :key="index">
+                                <td class="text-xs px-3 py-3">{{ (partialMode ? (pageNumber - 1) * 12 + index + 1 :
+                                    index + 1) }}</td>
+                                <td class="text-xs px-3 py-3">{{ pro.product.product_sn }}</td>
+                                <td class="text-xs px-3 py-3">{{ pro.product.product_desc }}</td>
+                                <td class="text-xs px-3 py-3">{{ pro.quantity }}</td>
+                                <td class="text-xs px-3 py-3">{{ pro.product.product_uom }}</td>
+                                <td class="text-xs px-3 py-3">{{ numberWithCommas(pro.price) }}</td>
+                                <td class="text-xs px-3 py-3">{{ numberWithCommas(pro.price * pro.quantity) }}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="flex items-start justify-between">
-                        <div class="payment mt-3"></div>
+                    <div v-if="showFooter" class="flex items-start justify-between">
+                        <div class="payment"></div>
                         <table class="min-w-[50%]">
-                            <tbody>
+                            <tbody>                                
                                 <tr>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                </tr>
-                                <tr>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">Purchase
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">Purchase
                                         SubTotal</td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">
                                         <div class="flex justify-between">
                                             <span>IDR. </span>
                                             <span>
@@ -110,13 +102,13 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">PPN 11%</td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">PPN 11%</td>
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">
                                         <div class="flex justify-between">
                                             <span>IDR. </span>
                                             <span>{{ numberWithCommas(item.ppn) }}</span>
@@ -124,13 +116,13 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-3 py-2 "></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="px-3 py-2"></td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">Total</td>
-                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                    <td class="px-3 py-3 "></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="px-3 py-3"></td>
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">Total</td>
+                                    <td class="text-xs px-3 py-3 border-gray-200 border-2">
                                         <div class="flex justify-between">
                                             <p>IDR. </p>
                                             {{ numberWithCommas(item.grand_total) }}
@@ -145,7 +137,7 @@
                     <p>Desc</p>
                     <p>{{ item.desc }}</p>
                 </div> -->
-                <div class="flex justify-between text-center">
+                <div v-if="showFooter" class="flex justify-between text-center">
                     <div>
                         <p class="mb-2 text-xs">Prepared By</p>
                         <img :src="getImagePaths('tt-imam-without-stempel.png')" width="120">
@@ -180,6 +172,30 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+        partialMode: {
+            type: Boolean,
+            default: false
+        },
+        pageNumber: {
+            type: Number,
+            default: 1
+        },
+        totalPages: {
+            type: Number,
+            default: 1,
+        },
+        rowsToShow: {
+            type: Array,
+            default: () => [],
+        },
+        showHeader: {
+            type: Boolean,
+            default: true,
+        },
+        showFooter: {
+            type: Boolean,
+            default: true,
+        }
     },
     methods: {
         getImagePaths(filename) {

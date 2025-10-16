@@ -33,150 +33,303 @@ interface JasaKirim {
   code_jasakirim: string;
 }
 
-export const exportPoPDF = (item: Purchaseorder) => {
-  const container = document.createElement('div')
-  container.style.width = '794px';
-  container.style.height = '1123px';
-  document.body.appendChild(container)
+const ROWS_PER_PAGE = 12;
+const ROws_PER_PAGE_DO = 5;
 
-  const app = createApp({
-    render: () => h(purchase_pdf, { item }),
-  });
+export const exportPoPDF = async (item) => {
+  if (!item || item.length === 0) {
+    console.warn('No Items To Export');
+    return;
+  }
 
-  const instance = app.mount(container);
+  await generateSinglePoPdf(item);
+}
+const generateSinglePoPdf = async (item) => {
+  var totalRows = item.detail_po.length;
+  var totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+  var pdf = new jsPDF('p', 'mm', 'A4');
+  var imgWidth = 210
+  var imgHeight = 297;
 
-  html2canvas(instance.$el).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  let currentPage = 1;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+  while (currentPage <= totalPages) {
+    const startRow = (currentPage - 1) * ROWS_PER_PAGE;
+    const endRow = Math.min(startRow + ROWS_PER_PAGE, totalRows);
+    const rowsToShow = item.detail_po.slice(startRow, endRow);
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages;
+    const remainingRows = totalRows - startRow;
 
-    pdf.save(`purchase_order_${item.code_po}.pdf`);
-  });
+    const pdfProps = {
+      item,
+      partialMode: totalPages > 1,
+      pageNumber: currentPage,
+      totalPages,
+      rowsToShow,
+      showHeader: isFirstPage,
+      showFooter: isLastPage,
+    };
 
-  app.unmount();
-  document.body.removeChild(container);
+    const container = document.createElement('div');
+    container.style.width = '794px';
+    container.style.height = '1123px';
+    document.body.appendChild(container);
+
+    const app = createApp({
+      render: () => h(purchase_pdf, pdfProps),
+    });
+
+    const instance = app.mount(container);
+
+    try {
+      const canvas = await html2canvas(instance.$el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+      });
+
+      const imgData = canvas.toDataURL('img/png');
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (currentPage > 1) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      currentPage++;
+    } catch (error) {
+      console.error('Error Generating Page', error);
+    } finally {
+      app.onUnmount();
+      document.body.removeChild(container);
+    }
+  }
+  pdf.save(`purchase_order_${item.code_po}.pdf`);
 }
 
-export const exportDoPDF = (item: Deliveryorder) => {
-  // Buat instance Vue baru untuk merender komponen
-  const container = document.createElement('div')
-  container.style.width = '794px';
-  container.style.height = '1123px';
-  document.body.appendChild(container)
-  const app = createApp({
-    render: () => h(Do_pdf, { item })
-  });
+export const exportDoPDF = async(item: Deliveryorder) => {
+  if (!item || item.length === 0) {
+    console.warn('No Items To Export');
+    return;
+  }
 
-  const instance = app.mount(container);
+  await generateSingleDoPdf(item);
+}
 
-  // Gunakan html2canvas untuk mengonversi elemen ke gambar
-  html2canvas(instance.$el).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+const generateSingleDoPdf = async (item) => {
+  var totalRows = item.detail_do.length;
+  var totalPages = Math.ceil(totalRows / ROws_PER_PAGE_DO);
+  var pdf = new jsPDF('p', 'mm', 'A4');
+  var imgWidth = 210
+  var imgHeight = 297;
+ 
+  let currentPage = 1;
+  while (currentPage <= totalPages) {
+    const startRow = (currentPage - 1) * ROws_PER_PAGE_DO;
+    const endRow = Math.min(startRow + ROws_PER_PAGE_DO, totalRows);
+    const rowsToShow = item.detail_do.slice(startRow, endRow);
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages;
+    const remainingRows = totalRows - startRow;
 
-    // Tambahkan gambar ke PDF
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    const pdfProps = {
+      item,
+      partialMode: totalPages > 1,
+      pageNumber: currentPage,
+      totalPages,
+      rowsToShow,
+      showHeader: isFirstPage,
+      showFooter: isLastPage,
+    };
 
-    // Simpan PDF
-    pdf.save(`DeliveryOrder_${item.code_do}.pdf`);
-  });
+    const container = document.createElement('div');
+    container.style.width = '794px';
+    container.style.height = '1123px';
+    document.body.appendChild(container);
 
-  app.unmount()
-  document.body.removeChild(container);
+    const app = createApp({
+      render : () => h(Do_pdf, pdfProps),
+    });
+
+    const instance = app.mount(container);
+
+    try {
+      const canvas = await html2canvas(instance.$el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+      });
+
+      const imgData = canvas.toDataURL('img/png');
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (currentPage > 1) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      currentPage++;
+    } catch (error) {
+      console.error('Error Generating Page', error);
+    } finally {
+      app.onUnmount();
+      document.body.removeChild(container);
+    }
+  }
+  pdf.save(`delivery_order_${item.code_do}.pdf`);
 }
 
 export const exportInvPDF = async (item: Invoice) => {
-  const container = document.createElement('div');
-  container.style.width = '794px';
-  container.style.height = '1123px';
-  document.body.appendChild(container);
-
-  const app = createApp({
-    render: () => h(Invoice_pdf, { item })
-  });
-
-  const instance = app.mount(container);
-
-  // Tunggu hingga rendering selesai
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const margin = 10; // margin dalam mm
-
-  try {
-    const canvas = await html2canvas(instance.$el, {
-      scale: 2, // meningkatkan kualitas
-      logging: false,
-      useCORS: true,
-      allowTaint: true
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-    const imgWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-    let page = 1;
-
-    // Tambahkan halaman pertama
-    pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    // Tambahkan halaman baru jika konten terlalu panjang
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-      page++;
-    }
-
-    pdf.save(`Invoice_${item.code_invoice}.pdf`);
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-  } finally {
-    app.unmount();
-    document.body.removeChild(container);
+  if (!item || item.length === 0) {
+    console.warn('No Items To Export');
+    return;
   }
+
+  await generateSingleInvPdf(item);
 };
 
-export const exportQuoPDF = async (item: Quotation) => {
-  const container = document.createElement('div');
-  container.style.width = '794px';
-  container.style.height = '1123px';
-  document.body.appendChild(container)
-  const app = createApp({
-    render: () => h(Quotation_pdf, { item })
-  });
+const generateSingleInvPdf = async(item) => {
+  var totalRows = item.detail_inv.length;
+  var totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+  var pdf = new jsPDF('p', 'mm', 'A4');
+  var imgWidth = 210
+  var imgHeight = 297;
 
-  const instance = app.mount(container);
+  let currentPage = 1;
+  while (currentPage <= totalPages) {
+    const startRow = (currentPage - 1) * ROWS_PER_PAGE;
+    const endRow = Math.min(startRow + ROWS_PER_PAGE, totalRows);
+    const rowsToShow = item.detail_inv.slice(startRow, endRow);
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages;
+    const remainingRows = totalRows - startRow;
 
-  await nextTick();
-  await new Promise(resolve => setTimeout(resolve, 200));
+    const pdfProps = {
+      item,
+      partialMode: totalPages > 1,
+      pageNumber: currentPage,
+      totalPages,
+      rowsToShow,
+      showHeader: isFirstPage,
+      showFooter: isLastPage,
+    };
 
-  // Gunakan html2canvas untuk mengonversi elemen ke gambar
-  html2canvas(instance.$el).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const container = document.createElement('div');
+    container.style.width = '794px';
+    container.style.height = '1123px';
+    document.body.appendChild(container);
 
-    // Tambahkan gambar ke PDF
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    const app = createApp({
+      render : () => h(Invoice_pdf, pdfProps),
+    });
 
-    // Simpan PDF
-    pdf.save(`quotation_${item.code_quatation}.pdf`);
-  });
+    const instance = app.mount(container);
 
-  app.unmount();
-  document.body.removeChild(container);
+    try {
+      const canvas = await html2canvas(instance.$el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+      });
+
+      const imgData = canvas.toDataURL('img/png');
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (currentPage > 1) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      currentPage++;
+    } catch (error) {
+      console.error('Error Generating Page', error);
+    } finally {
+      app.onUnmount();
+      document.body.removeChild(container);
+    }
+  }
+  pdf.save(`invoice_${item.code_invoice}.pdf`);
+}
+
+export const exportQuoPDF = async (item) => {
+  if (!item || item.length === 0) {
+    console.warn('No Items To Export');
+    return;
+  }
+
+  await generateSingleQuoPdf(item);
+}
+
+const generateSingleQuoPdf = async (item) => {
+  var totalRows = item.detail_quo.length;
+  var totalPages = Math.ceil(totalRows / ROWS_PER_PAGE);
+  var pdf = new jsPDF('p', 'mm', 'A4');
+  var imgWidth = 210
+  var imgHeight = 297;
+
+  let currentPage = 1;
+  while(currentPage <= totalPages) {
+    const startRow = (currentPage - 1) * ROWS_PER_PAGE;
+    const endRow = Math.min(startRow + ROWS_PER_PAGE, totalRows);
+    const rowsToShow = item.detail_quo.slice(startRow, endRow);
+    const isFirstPage = currentPage === 1;
+    const isLastPage = currentPage === totalPages;
+    const remainingRows = totalRows - startRow;
+
+    const pdfProps = {
+      item,
+      partialMode: totalPages > 1,
+      pageNumber: currentPage,
+      totalPages,
+      rowsToShow,
+      showHeader: isFirstPage,
+      showFooter: isLastPage,
+    };
+
+    const container = document.createElement('div');
+    container.style.width = '794px';
+    container.style.height = '1123px';
+    document.body.appendChild(container);
+
+    const app = createApp({
+      render : () => h(Quotation_pdf, pdfProps),
+    });
+
+    const instance = app.mount(container);
+
+    try {
+      const canvas = await html2canvas(instance.$el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        height: 1123,
+      });
+
+      const imgData = canvas.toDataURL('img/png');
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      if (currentPage > 1) {
+        pdf.addPage();
+      }
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      currentPage++;
+    } catch (error) {
+      console.error('Error Generating Page', error);
+    } finally {
+      app.onUnmount();
+      document.body.removeChild(container);
+    }
+  }
+  pdf.save(`quotation_${item.code_quatation}.pdf`);
 }
 
 export const exportTTPDF = (item: Tandaterima) => {

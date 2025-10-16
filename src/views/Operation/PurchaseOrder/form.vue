@@ -78,12 +78,48 @@
             </div>
           </FormGroup>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
+        <div 
+          class="grid gap-6 mt-5"
+          :class="id ? 'grid-cols-2 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'"
+        >
+
+          <!-- code-po -->
+          <FormGroup 
+            label="Code" 
+            class="relative" 
+            v-if="id"
+          >
+            <input 
+              type="text" 
+              name="code" 
+              id="code" 
+              v-model="code_po"               
+              autocomplete="off" 
+              class="rounded w-full" 
+              :class="inputClass(rules.deposit)"
+              placeholder="Type Code PO" 
+            />            
+            <div class="" v-if="rules.vendor_id == true">
+              <p class="text-red-500 text-sm">Vendor Dibutuhkan</p>
+            </div>
+          </FormGroup>
           <!-- No -->
-          <FormGroup label="Vendor" class="relative" :required="true">
-            <input type="text" name="vendor_name" id="vendor_name" v-model="vendor_name" @input="filtervendors"
-              autocomplete="off" class="rounded w-full" :class="inputClass(rules.deposit)"
-              placeholder="Type Vendor Name" />
+          <FormGroup 
+            label="Vendor" 
+            class="relative" 
+            :required="true"
+          >
+            <input 
+              type="text" 
+              name="vendor_name" 
+              id="vendor_name" 
+              v-model="vendor_name" 
+              @input="filtervendors"
+              autocomplete="off" 
+              class="rounded w-full" 
+              :class="inputClass(rules.deposit)"
+              placeholder="Type Vendor Name" 
+            />
             <ul v-if="filteredvendors.length && vendor_name" class="border rounded w-full mt-2 bg-white absolute z-40">
               <li v-for="vendor in filteredvendors" :key="vendor.vendor_id" @click="selectvendor(vendor)"
                 class="p-2 cursor-pointer hover:bg-gray-200">
@@ -172,7 +208,7 @@
               </div>
               <div class="sub_total flex justify-between mt-3">
                 <div class="ppn flex items-center space-x-2">
-                  <input type="checkbox" v-model="checkppn" class="mr-2">
+                  <input type="checkbox" v-model="checkppn" :checked="checkppn != 0" class="mr-2">
                   <p>PPN
                   </p>
                 </div>
@@ -243,6 +279,7 @@ export default defineComponent({
       price: 0,
       termin: '',
       po_type: '',
+      code_po : '',
       status_payment: "unpaid",
       total_tax: 0,
       total_service: 0,
@@ -540,13 +577,14 @@ export default defineComponent({
     async getById(id) {
       await ApiServices.get(PurchaseOrder + '/' + id).then((res) => {
         var data = res.data
-        this.issue_at = data.issue_at
-        this.due_at = data.due_at
-        this.termin = data.termin
-        this.vendor_id = data.vendor_id
-        this.vendor_name = data.vendor.vendor_name
-        this.deposit = data.deposit
-        this.checkppn = data.checkppn
+        this.issue_at = data.issue_at;
+        this.due_at = data.due_at;
+        this.termin = data.termin;
+        this.vendor_id = data.vendor_id;
+        this.vendor_name = data.vendor.vendor_name;
+        this.deposit = data.deposit;
+        this.checkppn = data.ppn > 0 ? 1 : 0;
+        this.code_po = data.code_po;
         if (data.id_po) {
           this.getDetailSo(data.id_po)
         }
@@ -562,6 +600,7 @@ export default defineComponent({
               vendor_id: this.vendor_id,
               employee_id: this.employee_id,
               termin: this.termin,
+              code_po : this.code_po,
               total_tax: this.total_tax,
               sub_total: this.sub_total,
               ppn: this.ppn,
@@ -604,7 +643,7 @@ export default defineComponent({
               employee_id: this.employee_id,
               termin: this.termin,
               total_tax: this.total_tax,
-              sub_total: this.sub_total,
+              sub_total: this.sub_total,              
               ppn: this.ppn,
               grand_total: this.grand_total,
               status_payment: this.status_payment,

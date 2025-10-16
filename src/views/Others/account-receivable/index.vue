@@ -87,7 +87,8 @@
               <tr v-for="(account, index) in paginatedData" :key="account.id"
                 class="hover:bg-gray-50 transition-colors duration-150">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <div class="bg-yellow-400 text-slate-600 text-center px-2 rounded-xl" v-if="account.status_payment == 'partial'">
+                  <div class="bg-yellow-400 text-slate-600 text-center px-2 rounded-xl"
+                    v-if="account.status_payment == 'partial'">
                     {{ account.status_payment }}
                   </div>
                   <div class="bg-green-400 text-slate-600 text-center px-2 rounded-xl"
@@ -131,11 +132,8 @@
                     <!-- <button @click="viewDetails(account)" class="text-blue-600 hover:text-blue-900">
                       View
                     </button> -->
-                    <button 
-                      @click="openModal(account)" 
-                      class="text-green-600 hover:text-green-900"
-                      v-if="account.status_payment != 'full'"
-                    >                
+                    <button @click="openModal(account)" class="text-green-600 hover:text-green-900"
+                      v-if="account.status_payment != 'full'">
                       Posting
                     </button>
                     <button v-if="account.status_payment != 'unpaid'" @click="resetPrice(account)"
@@ -191,10 +189,7 @@
                 <div class="relative">
                   <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">Rp.</span>
                   <div class="flex space-x-3">
-                    <input 
-                      id="deposit-amount" 
-                      type="number" 
-                      v-model.number="additionalDeposit"
+                    <input id="deposit-amount" type="number" v-model.number="additionalDeposit"
                       @change="changePrice(selectedItem)"
                       class="w-full p-3 pl-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                       placeholder="0.00" />
@@ -366,7 +361,7 @@ export default defineComponent({
       var total = item.grand_total - item.deposit;
       if (additionalDeposit.value > total) {
         additionalDeposit.value = total;
-      }    
+      }
     }
 
     // Computed properties for filtering and pagination
@@ -390,7 +385,7 @@ export default defineComponent({
         result = result.filter(a => a.status_payment === 'partial')
       } else if (sortBy.value === 'full') {
         result = result.filter(a => a.status_payment === 'full')
-      } 
+      }
 
       return result
     })
@@ -489,10 +484,12 @@ export default defineComponent({
           const deposit = Number(selectedItem.value.deposit || 0) + Number(additionalDeposit.value || 0);
 
           var status_payment = 'unpaid';
-          if (selectedItem.value.deposit = deposit) {
+          if (deposit >= selectedItem.value.grand_total) {            
             status_payment = 'full';
-          } else {
+          } else if(deposit > 0){
             status_payment = 'partial';
+          }else {
+            status_payment = 'unpaid'
           }
 
           const response = await ApiServices.put(AccUpdateDeposit + '/' + selectedItem.value.id_invoice, {
@@ -568,38 +565,115 @@ export default defineComponent({
     }
 
     const exportData = () => {
-      const data = accounts.value.map((account) => ({
-        'Code Po': account.code_invoice,
-        Customer: account.customer.customer_name,
-        Deposit: account.deposit,
-        Amount: account.grand_total,
-        Debt: account.grand_total - account.deposit,
-        'Issue Date': account.issue_at,
-        'Due Date': account.due_at,
-        Aging: calculateDay(account.issue_at, account.due_at),
-        'Status AR': account.grand_total = account.deposit ? "Paid" : "Partial",
-        'Payment Method': account.paymentsales.payment_method ? account.paymentsales.payment_method : "",
-        'Payment Date': account.paymentsales.issue_at ? account.paymentsales.issue_at : ""
-      }))
+      const data = accounts.value.map((account) => {
+        // Calculate Debt
+        const debt = account.grand_total - account.deposit;
+
+        // Get payments, sorted by issue_at (optional: for chronological order)
+        const payments = account.paymentsales || [];
+        payments.sort((a, b) => new Date(a.issue_at) - new Date(b.issue_at));
+
+        // Prepare payment data for up to 2 payments (extendable)
+        const paymentData = {
+          'Payment 1': payments[0]?.code_paymentso ? payments[0]?.code_paymentso : "payment",
+          'Payment Date 1': payments[0]?.issue_at ? payments[0]?.issue_at : account.issue_at ,
+          'Payment 2': payments[1]?.code_paymentso || '',
+          'Payment Date 2': payments[1]?.issue_at || '',
+        };
+
+        return {
+          'Code Po': account.code_invoice,
+          Customer: account.customer?.customer_name || 'N/A',
+          'Deposit Amount': account.deposit || 0,
+          Amount: account.grand_total || 0,
+          Debt: debt || 0,
+          'Issue Date': account.issue_at || '',
+          'Due Date': account.due_at || '',
+          Aging: calculateDay(account.issue_at, account.due_at) || 0,
+          'Status AR': account.status_payment || 'N/A',
+          ...paymentData, // Spread payment data into the object
+        };
+      });
+
+      // Define headers (match the table columns)
+      const headers = [
+        'Code Po',
+        'Customer',
+        'Deposit Amount',
+        'Amount',
+        'Debt',
+        'Issue Date',
+        'Due Date',
+        'Aging',
+        'Status AR',
+        'Payment 1',
+        'Payment Date 1',
+        'Payment 2',
+        'Payment Date 2',
+      ];
 
       // Create CSV content
-      const headers = Object.keys(data[0])
       const csvContent = [
         headers.join(','),
-        ...data.map((row) => headers.map((header) => `"${row[header]}"`).join(',')),
-      ].join('\n')
+        ...data.map((row) =>
+          headers.map((header) => `"${row[header] !== undefined ? row[header] : ''}"`).join(',')
+        ),
+      ].join('\n');
 
       // Create and trigger download
-      const blob = new Blob([csvContent], { type: 'text/csv' })
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.setAttribute('href', url)
-      a.setAttribute('download', `account-receivable-${new Date().toISOString().split('T')[0]}.csv`)
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-    }
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `account-receivable-${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    };
+
+    // Helper function to calculate days between dates
+    // const calculateDay = (startDate, endDate) => {
+    //   if (!startDate || !endDate) return 0;
+    //   const start = new Date(startDate);
+    //   const end = new Date(endDate);
+    //   const diffTime = Math.abs(end - start);
+    //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    //   return end < start ? -diffDays : diffDays; // Negative for past due
+    // };
+    // const exportData = () => {
+    //   const data = accounts.value.map((account) => ({
+    //     'Code Po': account.code_invoice,
+    //     Customer: account.customer.customer_name,
+    //     Terbayar: account.deposit,
+    //     Amount: account.grand_total,
+    //     Debt: account.grand_total - account.deposit,
+    //     'Issue Date': account.issue_at,
+    //     'Due Date': account.due_at,
+    //     Aging: calculateDay(account.issue_at, account.due_at),
+    //     'Status AR': account.status_payment,
+    //     'Payment Method': account.paymentsales.payment_method ? account.paymentsales.payment_method : "",
+    //     'Payment Date': account.paymentsales.issue_at ? account.paymentsales.issue_at : ""
+    //   }))
+
+    //   // Create CSV content
+    //   const headers = Object.keys(data[0])
+    //   const csvContent = [
+    //     headers.join(','),
+    //     ...data.map((row) => headers.map((header) => `"${row[header]}"`).join(',')),
+    //   ].join('\n')
+
+    //   // Create and trigger download
+    //   const blob = new Blob([csvContent], { type: 'text/csv' })
+    //   const url = window.URL.createObjectURL(blob)
+    //   const a = document.createElement('a')
+    //   a.setAttribute('href', url)
+    //   a.setAttribute('download', `account-receivable-${new Date().toISOString().split('T')[0]}.csv`)
+    //   document.body.appendChild(a)
+    //   a.click()
+    //   document.body.removeChild(a)
+    //   window.URL.revokeObjectURL(url)
+    // }
 
     return {
       // State

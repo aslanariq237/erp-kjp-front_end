@@ -92,6 +92,13 @@
               <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
             </div>
           </FormGroup>
+          <FormGroup label="code" class="relative" :required="true" :error="rules.code" errorMessage="Code is Required">
+            <input type="text" name="code" id="code" v-model="code" autocomplete="off" :class="inputClass(rules.due_at)"
+              placeholder="Type Code" />
+            <div class="" v-if="rules.customer_name == true">
+              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
+            </div>
+          </FormGroup>
           <!-- Code PO -->
         </div>
         <FormGroup label="Note" class="relative w-full mt-4 border-gray-500" :required="true"
@@ -223,6 +230,7 @@ import {
   Product,
   Quatations,
   QuatationsAdd,
+  QuatationsCode,
 } from '@/core/utils/url_api'
 import router from '@/router'
 import { useRoute } from 'vue-router'
@@ -250,6 +258,7 @@ export default defineComponent({
       customer_name: '',
       filteredCustomers: [],
       product_name: '',
+      code: '',
       filteredProducts: [],
       products: [],
       description: '',
@@ -284,8 +293,9 @@ export default defineComponent({
     const id = route.params.id
     this.employee_id = this.user.employee_id
 
-    this.getCustomer()
-    this.getProducts()
+    this.getCustomer();
+    this.getProducts();
+    this.getCode();
     if (id) {
       this.getById(id)
       this.id = id
@@ -338,6 +348,12 @@ export default defineComponent({
         this.products = data
       })
     },
+    getCode() {
+      ApiServices.get(QuatationsCode).then((res) => {
+        var data = res.data;
+        this.code = data;
+      })
+    },
 
     filterProducts() {
       const searchTerm = this.product_name.toLowerCase()
@@ -369,7 +385,7 @@ export default defineComponent({
     addPoDetails() {
       var validation = false;
       var product_id = null;
-      var quantity  = 1;
+      var quantity = 1;
       var price = 1;
 
       if (this.product_id == '' || this.product_id == null) {
@@ -385,14 +401,14 @@ export default defineComponent({
       if (this.quantity != 0) {
         quantity = this.quantity
         validation = true;
-      }else{
+      } else {
         validation = false;
       }
 
       if (this.price != 0) {
         price = this.price;
         validation = true;
-      }else{
+      } else {
         validation = false;
       }
 
@@ -555,7 +571,7 @@ export default defineComponent({
         this.customer_id = data[0].customer_id
         this.termin = data[0].termin
         this.description = data[0].description,
-          this.code_quatation = data[0].code_quatation
+        this.code_quatation = data[0].code_quatation
         var id = data[0].id_quatation
         if (id) {
           this.getDetailQuotation(id)
@@ -593,7 +609,7 @@ export default defineComponent({
                     await router.push('/quotation')
                   }
                 })
-              }              
+              }
             ).catch((error) => {
               if (error.response && error.response.data) {
                 Swal.fire({
@@ -629,7 +645,7 @@ export default defineComponent({
                     await router.push('/quotation')
                   }
                 })
-              }              
+              }
             ).catch((error) => {
               if (error.response && error.response.data) {
                 Swal.fire({

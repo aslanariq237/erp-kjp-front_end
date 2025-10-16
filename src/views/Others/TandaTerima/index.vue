@@ -117,6 +117,12 @@
                     class="shadow-lg mr-2 px-3 py-2 rounded-lg"
                     @click="exportToPdf(entry)"
                   >Export</button>                                      
+                  <button
+                    @click="deleteData(entry.id_quatation)"
+                    class="shadow-lg mr-2 px-3 py-2 rounded-lg border"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -191,10 +197,11 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import axios from 'axios'
-import { DetailTandater, SalesOrders, Tandater } from '@/core/utils/url_api'
+import { DetailTandater, SalesOrders, Tandater, TandaterDelete } from '@/core/utils/url_api'
 import router from '@/router'
 import { exportTTPDF } from '@/core/helpers/exportToPdf'
 import ApiServices from '@/core/services/ApiServices'
+import Swal from 'sweetalert2'
 export default defineComponent({
   name: 'SalesOrderPage',
   components: {
@@ -257,8 +264,10 @@ export default defineComponent({
         result = result.filter((entry) => {
           const code_tandater = entry.code_tandater.toLowerCase()          
           const customer = entry.customer.customer_name.toLowerCase()
+          const resi = entry.resi.toLowerCase()
           return code_tandater.includes(query)||                                
-                customer.includes(query)
+                customer.includes(query) ||
+                resi.includes(query)
         })
       }
 
@@ -270,6 +279,28 @@ export default defineComponent({
     }
     const editData = (id) => {
       router.push('/tanda-terima/edit/' + id);
+    }
+
+    const deleteData = async (id) => {
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!',
+      })
+
+      if (result.isConfirmed) {
+        try {
+          await ApiServices.delete(TandaterDelete + '/' + id)
+          await Tandater()
+          Swal.fire('Deleted!', 'The quotation has been deleted.', 'success')
+        } catch (error) {
+          Swal.fire('Error!', 'There was an error deleting the quotation.', 'error')
+        }
+      }
     }
 
     const totalPages = computed(() => Math.ceil(filteredData.value.length / itemsPerPage.value))
@@ -383,6 +414,7 @@ export default defineComponent({
       exportData,
       exportToPdf,
       formatCurrency,
+      deleteData,
     }
   },
 })

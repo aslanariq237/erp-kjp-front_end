@@ -116,9 +116,9 @@
               <tr v-for="products in tandaterima_details" :key="products.product_id">
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <button type="button"
-                    class="border-2 px-4 rounded-lg dark:text-gray-400 bg-red-300 hover:bg-red-400 text-gray-100"
+                    class="border-2 px-4 rounded-lg dark:text-gray-400 hover:bg-red-200 text-gray-800"
                     @click="tandaterima_details.splice(index, 1)">
-                    X
+                    delete
                   </button>
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ products.code_invoice }}</td>
@@ -248,10 +248,10 @@ export default defineComponent({
       }.bind(this))
 
       if (selected) {
-        this.due_at = selected.due_at;
+        this.due_at = selected.due_at;        
         this.po_number = selected.po_number,
-          this.customer_id = selected.customer_id,
-          this.customer_name = selected.customer.customer_name;
+        this.customer_id = selected.customer_id,
+        this.customer_name = selected.customer.customer_name;
         this.customer_address = selected.customer.customer_address;
         this.code_so = selected.code_so;
 
@@ -297,6 +297,7 @@ export default defineComponent({
           }
         )
       }
+      console.log(this.tandaterima_details);
     },
     showNotification(type, message) {
       this.notification = {
@@ -342,6 +343,7 @@ export default defineComponent({
             var object = {
               code_invoice: data[i].invoice.code_invoice,
               id_invoice: data[i].id_invoice,
+              id_so : data[i].id_so,
               code_so: data[i].so.code_so,
               po_number: data[i].so.po_number,
               nominal: data[i].invoice.grand_total,

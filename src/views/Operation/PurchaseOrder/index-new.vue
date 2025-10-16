@@ -463,8 +463,7 @@ export default defineComponent({
             purchaseorders: [],
             type: 'draft',
             itemsPerPage: 10,
-            currentPage: 1,
-            ROWS_PER_PAGE: 12,
+            currentPage: 1,            
         }
     },
     mounted() {

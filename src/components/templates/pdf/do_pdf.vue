@@ -1,6 +1,9 @@
 <template>
     <div class="quotation p-20">
-        <div class="header flex justify-between items-center">
+        <div 
+        v-if="showHeader"
+            class="header flex justify-between items-center"
+        >
             <div class="logo">
                 <img :src="getImagePaths('KJP_Logo.png')" width="180" height="90">
             </div>
@@ -25,7 +28,10 @@
                 <div class="title text-center">
                     <p class="text-xl font-semibold mt-2">DELIVERY ORDER</p>
                 </div>
-                <div class="flex justify-between items-center text-xs mt-5">
+                <div 
+                    v-if="showHeader"
+                    class="flex justify-between items-center text-xs mt-5"
+                >
                     <div class="left w-[50%]">
                         <p class="font-semibold">Kepata Yth.</p>
                         <p>{{ item.customer.customer_name }}</p>
@@ -48,7 +54,10 @@
                 </div>
                 <div class="my-13">                                        
                     <table class="min-w-full divide-y mt-4 divide-gray-100 shadow-sm border-gray-200 border">
-                        <thead class="border">
+                        <thead 
+                            class="border"
+                            v-if="pageNumber === 1 || partialMode"
+                            >
                             <tr class="text-center">                                
                                 <th class="text-xs px-3 py-2 font-semibold">No</th>
                                 <th class="text-xs px-3 py-2 font-semibold">Part Number</th>
@@ -62,8 +71,12 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2" v-for="(pro, index) in item.detail_do" :key="index">
-                                <td class="text-xs px-3 py-2">{{index+1 }}</td>
+                            <tr 
+                                class="text-center border-b-2" 
+                                v-for="(pro, index) in (item.detail_do ? rowsToShow : item.detail_do)" :key="index"
+                            >
+                                <td class="text-xs px-3 py-3">{{ (partialMode ? (pageNumber - 1) * 6 + index + 1 :
+                                    index + 1) }}</td>
                                 <td class="text-xs px-3 py-2">{{pro.product.product_sn }}</td>
                                 <td class="text-xs px-3 py-2">{{pro.product.product_desc }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.quantity }}</td>
@@ -74,7 +87,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="flex justify-between mt-20">
+                <div 
+                    class="flex justify-between mt-20"
+                    v-if="showFooter"
+                >
                     <div>
                         <p class="mb-2 text-xs">Prepared By</p>   
                         <img :src="getImagePaths('tt-imam.png')" width="170">             
@@ -106,6 +122,30 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+        partialMode: {
+            type: Boolean,
+            default: false
+        },
+        pageNumber: {
+            type: Number,
+            default: 1
+        },
+        totalPages: {
+            type: Number,
+            default: 1,
+        },
+        rowsToShow: {
+            type: Array,
+            default: () => [],
+        },
+        showHeader: {
+            type: Boolean,
+            default: true,
+        },
+        showFooter: {
+            type: Boolean,
+            default: true,
+        }
     },
     methods: {
         getImagePaths(filename) {

@@ -548,7 +548,7 @@ const router = createRouter({
       children: [
         {
           path: '',
-          component: () => import('../views/Others/Quotation/index.vue'),
+          component: () => import('../views/Others/Quotation/index-new.vue'),
           meta: {
             title: 'Quotation',
           },

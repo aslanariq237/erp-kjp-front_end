@@ -1,6 +1,9 @@
 <template>
     <div class="quotation p-20">
-        <div class="header flex justify-between items-center">
+        <div 
+            class="header flex justify-between items-center"
+            v-if="showHeader"
+        >
             <div class="logo">
                 <img :src="getImagePaths('KJP_Logo.png')" width="180" height="90">
             </div>
@@ -25,7 +28,10 @@
                 <div class="title text-center mt-5">
                     <p class="text-xl font-semibold">INVOICE</p>
                 </div>
-                <div class="flex justify-between text-xs mt-5">
+                <div 
+                    class="flex justify-between text-xs mt-5"
+                    v-if="showHeader"
+                >
                     <div class="left w-[50%]">
                         <p class="font-semibold">Kepata Yth.</p>
                         <p class="text-xs">{{ item.customer.customer_name }}</p>
@@ -34,7 +40,7 @@
                     <div class="right">
                         <div class="flex">
                             <p class="w-40">Purchase Order No </p>
-                            <!-- <p>: {{ item.salesorder.po_number }}</p> -->
+                            <p>: {{ selectedSalesOrder.po_number }}</p>
                         </div>
                         <div class="flex">
                             <p class="w-40">Invoice No </p>
@@ -46,7 +52,7 @@
                         </div>
                         <div class="flex">
                             <p class="w-40">Term of Payment </p>
-                            <!-- <p>: {{ item.salesorder.termin }}</p> -->
+                            <p>: {{ selectedSalesOrder.termin }}</p>
                         </div>
                         <div class="flex">
                             <p class="w-40">Due Date </p>
@@ -70,18 +76,25 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800">
-                            <tr class="text-center border-b-2 text-xs" v-for="(pro, index) in item.detail_inv" :key="index">
-                                <td class="text-xs px-3 py-2">{{ index+1 }}</td>
+                            <tr class="text-center border-b-2 text-xs" 
+                                v-for="(pro, index) in (item.detail_inv ? rowsToShow : item.detail_inv)"
+                                :key="index"
+                            >
+                                <td class="text-xs px-3 py-2">{{ (partialMode ? (pageNumber - 1) * 12 + index + 1 :
+                                    index + 1) }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.product.product_sn }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.product.product_desc }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.quantity }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.product.product_uom }}</td>
                                 <td class="text-xs px-3 py-2">{{ numberWithCommas(pro.price) }}</td>
-                                <td class="text-xs px-3 py-2">{{ numberWithCommas(pro.amount) }}</td>                                
+                                <td class="text-xs px-3 py-2">{{ numberWithCommas(pro.amount) }}</td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="flex items-center justify-between">
+                    <div 
+                        class="flex items-center justify-between"
+                        v-if="showFooter"
+                    >
                         <div class="payment">
                             <p class="font-bold text-xs">
                                 Payment Details:
@@ -102,78 +115,80 @@
                         <table class="min-w-[50%]">
                             <tbody>
                                 <tr>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                            </tr>
-                            <tr>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">Invoice
-                                    SubTotal</td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">
-                                    <div class="flex justify-between">
-                                        <span>IDR. </span>
-                                        <span>
-                                            {{ numberWithCommas(item.sub_total) }}
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr v-if="item.customer.customer_name == 'PT. Khayahan Jaya Persada'">
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">Invoice
-                                    DPP</td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">
-                                    <div class="flex justify-between">
-                                        <span>IDR. </span>
-                                        <span>
-                                            {{ numberWithCommas(Math.round(item.sub_total * 11/12)) }},00
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">PPN 11%</td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">
-                                    <div class="flex justify-between">
-                                        <span>IDR. </span>
-                                        <span>
-                                            {{ numberWithCommas(item.ppn) }}
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="px-3 py-2"></td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">Total</td>
-                                <td class="text-xs px-3 py-2 border-gray-200 border-2">
-                                    <div class="flex justify-between">
-                                        <span>IDR. </span>
-                                        <span>{{ numberWithCommas(item.grand_total) }}</span>
-                                    </div>
-                                </td>
-                            </tr>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">Invoice
+                                        SubTotal</td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>
+                                                {{ numberWithCommas(item.sub_total) }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-if="item.customer_id == 2">
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">DPP Nilai lain</td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>
+                                                {{ numberWithCommas(Math.round(item.sub_total * 11 / 12)) }},00
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">PPN {{ item.customer_id == 2 ? "11%" : "12%" }}</td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>
+                                                {{ numberWithCommas(item.ppn) }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="px-3 py-2"></td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">Total</td>
+                                    <td class="text-xs px-3 py-2 border-gray-200 border-2">
+                                        <div class="flex justify-between">
+                                            <span>IDR. </span>
+                                            <span>{{ numberWithCommas(item.grand_total) }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="flex justify-between mt-12">
+                <div 
+                    class="flex justify-between mt-12"
+                    v-if="showFooter"
+                >
                     <div>
                         <div class="" v-if="item.approved == 1">
 
@@ -181,13 +196,13 @@
                         <div v-else>
                             <p class="text-xs">Warm Regards</p>
                             <div v-if="item.customer.customer_name != 'PT. Petronesia Benimel'">
-                                <div class="text-xs mt-20">                                    
+                                <div class="text-xs mt-20">
                                     <p>VINCENTIUS ADITYA HARNAWAN</p>
                                 </div>
                             </div>
                             <div v-else>
                                 <div class="text-xs mt-44">
-                                    <p>HERY SUSANTO</p>                                    
+                                    <p>HERY SUSANTO</p>
                                 </div>
                             </div>
                         </div>
@@ -206,6 +221,44 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+        partialMode: {
+            type: Boolean,
+            default: false
+        },
+        pageNumber: {
+            type: Number,
+            default: 1
+        },
+        totalPages: {
+            type: Number,
+            default: 1,
+        },
+        rowsToShow: {
+            type: Array,
+            default: () => [],
+        },
+        showHeader: {
+            type: Boolean,
+            default: true,
+        },
+        showFooter: {
+            type: Boolean,
+            default: true,
+        }
+    },
+    computed: {
+        selectedSalesOrder() {
+            const soMap = new Map();
+            this.item.detail_inv.forEach(detail => {
+                if (detail.so && detail.so.id_so) {
+                    soMap.set(detail.so.id_so, {
+                        po_number: detail.so.po_number,
+                        termin: detail.so.termin,
+                    });
+                }
+            });
+            return soMap.values().next().value || { po_number: 'N/A', termin: 'N/A' };
+        }
     },
     methods: {
         getImagePaths(filename) {

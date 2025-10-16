@@ -414,6 +414,7 @@ export default defineComponent({
         Code: opex.opex_code,
         Price: opex.opex_price,
         Type: opex.opex_type,
+        Date : opex.issue_at,
       }))
 
       // Create CSV content

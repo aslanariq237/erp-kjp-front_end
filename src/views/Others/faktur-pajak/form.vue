@@ -59,11 +59,27 @@
           <FormGroup>
           </FormGroup>
         </div>
-        <div class="flex items-end gap-5">
-          <FormGroup label="Invoice" :required="true" :error="rules.no" class="w-full"
-            errorMessage="Purchase Order is required">            
-            <select name="id_so" id="id_so" v-model="id_invoice" class="rounded w-full" :class="inputClass(rules.due_at)">
-              <option v-for="delo in deliveryOrders" :key="delo.id_invoice" :value="delo.id_invoice">
+        <div 
+          class="flex items-end gap-5">
+          <FormGroup 
+            label="Invoice" 
+            :required="true" 
+            :error="rules.no" 
+            class="w-full"
+            errorMessage="Purchase Order is required"
+          >
+            <select 
+              name="id_so" 
+              id="id_so" 
+              v-model="id_invoice" 
+              class="rounded w-full" 
+              :class="inputClass(rules.due_at)"
+            >
+              <option 
+                v-for="(delo, i) in deliveryOrders" 
+                :key="i" 
+                :value="delo.id_invoice"
+              >
                 {{ delo.code_invoice }}
               </option>
             </select>
@@ -82,10 +98,9 @@ import { RouterLink, useRoute } from 'vue-router'
 import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import Swal from 'sweetalert2'
-import axios from 'axios'
-import { computed } from 'vue'
 import {
   AddFakturPajak,
+  DeliveryOrder,
   GetFakturPajak,
   Invoice,
   InvoiceAdd,
@@ -139,10 +154,10 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.total = this.sub_total;
+    this.total = this.sub_total;    
     this.getSalesOrder();
     if (id) {
-      this.getById(id);
+      this.getById(id);      
       this.id = id;
     } else {
       this.issue_at = new Date().toLocaleDateString('en-CA');
@@ -151,13 +166,13 @@ export default defineComponent({
   methods: {
     changeQuantity(products) {
       products.amount = products.price * products.quantity;
-    },
+    },    
     getSalesOrder() {
       ApiServices.get(SalesOrders).then((res) => {
-        var data = res.data;
+        var data = res.data;  
         this.salesOrders = data;
       })
-    },
+    },    
     selectedSalesOrder() {
       var selected = this.salesOrders.find(function(item){
         return item.id_so == this.id_so
@@ -171,18 +186,17 @@ export default defineComponent({
         this.employee_name = selected.employee.employee_name;
         this.po_number = selected.po_number;
         this.due_at = selected.due_at;
-        this.getDeliveryOrder(this.id_so);                
+        this.getDeliveryOrder(this.id_so); 
       }      
     },
 
-    getDeliveryOrder(id) {
-      ApiServices.get(Invoice + '/faktur').then((res) => {
-        var data = res.data        
-        data = data.filter((filt) => 
-          filt.detail_inv.some(d => d.id_so == id) &&
-          filt.has_faktur == 0
-        )
-        this.deliveryOrders = data;                                
+    getDeliveryOrder(id) {      
+      ApiServices.get(Invoice + '/faktur/' + id).then((res) => {
+        var data = res.data         
+        if (!this.id) {
+          data = data.filter((detail) => detail.has_faktur == 0);   
+        }          
+        this.deliveryOrders = data;        
       })      
     },
 
@@ -207,16 +221,13 @@ export default defineComponent({
     async getById(id) {
       await ApiServices.get(GetFakturPajak + '/' + id).then(        
         (res) => {
-          var data = res.data;
-          console.log(data)
+          var data = res.data;                         
           this.id_so = data[0].so.id_so;
-          this.id_invoice = data[0].invoice.id_invoice;
+          this.id_invoice = data[0].id_invoice;
           this.po_number = data[0].so.po_number
-          this.customer_name = data[0].so.customer.customer_name;
-          this.id_invoice = data[0].invoice.code_invoice;          
-          this.faktur_pajak = data[0].code_faktur_pajak; 
-          
-          getDeliveryOrder(this.id_invoice);
+          this.customer_name = data[0].so.customer.customer_name;                  
+          this.code_faktur_pajak = data[0].code_faktur_pajak;
+          this.getDeliveryOrder(data[0].id_so);
         }
       )
     },
@@ -291,8 +302,7 @@ export default defineComponent({
             tandaterima_details: this.tandaterima_details,
           }, {
             headers: { "Content-Type": "application/json" }
-          }).then((response) => {
-            console.log(response)
+          }).then((response) => {            
             Swal.fire({
               icon: "success",
               title: 'Success',

@@ -69,6 +69,7 @@ export const PurchaseOrder = urlLocalhost + 'purchase_orders'
 export const PurchaseOrderMonthly = urlLocalhost + 'purchase_orders/monthly'
 export const PurchaseOrderAdd = urlLocalhost + 'purchase_orders_code'
 export const PurchaseOrderDelete = urlLocalhost + 'purchase_orders_delete'
+export const PurchaseOrderRestore = urlLocalhost + 'purchase_orders_restore'
 
 export const PoJasaKirim = urlLocalhost + 'po-jasakirim'
 export const PoJasaKirimDetail = urlLocalhost + 'po-jasakirim/detail'
@@ -76,6 +77,7 @@ export const PoJasaKirimCode = urlLocalhost + 'po-jasakirim/store'
 
 //Q
 export const Quatations = urlLocalhost + 'quatations'
+export const QuatationsCode = urlLocalhost + 'code_quo'
 export const QuatationsAdd = urlLocalhost + 'quatations_code'
 export const QuatationsDelete = urlLocalhost + 'quatations_delete'
 
@@ -88,6 +90,7 @@ export const SalesOrderAdd = urlLocalhost + 'sales_orders_code'
 export const SalesOrderDelete = urlLocalhost + 'sales_orders_delete'
 //T
 export const Tandater = urlLocalhost + 'tandater'
+export const TandaterDelete = urlLocalhost + 'tandater/delete'
 export const TandaterAdd = urlLocalhost + 'addTandater'
 //v
 export const Vendor = urlLocalhost + 'vendors'

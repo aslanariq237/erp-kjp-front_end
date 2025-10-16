@@ -100,7 +100,7 @@
   import Notification from '@/components/Notification.vue'
   import FormGroup from '@/components/FormGroup.vue'
   import Swal from 'sweetalert2'
-  import axios from 'axios'
+  import ApiServices from '@/core/services/ApiServices'  
   import { computed } from 'vue'
   import {
     AddFakturPajak,
@@ -187,7 +187,7 @@
       },
   
       async getById(id) {
-        await axios.get(GetFakturPajak + '/' + id).then(        
+        await ApiServices.get(GetFakturPajak + '/' + id).then(        
           (res) => {
             var data = res.data;
             console.log(data)            
@@ -204,7 +204,7 @@
         const result = 2;      
         if (result != 0) {
           if (this.id == null) {
-            await axios.post(AddFakturPajak, {
+            await ApiServices.post(AddFakturPajak, {
               id_so: this.id_so,
               id_invoice: this.id_invoice,
               customer_id: this.customer_id,                               
@@ -237,7 +237,7 @@
             )
           }
           else {
-            await axios.put(TandaterAdd + '/' + this.id, {
+            await ApiServices.put(TandaterAdd + '/' + this.id, {
               id_so: this.id_so,
               customer_id: this.customer_id,
               employee_id: 1,

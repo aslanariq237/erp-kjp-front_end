@@ -91,7 +91,10 @@
                             <p>Sub Total</p>
                             <p>{{ formatCurrency(sub_total) }}</p>
                         </div>
-                        <div class="sub_total flex justify-between mt-3">
+                        <div 
+                            class="sub_total flex justify-between mt-3"
+                            v-if="ppn != 0"
+                            >
                             <p>PPN</p>
                             <p>{{ formatCurrency(ppn) }}</p>
                         </div>
@@ -181,8 +184,8 @@ export default defineComponent({
                     this.employee_name = data.employee.employee_name;
                     this.sub_total = data.sub_total;
                     this.code_invoice = data.code_invoice;
-                    this.ppn = data.sub_total * 0.11;
-                    this.grand_total = data.sub_total + this.ppn;
+                    this.ppn = data.ppn;
+                    this.grand_total = data.grand_total;
                 }
             )
         },

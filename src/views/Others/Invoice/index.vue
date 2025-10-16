@@ -8,10 +8,8 @@
           <p class="text-gray-500 text-sm mt-1">Others / Invoice</p>
         </div>
         <div class="flex gap-3 items-center">
-          <button
-            @click="exportData"
-            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
-          >
+          <button @click="exportData"
+            class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200">
             <span>Export</span>
           </button>
           <RouterLink to="/invoice/form" class="bg-blue-500 px-6 py-2 rounded-lg text-white">
@@ -26,12 +24,8 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Search</label>
             <div class="relative">
-              <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Search by code..."
-                class="w-full pl-10 pr-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" v-model="searchQuery" placeholder="Search by code..."
+                class="w-full pl-10 pr-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
               <span class="absolute left-3 top-2.5 text-gray-400">
                 <!-- Search icon placeholder -->
                 🔍
@@ -41,16 +35,10 @@
           <div class="form-group">
             <label class="text-sm font-medium text-gray-600 mb-2 block">Date Range</label>
             <div class="flex gap-2">
-              <input
-                type="date"
-                v-model="startDate"
-                class="w-full px-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="date"
-                v-model="endDate"
-                class="w-full px-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="date" v-model="startDate"
+                class="w-full px-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <input type="date" v-model="endDate"
+                class="w-full px-3 py-2 border dark:bg-gray-800 dark:text-gray-400 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>
         </div>
@@ -62,12 +50,9 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
               <tr>
-                <th
-                  v-for="header in tableHeaders"
-                  :key="header.key"
+                <th v-for="header in tableHeaders" :key="header.key"
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                  @click="sortBy = header.key"
-                >
+                  @click="sortBy = header.key">
                   <div class="flex items-center gap-2">
                     {{ header.label }}
                     <span v-if="sortBy === header.key">↓</span>
@@ -79,20 +64,17 @@
               <tr v-if="loading" class="text-center">
                 <td colspan="14" class="px-6 py-4">Loading...</td>
               </tr>
-              <tr
-                v-else-if="paginatedData.length === 0"
-                class="text-center dark:bg-gray-800 dark:text-gray-400"
-              >
+              <tr v-else-if="paginatedData.length === 0" class="text-center dark:bg-gray-800 dark:text-gray-400">
                 <td colspan="14" class="px-6 py-4">No data found</td>
               </tr>
-              <tr
-                v-for="(entry, index) in paginatedData"
-                :key="entry.id_invoice"
-                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400"
-              >
+              <tr v-for="(entry, index) in paginatedData" :key="entry.id_invoice"
+                class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800 dark:text-gray-400">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.code_invoice }}
-                </td>                
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ entry.detail_inv[0].so.po_number ? entry.detail_inv[0].so.po_number : 'checking' }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {{ entry.customer.customer_name }}
                 </td>
@@ -109,23 +91,13 @@
                   {{ entry.due_at }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="viewData(entry.id_invoice)"
-                  >
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="viewData(entry.id_invoice)">
                     View
                   </button>
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="editData(entry.id_invoice)"
-                  >
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editData(entry.id_invoice)">
                     Edit
                   </button>
-                  <button
-                    class="shadow-lg mr-2 px-3 py-2 rounded-lg"
-                    @click="editPPN(entry)"
-                    v-if="entry.grand_total != entry.deposit"
-                  >
+                  <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="editPPN(entry)">
                     Edit PPN
                   </button>
                   <button class="shadow-lg mr-2 px-3 py-2 rounded-lg" @click="exportToPDF(entry)">
@@ -138,9 +110,7 @@
         </div>
 
         <!-- Enhanced Pagination -->
-        <div
-          class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400"
-        >
+        <div class="bg-white px-6 py-4 border-t border-gray-200 dark:bg-gray-800 dark:text-gray-400">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-700">
               Showing
@@ -152,47 +122,26 @@
               results
             </div>
             <div class="flex items-center space-x-2">
-              <button
-                @click="currentPage = 1"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage = 1" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 First
               </button>
-              <button
-                @click="currentPage--"
-                :disabled="currentPage === 1"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }"
-              >
+              <button @click="currentPage--" :disabled="currentPage === 1" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                 Previous
               </button>
               <div class="flex space-x-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  @click="currentPage = page"
-                  class="pagination-button"
-                  :class="{ 'bg-blue-600 text-white': currentPage === page }"
-                >
+                <button v-for="page in displayedPages" :key="page" @click="currentPage = page" class="pagination-button"
+                  :class="{ 'bg-blue-600 text-white': currentPage === page }">
                   {{ page }}
                 </button>
               </div>
-              <button
-                @click="currentPage++"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage++" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Next
               </button>
-              <button
-                @click="currentPage = totalPages"
-                :disabled="currentPage >= totalPages"
-                class="pagination-button"
-                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }"
-              >
+              <button @click="currentPage = totalPages" :disabled="currentPage >= totalPages" class="pagination-button"
+                :class="{ 'opacity-50 cursor-not-allowed': currentPage >= totalPages }">
                 Last
               </button>
             </div>
@@ -206,7 +155,6 @@
 <script>
 import { defineComponent, ref, computed, onMounted, createApp, h } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
-import axios from 'axios'
 import { DetailInvoice, Invoice, InvoiceAdd, SalesOrders } from '@/core/utils/url_api'
 import InvoicePdfTemplate from '@/components/templates/pdf/invoice_pdf.vue'
 import router from '@/router'
@@ -227,7 +175,8 @@ export default defineComponent({
 
     // Table headers configuration
     const tableHeaders = [
-      { key: 'code_invoice', label: 'Invoice Number' },      
+      { key: 'code_invoice', label: 'Invoice Number' },
+      { key: 'code_po', label: 'PO Number' },
       { key: 'Customer', label: 'Customer Name' },
       { key: 'sub_total', label: 'Sub Total' },
       { key: 'sub_total', label: 'PPN' },
@@ -258,7 +207,7 @@ export default defineComponent({
       // }
     }
 
-    const getDetailInv = async() => {
+    const getDetailInv = async () => {
       try {
         await ApiServices.get(DetailInvoice).then((res) => {
           dataexcel.value = res.data;
@@ -275,15 +224,15 @@ export default defineComponent({
     }
 
     const editPPN = (item) => {
-      ApiServices.post(InvoiceAdd + '/edit_ppn/' + item.id_invoice,{
-        sub_total : item.sub_total,
-        ppn : item.ppn,
-      }).then((res) => {        
+      ApiServices.post(InvoiceAdd + '/edit_ppn/' + item.id_invoice, {
+        sub_total: item.sub_total,
+        ppn: item.ppn,
+      }).then((res) => {
         Swal.fire({
-          icon : 'success',
-          title : 'Success',
-          text : 'Berhasil Mengubah PPN',          
-        }).then(async(res) => {
+          icon: 'success',
+          title: 'Success',
+          text: 'Berhasil Mengubah PPN',
+        }).then(async (res) => {
           if (res.isConfirmed) {
             await getInvoices();
           }
@@ -314,9 +263,10 @@ export default defineComponent({
       if (searchQuery.value) {
         const query = searchQuery.value.toLowerCase()
         result = result.filter((entry) => {
-          const code_inv = entry.code_invoice.toLowerCase()          
+          const code_inv = entry.code_invoice.toLowerCase()
+          const po_number = entry.detail_inv[0]?.so?entry.detail_inv[0].so.po_number:"none".toLowerCase();
           const customer = entry.customer.customer_name.toLowerCase()
-          return code_inv.includes(query) || customer.includes(query)
+          return code_inv.includes(query) || customer.includes(query) || po_number.includes(query)
         })
       }
 
@@ -383,21 +333,47 @@ export default defineComponent({
       return rangeWithDots
     })
 
+    const monthNames = [
+      '', // index 0 (not used)
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+    
+    const formatDateWithMonthString = (dateStr) => {
+      // dateStr: '2025-01-08' or similar
+      const date = new Date(dateStr)
+      const day = date.getDate()
+      const month = date.getMonth() + 1 // getMonth() returns 0-based
+      const year = date.getFullYear()
+      return `${monthNames[month]}`
+    }
+
     // Utility functions
     const exportData = () => {
       const data = dataexcel.value.map((entry) => ({
         'Invoice Number': entry.invoice.code_invoice,
-        'SO Number': entry.invoice.salesorder.code_so,
-        'PO Number': entry.invoice.salesorder.po_number,
+        'SO Number' : entry.so ? entry.so.code_so : '',
+        'PO Number' : entry.so ? entry.so.po_number : '',
         'DO Number' : entry.do.code_do,
-        'Customer' : entry.invoice.customer.customer_name,
-        'Product Desc' : entry.product.product_desc,
-        'Product SN' : entry.product.product_sn,
-        'Quantity' : entry.quantity,
-        'Price' : entry.price,
-        'Issue Date' : entry.invoice.issue_at,
-        'Due Date' : entry.invoice.due_at,
-      }));     
+        'Customer': entry.invoice.customer.customer_name,        
+        'Product Desc': entry.product.product_desc,
+        'Product SN': entry.product.product_sn,
+        'Quantity': entry.quantity,
+        'Price': entry.price,
+        'Month' : formatDateWithMonthString(entry.invoice.issue_at),
+        'Issue Date': entry.invoice.issue_at,
+        'Due Date': entry.invoice.due_at,
+      }));
+      // 'SO Number': entry.so.code_so,
+      //   'PO Number': entry.so.po_number,
+      //   'DO Number' : entry.do.code_do,
+      // 'Customer' : entry.invoice.customer.customer_name,
+      // 'Product Desc' : entry.product.product_desc,
+      // 'Product SN' : entry.product.product_sn,
+      // 'Quantity' : entry.quantity,
+      // 'Price' : entry.price,
+      // 'Issue Date' : entry.invoice.issue_at,
+      // 'Due Date' : entry.invoice.due_at,
 
       // Create CSV content
       const headers = Object.keys(data[0])
@@ -453,6 +429,7 @@ export default defineComponent({
       formatCurrency,
       exportData,
       exportToPDF,
+      formatDateWithMonthString,
     }
   },
 })
@@ -464,11 +441,11 @@ export default defineComponent({
 }
 
 .form-group label {
-  @apply block text-sm  dark:text-gray-400 font-medium text-gray-700 mb-1;
+  @apply block text-sm dark:text-gray-400 font-medium text-gray-700 mb-1;
 }
 
 .form-group input,
 .form-group select {
-  @apply block w-full  dark:text-gray-400 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  @apply block w-full dark:text-gray-400 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
 }
 </style>

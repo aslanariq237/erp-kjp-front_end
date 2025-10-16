@@ -1,7 +1,10 @@
 <template>
     <div class="">
-        <div class="quotation p-20" v-for="(page, pageIndex) in pages" :key="pageIndex" :class="page">
-            <div class="header flex justify-between items-center">
+        <div class="quotation p-20">
+            <div 
+                class="header flex justify-between items-center"
+                v-if="showHeader"
+            >
                 <div class="logo">
                     <img :src="getImagePaths('KJP_Logo.png')" width="180" height="90">
                 </div>
@@ -20,13 +23,15 @@
                     </div>
                 </div>
             </div>
-            <div class="border-b-2 border-gray-400 mt-3"></div>
+            <div v-if="showHeader" class="border-b-2 border-gray-400 mt-3"></div>
             <div class="body">
                 <div class="mt-3">
-                    <div class="title text-center">
+                    <div class="title text-center" v-if="showHeader">
                         <p class="text-xl font-semibold mt-5">QUOTATION</p>
                     </div>
-                    <div class="flex justify-between align-center text-xs my-5" v-if="pageIndex == 0">
+                    <div 
+                        class="flex justify-between align-center text-xs my-5" v-if="showHeader"                        
+                    >
                         <div class="left w-[50%]">
                             <p>Kepata Yth.</p>
                             <p>{{ item.customer.customer_name }}</p>
@@ -67,8 +72,8 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800">
-                                <tr class="text-center border-b-2" v-for="(pro, index) in page" :key="index">
-                                    <td class="text-xs px-3 py-2 items-center">{{ index + 1 }}</td>
+                                <tr class="text-center border-b-2" v-for="(pro, index) in (item.detail_quo ? rowsToShow : item.detail_quo)" :key="index">
+                                    <td class="text-xs px-3 py-2 items-center">{{ (partialMode ? (pageNumber - 1) * 12 + index + 1 : index + 1) }}</td>
                                     <td class="text-xs px-3 py-2 items-center">{{ pro.product.product_sn }}</td>
                                     <td class="text-xs px-3 py-2 items-center">{{ pro.product.product_desc }}</td>
                                     <td class="text-xs px-3 py-2 items-center">{{ pro.quantity }}</td>
@@ -78,7 +83,10 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div class="flex items-start justify-between">
+                        <div 
+                            class="flex items-start justify-between"
+                            v-if="showFooter"
+                        >
                             <div class="payment mt-3">
                                 <span>note : <p class="text-xs" v-html="formatNote(item.description)"></p></span>
                             </div>
@@ -144,7 +152,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="flex justify-between text-center" v-if="pageIndex === pages.length - 1">
+                    <div class="flex justify-between text-center" v-if="showFooter">
                         <div>
                             <p class="mb-2 text-xs">Prepared By</p>
                             <img :src="getImagePaths('tt-imam.png')" width="170">
@@ -168,6 +176,30 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+        partialMode: {
+            type: Boolean,
+            default: false
+        },
+        pageNumber: {
+            type: Number,
+            default: 1
+        },
+        totalPages: {
+            type: Number,
+            default: 1,
+        },
+        rowsToShow: {
+            type: Array,
+            default: () => [],
+        },
+        showHeader: {
+            type: Boolean,
+            default: true,
+        },
+        showFooter: {
+            type: Boolean,
+            default: true,
+        }
     },
     computed: {
         pages() {

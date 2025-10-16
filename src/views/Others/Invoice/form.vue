@@ -191,6 +191,7 @@ export default defineComponent({
       customer_name: '',
       customer_npwp: 0,
       customer_address: '',
+      ppnCheck : 0,
       employee_name: '',
       checklist_prod: 0,
       issue_at: '',
@@ -213,11 +214,11 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.employee_id = this.user.employee_id;
+    this.employee_id = this.user.employee_id;    
 
     this.getSalesOrder();
     if (id) {
-      this.getById(id);
+      this.getById(id);      
       this.id = id;
     } else {
       this.issue_at = new Date().toLocaleDateString('en-CA');
@@ -231,7 +232,11 @@ export default defineComponent({
       }, 0);
     },
     ppn() {
-      return this.sub_total * 0.11;
+      let ppn;
+      this.ppnCheck != 0
+      ? ppn = this.sub_total * 0.11
+      : ppn = 0;
+      return ppn;
     },
     grand_total() {
       return this.sub_total + this.ppn;
@@ -257,7 +262,7 @@ export default defineComponent({
         this.customer_address = data.customer.customer_address;
         this.employee_id = data.employee.employee_id;
         this.employee_name = data.employee.employee_name;
-        this.po_number = data.po_number;
+        this.po_number = data.po_number;        
         this.due_at = data.due_at;
 
         if (data.id_so) {
@@ -365,13 +370,15 @@ export default defineComponent({
           this.code_invoice = data[0].code_invoice;
           this.customer_name = data[0].customer.customer_name;
           this.customer_address = data[0].customer.customer_address;
-
+          this.ppnCheck = data[0].ppn != 0 ? 1 : 0;
+          
           var id = data[0].id_invoice;
           if (id) {
             this.getDetailSo(id);
           }
         }
       )
+      console.log(this.ppnCheck);
     },
 
     async validation() {
