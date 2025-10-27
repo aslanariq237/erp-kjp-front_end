@@ -252,7 +252,7 @@
 <script>
 import AdminLayout from '@/components/layout/AdminLayout.vue';
 import ApiServices from '@/core/services/ApiServices';
-import { AccPayable, AccPayableDeposit, AccPayableReset } from '@/core/utils/url_api';
+import { AccPayable, AccPayableDeposit, AccPayableDepositJakir, AccPayableReset } from '@/core/utils/url_api';
 import Swal from 'sweetalert2';
 import { defineComponent } from 'vue';
 export default defineComponent({
@@ -344,24 +344,44 @@ export default defineComponent({
                     status_payment = 'full';
                 } else if (deposit > 0 && deposit != this.selectedItem.grand_total) {
                     status_payment = 'partial';
-                }
-                const response = await ApiServices.put(AccPayableDeposit + '/' + this.selectedItem.id_po, {
-                    deposit: deposit,
-                    id_po: this.selectedItem.id_po,
-                    status_payment: status_payment,
-                    payment_method: 'Transfer',
-                    issue_at: this.issue_today,
-                });
-
-                if (response.status === 200) {
-                    this.closeModal();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Pembayaran Sukses',
-                    }).then(async (res) => {
-                        await this.getData();
-                    })
-                }
+                }                
+                if (this.status != 'jasakirim') {
+                    const response = await ApiServices.put(AccPayableDeposit + '/' + this.selectedItem.id_po, {
+                        deposit: deposit,
+                        id_po: this.selectedItem.id_po,
+                        id_jasakirim : this.selectedItem.id_jasakirim,
+                        status_payment: status_payment,
+                        payment_method: 'Transfer',
+                        issue_at: this.issue_today,
+                    });
+                    if (response.status === 200) {
+                        this.closeModal();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Pembayaran Sukses',
+                        }).then(async (res) => {
+                            await this.getData();
+                        })
+                    }
+                }else{
+                    const response = await ApiServices.put(AccPayableDepositJakir + '/' + this.selectedItem.id_jasakirim, {
+                        deposit: deposit,
+                        id_po: this.selectedItem.id_po,
+                        id_jasakirim : this.selectedItem.id_jasakirim,
+                        status_payment: status_payment,
+                        payment_method: 'Transfer',
+                        issue_at: this.issue_today,
+                    });
+                    if (response.status === 200) {
+                        this.closeModal();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Pembayaran Sukses',
+                        }).then(async (res) => {
+                            await this.getData();
+                        })
+                    }
+                }                
             } catch (error) {
                 console.error('Failed to update Deposit', error);
             }

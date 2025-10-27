@@ -32,60 +32,101 @@
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 dark:text-gray-400">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">         
           <!-- Id_Purchase order -->
-          <FormGroup label="Sales Order" :required="true" :error="rules.id_so" errorMessage="Purchase Order is required">
-            <select name="id_so" id="id_so" v-model="id_so" class="rounded w-full" @change="selectedSalesOrder"
-              :class="inputClass(rules.due_at)">
-              <option v-for="po in salesOrders" :key="po.id_so" :value="po.id_so" :class="inputClass(rules.due_at)">
-                {{ po.code_so }}
-              </option>
-            </select>
-          </FormGroup>
-          <FormGroup label="Po Number" :required="true" :error="rules.customer" errorMessage="DO Type is required">
-            <input type="text" v-model="customer_id" hidden>
-            <input type="text" id="do_type" autocomplete="off" name="do_type" v-model="po_number" :class="inputClass(rules.do_type)"
-              placeholder="Po Number" />
-          </FormGroup>
-          <!-- DO Type -->
-          <FormGroup label="Customer name" :required="true" :error="rules.customer" errorMessage="Customer Name is required">            
-            <input type="text" id="do_type" name="do_type" autocomplete="off" v-model="customer_name" :class="inputClass(rules.do_type)"
-              placeholder="Customer Name" />
-          </FormGroup>
-
-          <!-- Alamat -->
-          <FormGroup label="No Faktur Pajak" :required="true" :error="rules.code_faktur_pajak" errorMessage="Code Faktur Pajak is required">
-            <input type="text" id="alamat" name="alamat" autocomplete="off" v-model="code_faktur_pajak" :class="inputClass(rules.alamat)"
-              placeholder="Enter Faktur pajak" />
-          </FormGroup>
-          <FormGroup>
-          </FormGroup>
-        </div>
-        <div 
-          class="flex items-end gap-5">
-          <FormGroup 
-            label="Invoice" 
+           <FormGroup 
+            label="No Faktur Pajak" 
             :required="true" 
-            :error="rules.no" 
-            class="w-full"
-            errorMessage="Purchase Order is required"
+            :error="rules.code_faktur_pajak" 
+            errorMessage="Code Faktur Pajak is required"
+          >
+            <input 
+              type="text" 
+              id="alamat" 
+              name="alamat" 
+              autocomplete="off" 
+              v-model="code_faktur_pajak" 
+              :class="inputClass(rules.alamat)"
+              placeholder="Enter Faktur pajak" 
+            />
+          </FormGroup>
+          <FormGroup 
+            label="Customer" 
+            class="relative" 
+            :required="true"
+          >
+          <input type="hidden" v-model="customer_id">
+            <input 
+              type="text" 
+              autocomplete="off" 
+              name="customer_name" 
+              id="customer_name" 
+              v-model="customer_name"
+              @input="filterCustomers" 
+              class="rounded w-full" 
+              placeholder="Type customer name"
+              :class="inputClass(rules.issue_at)" 
+            />
+            <ul 
+              v-if="filteredCustomers.length && customer_name"
+              class="border rounded w-full mt-2 absolute z-40 bg-white"
+            >
+              <li 
+                v-for="customer in filteredCustomers" 
+                :key="customer.customer_id" 
+                @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                {{ customer.customer_name }}
+              </li>
+              <li v-if="filteredCustomers.length === 0">
+                not found
+              </li>
+            </ul>
+            <div class="" v-if="rules.customer_id == true">
+              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
+            </div>
+          </FormGroup>    
+          <FormGroup
+            label="Invoice"
+            :required="true"                  
           >
             <select 
-              name="id_so" 
-              id="id_so" 
-              v-model="id_invoice" 
-              class="rounded w-full" 
-              :class="inputClass(rules.due_at)"
+              name="id_invoice" 
+              id="id_invoice"
+              class="rounded w-full"
+              v-model="selected_id_invoice"
+              @change="selectInvoice"          
+              :class="inputClass(rules.alamat)"
             >
+              <option value="" selected>select an option</option>
               <option 
-                v-for="(delo, i) in deliveryOrders" 
-                :key="i" 
-                :value="delo.id_invoice"
+                v-for="data in invoices"
+                :key="data.id_invoice"
+                :value="data.id_invoice"                
+                :class="inputClass(rules.alamat)"
               >
-                {{ delo.code_invoice }}
+                {{ data.code_invoice }}
               </option>
             </select>
-          </FormGroup>
-        </div>        
-      </div>
+          </FormGroup> 
+          <FormGroup 
+            label="Po Number" 
+            :required="false" 
+            :error="rules.code_faktur_pajak" 
+            errorMessage="Po Number is required"
+          >
+            <input 
+              type="text" 
+              id="code_po" 
+              name="code_po" 
+              autocomplete="off" 
+              v-model="po_number" 
+              readonly
+              :class="inputClass(rules.alamat)"
+              placeholder="Enter Faktur pajak" 
+            />
+          </FormGroup>                   
+        </div>                
+      </div>     
     </Form>
   </AdminLayout>
 </template>
@@ -99,13 +140,10 @@ import Notification from '@/components/Notification.vue'
 import FormGroup from '@/components/FormGroup.vue'
 import Swal from 'sweetalert2'
 import {
-  AddFakturPajak,
-  DeliveryOrder,
-  GetFakturPajak,
+  Customer,
   Invoice,
-  InvoiceAdd,
-  SalesOrders,
-  TandaterAdd
+  GetFakturPajak,
+  AddFakturPajak
 } from '@/core/utils/url_api'
 import router from '@/router'
 import ApiServices from '@/core/services/ApiServices'
@@ -121,23 +159,17 @@ export default defineComponent({
 
   data() {
     return {
-      id: null,    
-      salesOrders : [],  
-      deliveryOrders: [],      
-      id_so: null,
-      code_invoice: null,
+      id: null,
+      customer_id: null,
       id_invoice: null,
-      customer_id: null,      
-      po_number: '',
-      code_faktur_pajak : '',      
+      selected_id_invoice: null,
+      id_so: null,
       customer_name: '',
-      customer_npwp: 0,
-      customer_address: '',
-      employee_name: '',
-      checklist_prod: 0,
-      code_invoice: '',
-      issue_at: '',
-      due_at: '',
+      code_faktur_pajak: '',
+      po_number: '',            
+      customers: [],
+      invoices: [],
+      filteredCustomers: [],           
       isSubmitting: false,
       notification: {
         show: false,
@@ -154,49 +186,62 @@ export default defineComponent({
   async mounted() {
     const route = useRoute();
     const id = route.params.id;
-    this.total = this.sub_total;    
-    this.getSalesOrder();
+    this.total = this.sub_total;        
+    this.getCustomer();
     if (id) {
       this.getById(id);      
       this.id = id;
-    } else {
+    } else {      
       this.issue_at = new Date().toLocaleDateString('en-CA');
     }
   },
   methods: {
+    async getCustomer(){
+      ApiServices.get(Customer).then(
+        (res) => {
+          var data = res.data;
+          this.customers = data;          
+        }
+      )
+    },
+    filterCustomers() {
+      const searchTerm = this.customer_name.toLowerCase()
+      this.filteredCustomers = this.customers.filter((customer) => {
+        const name = customer.customer_name.toLowerCase()
+        return name.includes(searchTerm)
+      })
+    },
+    selectCustomer(customer) {
+      this.customer_id = customer.customer_id
+      this.customer_name = customer.customer_name
+      this.filteredCustomers = []
+
+      this.getDeliveryOrder(this.customer_id);
+    },
+
+    selectInvoice(){
+      const selected = this.invoices.find(inv => inv.id_invoice == this.selected_id_invoice);      
+      this.id_invoice = selected.id_invoice;            
+      if (selected.detail_inv && selected.detail_inv.length > 0) {
+        const firstDetail = selected.detail_inv[0];
+        this.id_so = firstDetail.id_so;
+        this.po_number = firstDetail.so.po_number;
+      }else{
+        console.warn('Invoice Tidak Memiliki detail_inv');
+      }
+    },
+
     changeQuantity(products) {
       products.amount = products.price * products.quantity;
-    },    
-    getSalesOrder() {
-      ApiServices.get(SalesOrders).then((res) => {
-        var data = res.data;  
-        this.salesOrders = data;
-      })
-    },    
-    selectedSalesOrder() {
-      var selected = this.salesOrders.find(function(item){
-        return item.id_so == this.id_so
-      }.bind(this));
-      if (selected) {
-        this.customer_id = selected.customer.customer_id;
-        this.customer_name = selected.customer.customer_name;
-        this.customer_npwp = selected.customer.customer_npwp;
-        this.customer_address = selected.customer.customer_address;
-        this.employee_id = selected.employee.employee_id;
-        this.employee_name = selected.employee.employee_name;
-        this.po_number = selected.po_number;
-        this.due_at = selected.due_at;
-        this.getDeliveryOrder(this.id_so); 
-      }      
-    },
+    },                  
 
     getDeliveryOrder(id) {      
       ApiServices.get(Invoice + '/faktur/' + id).then((res) => {
-        var data = res.data         
+        var data = res.data
         if (!this.id) {
-          data = data.filter((detail) => detail.has_faktur == 0);   
-        }          
-        this.deliveryOrders = data;        
+          data = data.filter((i) => i.has_faktur != 1)                        
+        }
+        this.invoices = data;             
       })      
     },
 
@@ -221,13 +266,16 @@ export default defineComponent({
     async getById(id) {
       await ApiServices.get(GetFakturPajak + '/' + id).then(        
         (res) => {
-          var data = res.data;                         
-          this.id_so = data[0].so.id_so;
-          this.id_invoice = data[0].id_invoice;
-          this.po_number = data[0].so.po_number
-          this.customer_name = data[0].so.customer.customer_name;                  
+          var data = res.data;              
           this.code_faktur_pajak = data[0].code_faktur_pajak;
-          this.getDeliveryOrder(data[0].id_so);
+          this.customer_id = data[0].customer_id;
+          this.customer_name = data[0].so.customer.customer_name;          
+          this.id_invoice = data[0].id_invoice;
+          this.po_number = data[0].so.po_number;
+          this.selected_id_invoice = data[0].id_invoice;        
+          this.id_so = data[0].id_so;          
+          this.getDeliveryOrder(this.customer_id);
+          // this.selectInvoice();
         }
       )
     },
@@ -245,14 +293,7 @@ export default defineComponent({
         count++
       } else {
         this.rules.code_faktur_pajak = false
-      }  
-      
-      if (this.deliveryOrders == '' || this.deliveryOrders == null) {
-        this.rules.deliveryOrders = true
-        count++
-      } else {
-        this.rules.deliveryOrders = false
-      }
+      }          
 
       return count
     },
@@ -294,12 +335,10 @@ export default defineComponent({
         }
         else {
           await ApiServices.put(AddFakturPajak + '/' + this.id, {
-            id_so: this.id_so,
-            customer_id: this.customer_id,
-            employee_id: 1,
-            issue_at: this.issue_at,            
-            due_at: this.due_at,                      
-            tandaterima_details: this.tandaterima_details,
+            id_so : this.id_so,
+            id_invoice : this.id_invoice,
+            customer_id : this.customer_id,
+            code_faktur_pajak : this.code_faktur_pajak
           }, {
             headers: { "Content-Type": "application/json" }
           }).then((response) => {            
