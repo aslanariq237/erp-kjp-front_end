@@ -210,6 +210,7 @@ export default defineComponent({
       packages: [],
       packages_id: [],
       product_id: [],
+      opexToDelete: null,
       customer_id: null,
       isSubmitting: false,
       id: null,
@@ -293,8 +294,7 @@ export default defineComponent({
         style: 'currency',
         currency: 'IDR',
       }).format(value)
-    },
-
+    },    
     addPoDetails() {
       if (this.product_id == null) {
         Swal.fire({
@@ -419,10 +419,10 @@ export default defineComponent({
       })
     },
     getDetailSo(id) {
-      axios.get(GetAbsorb + '/' + id).then((res) => {
+      ApiServices.get(GetAbsorb + '/' + id).then((res) => {
         const data = res.data;
         for (let i = 0; i < data.length; i++) {
-          const object = {          
+          const object = {
             product_id: data[i].product_id,
             product_code: data[i].product.product_code,
             product_pn: data[i].product.product_sn,
@@ -440,7 +440,7 @@ export default defineComponent({
     },
 
     async getById(id) {
-      await axios.get(GetOpex + '/' + id).then((res) => {
+      await ApiServices.get(GetOpex + '/' + id).then((res) => {
         var data = res.data;
         this.opex_name = data.opex_name;
         this.opex_price = data.opex_price;
@@ -459,58 +459,58 @@ export default defineComponent({
         this.isSubmitting = true
         if (!this.id) {
           ApiServices
-          .post(AddOpex + '/' + 'absorb', {
-            customer_id: this.customer_id,
-            opex_name: this.opex_name,
-            opex_price: this.opex_price,
-            opex_type: this.opex_type,
-            sales_order_details: this.sales_order_details,
-            issue_at: this.issue_at,
-          })
-          .then(() => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'Data has been saved',
-            }).then(() => router.push('/opex-absorb'))
-          })
-          .catch((error) => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: error.response?.data?.message || error.message,
+            .post(AddOpex + '/' + 'absorb', {
+              customer_id: this.customer_id,
+              opex_name: this.opex_name,
+              opex_price: this.opex_price,
+              opex_type: this.opex_type,
+              sales_order_details: this.sales_order_details,
+              issue_at: this.issue_at,
             })
-          })
-          .finally(() => {
-            this.isSubmitting = false
-          })
-        }else{
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Data has been saved',
+              }).then(() => router.push('/opex-absorb'))
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.response?.data?.message || error.message,
+              })
+            })
+            .finally(() => {
+              this.isSubmitting = false
+            })
+        } else {
           ApiServices
-          .put(AddOpex + '/' + 'absorb/' + this.id, {
-            customer_id: this.customer_id,
-            opex_name: this.opex_name,
-            opex_price: this.opex_price,
-            opex_type: this.opex_type,
-            sales_order_details: this.sales_order_details,
-            issue_at: this.issue_at,
-          })
-          .then(() => {
-            Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: 'Data has been saved',
-            }).then(() => router.push('/opex-absorb'))
-          })
-          .catch((error) => {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: error.response?.data?.message || error.message,
+            .put(AddOpex + '/' + 'absorb/' + this.id, {
+              customer_id: this.customer_id,
+              opex_name: this.opex_name,
+              opex_price: this.opex_price,
+              opex_type: this.opex_type,
+              sales_order_details: this.sales_order_details,
+              issue_at: this.issue_at,
             })
-          })
-          .finally(() => {
-            this.isSubmitting = false
-          })
+            .then(() => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Data has been saved',
+              }).then(() => router.push('/opex-absorb'))
+            })
+            .catch((error) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.response?.data?.message || error.message,
+              })
+            })
+            .finally(() => {
+              this.isSubmitting = false
+            })
         }
       }
     },

@@ -333,7 +333,7 @@ const router = createRouter({
         {
           path: '',
           name: 'Opex Cogs',
-          component: () => import('../views/Others/OPEXCogs/index.vue'),
+          component: () => import('../views/Others/OPEXCogs/index-new.vue'),
           meta: {
             title: 'Opex Cogs',
           },

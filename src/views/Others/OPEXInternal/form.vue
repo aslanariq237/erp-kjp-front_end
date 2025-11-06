@@ -58,14 +58,25 @@
           </FormGroup>
 
           <!-- Amount -->
-          <FormGroup label="Price" :required="true" :error="rules.amount"
-            errorMessage="Amount is required and must be greater than 0">
-            <input type="number" id="amount" name="amount" v-model="opex_price" min="0" :class="[
+          <FormGroup 
+            label="Price" 
+            :required="true" 
+            :error="rules.amount"
+            errorMessage="Amount is required and must be greater than 0"
+          >
+            <input 
+              type="number" 
+              id="amount" 
+              name="amount" 
+              @change="numberWithCommas(opex_price)"
+              v-model="opex_price" 
+              min="0" :class="[
               'w-full rounded-lg border px-4 py-2 focus:outline-none focus:ring-2 transition-colors duration-200',
               rules.amount
                 ? 'border-red-300 focus:ring-red-500 bg-red-50'
                 : 'border-gray-300 focus:ring-blue-500',
-            ]" placeholder="Enter price" />
+              ]" placeholder="Enter price" 
+            />
             <div class="" v-if="rules.opex_price == true">
               <p class="text-red-500 text-sm">Opex Price Dibutuhkan</p>
             </div>
@@ -165,6 +176,11 @@ export default defineComponent({
       setTimeout(() => {
         this.notification.show = false
       }, 3000)
+    },
+    numberWithCommas(x){
+      var x = x.toString().replace('.', ',')
+
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
 
     async validation() {

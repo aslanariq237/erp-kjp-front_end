@@ -57,6 +57,7 @@ export const GetOpex = urlLocalhost + 'opex'
 export const GetAbsorb = urlLocalhost + 'opex/absorb'
 export const AddOpex = urlLocalhost + 'opex_code'
 export const AddOpexApprove = urlLocalhost + 'opex_code/approved'
+export const DeleteOpex = urlLocalhost + 'opex_delete'
 //P
 export const Product = urlLocalhost + 'products'
 export const ProductSearch = urlLocalhost + 'products/search'
