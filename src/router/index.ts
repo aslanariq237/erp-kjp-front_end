@@ -333,7 +333,7 @@ const router = createRouter({
         {
           path: '',
           name: 'Opex Cogs',
-          component: () => import('../views/Others/OPEXCogs/index-new.vue'),
+          component: () => import('../views/Others/OPEXCogs/index.vue'),
           meta: {
             title: 'Opex Cogs',
           },
@@ -406,7 +406,7 @@ const router = createRouter({
       children: [
         {
           path: '',          
-          component: () => import('../views/Others/OPEXAbsorb/index.vue'),
+          component: () => import('../views/Others/OPEXAbsorb/index-new.vue'),
           meta: {
             title: 'Opex Absorb',
           },
