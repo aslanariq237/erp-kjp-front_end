@@ -35,6 +35,7 @@ interface JasaKirim {
 
 const ROWS_PER_PAGE = 12;
 const ROws_PER_PAGE_DO = 5;
+const Rows_PER_PAGE_DO_2 = 4;
 
 export const exportPoPDF = async (item) => {
   if (!item || item.length === 0) {
@@ -121,15 +122,31 @@ export const exportDoPDF = async(item: Deliveryorder) => {
 
 const generateSingleDoPdf = async (item) => {
   var totalRows = item.detail_do.length;
-  var totalPages = Math.ceil(totalRows / ROws_PER_PAGE_DO);
+  let maxTextLen = 0
+
+  const TEXT_LENGTH_THRESHOLD = 80;
+  if (Array.isArray(item.point)) {
+    maxTextLen = item.point.reduce((max, d) => {
+      const txt = (d.alamat || '').toString();
+      return Math.max(max, txt.length);
+    }, 0);
+  }else if(item.point && typeof item.point.alamat === 'string') {
+    maxTextLen = item.point.alamat.length;
+  }
+
+  let rowsPerPage = ROws_PER_PAGE_DO;
+  if (maxTextLen > TEXT_LENGTH_THRESHOLD) {
+    rowsPerPage = Rows_PER_PAGE_DO_2;
+  }
+  var totalPages = Math.ceil(totalRows / rowsPerPage);
   var pdf = new jsPDF('p', 'mm', 'A4');
   var imgWidth = 210
   var imgHeight = 297;
  
   let currentPage = 1;
   while (currentPage <= totalPages) {
-    const startRow = (currentPage - 1) * ROws_PER_PAGE_DO;
-    const endRow = Math.min(startRow + ROws_PER_PAGE_DO, totalRows);
+    const startRow = (currentPage - 1) * rowsPerPage;
+    const endRow = Math.min(startRow + rowsPerPage, totalRows);
     const rowsToShow = item.detail_do.slice(startRow, endRow);
     const isFirstPage = currentPage === 1;
     const isLastPage = currentPage === totalPages;

@@ -39,10 +39,20 @@
                     </FormGroup>                    
 
                     <!-- Due Date -->
-                    <FormGroup label="Delivery Point" :required="true" :error="rules.point"
-                        errorMessage="Due Date is required">
-                        <input type="text" id="point" name="point" v-model="point" disabled
-                            :class="inputClass(rules.point)" />
+                    <FormGroup 
+                        label="Delivery Point" 
+                        :required="true" 
+                        :error="rules.point"
+                        errorMessage="Due Date is required"
+                    >
+                        <input 
+                            type="text" 
+                            id="point" 
+                            name="point" 
+                            v-model="point" 
+                            disabled
+                            :class="inputClass(rules.point)" 
+                        />
                     </FormGroup>
                     <!-- No -->
                     <FormGroup label="Customer Name" :required="true" :error="rules.customer_id"
@@ -136,7 +146,7 @@ export default defineComponent({
     },
     async mounted() {
         const route = useRoute();
-        const id = route.params.id;
+        const id = route.params.id;        
 
         if (id) {
             this.getById(id)

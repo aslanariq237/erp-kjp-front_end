@@ -374,6 +374,7 @@ export default defineComponent({
     }
     const exportToPDF = (item) => {
       exportDoPDF(item);
+      // console.log(item);
     }
     return {
       viewData,      

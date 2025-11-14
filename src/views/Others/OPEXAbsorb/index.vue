@@ -109,9 +109,8 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex space-x-3">
-                    <button 
-                      v-if="opex.approved == 0"
-                      class="text-green-600 hover:text-green-900" @click="approve(opex.opex_id)">
+                    <button v-if="opex.approved == 0" class="text-green-600 hover:text-green-900"
+                      @click="approve(opex.opex_id)">
                       Approve
                     </button>
                     <button class="text-blue-600 hover:text-green-900" @click="editData(opex.opex_id)">
@@ -170,24 +169,16 @@
               <tr class="text-left">
                 <th>Product</th>
                 <th>SN</th>
-                <th>Qty</th>                
+                <th>Qty</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr 
-                v-for="(data, index) in detail" :key="index"
+              <tr v-for="(data, index) in detail" :key="index"
                 class="hover:bg-gray-50 transition-colors duration-150 text-sm"
-                :class="data.product_stock == 0 ? 'bg-red-100 hover:bg-red-200' : 'bg-gray-50'"
-              >
-                <td
-                  class="text-sm text-gray-500"              
-                >{{ data.product_desc }}</td>
-                <td
-                  class="text-sm text-gray-500"
-                >{{ data.product_sn }}</td>
-                <td
-                  class="text-sm text-gray-500"
-                >{{ data.quantity }}</td>                
+                :class="data.product_stock == 0 ? 'bg-red-100 hover:bg-red-200' : 'bg-gray-50'">
+                <td class="text-sm text-gray-500">{{ data.product_desc }}</td>
+                <td class="text-sm text-gray-500">{{ data.product_sn }}</td>
+                <td class="text-sm text-gray-500">{{ data.quantity }}</td>
               </tr>
             </tbody>
           </table>
@@ -198,8 +189,7 @@
             <button @click="isModalOpen = false" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">
               Cancel
             </button>
-            <button 
-              @click="approveOpex(opex)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button @click="approveOpex(opex)" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
               Approve
             </button>
           </div>
@@ -279,14 +269,14 @@ export default defineComponent({
           for (let i = 0; i < data.length; i++) {
             var object = {
               opex_id: data[i].opex_id,
-              product_id : data[i].product_id,
+              product_id: data[i].product_id,
               product_desc: data[i].product.product_desc,
               product_sn: data[i].product.product_sn,
-              product_stock : data[i].product.product_stock,
-              quantity: data[i].quantity,              
+              product_stock: data[i].product.product_stock,
+              quantity: data[i].quantity,
               price: data[i].price,
             };
-            detail.value.push(object);            
+            detail.value.push(object);
           }
         }
       )
@@ -299,9 +289,9 @@ export default defineComponent({
         alert('Terdapat Produk Dengan Stock 0')
         return;
       }
-      
-      await ApiServices.post(AddOpexApprove + '/' + opex_id.value, {        
-        detail : detail.value,
+
+      await ApiServices.post(AddOpexApprove + '/' + opex_id.value, {
+        detail: detail.value,
       }).then(
         (res) => {
           console.log(res);
@@ -314,6 +304,11 @@ export default defineComponent({
     onMounted(() => {
       fetchOpexData()
     })
+    const monthNames = [
+      '', // index 0 (not used)
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
 
     // Computed properties for filtering and pagination
     const filteredData = computed(() => {
@@ -412,12 +407,21 @@ export default defineComponent({
     const editData = async (id) => {
       router.push('opex-absorb/edit/' + id)
     }
+    const formatDateWithMonthString = (dateStr) =>{
+      // dateStr: '2025-01-08' or similar
+      const date = new Date(dateStr)
+      const day = date.getDate()
+      const month = date.getMonth() + 1 // getMonth() returns 0-based
+      const year = date.getFullYear()
+      return `${monthNames[month]}`
+    }
 
     const exportData = () => {
       const data = filteredData.value.map((opex) => ({
         Name: opex.opex_name,
         Code: opex.opex_code,
-        Price: formatCurrency(opex.opex_price),
+        Price: opex.opex_price,
+        Bulan: formatDateWithMonthString(opex.issue_at),
         Type: opex.opex_type,
       }))
 
@@ -463,6 +467,7 @@ export default defineComponent({
       displayedPages,
       detail,
       opexData,
+      monthNames,
 
       // Methods      
       formatCurrency,

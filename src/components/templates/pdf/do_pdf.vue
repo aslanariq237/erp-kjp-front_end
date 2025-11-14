@@ -22,10 +22,10 @@
                 </div>
             </div>
         </div>
-        <div class="border-b-2 border-gray-400 mt-2"></div>
+        <div class="border-b-2 border-gray-400 mt-2" v-if="showHeader"></div>
         <div class="body">
             <div class="mt-3">
-                <div class="title text-center">
+                <div class="title text-center" v-if="showHeader">
                     <p class="text-xl font-semibold mt-2">DELIVERY ORDER</p>
                 </div>
                 <div 

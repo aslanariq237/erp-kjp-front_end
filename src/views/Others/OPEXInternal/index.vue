@@ -95,7 +95,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">{{ opex.opex_name }}</div>
-                                </td>                                
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {{ formatCurrency(opex.opex_price) }}
                                 </td>
@@ -110,7 +110,8 @@
                                         <button @click="editOpex(opex)" class="text-green-600 hover:text-green-900">
                                             Edit
                                         </button>
-                                        <button @click="confirmDelete(opex)" class="text-green-600 hover:text-green-900">
+                                        <button @click="confirmDelete(opex)"
+                                            class="text-green-600 hover:text-green-900">
                                             Delete
                                         </button>
                                     </div>
@@ -190,7 +191,7 @@
 import { defineComponent, ref, computed, onMounted } from 'vue'
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { 
+import {
     GetOpex,
     DeleteOpex
 } from '@/core/utils/url_api'
@@ -206,14 +207,20 @@ export default defineComponent({
         const router = useRouter();
         const tableHeaders = [
             { key: 'opex_code', label: 'Opex Number' },
-            { key: 'opex_name', label: 'Opex Name' },            
+            { key: 'opex_name', label: 'Opex Name' },
             { key: 'opex_price', label: 'Price' },
             { key: 'opex_type', label: 'Type' },
             { key: 'actions', label: 'Actions' },
-        ]
+        ];
+        const monthNames = [
+            '', // index 0 (not used)
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
         return {
             router: router,
             tableHeaders: tableHeaders,
+            monthNames: monthNames,
             po_type: '',
             searchQuery: '',
             sortBy: 'opex_name',
@@ -228,7 +235,7 @@ export default defineComponent({
 
         }
     },
-    mounted(){
+    mounted() {
         this.fetchData();
     },
     methods: {
@@ -265,7 +272,7 @@ export default defineComponent({
                     (res) => {
                         alert('OPEX deleted successfully')
                     }
-                );                
+                );
 
                 this.showDeleteModal = false
                 this.opexToDelete = null
@@ -277,6 +284,41 @@ export default defineComponent({
             } finally {
                 this.loading = false
             }
+        },
+        formatDateWithMonthString(dateStr){
+            // dateStr: '2025-01-08' or similar
+            const date = new Date(dateStr)
+            const day = date.getDate()
+            const month = date.getMonth() + 1 // getMonth() returns 0-based
+            const year = date.getFullYear()
+            return `${this.monthNames[month]}`
+        },
+        exportData() {
+            const data = this.filteredData.map(
+                (opex) => ({
+                    Name: opex.opex_name,                    
+                    Code: opex.opex_code,
+                    Price: opex.opex_price,                    
+                    Type: opex.opex_type,
+                    Bulan: this.formatDateWithMonthString(opex.issue_at),
+                    Date: opex.issue_at,
+                })
+            );
+
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map((row) => headers.map((header) => `"${row[header]}"`).join(',')),
+            ].join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' })
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.setAttribute('href', url)
+            a.setAttribute('download', `opex-${new Date().toISOString().split('T')[0]}.csv`)
+            document.body.appendChild(a)
+            a.click()
+            document.body.removeChild(a)
+            window.URL.revokeObjectURL(url)
         }
     },
     computed: {
@@ -310,7 +352,7 @@ export default defineComponent({
                 if (this.sortBy === 'opex_price') {
                     return a.opex_price - b.opex_price
                 }
-                return String(a[this.sortBy]).localeCompare(String(b[this.sortBy    ]))
+                return String(a[this.sortBy]).localeCompare(String(b[this.sortBy]))
             })
 
             return result

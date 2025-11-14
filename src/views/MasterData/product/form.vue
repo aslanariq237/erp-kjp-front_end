@@ -74,14 +74,30 @@
                 </div>
                 <div v-if="is_package == true">
                     <div class="flex space-x-5 items-end md:flex-row mt-4 justify-between">
-                        <FormGroup class="w-full relative" label="Product" :required="true" :error="rules.product_id"
-                            errorMessage="Pilih produk">
-                            <input type="text" name="product_name" id="product_name" v-model="product_name"
-                                autocomplete="off" @input="filterProducts" :class="inputClass(rules.product_id) + ' focus:ring-green-500 focus:border-green-500'
-                                    " placeholder="Type product name" />
-                            <ul v-if="filteredProducts.length && product_name"
-                                class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
-                                <li v-for="product in filteredProducts" :key="product.product_id"
+                        <FormGroup 
+                            class="w-full relative" 
+                            label="Product" 
+                            :required="true" 
+                            :error="rules.product_id"
+                            errorMessage="Pilih produk"
+                        >
+                            <input 
+                                type="text" 
+                                name="product_name" 
+                                id="product_name" 
+                                v-model="product_name"
+                                autocomplete="off" 
+                                @input="filterProducts" 
+                                :class="inputClass(rules.product_id) + ' focus:ring-green-500 focus:border-green-500'" 
+                                placeholder="Type product name" 
+                            />
+                            <ul v-if="filteredProducts.length && 
+                                product_name"
+                                class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600"
+                            >
+                                <li 
+                                    v-for="product in filteredProducts" 
+                                    :key="product.product_id"
                                     @click="selectProduct(product)"
                                     class="p-3 cursor-pointer hover:bg-green-100 dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200">
                                     {{ product.product_sn }} - {{ product.product_desc }}
@@ -92,10 +108,26 @@
                                 </li>
                             </ul>
                         </FormGroup>
+                        <FormGroup 
+                            label="Quantity" 
+                            :required="true"                             
+                            errorMessage="Quantity is required"
+                        >
+                            <input 
+                                type="text" 
+                                id="quantity" 
+                                autocomplete="off" 
+                                name="quantity" 
+                                v-model="quantity"
+                                :class="inputClass(rules.issue_at)" 
+                            />
+                        </FormGroup>
                         <div class="">
-                            <button type="button"
+                            <button 
+                                type="button"
                                 class="w-full flex items-center justify-center px-6 py-2 gap-2 bg-white text-green-600 border border-green-500 font-semibold rounded-lg hover:bg-green-500 hover:text-white transition-colors duration-300 ease-in-out shadow-md"
-                                @click="ProductList">
+                                @click="ProductList"
+                            >
                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd"
@@ -128,7 +160,11 @@
                                     </th>
                                     <th
                                         class="px-4 py-3 font-semibold text-right text-xs text-gray-700 uppercase tracking-wider dark:text-gray-300">
-                                        Product Uom
+                                        Uom
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 font-semibold text-right text-xs text-gray-700 uppercase tracking-wider dark:text-gray-300">
+                                        Quantity
                                     </th>
                                     <th
                                         class="px-4 py-3 font-semibold text-center text-xs text-gray-700 uppercase tracking-wider dark:text-gray-300">
@@ -136,9 +172,13 @@
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                                <tr v-for="(poDetail, index) in package_details" :key="index"
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                            <tbody 
+                                class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                                <tr 
+                                    v-for="(poDetail, index) in package_details" 
+                                    :key="index"
+                                    class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150"
+                                >
                                     <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                         {{ index + 1 }}
                                     </td>
@@ -155,6 +195,10 @@
                                     <td
                                         class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-right">
                                         {{ poDetail.product ? poDetail.product.product_uom : poDetail.product_uom }}
+                                    </td>
+                                    <td
+                                        class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-right">
+                                        {{ poDetail.quantity }}
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap text-center">
                                         <button type="button"
@@ -212,6 +256,7 @@ export default defineComponent({
             product_category_id: '',
             product_stock: 0,
             products: [],
+            quantity: 1,
             product_id: null,
             package_details: [],
             detail_pacakges: [],
@@ -320,6 +365,7 @@ export default defineComponent({
                     product_id: selected.product_id,
                     product_desc: selected.product_desc,
                     product_sn: selected.product_sn,
+                    quantity: this.quantity,
                     product_brand: selected.product_brand,
                     product_uom: selected.product_uom,
                 })
@@ -355,6 +401,7 @@ export default defineComponent({
                         product_id: item.product.product_id,
                         product_desc: item.product.product_desc,
                         product_sn: item.product.product_sn,
+                        quantity: item.quantity,
                         product_brand: item.product.product_brand,
                         product_uom: item.product.product_uom
                     });

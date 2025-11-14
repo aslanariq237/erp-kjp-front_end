@@ -237,9 +237,7 @@ export default defineComponent({
     if (id) {
       this.getById(id);
       this.id = id;
-    }
-    console.log(this.sales_order_details)
-
+    }    
     this.issue_at = new Date().toLocaleDateString('en-ca');
   },
   computed: {

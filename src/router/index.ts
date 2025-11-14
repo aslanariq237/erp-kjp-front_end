@@ -406,7 +406,7 @@ const router = createRouter({
       children: [
         {
           path: '',          
-          component: () => import('../views/Others/OPEXAbsorb/index-new.vue'),
+          component: () => import('../views/Others/OPEXAbsorb/index.vue'),
           meta: {
             title: 'Opex Absorb',
           },

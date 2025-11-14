@@ -1,10 +1,16 @@
 <!-- eslint-disable vue/block-lang -->
 <template>
   <AdminLayout>
-    <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
+    <Form 
+      @submit="onSubmit" 
+      class="container mx-auto px-6 py-4">
       <!-- Notification -->
-      <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
-        @close="notification.show = false" />
+      <Notification 
+        v-if="notification.show" 
+        :type="notification.type" 
+        :message="notification.message"
+        @close="notification.show = false" 
+      />
 
       <!-- Header Card -->
       <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
@@ -590,7 +596,8 @@ export default defineComponent({
         this.sales_order_details = [];
 
         for (let i = 0; i < data.length; i++) {
-          const productObj = {
+          const productObj = {     
+            id_detail_so: data[i].id_detail_so,     
             product_id: data[i].product_id,
             product_code: data[i].product?.product_code || '',
             product_desc: data[i].product?.product_desc || '',
@@ -602,7 +609,7 @@ export default defineComponent({
             price: data[i].price,
             discount: data[i].discount,
             amount: data[i].amount,
-            has_do: data[i].has_do
+            has_do: data[i].has_do,            
           };
           this.sales_order_details.push(productObj);
         }

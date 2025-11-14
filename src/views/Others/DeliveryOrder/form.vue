@@ -99,14 +99,14 @@
                 <td class="px-3 py-2 whitespace-no-wrap">
                   <input type="text" v-model="products.quantity_left"
                     class="w-20 rounded-lg border-gray-200 text-center" @change="changeQuantity(products)"
-                    :disabled="products.has_do === 1" min="0"
-                    :max="products.product_stock < products.quantity ? products.product_stock : products.quantity">
+                    :disabled="products.has_do === 1" min="0" :max="products.product_stock < products.quantity
+                      ? products.product_stock
+                      : products.quantity">
                 </td>
                 <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(products.price) }}</td>
                 <td>
-                  <input type="checkbox" name="check_barang" id="check_barang" v-model="products.checked"
-                    :disabled="products.product_stock == 0 || products.has_do === 1" @change="AddDeliverOrderDetails(products)
-                      ">
+                  <input type="checkbox" name="check_barang" id="check_barang" v-model="products.checked" @change="AddTest(products)
+                    ">
                 </td>
               </tr>
             </tbody>
@@ -280,6 +280,7 @@ export default defineComponent({
               is_package: detail.product.is_package,
               has_do: detail.has_do,
               quantity: detail.quantity,
+              checked: false,
               quantity_left: detail.quantity - detail.quantity_left,
               price: detail.price,
             };
@@ -292,13 +293,87 @@ export default defineComponent({
       });
       this.delivery_order_details = [];
     },
+    async AddTest(products) {
+      if (products.checked = true) {
+        let validation = false;
+        if (products.is_package != 1) {
+          if (products.quantity_left > products.product_stock) {
+            Swal.fire({
+              icon: 'error',
+              text: `Stok produk ${products.product_desc} tidak mencukupi!`,
+              showCancelButton: true,
+              confirmButtonText: 'Ya, Lanjutkan',
+              cancelButtonText: 'Tidak',
+            }).then(
+              (res) => {
+                if (res.isConfirmed) {
+                  if (products.is_package != 1) {
+                    if (products.product_stock != 0) {
+                      products.quantity_left = products.product_stock;
+                      validation = true;
+                    } else {
+                      products.checked = false;
+                      return;
+                    }
+                  } else {
+                    products.quantity_left = products.quantity_left;
+                    validation = true;
+                  }
+                } else if (res.isDismissed) {
+                  products.checked = false;
+                  validation = false;
+                  return;
+                }
+              }
+            )
+          } else if (products.quantity_left > products.quantity
+            && products.product_stock >= products.quantity
+          ) {
+            products.quantity_left = products.quantity
+            validation = true;
+          }
+        }else{
+          products.quantity_left = products.quantity_left;
+          validation = true;
+        }
+
+        if (validation = true) {
+          var objectInclude = {
+            id_detail_so: products.id_detail_so,
+            product_id: products.product_id,
+            quantity: products.quantity,
+            quantity_left: products.quantity_left,
+            is_package: products.is_package,
+            price: products.price,
+            checked: false,
+          }
+          this.delivery_order_details.push(objectInclude);
+          console.log(this.delivery_order_details);
+        }
+      }
+    },
     async AddDeliverOrderDetails(products) {
       if (products.checked) {
         if (products.quantity_left > products.product_stock) {
+          Swal.fire({
+            icon: "error",
+            text: `Stok produk ${products.product_desc} tidak mencukupi!`,
+          }).then(
+            (res) => {
+              if (res.isConfirmed) {
+                products.quantity_left = products.product_stock;
+              } else if (res.isDismissed) {
+                products.checked = false;
+                return 0;
+              }
+            }
+          )
           this.errorMessage = `Stok produk ${products.product_desc} tidak mencukupi!`;
           products.quantity_left = products.product_stock;
         }
-        else if (products.quantity_left > products.quantity && products.product_stock >= products.quantity) {
+        else if (products.quantity_left > products.quantity
+          && products.product_stock >= products.quantity
+        ) {
           products.quantity_left = products.quantity
         }
 
@@ -312,6 +387,7 @@ export default defineComponent({
           checked: false,
         }
         this.delivery_order_details.push(objectInclude);
+        console.log(this.delivery_order_details);
       } else {
         this.delivery_order_details.splice(this.delivery_order_details.indexOf(products));
       }

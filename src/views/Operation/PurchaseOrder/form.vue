@@ -562,6 +562,7 @@ export default defineComponent({
         var data = res.data
         for (let i = 0; i < data.length; i++) {
           var object = {
+            id_detail_po: data[i].id_detail_po,
             product_id: data[i].product_id,
             product_desc: data[i].product.product_desc,
             quantity: data[i].quantity,
