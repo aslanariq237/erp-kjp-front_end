@@ -76,6 +76,11 @@
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
               >
+                Type
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
                 Brand
               </th>
               <th
@@ -98,8 +103,8 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
               v-for="(product, index) in paginatedData"
-              :key="product.id"
-              class="hover:bg-gray-50"
+              :key="product.id"              
+              :class="{'bg-slate-300': product.has_used}"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 {{ product.product_code }}
@@ -109,6 +114,9 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="text-sm font-medium text-gray-900">{{ product.product_desc }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ product.is_package != 1 ? 'Product' : 'ADRS' }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div class="text-sm font-medium text-gray-900">{{ product.product_brand }}</div>

@@ -57,10 +57,10 @@
             </tr>
             <tr v-for="(entry, index) in paginatedData" :key="entry.id"
               class="hover:bg-gray-50 transition-colors duration-150 dark:bg-gray-800">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+              <td class="px-6 py-4 whitespace-nowrap text-sm">
                 {{ entry.code_quatation }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">
                 {{ entry.customer.customer_name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -192,6 +192,7 @@ export default defineComponent({
       searchQuery: '',
       itemsPerPage: 10,
       currentPage: 1,
+      loading: false,
       quotations: [],
       dataexcel: [],
     }

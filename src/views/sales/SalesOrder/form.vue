@@ -356,7 +356,8 @@ export default defineComponent({
     getProducts() {
       ApiServices.get(Product).then((res) => {
         var data = res.data
-        this.products = data
+        data = data.filter(item => item.has_used != 1);
+        this.products = data        
       })
     },
     formatCurrency(value) {
@@ -507,10 +508,10 @@ export default defineComponent({
 
     filterProducts() {
       const searchTerm = this.product_name.toLowerCase()
-      this.filteredProducts = this.products.filter((product) => {
+      this.filteredProducts = this.products.filter((product) => {        
         const desc = product.product_desc.toLowerCase()
-        const sn = product.product_sn.toLowerCase()
-        return desc.includes(searchTerm) || sn.includes(searchTerm)
+        const sn = product.product_sn.toLowerCase()        
+        return desc.includes(searchTerm) || sn.includes(searchTerm)         
       })
     },
     selectProduct(product) {

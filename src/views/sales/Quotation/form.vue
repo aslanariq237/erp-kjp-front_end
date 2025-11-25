@@ -1,6 +1,8 @@
 <template>
   <AdminLayout>
-    <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
+    <Form 
+      @submit="onSubmit" 
+      class="container mx-auto px-6 py-4">
       <!-- Notification -->
       <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
         @close="notification.show = false" />
@@ -41,7 +43,58 @@
 
       <!-- Form Card -->
       <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- No -->
+          <FormGroup 
+            label="Customer" 
+            class="relative" 
+            :required="true" 
+            :error="rules.customer_id"
+            errorMessage="Customer is Required"
+          >
+            <input 
+              type="text" 
+              name="customer_name" 
+              id="customer_name" 
+              v-model="customer_name" 
+              autocomplete="off"
+              @input="filterCustomers" 
+              :class="inputClass(rules.due_at)" 
+              placeholder="Type customer name" 
+            />
+            <ul 
+              v-if="filteredCustomers.length" 
+              class="border rounded w-full mt-2 bg-white absolute z-40"
+            >
+              <li 
+                v-for="customer in filteredCustomers" 
+                :key="customer.customer_id" 
+                @click="selectCustomer(customer)"
+                class="p-2 cursor-pointer hover:bg-gray-200">
+                {{ customer.customer_code }} - {{ customer.customer_name }}
+              </li>
+            </ul>            
+          </FormGroup>
+          <FormGroup 
+            label="code" 
+            class="relative" 
+            :required="true" 
+            :error="rules.code" 
+            errorMessage="Code is Required"
+          >
+            <input 
+              type="text" 
+              name="code" 
+              id="code" 
+              v-model="code" 
+              autocomplete="off" 
+              :class="inputClass(rules.due_at)"
+              placeholder="Type Code" 
+            />            
+          </FormGroup>
+          <!-- Code PO -->
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
           <!-- Issue Date -->
           <FormGroup label="Issue Date" :required="true" :error="rules.issue_at" errorMessage="Issue Date is required">
             <!-- <p> {{ issue_at }}</p> -->
@@ -53,7 +106,12 @@
 
           <!-- Termin -->
           <FormGroup label="Term of Payment" :required="true" :error="rules.po_type" errorMessage="PO Type is required">
-            <select id="po_type" name="po_type" v-model="termin" :class="inputClass(rules.due_at)">
+            <select 
+              id="termin" 
+              name="termin" 
+              v-model="termin" 
+              :class="inputClass(rules.due_at)"
+            >
               <option value="CBD">CBD(Cash Before Delivery)</option>
               <option value="CAD">CAD(Cash After Delivery)</option>
               <option value="N14">N14</option>
@@ -69,144 +127,141 @@
           </FormGroup>
 
           <!-- Due Date -->
-          <FormGroup label="Due Date" :required="true" :error="rules.due_at">
-            <input type="date" id="due_at" name="due_at" v-model="due_at" :class="inputClass(rules.due_at)" />
+          <FormGroup 
+            label="Due Date" 
+            :required="true" 
+            :error="rules.due_at"
+          >
+            <input 
+              type="date" 
+              id="due_at" 
+              name="due_at" 
+              v-model="due_at" 
+              :class="inputClass(rules.due_at)" 
+            />
             <div class="" v-if="rules.due_at == true">
               <p class="text-sm text-red-500">Due Date Dibutuhkan</p>
             </div>
           </FormGroup>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-5">
-          <!-- No -->
-          <FormGroup label="Customer" class="relative" :required="true" :error="rules.customer_id"
-            errorMessage="Customer is Required">
-            <input type="text" name="customer_name" id="customer_name" v-model="customer_name" autocomplete="off"
-              @input="filterCustomers" :class="inputClass(rules.due_at)" placeholder="Type customer name" />
-            <ul v-if="filteredCustomers.length" class="border rounded w-full mt-2 bg-white absolute z-40">
-              <li v-for="customer in filteredCustomers" :key="customer.customer_id" @click="selectCustomer(customer)"
-                class="p-2 cursor-pointer hover:bg-gray-200">
-                {{ customer.customer_code }} - {{ customer.customer_name }}
-              </li>
-            </ul>
-            <div class="" v-if="rules.customer_name == true">
-              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
-            </div>
-          </FormGroup>
-          <FormGroup label="code" class="relative" :required="true" :error="rules.code" errorMessage="Code is Required">
-            <input type="text" name="code" id="code" v-model="code" autocomplete="off" :class="inputClass(rules.due_at)"
-              placeholder="Type Code" />
-            <div class="" v-if="rules.customer_name == true">
-              <p class="text-red-500 text-sm">Customer Dibutuhkan</p>
-            </div>
-          </FormGroup>
-          <!-- Code PO -->
-        </div>
-        <FormGroup label="Note" class="relative w-full mt-4 border-gray-500" :required="true"
-          :error="rules.customer_id">
-          <textarea name="note" id="note" cols="30" class="rounded-md w-full border-gray-500" v-model="description">
+        </div>        
+        <FormGroup 
+          label="Note" 
+          class="relative w-full mt-4 border-gray-500"                     
+        >
+          <textarea 
+            name="note" 
+            id="note" 
+            cols="30" 
+            class="rounded-md w-full border-gray-500" 
+            v-model="description"
+          >
           </textarea>
         </FormGroup>
-        <div class="flex justify-content-between gap-4 items-end mt-4">
-          <FormGroup class="w-full md:w-2/5 relative" label="Product" :required="true" :error="rules.product_id"
-            errorMessage="Pilih produk">
-            <input type="text" name="customer_name" id="customer_name" v-model="product_name" autocomplete="off"
-              @input="filterProducts" class="rounded-md" placeholder="Type customer name" />
-            <ul v-if="filteredProducts.length && product_name"
-              class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
-              <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
-                class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200">
-                {{ product.product_sn }} - {{ product.product_desc }}
-              </li>
-              <li v-if="filteredProducts.length === 0 && product_name" class="p-3 text-gray-500 italic">
-                Tidak ada produk yang cocok.
-              </li>
-            </ul>
-          </FormGroup>
+      </div>
+      <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800 mt-4">
+        <div class="">
+          <div class="flex justify-content-between gap-4 items-end mt-4">
+            <FormGroup class="w-full md:w-2/5 relative" label="Product" :required="true" :error="rules.product_id"
+              errorMessage="Pilih produk">
+              <input type="text" name="customer_name" id="customer_name" v-model="product_name" autocomplete="off"
+                @input="filterProducts" class="rounded-md" placeholder="Type customer name" />
+              <ul v-if="filteredProducts.length && product_name"
+                class="absolute z-40 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-60 overflow-y-auto dark:bg-gray-700 dark:border-gray-600">
+                <li v-for="product in filteredProducts" :key="product.product_id" @click="selectProduct(product)"
+                  class="p-3 cursor-pointer dark:hover:bg-gray-600 transition-colors duration-150 text-gray-800 dark:text-gray-200">
+                  {{ product.product_sn }} - {{ product.product_desc }}
+                </li>
+                <li v-if="filteredProducts.length === 0 && product_name" class="p-3 text-gray-500 italic">
+                  Tidak ada produk yang cocok.
+                </li>
+              </ul>
+            </FormGroup>
 
-          <!-- Grand Total -->
-          <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
-            errorMessage="Quantity is required">
-            <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
-          </FormGroup>
-          <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
-            errorMessage="Price is required">
-            <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
-              placeholder="Enter Quantity" />
-          </FormGroup>
-          <div v-if="id">
-            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-              @click="addPoDetails">
-              tambah
-            </button>
-          </div>
-          <div v-else>
-            <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-              @click="addPoDetails">
-              tambah
-            </button>
-          </div>
-        </div>
-        <div class="mt-5 relative overflow-x-auto">
-          <table
-            class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90">
-            <thead>
-              <tr class="text-center">
-                <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Price</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
-                <th class="px-3 py-2 font-semibold text-left border-b">Product Amount</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800">
-              <tr v-for="poDetail in inquiry_details" :key="poDetail.product_id">
-                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_code }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_pn }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_desc }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.quantity }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(poDetail.price) }}</td>
-                <td class="px-3 py-2 whitespace-nowrap">
-                  <input type="text" v-model="poDetail.discount"
-                    class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400" @change="updateAmount(poDetail)" />
-                </td>
-                <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
-                <td class="px-3 py-2 whitespace-no-wrap">
-                  <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
-                    @click="inquiry_details.splice(inquiry_details.indexOf(poDetail), 1)">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <div class="" v-if="rules.inquiry_details == true">
-              <p class="text-sm text-red-500">Barang Dibutuhkan</p>
+            <!-- Grand Total -->
+            <FormGroup class="w-full" label="Quantity" :required="true" :error="rules.quantity"
+              errorMessage="Quantity is required">
+              <input type="number" id="quantity" name="quantity" v-model="quantity" :class="inputClass(rules.quantity)"
+                placeholder="Enter Quantity" />
+            </FormGroup>
+            <FormGroup class="w-full" label="Price" :required="true" :error="rules.quantity"
+              errorMessage="Price is required">
+              <input type="number" id="quantity" name="quantity" v-model="price" :class="inputClass(rules.quantity)"
+                placeholder="Enter Quantity" />
+            </FormGroup>
+            <div v-if="id">
+              <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                @click="addPoDetails">
+                tambah
+              </button>
             </div>
-          </table>
-        </div>
-        <div class="flex justify-between mt-5">
-          <div class="">
-          </div>
-          <div class="w-full"></div>
-          <div class="w-full">
-            <div class="sub_total flex justify-between mt-3 text-gray-500">
-              <p>Sub Total</p>
-              <p>{{ formatCurrency(sub_total) }}</p>
+            <div v-else>
+              <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                @click="addPoDetails">
+                tambah
+              </button>
             </div>
-            <div class="sub_total flex justify-between mt-3 text-gray-500">
-              <div class="flex items-center">
-                <input type="checkbox" v-model="checkppn" class="mr-2">
-                <p>PPN</p>
+          </div>
+          <div class="mt-5 relative overflow-x-auto">
+            <table
+              class="min-w-full divide-y divide-gray-100 shadow-sm border-gray-200 border dark:bg-gray-800 dark:text-gray-400/90">
+              <thead>
+                <tr class="text-center">
+                  <th class="px-3 py-2 font-semibold text-left border-b">Code</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">PN</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">Product Name</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">Quantity</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">Product Price</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">Discount</th>
+                  <th class="px-3 py-2 font-semibold text-left border-b">Product Amount</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-100 dark:bg-gray-800">
+                <tr v-for="poDetail in inquiry_details" :key="poDetail.product_id">
+                  <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_code }}</td>
+                  <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_pn }}</td>
+                  <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.product_desc }}</td>
+                  <td class="px-3 py-2 whitespace-nowrap">{{ poDetail.quantity }}</td>
+                  <td class="px-3 py-2 whitespace-nowrap">{{ formatCurrency(poDetail.price) }}</td>
+                  <td class="px-3 py-2 whitespace-nowrap">
+                    <input type="text" v-model="poDetail.discount"
+                      class="w-20 rounded-lg dark:bg-gray-800 dark:text-gray-400" @change="updateAmount(poDetail)" />
+                  </td>
+                  <td class="px-3 py-2 whitespace-no-wrap">{{ formatCurrency(poDetail.amount) }}</td>
+                  <td class="px-3 py-2 whitespace-no-wrap">
+                    <button type="button" class="border-gray-300 border-2 px-3 h-12 rounded-lg dark:text-gray-400"
+                      @click="inquiry_details.splice(inquiry_details.indexOf(poDetail), 1)">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <div class="" v-if="rules.inquiry_details == true">
+                <p class="text-sm text-red-500">Barang Dibutuhkan</p>
               </div>
-              <p>{{ formatCurrency(ppn) }}</p>
+            </table>
+          </div>
+          <div class="flex justify-between mt-5">
+            <div class="">
             </div>
-            <div class="sub_total flex justify-between mt-3 text-gray-500">
-              <p>Grand Total</p>
-              <p>{{ formatCurrency(grand_total) }}</p>
+            <div class="w-full"></div>
+            <div class="w-full">
+              <div class="sub_total flex justify-between mt-3 text-gray-500">
+                <p>Sub Total</p>
+                <p>{{ formatCurrency(sub_total) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3 text-gray-500">
+                <div class="flex items-center">
+                  <input type="checkbox" v-model="checkppn" class="mr-2">
+                  <p>PPN</p>
+                </div>
+                <p>{{ formatCurrency(ppn) }}</p>
+              </div>
+              <div class="sub_total flex justify-between mt-3 text-gray-500">
+                <p>Grand Total</p>
+                <p>{{ formatCurrency(grand_total) }}</p>
+              </div>
+              <input type="text" v-model="code_quatation" hidden />
             </div>
-            <input type="text" v-model="code_quatation" hidden />
           </div>
         </div>
       </div>
@@ -280,9 +335,11 @@ export default defineComponent({
         message: '',
       },
       rules: {
-        customer_name: false,
+        code: false,
+        customer_id: false,
         inquiry_details: false,
         issue_at: false,
+        termin: false,
         due_at: false,
       },
       inquiry_details: [],
@@ -507,10 +564,23 @@ export default defineComponent({
       var count = 0
 
       if (this.customer_id == '' || this.customer_id == null) {
-        this.rules.customer_name = true
-        count++
+        this.rules.customer_id = true        
+        count++;
       } else {
-        this.rules.customer_name = false
+        this.rules.customer_id = false
+      }
+
+      if (this.code == '' || this.code == null) {
+        this.rules.code = true;        
+        count++;
+      }else{
+        this.rules.code = false;
+      }
+
+      if (this.termin == '' || this.termin == null) {
+        this.rules.termin = true;
+      }else {
+        this.rules.termin = false;
       }
 
       if (this.issue_at == '' || this.issue_at == null) {
@@ -541,7 +611,7 @@ export default defineComponent({
         count++
       }
 
-      return count
+      return count;
     },
     getDetailQuotation(id) {
       ApiServices.get(DetailQuatation + '/' + id).then((res) => {
@@ -571,7 +641,7 @@ export default defineComponent({
         this.customer_id = data[0].customer_id
         this.termin = data[0].termin
         this.description = data[0].description,
-        this.code_quatation = data[0].code_quatation
+          this.code_quatation = data[0].code_quatation
         var id = data[0].id_quatation
         if (id) {
           this.getDetailQuotation(id)

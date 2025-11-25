@@ -75,8 +75,8 @@
                                 class="text-center border-b-2" 
                                 v-for="(pro, index) in (item.detail_do ? rowsToShow : item.detail_do)" :key="index"
                             >
-                                <td class="text-xs px-3 py-3">{{ (partialMode ? (pageNumber - 1) * 6 + index + 1 :
-                                    index + 1) }}</td>
+                                <td class="text-xs px-3 py-3">{{ (partialMode ? (pageNumber - 1) * 4 + index + 1 :
+                                    index + 1) }}</td>                                
                                 <td class="text-xs px-3 py-2">{{pro.product.product_sn }}</td>
                                 <td class="text-xs px-3 py-2">{{pro.product.product_desc }}</td>
                                 <td class="text-xs px-3 py-2">{{ pro.quantity }}</td>

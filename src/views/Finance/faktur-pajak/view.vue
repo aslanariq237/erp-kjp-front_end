@@ -189,8 +189,7 @@
       async getById(id) {
         await ApiServices.get(GetFakturPajak + '/' + id).then(        
           (res) => {
-            var data = res.data;
-            console.log(data)            
+            var data = res.data;                       
             this.po_number = data[0].so.po_number
             this.customer_name = data[0].so.customer.customer_name;
             this.code_invoice = data[0].invoice.code_invoice;          
@@ -211,8 +210,7 @@
               code_faktur_pajak : this.faktur_pajak,
             }, {
               headers: { "Content-Type": "application/json" }
-            }).then((response) => {
-              console.log(response)
+            }).then((response) => {              
               Swal.fire({
                 icon: "success",
                 title: 'Success',
@@ -246,8 +244,7 @@
               tandaterima_details: this.tandaterima_details,
             }, {
               headers: { "Content-Type": "application/json" }
-            }).then((response) => {
-              console.log(response)
+            }).then((response) => {              
               Swal.fire({
                 icon: "success",
                 title: 'Success',

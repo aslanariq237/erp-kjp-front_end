@@ -120,8 +120,18 @@
                                 name="quantity" 
                                 v-model="quantity"
                                 :class="inputClass(rules.issue_at)" 
-                            />
+                            />                            
                         </FormGroup>
+                        <FormGroup v-if="check_stock != true">  
+                            <select 
+                                name="used_for_stock" 
+                                id="used_for_stock"
+                                v-model="used_for_stock"
+                            >
+                                <option value="1">True</option>
+                                <option value="0">False</option>
+                            </select>
+                        </FormGroup>                        
                         <div class="">
                             <button 
                                 type="button"
@@ -167,6 +177,10 @@
                                         Quantity
                                     </th>
                                     <th
+                                        class="px-4 py-3 font-semibold text-right text-xs text-gray-700 uppercase tracking-wider dark:text-gray-300">
+                                        Stock
+                                    </th>
+                                    <th
                                         class="px-4 py-3 font-semibold text-center text-xs text-gray-700 uppercase tracking-wider dark:text-gray-300">
                                         Action
                                     </th>
@@ -199,6 +213,17 @@
                                     <td
                                         class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-right">
                                         {{ poDetail.quantity }}
+                                    </td>
+                                    <td
+                                        class="px-4 py-3 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200 text-center items-center">
+                                        <input 
+                                            type="checkbox" 
+                                            name="used_for_stock" 
+                                            id="used_for_stock" 
+                                            v-model="poDetail.used_for_stock" 
+                                            :checked="poDetail.used_for_stock = 1"
+                                            :disabled="poDetail.used_for_stock != 1"                                                                                                                                  
+                                        >
                                     </td>
                                     <td class="px-4 py-3 whitespace-nowrap text-center">
                                         <button type="button"
@@ -257,6 +282,8 @@ export default defineComponent({
             product_stock: 0,
             products: [],
             quantity: 1,
+            used_for_stock: 0,
+            check_stock: false,
             product_id: null,
             package_details: [],
             detail_pacakges: [],
@@ -295,7 +322,7 @@ export default defineComponent({
         getProduct() {
             ApiServices.get(Product).then((res) => {
                 var data = res.data
-                this.products = data
+                this.products = data            
             })
         },
         showNotification(type, message) {
@@ -367,8 +394,10 @@ export default defineComponent({
                     product_sn: selected.product_sn,
                     quantity: this.quantity,
                     product_brand: selected.product_brand,
+                    used_for_stock: this.used_for_stock,
                     product_uom: selected.product_uom,
                 })
+                console.log(this.package_details);
             }
         },
 
@@ -386,7 +415,7 @@ export default defineComponent({
                     this.product_code = data.product_code;
                     this.product_uom = data.product_uom;
                     this.is_package = data.is_package;
-                    this.detail_pacakges = data.detail_package || [];
+                    this.detail_pacakges = data.detail_package || [];                    
                     if (data.is_package == 1) {
                         this.getDetail();
                     }
@@ -396,17 +425,21 @@ export default defineComponent({
         getDetail() {
             this.package_details = [];
             this.detail_pacakges.forEach((item) => {
-                if (item.product) {
+                if (item.product) {                    
                     this.package_details.push({
                         product_id: item.product.product_id,
                         product_desc: item.product.product_desc,
                         product_sn: item.product.product_sn,
                         quantity: item.quantity,
                         product_brand: item.product.product_brand,
+                        used_for_stock: item.used_for_stock,
                         product_uom: item.product.product_uom
                     });
                 }
-            })
+                // if (item.used_for_stock) {
+                //     this.check_stock = true;
+                // }
+            });
         },
         async onSubmit() {
             const result = await this.validation();

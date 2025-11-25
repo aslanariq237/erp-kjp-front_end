@@ -257,6 +257,19 @@ export default defineComponent({
         loading.value = false
       }
     }
+    const monthNames = [
+      '', // index 0 (not used)
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const formatDateWithMonthString = (dateStr) =>{
+      // dateStr: '2025-01-08' or similar
+      const date = new Date(dateStr)
+      const day = date.getDate()
+      const month = date.getMonth() + 1 // getMonth() returns 0-based
+      const year = date.getFullYear()
+      return `${monthNames[month]}`
+    }
 
     const exportData = () => {
       const data = dataexcel.value.map((item) => ({
@@ -277,6 +290,7 @@ export default defineComponent({
         'Invoice Date': item.invoice_date,
         'Amount Invoice': item.amount_invoice,        
         'Resi': item.resi,
+        'Month': formatDateWithMonthString(item.so_date),
         'Tandater Date': item.tandater_date,
       })); 
 
@@ -309,6 +323,7 @@ export default defineComponent({
       maxAmount,
       currentPage,
       itemsPerPage,
+      monthNames,
       tableHeaders,
 
       // Computed
@@ -320,6 +335,7 @@ export default defineComponent({
       displayedPages,
 
       // Methods
+      formatDateWithMonthString,
       formatCurrency,
       formatAccountNumber,
       viewDetails,

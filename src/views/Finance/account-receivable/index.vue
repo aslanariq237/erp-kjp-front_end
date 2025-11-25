@@ -344,7 +344,7 @@ export default defineComponent({
             tableHeaders: tableHeaders,
             monthNames: monthNames,
             searchQuery: '',
-            sortBy: '',
+            sortBy: 'status',
             minBalance: '',
             maxBalance: '',
             currentPage: 1,

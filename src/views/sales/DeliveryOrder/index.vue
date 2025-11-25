@@ -5,7 +5,7 @@
       <div class="flex justify-between items-center mb-6">
         <div class="breadcrumb">
           <h1 class="text-2xl font-bold text-gray-800">Delivery Order</h1>
-          <p class="text-gray-500 text-sm mt-1">Others / Delivery Order</p>
+          <p class="text-gray-500 text-sm mt-1">Sales / Delivery Order</p>
         </div>
         <div class="flex gap-3">
           <button

@@ -124,7 +124,7 @@ const generateSingleDoPdf = async (item) => {
   var totalRows = item.detail_do.length;
   let maxTextLen = 0
 
-  const TEXT_LENGTH_THRESHOLD = 80;
+  const TEXT_LENGTH_THRESHOLD = 120;
   if (Array.isArray(item.point)) {
     maxTextLen = item.point.reduce((max, d) => {
       const txt = (d.alamat || '').toString();

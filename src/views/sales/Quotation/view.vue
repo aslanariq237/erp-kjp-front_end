@@ -2,8 +2,12 @@
     <AdminLayout>
         <Form @submit="onSubmit" class="container mx-auto px-6 py-4">
             <!-- Notification -->
-            <Notification v-if="notification.show" :type="notification.type" :message="notification.message"
-                @close="notification.show = false" />
+            <Notification 
+                v-if="notification.show" 
+                :type="notification.type" 
+                :message="notification.message"
+                @close="notification.show = false" 
+            />
 
             <!-- Header Card -->
             <div class="bg-white rounded-lg shadow-md mb-6 dark:bg-gray-800 dark:text-gray-400">
@@ -13,7 +17,8 @@
                         <p class="text-gray-400 text-sm mt-1">Others / Quatation / View</p>
                     </div>
                     <div class="flex items-center gap-3">
-                        <RouterLink to="/quotation"
+                        <RouterLink 
+                            to="/quotation"
                             class="px-4 py-2 bg-red-400 rounded-lg hover:bg-red-500 transition-colors duration-200 flex items-center gap-2 text-white">
                             <i class="fas fa-times"></i>
                             Back

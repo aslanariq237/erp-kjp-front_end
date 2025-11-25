@@ -196,12 +196,12 @@
                         <div v-else>
                             <p class="text-xs">Warm Regards</p>
                             <div v-if="item.customer.customer_name != 'PT. Petronesia Benimel'">
-                                <div class="text-xs mt-20">
+                                <div class="text-xs mt-32">
                                     <p>VINCENTIUS ADITYA HARNAWAN</p>
                                 </div>
                             </div>
                             <div v-else>
-                                <div class="text-xs mt-44">
+                                <div class="text-xs mt-32">
                                     <p>HERY SUSANTO</p>
                                 </div>
                             </div>
